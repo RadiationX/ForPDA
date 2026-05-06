@@ -2,10 +2,12 @@ package forpdateam.ru.forpda.presentation.devdb.brands
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -52,17 +54,18 @@ class BrandsPresenter(
     }
 
     fun loadBrands() {
-        devDbRepository
-            .getBrands(currentCategory)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                devDbRepository.getBrands(currentCategory)
+            }.onSuccess {
                 currentData = it
                 viewState.showData(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun openBrand(item: Brands.Item) {

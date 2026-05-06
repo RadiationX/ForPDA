@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.asRegular
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
@@ -17,6 +18,9 @@ import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -69,10 +73,10 @@ class QmsChatPresenter(
             .untilDestroy()
         eventsRepository
             .observeEventsTab()
-            .subscribe {
+            .onEach {
                 handleEvent(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         nick?.let { nick -> title?.let { title -> viewState.setTitles(title, nick) } }
 
         updateMode()
@@ -103,106 +107,111 @@ class QmsChatPresenter(
     }
 
     fun findUser(nick: String) {
-        qmsInteractor
-            .findUser(nick)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                qmsInteractor.findUser(nick)
+            }.onSuccess {
                 viewState.onShowSearchRes(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     private fun loadChat() {
-        qmsInteractor
-            .getChat(userId, themeId)
-            //.map { qmsChatTemplate.mapEntity(it) }
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                qmsInteractor.getChat(userId, themeId)
+            }.onSuccess {
                 updateCurrentData(it)
                 viewState.showChat(it)
                 initOnNewMessages(it)
                 tryShowAvatar()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun sendNewTheme(nick: String, title: String, message: String, files: List<AttachmentItem>) {
-        qmsInteractor
-            .sendNewTheme(nick, title, message, files)
-            //.map { qmsChatTemplate.mapEntity(it) }
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                qmsInteractor.sendNewTheme(nick, title, message, files)
+            }.onSuccess {
                 updateCurrentData(it)
                 viewState.showChat(it)
                 viewState.onNewThemeCreate(it)
                 initOnNewMessages(it)
                 tryShowAvatar()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun sendMessage(message: String, files: List<AttachmentItem>) {
-        qmsInteractor
-            .sendMessage(userId, themeId, message, files)
-            .doOnSubscribe { viewState.setMessageRefreshing(true) }
-            .doAfterTerminate { viewState.setMessageRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setMessageRefreshing(true)
+            coRunCatching {
+                qmsInteractor.sendMessage(userId, themeId, message, files)
+            }.onSuccess {
                 viewState.onSentMessage(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setMessageRefreshing(false)
+        }
     }
 
     fun blockUser() {
-        currentData?.user?.nick?.let { nick ->
-            qmsInteractor
-                .blockUser(nick)
-                .map { it.firstOrNull { it.user.nick == nick } != null }
-                .subscribe({
-                    viewState.onBlockUser(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+        val nick = currentData?.user?.nick ?: return
+        viewModelScope.launch {
+            coRunCatching {
+                qmsInteractor.blockUser(nick)
+            }.map {
+                it.firstOrNull { it.user.nick == nick } != null
+            }.onSuccess {
+                viewState.onBlockUser(it)
+            }.onFailure {
+                errorHandler.handle(it)
+            }
         }
     }
 
     private fun tryShowAvatar() {
-        val result = avatarUrl?.let { it } ?: currentData?.user?.avatar?.let { it }
+        val result = avatarUrl ?: currentData?.user?.avatar
         if (result != null) {
             viewState.showAvatar(result)
         } else {
             currentData?.let {
-                avatarRepository
-                    .getAvatar(it.user.nick)
-                    .subscribe({
+                viewModelScope.launch {
+                    coRunCatching {
+                        avatarRepository.getAvatar(it.user.nick)
+                    }.onSuccess {
                         viewState.showAvatar(it)
-                    }, {
+                    }.onFailure {
                         errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+                    }
+                }
             }
         }
     }
 
 
     fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>) {
-        qmsInteractor
-            .uploadFiles(files, pending)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                qmsInteractor.uploadFiles(files, pending)
+            }.onSuccess {
                 viewState.onUploadFiles(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun handleEvent(event: TabNotification) {
@@ -236,28 +245,30 @@ class QmsChatPresenter(
     private fun onNewWsMessage(themeId: Int, messageId: Int) {
         currentData?.let {
             val lastMessId = it.messages.lastOrNull()?.asRegular()?.id ?: 0
-            qmsInteractor
-                .getMessagesFromWs(themeId, messageId, lastMessId)
-                .subscribe({
+            viewModelScope.launch {
+                coRunCatching {
+                    qmsInteractor.getMessagesFromWs(themeId, messageId, lastMessId)
+                }.onSuccess {
                     onNewMessages(it)
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 
     fun checkNewMessages() {
         currentData?.let {
             val lastMessId = it.messages.lastOrNull()?.asRegular()?.id ?: 0
-            qmsInteractor
-                .getMessagesAfter(themeId, it.themeId, lastMessId)
-                .subscribe({
+            viewModelScope.launch {
+                coRunCatching {
+                    qmsInteractor.getMessagesAfter(themeId, it.themeId, lastMessId)
+                }.onSuccess {
                     onNewMessages(it)
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 

@@ -215,7 +215,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
             .show()
     }
 
-    override fun onChangeReputation(result: Boolean) {
+    override fun onChangeReputation() {
         Toast.makeText(requireContext(), getString(R.string.reputation_changed), Toast.LENGTH_SHORT)
             .show()
     }

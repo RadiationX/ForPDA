@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.presentation.mentions
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.mentions.MentionsRepository
@@ -10,6 +11,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import java.util.regex.Pattern
 
@@ -34,27 +36,29 @@ class MentionsPresenter(
     }
 
     fun getMentions() {
-        mentionsRepository
-            .getMentions(currentSt)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                mentionsRepository.getMentions(currentSt)
+            }.onSuccess {
                 viewState.showMentions(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
-        favoritesRepository
-            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            }.onSuccess {
                 viewState.onAddToFavorite(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun onItemClick(item: MentionItem) {

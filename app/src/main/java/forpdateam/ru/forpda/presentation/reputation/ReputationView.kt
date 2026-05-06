@@ -16,7 +16,7 @@ interface ReputationView : IBaseView {
     fun showReputation(repData: RepData)
 
     @StateStrategyType(SkipStrategy::class)
-    fun onChangeReputation(result: Boolean)
+    fun onChangeReputation()
 
     @StateStrategyType(SkipStrategy::class)
     fun showItemDialogMenu(item: RepItem)

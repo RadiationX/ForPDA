@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -98,7 +97,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
     }
 
     override fun showData(data: ForumRules) {
-        webView.loadDataWithBaseURL("https://4pda.to/forum/", data.html, "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL("https://4pda.to/forum/", data.html.orEmpty(), "text/html", "utf-8", null)
     }
 
     override fun setStyleType(type: String) {

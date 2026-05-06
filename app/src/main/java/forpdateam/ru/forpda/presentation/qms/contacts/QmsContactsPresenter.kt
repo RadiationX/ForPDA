@@ -2,12 +2,16 @@ package forpdateam.ru.forpda.presentation.qms.contacts
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import java.util.Locale
 
@@ -31,15 +35,16 @@ class QmsContactsPresenter(
         super.onFirstViewAttach()
         qmsInteractor
             .observeContacts()
-            .subscribe {
+            .onEach {
                 localItems.clear()
                 localItems.addAll(it)
                 viewState.showContacts(it)
-                countersHolder.set(countersHolder.get().copy(
-                    qms = it.sumOf { it.count }
-                ))
+                countersHolder.set(
+                    countersHolder.get().copy(
+                        qms = it.sumOf { it.count }
+                    ))
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
     }
 
     fun searchLocal(nick: String) {
@@ -57,41 +62,43 @@ class QmsContactsPresenter(
     }
 
     fun loadContacts() {
-        qmsInteractor
-            .getContactList()
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
-
-            }, {
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                qmsInteractor.getContactList()
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun deleteDialog(id: Int) {
-        qmsInteractor
-            .deleteDialog(id)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                qmsInteractor.deleteDialog(id)
+            }.onSuccess {
                 loadContacts()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun blockUser(item: QmsContact) {
-        qmsInteractor
-            .blockUser(item.user.nick)
-            .map { it.firstOrNull { it.user.nick == item.user.nick } != null }
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                qmsInteractor.blockUser(item.user.nick)
+            }.map {
+                it.firstOrNull { it.user.nick == item.user.nick } != null
+            }.onSuccess {
                 viewState.onBlockUser(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun onItemClick(item: QmsContact) {

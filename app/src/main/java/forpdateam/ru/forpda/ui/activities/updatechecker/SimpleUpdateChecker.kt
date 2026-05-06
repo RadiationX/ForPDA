@@ -13,8 +13,12 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.checker.UpdateData
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * Created by radiationx on 23.07.17.
@@ -24,22 +28,23 @@ class SimpleUpdateChecker(
     private val checkerRepository: CheckerRepository
 ) {
 
-    private val compositeDisposable = CompositeDisposable()
+    private var checkJob: Job? = null
 
     fun checkUpdate() {
-        compositeDisposable.add(
-            checkerRepository
-                .checkUpdate(true)
-                .subscribe({
-                    showUpdateData(it)
-                }, {
-                    it.printStackTrace()
-                })
-        )
+        cancel()
+        checkJob = GlobalScope.launch(Dispatchers.Main) {
+            coRunCatching {
+                checkerRepository.checkUpdate(true)
+            }.onSuccess {
+                showUpdateData(it)
+            }.onFailure {
+                it.printStackTrace()
+            }
+        }
     }
 
-    fun destroy() {
-        compositeDisposable.clear()
+    fun cancel() {
+        checkJob?.cancel()
     }
 
     @SuppressLint("NewApi")

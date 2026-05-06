@@ -15,17 +15,17 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.MimeTypeUtil
 import forpdateam.ru.forpda.common.Utils
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class SystemLinkHandler(
     private val context: Context,
     private val mainPreferencesHolder: MainPreferencesHolder,
-    private val router: TabRouter,
     private val authHolder: AuthHolder
 ) : ISystemLinkHandler {
     override fun handle(url: String) {
@@ -73,52 +73,49 @@ class SystemLinkHandler(
             String.format(context.getString(R.string.perform_request_link), fileName),
             Toast.LENGTH_SHORT
         ).show()
-        val disposable = Observable
-            .fromCallable {
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val response = coRunCatching {
                 val request = NetworkRequest.Builder().url(url).withoutBody().build()
                 App.get().Di().webClient.request(request)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ response ->
-                if (response.url == null) {
-                    Toast.makeText(App.getContext(), R.string.error_occurred, Toast.LENGTH_SHORT)
-                        .show()
-                    return@subscribe
-                }
-                try {
-                    val activity = App.getActivity()
-                    val downloadUrl = response.redirect.run {
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                            replace("https", "http")
-                        } else {
-                            this
-                        }
-                    }
-                    if (!mainPreferencesHolder.getSystemDownloader() || activity == null) {
-                        externalDownloader(downloadUrl)
-                    } else {
-                        val checkAction = {
-                            try {
-                                systemDownloader(fileName, downloadUrl)
-                            } catch (exception: Exception) {
-                                Toast.makeText(
-                                    context,
-                                    R.string.perform_loading_error,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                externalDownloader(downloadUrl)
-                            }
-                        }
-                        App.get().checkStoragePermission(checkAction, activity)
-                    }
-                } catch (ex: Exception) {
-                    YandexMetrica.reportError(ex.message.orEmpty(), ex)
-                }
-            }, {
+            }.onFailure {
                 it.printStackTrace()
                 Toast.makeText(context, R.string.error_occurred, Toast.LENGTH_SHORT).show()
-            })
+            }.getOrNull()
+            if (response == null) {
+                return@launch
+            }
+
+            coRunCatching {
+                val activity = App.getActivity()
+                val downloadUrl = response.redirect.run {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                        replace("https", "http")
+                    } else {
+                        this
+                    }
+                }
+                if (!mainPreferencesHolder.getSystemDownloader() || activity == null) {
+                    externalDownloader(downloadUrl)
+                } else {
+                    val checkAction = {
+                        try {
+                            systemDownloader(fileName, downloadUrl)
+                        } catch (exception: Exception) {
+                            Toast.makeText(
+                                context,
+                                R.string.perform_loading_error,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            externalDownloader(downloadUrl)
+                        }
+                    }
+                    App.get().checkStoragePermission(checkAction, activity)
+                }
+            }.onFailure {
+                YandexMetrica.reportError(it.message.orEmpty(), it)
+            }
+        }
     }
 
     private fun systemDownloader(fileName: String, url: String) {

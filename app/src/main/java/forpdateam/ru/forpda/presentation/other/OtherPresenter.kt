@@ -4,6 +4,7 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
@@ -14,6 +15,9 @@ import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.ISystemLinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 @InjectViewState
@@ -45,13 +49,13 @@ class OtherPresenter(
         subscribeUser()
         authHolder
             .observe()
-            .subscribe {
+            .onEach {
                 if (!authHolder.get().isAuth()) {
                     user = null
                 }
                 updateMenuItems()
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         menuRepository
             .observerMenu()
@@ -63,12 +67,12 @@ class OtherPresenter(
 
         closeableInfoHolder
             .observe()
-            .subscribe { info ->
+            .onEach { info ->
                 localCloseableInfo.clear()
                 localCloseableInfo.addAll(info.filter { closeableInfoIds.contains(it.id) && !it.isClosed })
                 updateMenuItems()
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
     }
 
     fun onMenuDragModeChange(isDragMode: Boolean) {
@@ -83,28 +87,31 @@ class OtherPresenter(
     }
 
     private fun subscribeUser() {
-        profileRepository
-            .loadSelf()
-            .subscribe({}, {})
-            .untilDestroy()
+        viewModelScope.launch {
+            coRunCatching {
+                profileRepository.loadSelf()
+            }
+        }
+
         profileRepository
             .observeCurrentUser()
-            .subscribe {
-                user = it.value
+            .onEach {
+                user = it
                 updateMenuItems()
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
     }
 
     fun signOut() {
-        authRepository
-            .signOut()
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                authRepository.signOut()
+            }.onSuccess {
                 router.showSystemMessage("Данные авторизации удалены")
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun onMenuClick(item: AppMenuItem) {

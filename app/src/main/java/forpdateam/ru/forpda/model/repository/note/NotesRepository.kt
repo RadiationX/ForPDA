@@ -21,10 +21,6 @@ class NotesRepository(
         return notesCache.observeItems()
     }
 
-    suspend fun loadNotes(): List<NoteItem> {
-        return notesCache.getItems()
-    }
-
     suspend fun deleteNote(id: Long) {
         notesCache.delete(id)
     }

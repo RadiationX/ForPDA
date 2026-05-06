@@ -13,16 +13,12 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
-import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
 import com.yandex.metrica.YandexMetrica
-import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.DayNightHelper
@@ -190,9 +186,9 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         }
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState?.also { tabNavigator.onRestoreInstanceState(it) }
+         tabNavigator.onRestoreInstanceState(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -289,7 +285,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         super.onDestroy()
         disposables.dispose()
         bottomDrawer.destroy()
-        updateChecker.destroy()
+        updateChecker.cancel()
     }
 
     override fun onRequestPermissionsResult(

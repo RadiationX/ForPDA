@@ -4,12 +4,14 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -34,48 +36,51 @@ class ReputationPresenter(
     }
 
     fun loadReputation(page: Int? = null) {
-        reputationRepository
-            .loadReputation(
-                currentArgs.userId,
-                currentArgs.mode,
-                currentArgs.sort,
-                page ?: currentData?.pagination?.currentPage() ?: currentArgs.initialSt
-            )
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                reputationRepository.loadReputation(
+                    currentArgs.userId,
+                    currentArgs.mode,
+                    currentArgs.sort,
+                    page ?: currentData?.pagination?.currentPage() ?: currentArgs.initialSt
+                )
+            }.onSuccess {
                 currentData = it
                 viewState.showReputation(it)
                 tryShowAvatar(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun changeReputation(type: Boolean, message: String) {
-        reputationRepository
-            .changeReputation(0, currentArgs.userId, type, message)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
-                viewState.onChangeReputation(it)
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                reputationRepository.changeReputation(0, currentArgs.userId, type, message)
+            }.onSuccess {
+                viewState.onChangeReputation()
                 loadReputation()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun tryShowAvatar(data: RepData) {
-        avatarRepository
-            .getAvatar(data.nick.orEmpty())
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                avatarRepository.getAvatar(data.nick.orEmpty())
+            }.onSuccess {
                 viewState.showAvatar(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun selectPage(page: Int) {

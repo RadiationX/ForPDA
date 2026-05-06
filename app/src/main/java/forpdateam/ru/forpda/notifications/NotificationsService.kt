@@ -25,13 +25,19 @@ import forpdateam.ru.forpda.App.Companion.getContext
 import forpdateam.ru.forpda.common.BitmapUtils.centerCrop
 import forpdateam.ru.forpda.common.BitmapUtils.createAvatar
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.spannedFromHtml
 import forpdateam.ru.forpda.ui.activities.MainActivity
-import io.reactivex.Single
-import io.reactivex.SingleSource
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.min
 
 /**
@@ -45,6 +51,7 @@ class NotificationsService : Service() {
     private val eventsRepository = get().Di().eventsRepository
     private val notificationPreferencesHolder = get().Di().notificationPreferencesHolder
 
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     protected var disposables: CompositeDisposable = CompositeDisposable()
 
     private fun addToDisposable(disposable: Disposable) {
@@ -73,7 +80,9 @@ class NotificationsService : Service() {
                 .observeFavEnabled()
                 .subscribe { enabled: Boolean ->
                     if (enabled) {
-                        eventsRepository.updateEvents(NotificationEvent.Source.THEME)
+                        coroutineScope.launch {
+                            eventsRepository.updateEvents(NotificationEvent.Source.THEME)
+                        }
                     }
                 }
         )
@@ -83,7 +92,9 @@ class NotificationsService : Service() {
                 .observeQmsEnabled()
                 .subscribe { enabled: Boolean ->
                     if (enabled) {
-                        eventsRepository.updateEvents(NotificationEvent.Source.QMS)
+                        coroutineScope.launch {
+                            eventsRepository.updateEvents(NotificationEvent.Source.QMS)
+                        }
                     }
                 }
         )
@@ -100,27 +111,20 @@ class NotificationsService : Service() {
                 }
         )
 
-        addToDisposable(
-            eventsRepository
-                .observeEvents()
-                .subscribe { event: NotificationEvent -> this.sendNotification(event) }
-        )
+        eventsRepository
+            .observeEvents()
+            .onEach { sendNotification(it) }
+            .launchIn(coroutineScope)
 
-        addToDisposable(
-            eventsRepository
-                .observeEventsStack()
-                .subscribe { events: List<NotificationEvent> ->
-                    this.sendNotifications(
-                        events
-                    )
-                }
-        )
+        eventsRepository
+            .observeEventsStack()
+            .onEach { sendNotifications(it) }
+            .launchIn(coroutineScope)
 
-        addToDisposable(
-            eventsRepository
-                .observeCancel()
-                .subscribe { event: NotificationEvent -> this.cancelNotification(event) }
-        )
+        eventsRepository
+            .observeCancel()
+            .onEach { cancelNotification(it) }
+            .launchIn(coroutineScope)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -144,7 +148,9 @@ class NotificationsService : Service() {
         } else {
             checkEvents = false
         }
-        eventsRepository.externalStart(checkEvents)
+        coroutineScope.launch {
+            eventsRepository.externalStart(checkEvents)
+        }
         return START_STICKY
     }
 
@@ -152,6 +158,7 @@ class NotificationsService : Service() {
         super.onDestroy()
         Log.i(LOG_TAG, "onDestroy")
         if (!disposables.isDisposed) disposables.dispose()
+        coroutineScope.cancel()
     }
 
     override fun onTaskRemoved(rootIntent: Intent) {
@@ -171,36 +178,30 @@ class NotificationsService : Service() {
         Log.e("kulolo", "sendNotification " + event.notifyId())
         val user = event.user
         if (user != null && notificationPreferencesHolder.getMainAvatarsEnabled()) {
-            val schedulers = get().Di().schedulers
-            val disposable = avatarRepository
-                .getAvatar(user.id, user.nick)
-                .flatMap(Function<String?, SingleSource<Bitmap>> { s: String? ->
-                    Single
-                        .fromCallable { ImageLoader.getInstance().loadImageSync(s) }
-                        .subscribeOn(schedulers.io())
-                        .observeOn(schedulers.ui())
-                })
-                .onErrorReturn { throwable: Throwable? ->
-                    ImageLoader.getInstance().loadImageSync("assets://av.png")
-                }
-                .map { bitmap: Bitmap? ->
-                    var bitmap = bitmap
-                    if (bitmap != null) {
-                        val res = getContext().resources
-                        val height =
-                            res.getDimension(R.dimen.notification_large_icon_height).toInt()
-                        val width =
-                            res.getDimension(R.dimen.notification_large_icon_width).toInt()
-
-                        bitmap = centerCrop(bitmap, width, height, 1.0f)
-                        bitmap = createAvatar(bitmap, width, height, true)
+            coroutineScope.launch {
+                val avatarUrl = avatarRepository.getAvatar(user.id, user.nick)
+                val avatar = withContext(Dispatchers.IO) {
+                    coRunCatching {
+                        ImageLoader.getInstance().loadImageSync(avatarUrl)
+                    }.recoverCatching {
+                        ImageLoader.getInstance().loadImageSync("assets://av.png")
                     }
-                    bitmap
+                }.mapCatching { bitmap ->
+                    withContext(Dispatchers.Default){
+                        val res = getContext().resources
+                        val height = res.getDimension(R.dimen.notification_large_icon_height).toInt()
+                        val width = res.getDimension(R.dimen.notification_large_icon_width).toInt()
+
+                        centerCrop(bitmap, width, height, 1.0f).let {
+                            createAvatar(it, width, height, true)
+                        }
+                    }
+                }.onFailure {
+                    Log.d(LOG_TAG, "get avatar", it)
                 }
-                .subscribe(
-                    { avatar: Bitmap? -> sendNotification(event, avatar) },
-                    { obj: Throwable -> obj.printStackTrace() })
-            addToDisposable(disposable)
+
+                sendNotification(event, avatar.getOrNull())
+            }
         } else {
             sendNotification(event, null)
         }

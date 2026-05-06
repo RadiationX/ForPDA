@@ -11,7 +11,7 @@ import forpdateam.ru.forpda.model.NetworkStateProvider
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.events.NotificationEventsApi
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
-import io.reactivex.Single
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -73,7 +73,7 @@ class EventsRepository(
                 try {
                     eventsApi.parseWebSocketEvent(text)?.also {
                         if (it.type != NotificationEvent.Type.HAT_EDITED) {
-                            GlobalScope.launch {
+                            GlobalScope.launch(Dispatchers.Main) {
                                 handleWebSocketEvent(it)
                             }
                         }
@@ -87,7 +87,7 @@ class EventsRepository(
                 Log.d(LOG_TAG, "WSContr onDisconnected $response", throwable)
                 if (throwable is SocketTimeoutException || throwable is TimeoutException) {
                     Log.d(LOG_TAG, "start onFailure")
-                    GlobalScope.launch {
+                    GlobalScope.launch(Dispatchers.Main) {
                         start(true)
                     }
                 }

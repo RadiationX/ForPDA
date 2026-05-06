@@ -3,10 +3,14 @@ package forpdateam.ru.forpda.presentation.articles.detail
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -28,25 +32,25 @@ class ArticleDetailPresenter(
         loadArticle()
         articleInteractor
             .observeData()
-            .subscribe({
+            .onEach {
                 currentData = it
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+
+            }
+            .launchIn(viewModelScope)
     }
 
     fun loadArticle() {
-        articleInteractor
-            .loadArticle()
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                articleInteractor.loadArticle()
+            }.onSuccess {
                 viewState.showArticle(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun openAuthorProfile() {

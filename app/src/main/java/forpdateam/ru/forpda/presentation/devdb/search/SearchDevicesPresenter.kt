@@ -4,10 +4,12 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -32,17 +34,18 @@ class SearchDevicesPresenter(
         if (searchQuery.isNullOrEmpty()) {
             return
         }
-        devDbRepository
-            .search(searchQuery.orEmpty())
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                devDbRepository.search(searchQuery.orEmpty())
+            }.onSuccess {
                 currentData = it
                 viewState.showData(it, searchQuery.orEmpty())
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun openDevice(item: Brand.DeviceItem) {

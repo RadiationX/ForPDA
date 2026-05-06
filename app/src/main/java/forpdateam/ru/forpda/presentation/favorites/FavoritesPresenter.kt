@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
@@ -17,6 +18,9 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -71,33 +75,22 @@ class FavoritesPresenter(
 
         eventsRepository
             .observeEventsTab()
-            .subscribe {
+            .onEach {
                 Log.e("testtabnotify", "fav observeEventsTab $it")
                 handleEvent(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         favoritesRepository
             .observeItems()
-            .subscribe({
+            .onEach {
                 Log.d(
                     "kokos",
                     "observeContacts ${it.size} ${it.joinToString("; ") { "${it.topicId}:${it.isNew}" }}"
                 )
                 viewState.onShowFavorite(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
-
-        favoritesRepository
-            .loadCache()
-            .subscribe({
-                viewState.onShowFavorite(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            .launchIn(viewModelScope)
 
         crossScreenInteractor
             .observeTopic()
@@ -123,48 +116,39 @@ class FavoritesPresenter(
 
     fun loadFavorites(pageNum: Int) {
         currentSt = pageNum
-        favoritesRepository
-            .loadFavorites(currentSt, loadAll, sorting)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                favoritesRepository.loadFavorites(currentSt, loadAll, sorting)
+            }.onSuccess {
                 viewState.onLoadFavorites(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun markRead(topicId: Int) {
-        favoritesRepository
-            .markRead(topicId)
-            .subscribe({
-            }, {
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.markRead(topicId)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     private fun handleEvent(event: TabNotification) {
-        favoritesRepository
-            .handleEvent(event)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.handleEvent(event)
+            }.onSuccess {
                 Log.e("testtabnotify", "fav handleEvent $it")
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
-    }
-
-    fun markAllRead() {
-        forumRepository
-            .markAllRead()
-            .subscribe({
-                viewState.onMarkAllRead()
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun onItemClick(item: FavItem) {
@@ -218,15 +202,16 @@ class FavoritesPresenter(
     }
 
     fun changeFav(action: Int, type: String?, favId: Int) {
-        favoritesRepository
-            .editFavorites(action, favId, favId, type)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(action, favId, favId, type)
+            }.onSuccess {
                 viewState.onChangeFav(it)
                 loadFavorites(currentSt)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun showSubscribeDialog(item: FavItem) {

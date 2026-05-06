@@ -16,10 +16,6 @@ class HistoryRepository(
         return historyCache.observeItems()
     }
 
-    suspend fun getHistory(): List<HistoryItem> {
-        return historyCache.getHistory()
-    }
-
     suspend fun remove(id: Int) {
         historyCache.remove(id)
     }

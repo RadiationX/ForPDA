@@ -4,11 +4,16 @@ import android.util.Log
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -31,55 +36,56 @@ class QmsThemesPresenter(
         super.onFirstViewAttach()
         qmsInteractor
             .observeThemes(themesId)
-            .subscribe {
+            .filterNotNull()
+            .onEach {
                 currentData = it
                 viewState.showThemes(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         avatarUrl?.let { viewState.showAvatar(it) }
     }
 
     fun loadThemes() {
-        qmsInteractor
-            .getThemesList(themesId)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                qmsInteractor.getThemesList(themesId)
+            }.onSuccess {
                 currentData = it
                 if (it.themes.isEmpty()) {
                     openChat()
                 }
-                //viewState.showThemes(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun blockUser() {
-        currentData?.user?.nick?.let { nick ->
-            qmsInteractor
-                .blockUser(nick)
-                .map { it.firstOrNull { it.user.nick == nick } != null }
-                .subscribe({
-                    viewState.onBlockUser(it)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+        val nick = currentData?.user?.nick ?: return
+        viewModelScope.launch {
+            coRunCatching {
+                qmsInteractor.blockUser(nick)
+            }.map {
+                it.firstOrNull { it.user.nick == nick } != null
+            }.onSuccess {
+                viewState.onBlockUser(it)
+            }.onFailure {
+                errorHandler.handle(it)
+            }
         }
     }
 
     fun deleteTheme(themeId: Int) {
         currentData?.let {
-            qmsInteractor
-                .deleteTheme(it.user.id, themeId)
-                .subscribe({
-                    //viewState.showThemes(it)
-                }, {
+            viewModelScope.launch {
+                coRunCatching {
+                    qmsInteractor.deleteTheme(it.user.id, themeId)
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 

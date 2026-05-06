@@ -10,6 +10,9 @@ import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.presentation.Screen
 import io.reactivex.Observable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class MenuRepository(
     private val preferences: SharedPreferences,
@@ -139,18 +142,20 @@ class MenuRepository(
 
         authHolder
             .observe()
-            .subscribe {
+            .onEach {
                 loadMainMenuGroup()
                 Log.e("lplplp", "MenuRepository observe auth ${it.state}")
                 updateMenuItems()
             }
+            .launchIn(GlobalScope)
 
         countersHolder
             .observe()
-            .subscribe { counters ->
+            .onEach { counters ->
                 localCounters = counters
                 updateMenuItems()
             }
+            .launchIn(GlobalScope)
         updateMenuItems()
     }
 

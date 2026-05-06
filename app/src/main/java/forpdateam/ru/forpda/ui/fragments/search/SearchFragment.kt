@@ -633,13 +633,13 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
             }
             if (webViewClient == null) {
                 webViewClient = CustomWebViewClient()
-                webView.webViewClient = webViewClient
+                webView.webViewClient = webViewClient!!
                 webView.webChromeClient = CustomWebChromeClient()
             }
             Log.d("SUKA", "SEARCH SHOW WEBVIEW")
             webView.loadDataWithBaseURL(
                 "https://4pda.to/forum/",
-                searchResult.html?.value,
+                searchResult.html?.value.orEmpty(),
                 "text/html",
                 "utf-8",
                 null

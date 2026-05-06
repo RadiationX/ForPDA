@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replaceAt
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
@@ -39,11 +40,15 @@ import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Created by radiationx on 15.03.18.
@@ -111,11 +116,11 @@ class ThemePresenter(
             .untilDestroy()
         eventsRepository
             .observeEventsTab()
-            .debounce(2L, TimeUnit.SECONDS)
-            .subscribe {
+            .debounce(2.seconds)
+            .onEach {
                 handleEvent(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         loadUrl(themeUrl)
     }
 
@@ -171,17 +176,19 @@ class ThemePresenter(
         themeUrl = url
         loadAction = action
         viewState.updateHistoryLastHtml()
-        themeRepository
-            .getTheme(url, hatOpen, pollOpen)
-            .map { themeTemplate.mapEntity(it) }
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                themeRepository.getTheme(url, hatOpen, pollOpen)
+            }.map {
+                themeTemplate.mapEntity(it)
+            }.onSuccess {
                 onLoadData(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun onLoadData(page: ThemePage) {
@@ -199,35 +206,33 @@ class ThemePresenter(
     }
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
-        favoritesRepository
-            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            }.onSuccess {
                 if (it) {
-                    currentPage = currentPage?.copy(
-                        isInFavorite = true
-                    )
+                    currentPage = currentPage?.copy(isInFavorite = true)
                 }
                 viewState.onAddToFavorite(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun deleteTopicFromFavorite(favId: Int) {
-        favoritesRepository
-            .editFavorites(FavoritesApi.ACTION_DELETE, favId, -1, null)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(FavoritesApi.ACTION_DELETE, favId, -1, null)
+            }.onSuccess {
                 if (it) {
-                    currentPage = currentPage?.copy(
-                        isInFavorite = false
-                    )
+                    currentPage = currentPage?.copy(isInFavorite = false)
                 }
                 viewState.onDeleteFromFavorite(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     private fun createEditPostForm(
@@ -286,41 +291,45 @@ class ThemePresenter(
     fun sendMessage(message: String, attachments: List<AttachmentItem>) {
         createEditPostForm(message, attachments)?.let {
             viewState.setMessageRefreshing(true)
-            editorRepository
-                .sendPost(it)
-                .map { themeTemplate.mapEntity(it) }
-                .doOnSubscribe { viewState.setMessageRefreshing(true) }
-                .doAfterTerminate { viewState.setMessageRefreshing(false) }
-                .subscribe({
+            viewModelScope.launch {
+                viewState.setMessageRefreshing(true)
+                coRunCatching {
+                    editorRepository.sendPost(it)
+                }.map {
+                    themeTemplate.mapEntity(it)
+                }.onSuccess {
                     onLoadData(it)
                     viewState.onMessageSent()
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+                viewState.setMessageRefreshing(false)
+            }
         }
     }
 
     fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>) {
-        editorRepository
-            .uploadFiles(0, files, pending)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                editorRepository.uploadFiles(0, files, pending)
+            }.onSuccess {
                 viewState.onUploadFiles(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun deleteFiles(items: List<AttachmentItem>) {
-        editorRepository
-            .deleteFiles(0, items)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                editorRepository.deleteFiles(0, items)
+            }.onSuccess {
                 viewState.onDeleteFiles(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun loadUrl(url: String) {
@@ -487,7 +496,8 @@ class ThemePresenter(
     override fun onQuotePostClick(postId: Int, text: String) {
         getPostById(postId)?.let {
             val date = Utils.getForumDateTime(Utils.parseForumDateTime(it.date))
-            val insert = "[quote name=\"${it.user.nick}\" date=\"$date\" post=${it.id}]$text[/quote]\n"
+            val insert =
+                "[quote name=\"${it.user.nick}\" date=\"$date\" post=${it.id}]$text[/quote]\n"
             viewState.insertText(insert)
         }
     }
@@ -729,27 +739,29 @@ class ThemePresenter(
 
     override fun changeReputation(postId: Int, type: Boolean, message: String) {
         getPostById(postId)?.let {
-            reputationRepository
-                .changeReputation(it.id, it.user.id, type, message)
-                .subscribe({
+            viewModelScope.launch {
+                coRunCatching {
+                    reputationRepository.changeReputation(it.id, it.user.id, type, message)
+                }.onSuccess {
                     router.showSystemMessage(App.get().getString(R.string.reputation_changed))
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 
     override fun votePost(postId: Int, type: Boolean) {
         getPostById(postId)?.let {
-            themeRepository
-                .votePost(it.id, type)
-                .subscribe({
+            viewModelScope.launch {
+                coRunCatching {
+                    themeRepository.votePost(it.id, type)
+                }.onSuccess {
                     router.showSystemMessage(it)
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 
@@ -773,32 +785,30 @@ class ThemePresenter(
 
     override fun reportPost(postId: Int, message: String) {
         getPostById(postId)?.let { post ->
-            currentPage?.let {
-                themeRepository
-                    .reportPost(it.id, post.id, message)
-                    .subscribe({
-                        router.showSystemMessage("Жалоба отправлена")
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+            viewModelScope.launch {
+                coRunCatching {
+                    themeRepository.reportPost(post.topicId, post.id, message)
+                }.onSuccess {
+                    router.showSystemMessage("Жалоба отправлена")
+                }.onFailure {
+                    errorHandler.handle(it)
+                }
             }
         }
     }
 
     override fun deletePost(postId: Int) {
         getPostById(postId)?.let { post ->
-            themeRepository
-                .deletePost(post.id)
-                .subscribe({
-                    if (it) {
-                        viewState.deletePostUi(post)
-                    }
+            viewModelScope.launch {
+                coRunCatching {
+                    themeRepository.deletePost(post.id)
+                }.onSuccess {
+                    viewState.deletePostUi(post)
                     router.showSystemMessage(App.get().getString(R.string.message_deleted))
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 

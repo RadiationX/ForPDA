@@ -14,9 +14,13 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Preferences
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.ui.activities.SettingsActivity
 import forpdateam.ru.forpda.ui.activities.updatechecker.UpdateCheckerActivity
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * Created by radiationx on 25.12.16.
@@ -26,7 +30,7 @@ class SettingsFragment : BaseSettingFragment() {
     private val authRepository = App.get().Di().authRepository
     private val authHolder = App.get().Di().authHolder
     private val mainPreferencesHolder = App.get().Di().mainPreferencesHolder
-    private var disposable: Disposable? = null
+    private var logoutJob: Job? = null
 
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,22 +134,20 @@ class SettingsFragment : BaseSettingFragment() {
     }
 
     private fun logoutRequest() {
-        disposable?.dispose()
-        disposable = authRepository
-            .signOut()
-            .subscribe({
-                if (it) {
-                    Toast.makeText(App.getContext(), "Logout complete", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(App.getContext(), "Logout error", Toast.LENGTH_LONG).show()
-                }
-            }, {
+        logoutJob?.cancel()
+        logoutJob = GlobalScope.launch(Dispatchers.Main) {
+            coRunCatching {
+                authRepository.signOut()
+            }.onSuccess {
+                Toast.makeText(App.getContext(), "Logout complete", Toast.LENGTH_LONG).show()
+            }.onFailure {
                 Toast.makeText(App.getContext(), "Logout error: $it", Toast.LENGTH_LONG).show()
-            })
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        disposable?.dispose()
+        logoutJob?.cancel()
     }
 }

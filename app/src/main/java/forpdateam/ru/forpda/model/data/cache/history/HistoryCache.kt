@@ -7,7 +7,6 @@ import forpdateam.ru.forpda.entity.app.history.HistoryItem
 import forpdateam.ru.forpda.entity.db.history.HistoryItemBd
 import io.github.xilinjia.krdb.query.Sort
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -22,10 +21,6 @@ class HistoryCache(
         .query<HistoryItemBd>()
         .sort("unixTime", Sort.DESCENDING)
         .flowMapAll { it.toDomain() }
-
-    suspend fun getHistory(): List<HistoryItem> {
-        return observeItems().first()
-    }
 
     suspend fun add(id: Int, url: String, title: String) {
         realm.write {

@@ -3,11 +3,16 @@ package forpdateam.ru.forpda.presentation.history
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.history.HistoryRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -26,50 +31,35 @@ class HistoryPresenter(
         super.onFirstViewAttach()
         historyRepository
             .observeItems()
-            .subscribe({
+            .onStart {
+                viewState.setRefreshing(true)
+            }
+            .onEach {
+                viewState.setRefreshing(false)
                 viewState.showHistory(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
-        getHistory()
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun getHistory() {
-        historyRepository
-            .getHistory()
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
-                viewState.showHistory(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
-    }
 
     fun remove(id: Int) {
-        historyRepository
-            .remove(id)
-            .doOnTerminate { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
-            }, {
+        viewModelScope.launch {
+            coRunCatching {
+                historyRepository.remove(id)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun clear() {
-        historyRepository
-            .clear()
-            .doOnTerminate { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
-            }, {
+        viewModelScope.launch {
+            coRunCatching {
+                historyRepository.clear()
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun copyLink(item: HistoryItem) {

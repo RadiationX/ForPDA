@@ -1,10 +1,14 @@
 package forpdateam.ru.forpda.presentation.articles.detail.content
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.ui.TemplateManager
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -35,21 +39,18 @@ class ArticleContentPresenter(
             .untilDestroy()
         articleInteractor
             .observeData()
-            .subscribe({
-                viewState.showData(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+            .onEach { viewState.showData(it) }
+            .launchIn(viewModelScope)
     }
 
     fun sendPoll(from: String, pollId: Int, answersId: IntArray) {
-        articleInteractor
-            .sendPoll(from, pollId, answersId)
-            .subscribe({}, {
+        viewModelScope.launch {
+            coRunCatching {
+                articleInteractor.sendPoll(from, pollId, answersId)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
 }

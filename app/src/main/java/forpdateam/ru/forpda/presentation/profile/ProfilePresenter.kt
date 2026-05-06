@@ -1,16 +1,18 @@
 package forpdateam.ru.forpda.presentation.profile
 
-import moxy.InjectViewState
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import io.reactivex.Single
+import kotlinx.coroutines.launch
+import moxy.InjectViewState
 
 /**
  * Created by radiationx on 02.01.18.
@@ -34,31 +36,32 @@ class ProfilePresenter(
     }
 
     private fun loadProfile() {
-        profileUrl?.let {
-            profileRepository
-                .loadProfile(it)
-                .doOnSubscribe { viewState.setRefreshing(true) }
-                .doAfterTerminate { viewState.setRefreshing(false) }
-                .subscribe({ profileModel ->
-                    currentData = profileModel
-                    loadAvatar(profileModel)
-                    viewState.showProfile(profileModel)
-                }, {
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+        val url = profileUrl ?: return
+        viewState.setRefreshing(true)
+        viewModelScope.launch {
+            coRunCatching {
+                profileRepository.loadProfile(url)
+            }.onSuccess { profileModel ->
+                currentData = profileModel
+                loadAvatar(profileModel)
+                viewState.showProfile(profileModel)
+            }.onFailure {
+                errorHandler.handle(it)
+            }
         }
+        viewState.setRefreshing(false)
     }
 
     fun saveNote(note: String) {
-        profileRepository
-            .saveNote(note)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                profileRepository.saveNote(note)
+            }.onSuccess {
                 viewState.onSaveNote(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun onContactClick(item: ProfileModel.Contact) {

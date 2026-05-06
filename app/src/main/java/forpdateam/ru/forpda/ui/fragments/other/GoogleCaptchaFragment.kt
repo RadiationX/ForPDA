@@ -4,21 +4,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
 /**
@@ -66,13 +63,15 @@ class GoogleCaptchaFragment : TabFragment() {
             if (Pattern.compile("https://4pda.to/cdn-cgi/l/chk_captcha").matcher(uri.toString())
                     .find()
             ) {
-                val nr = NetworkRequest.Builder().url(uri.toString()).withoutBody().build()
-                val disposable = Observable.fromCallable { App.get().Di().webClient.request(nr) }
-                    .onErrorReturn { NetworkResponse(uri.toString()) }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { this@GoogleCaptchaFragment.onResponse() }
-                addToDisposable(disposable)
+                runBlocking {
+                    runCatching {
+                        val nr = NetworkRequest.Builder().url(uri.toString()).withoutBody().build()
+                        App.get().Di().webClient.request(nr)
+                    }
+                    withContext(Dispatchers.Main) {
+                        this@GoogleCaptchaFragment.onResponse()
+                    }
+                }
             }
             return true
         }

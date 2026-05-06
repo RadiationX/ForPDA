@@ -3,11 +3,13 @@ package forpdateam.ru.forpda.presentation.devdb.device
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Device
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -31,19 +33,19 @@ class DevicePresenter(
     }
 
     fun loadBrand() {
-        devDbRepository
-            .getDevice(deviceId.orEmpty())
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                devDbRepository.getDevice(deviceId.orEmpty())
+            }.onSuccess {
                 currentData = it
                 viewState.showData(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
-
 
     fun openSearch() {
         router.navigateTo(Screen.DevDbSearch())

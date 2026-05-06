@@ -57,7 +57,6 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         adapter = NotesAdapter(this, presenter::onInfoClick)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        refreshLayout.setOnRefreshListener { presenter.loadNotes() }
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, false))
 
         dialogMenu.apply {

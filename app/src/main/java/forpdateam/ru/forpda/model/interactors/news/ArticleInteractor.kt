@@ -1,13 +1,18 @@
 package forpdateam.ru.forpda.model.interactors.news
 
-import com.jakewharton.rxrelay2.BehaviorRelay
+import android.util.Log
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.repository.news.NewsRepository
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleTemplate
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ArticleInteractor(
     val initData: InitData,
@@ -15,73 +20,73 @@ class ArticleInteractor(
     private val articleTemplate: ArticleTemplate
 ) {
 
-    private val dataRelay = BehaviorRelay.create<DetailsPage>()
-    private val commentsRelay = BehaviorRelay.create<List<Comment>>()
+    private val dataState = MutableStateFlow<DetailsPage?>(null)
+    private val commentsState = MutableStateFlow<List<Comment>?>(null)
 
-    fun observeData(): Observable<DetailsPage> = dataRelay
-    fun observeComments(): Observable<List<Comment>> = commentsRelay
+    fun observeData(): Flow<DetailsPage> = dataState.filterNotNull()
+    fun observeComments(): Flow<List<Comment>> = commentsState.filterNotNull()
 
-    fun loadArticle(): Single<DetailsPage> = Single
-        .defer {
-            if (initData.newsId > 0) {
-                newsRepository.getDetails(initData.newsId)
-            } else {
-                newsRepository.getDetails(initData.newsUrl.orEmpty())
-            }
+    suspend fun loadArticle(): DetailsPage {
+        val details = if (initData.newsId > 0) {
+            newsRepository.getDetails(initData.newsId)
+        } else {
+            newsRepository.getDetails(initData.newsUrl.orEmpty())
         }
-        .map { articleTemplate.mapEntity(it) }
-        .doOnSuccess { updateData(it) }
+        return articleTemplate.mapEntity(details)
+    }
 
-
-    fun likeComment(commentId: Int) = newsRepository
-        .likeComment(initData.newsId, commentId)
-        .doOnSubscribe {
-            updateComments { comments ->
-                comments.replace(
-                    condition = { it.id == commentId },
-                    map = {
-                        val karma = it.karma
-                        it.copy(
-                            karma = karma?.copy(
-                                status = Comment.Karma.LIKED,
-                                count = karma.count + 1
-                            )
+    suspend fun likeComment(commentId: Int) {
+        newsRepository.likeComment(initData.newsId, commentId)
+        updateComments { comments ->
+            comments.replace(
+                condition = { it.id == commentId },
+                map = {
+                    val karma = it.karma
+                    it.copy(
+                        karma = karma?.copy(
+                            status = Comment.Karma.LIKED,
+                            count = karma.count + 1
                         )
-                    }
-                )
-            }
+                    )
+                }
+            )
         }
+    }
 
-    fun sendPoll(from: String, pollId: Int, answersId: IntArray) = newsRepository
-        .sendPoll(from, pollId, answersId)
+    suspend fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
+        return newsRepository.sendPoll(from, pollId, answersId)
+    }
 
-    fun replyComment(commentId: Int, comment: String): Single<DetailsPage> = newsRepository
-        .replyComment(initData.newsId, commentId, comment)
-        .map { articleTemplate.mapEntity(it) }
-        .doOnSuccess { updateData(it) }
+    suspend fun replyComment(commentId: Int, comment: String): DetailsPage {
+        return newsRepository
+            .replyComment(initData.newsId, commentId, comment)
+            .let { articleTemplate.mapEntity(it) }
+            .also { updateData(it) }
+    }
 
     private fun updateData(article: DetailsPage) {
         initData.newsId = article.id
-        dataRelay.accept(article)
+        dataState.value = article
         parseComments(article)
     }
 
     private fun updateComments(block: (List<Comment>) -> List<Comment>) {
-        commentsRelay.value?.also { comments ->
-            commentsRelay.accept(block.invoke(comments))
+        commentsState.update {
+            it?.let(block)
         }
     }
 
     private fun parseComments(article: DetailsPage) {
-        newsRepository
-            .getComments(article)
-            .subscribe({
-                commentsRelay.accept(it)
-            }, {
-                it.printStackTrace()
-            })
+        GlobalScope.launch {
+            coRunCatching {
+                newsRepository.getComments(article)
+            }.onSuccess {
+                commentsState.value = it
+            }.onFailure {
+                Log.d("ArticleInteractor", "parseComments", it)
+            }
+        }
     }
-
 
     data class InitData(
         var newsUrl: String? = null,

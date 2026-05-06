@@ -72,7 +72,6 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
         recyclerView.adapter = adapter
 
         adapter.setItemClickListener(adapterListener)
-        refreshLayout.setOnRefreshListener { presenter.getHistory() }
     }
 
     override fun addBaseToolbarMenu(menu: Menu) {

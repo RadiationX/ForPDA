@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.SchedulersProvider
@@ -15,7 +16,9 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
-import io.reactivex.Observable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -36,7 +39,7 @@ class ArticlesListPresenter(
     private var currentPage = 1
 
     private val currentItems = mutableListOf<NewsItem>()
-    private val avatarsData = mutableListOf<Pair<Int, String>>()
+    private val avatarsData = mutableListOf<NewsUser>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -45,63 +48,62 @@ class ArticlesListPresenter(
 
     private fun loadArticles(page: Int, withClear: Boolean) {
         currentPage = page
-        newsRepository
-            .getNews(category, currentPage)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                newsRepository.getNews(category, currentPage)
+            }.onSuccess {
                 if (withClear) {
                     currentItems.clear()
                 }
                 currentItems.addAll(it)
                 viewState.showNews(it, withClear)
                 loadAvatars(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun loadAvatars(items: List<NewsItem>) {
         if (!authHolder.get().isAuth()) {
             return
         }
-        val newAvatarsData = mutableListOf<Pair<Int, String>>()
+        val newsUsers = mutableListOf<NewsUser>()
         items.forEach { item ->
-            if (avatarsData.firstOrNull { it.first == item.authorId } == null) {
-                Pair(item.authorId, item.author.orEmpty()).also {
+            if (avatarsData.firstOrNull { it.id == item.authorId } == null) {
+                NewsUser(item.authorId, item.author, null).also {
                     avatarsData.add(it)
-                    newAvatarsData.add(it)
+                    newsUsers.add(it)
                 }
             }
         }
-        newAvatarsData.forEach {
-            Log.e("kekosina", "newAvatarsData ${it.first} ${it.second}")
+        newsUsers.forEach {
+            Log.e("kekosina", "newAvatarsData ${it.id} ${it.nick}")
         }
-        Observable
-            .fromIterable(newAvatarsData)
-            .flatMapSingle { avatarData ->
-                avatarRepository
-                    .getAvatar(avatarData.second)
-                    .map { Pair(avatarData, it as String?) }
-                    .onErrorReturnItem(Pair(avatarData, null as String?))
-            }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-            .subscribe({ loaded ->
-                val updItems = currentItems.toMutableList()
-                updItems.replace(
-                    condition = { it.authorId == loaded.first.first && it.avatar?.value != loaded.second },
-                    map = { it.copy(avatar = loaded.second?.asDeferredData()) }
-                )
-                currentItems.clear()
-                currentItems.addAll(updItems)
-                viewState.updateItems(currentItems)
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+        viewModelScope.launch {
+            val loadedAvatars = newsUsers.map { newsUser ->
+                async {
+                    val avatarUrl = coRunCatching {
+                        avatarRepository.getAvatar(newsUser.id, newsUser.nick)
+                    }.getOrNull()
+                    newsUser.copy(avatarUrl = avatarUrl)
+                }
+            }.awaitAll()
 
+            val updItems = currentItems.toMutableList()
+            loadedAvatars.forEach { loaded ->
+                updItems.replace(
+                    condition = { it.authorId == loaded.id && it.avatar?.value != loaded.avatarUrl },
+                    map = { it.copy(avatar = loaded.avatarUrl?.asDeferredData()) }
+                )
+            }
+
+            currentItems.clear()
+            currentItems.addAll(updItems)
+            viewState.updateItems(currentItems)
+        }
     }
 
     fun refreshArticles() {
@@ -149,4 +151,10 @@ class ArticlesListPresenter(
             searchUrl = "https://4pda.to/?s="
         })
     }
+
+    private data class NewsUser(
+        val id: Int,
+        val nick: String,
+        val avatarUrl: String?
+    )
 }

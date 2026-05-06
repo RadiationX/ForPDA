@@ -2,11 +2,15 @@ package forpdateam.ru.forpda.presentation.articles.detail.comments
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.news.Comment
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -28,9 +32,7 @@ class ArticleCommentPresenter(
         super.onFirstViewAttach()
         articleInteractor
             .observeComments()
-            .doOnTerminate { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+            .onEach {
                 viewState.showComments(it)
                 if (firstShow) {
                     val targetCommentId = articleInteractor.initData.commentId
@@ -38,52 +40,50 @@ class ArticleCommentPresenter(
                     viewState.scrollToComment(index)
                     firstShow = false
                 }
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            .launchIn(viewModelScope)
 
         authHolder
             .observe()
-            .subscribe {
-                viewState.setMessageFieldVisible(it.isAuth())
-            }
-            .untilDestroy()
+            .onEach { viewState.setMessageFieldVisible(it.isAuth()) }
+            .launchIn(viewModelScope)
     }
 
     fun updateComments() {
-        articleInteractor
-            .loadArticle()
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({ }, {
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                articleInteractor.loadArticle()
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun replyComment(commentId: Int, text: String) {
-        articleInteractor
-            .replyComment(commentId, text)
-            .doOnSubscribe { viewState.setSendRefreshing(true) }
-            .doAfterTerminate { viewState.setSendRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setSendRefreshing(true)
+            coRunCatching {
+                articleInteractor.replyComment(commentId, text)
+            }.onSuccess {
                 viewState.onReplyComment()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setSendRefreshing(false)
+        }
     }
 
     fun likeComment(commentId: Int) {
-        articleInteractor
-            .likeComment(commentId)
-            .subscribe({}, {
+        viewModelScope.launch {
+            coRunCatching {
+                articleInteractor.likeComment(commentId)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
-
 
     fun openProfile(comment: Comment) {
         linkHandler.handle("https://4pda.to/forum/index.php?showuser=${comment.user.id}", router)

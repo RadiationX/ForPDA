@@ -35,7 +35,7 @@ class PostEditorRepository(
         return attachmentsApi.deleteTopicFiles(id, items)
     }
 
-    suspend fun sendPost(form: EditPostForm): Any {
+    suspend fun sendPost(form: EditPostForm): ThemePage {
         return editPostApi.sendPost(form).also {
             saveUsers(it)
         }

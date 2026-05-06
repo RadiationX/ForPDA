@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.entity.common.AuthData
 import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
-import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.repository.auth.AuthRepository
@@ -13,9 +13,9 @@ import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ISystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
-import io.reactivex.Observable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by radiationx on 02.01.18.
@@ -32,7 +32,7 @@ class AuthPresenter(
     private val systemLinkHandler: ISystemLinkHandler
 ) : BasePresenter<AuthView>() {
 
-    private var captcha: AuthCaptcha? = null
+    private var currentCaptcha: AuthCaptcha? = null
     private var form = AuthForm("", "", "", false)
 
     override fun onFirstViewAttach() {
@@ -46,21 +46,21 @@ class AuthPresenter(
     }
 
     fun signIn() {
-        this.captcha?.also { captcha ->
-            authRepository
-                .signIn(captcha, form)
-                .doOnSubscribe { viewState.setSendRefreshing(true) }
-                .doAfterTerminate { viewState.setSendRefreshing(false) }
-                .subscribe({
-                    viewState.onSuccessAuth()
-                    loadProfile("https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}")
-                }, {
-                    form = form.copy(captcha = "")
-                    viewState.onFormChanged(form)
-                    loadForm()
-                    errorHandler.handle(it)
-                })
-                .untilDestroy()
+        val captcha = currentCaptcha ?: return
+        viewModelScope.launch {
+            viewState.setSendRefreshing(true)
+            coRunCatching {
+                authRepository.signIn(captcha, form)
+            }.onSuccess {
+                viewState.onSuccessAuth()
+                loadProfile("https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}")
+            }.onFailure {
+                form = form.copy(captcha = "")
+                viewState.onFormChanged(form)
+                loadForm()
+                errorHandler.handle(it)
+            }
+            viewState.setSendRefreshing(false)
         }
     }
 
@@ -85,42 +85,31 @@ class AuthPresenter(
     }
 
     private fun loadForm() {
-        authRepository
-            .loadCaptcha()
-            .doOnSubscribe { viewState.setSendEnabled(false) }
-            .doAfterTerminate { viewState.setSendEnabled(form.isFilled()) }
-            .subscribe({
-                captcha = it
+        viewModelScope.launch {
+            viewState.setSendEnabled(false)
+            coRunCatching {
+                authRepository.loadCaptcha()
+            }.onSuccess {
+                currentCaptcha = it
                 viewState.onCaptchaLoaded(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setSendEnabled(form.isFilled())
+        }
     }
 
     private fun loadProfile(url: String) {
-        profileRepository
-            .loadProfile(url)
-            /*.doOnTerminate { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }*/
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                profileRepository.loadProfile(url)
+            }.onSuccess {
                 viewState.showProfile(it)
-                delayedExit(it)
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
-    }
-
-    private fun delayedExit(profile: ProfileModel) {
-        Observable
-            .just(false)
-            .delay(2000L, TimeUnit.MILLISECONDS)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-            .subscribe {
+                delay(2000)
                 router.exit()
+            }.onFailure {
+                errorHandler.handle(it)
             }
-            .untilDestroy()
+        }
     }
 }

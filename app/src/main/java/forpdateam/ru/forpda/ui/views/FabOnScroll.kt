@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.ui.views
 
 import android.content.Context
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -12,14 +11,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /**
  * Created by radiationx on 26.07.17.
  */
 class FabOnScroll : FloatingActionButton.Behavior {
-    private val handler = Handler()
-    private var currentRunnable: Runnable? = null
+
+    private var animationJob: Job? = null
+
     private val interpolator: Interpolator = AccelerateDecelerateInterpolator()
 
     constructor(context: Context) : super(context, null)
@@ -115,10 +120,9 @@ class FabOnScroll : FloatingActionButton.Behavior {
         target: View
     ) {
         super.onStopNestedScroll(coordinatorLayout, child, target)
-        if (currentRunnable != null) {
-            handler.removeCallbacks(currentRunnable)
-        }
-        currentRunnable = Runnable {
+        animationJob?.cancel()
+        animationJob = GlobalScope.launch(Dispatchers.Main) {
+            delay(1000)
             child.clearAnimation()
             child.animate()
                 .scaleX(0.0f)
@@ -128,6 +132,5 @@ class FabOnScroll : FloatingActionButton.Behavior {
                 .start()
             child.isClickable = false
         }
-        handler.postDelayed(currentRunnable, 1000)
     }
 }

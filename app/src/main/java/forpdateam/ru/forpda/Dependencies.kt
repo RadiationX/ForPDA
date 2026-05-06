@@ -133,7 +133,6 @@ class Dependencies internal constructor(
         SystemLinkHandler(
             context,
             mainPreferencesHolder,
-            router,
             authHolder
         )
     }

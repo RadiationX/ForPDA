@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
@@ -21,6 +22,7 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.IThemePresenter
 import forpdateam.ru.forpda.ui.TemplateManager
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 @InjectViewState
@@ -128,26 +130,23 @@ class SearchPresenter(
             return
         }
         val withHtml =
-            settings.result == SearchSettings.RESULT_POSTS.first && settings.resourceType.equals(
-                SearchSettings.RESOURCE_FORUM.first
-            )
-        searchRepository
-            .getSearch(settings)
-            .map {
+            settings.result == SearchSettings.RESULT_POSTS.first && settings.resourceType == SearchSettings.RESOURCE_FORUM.first
+
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            viewState.onStartSearch(settings)
+            coRunCatching {
+                searchRepository.getSearch(settings)
+            }.map {
                 if (withHtml) searchTemplate.mapEntity(it) else it
-            }
-            .doOnSubscribe {
-                viewState.setRefreshing(true)
-                viewState.onStartSearch(settings)
-            }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+            }.onSuccess {
                 currentData = it
                 viewState.showData(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun search(query: String, nick: String) {
@@ -330,14 +329,15 @@ class SearchPresenter(
             is SearchItem.Topic -> item.topicId
             is SearchItem.News -> return
         }
-        favoritesRepository
-            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            }.onSuccess {
                 viewState.onAddToFavorite(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     /* ITHEME PReSNETER*/
@@ -433,7 +433,10 @@ class SearchPresenter(
 
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.post.user.id}", router)
+            linkHandler.handle(
+                "https://4pda.to/forum/index.php?showuser=${it.post.user.id}",
+                router
+            )
         }
     }
 
@@ -494,27 +497,34 @@ class SearchPresenter(
 
     override fun changeReputation(postId: Int, type: Boolean, message: String) {
         getPostById(postId)?.let {
-            reputationRepository
-                .changeReputation(it.post.id, it.post.user.id, type, message)
-                .subscribe({
+            viewModelScope.launch {
+                coRunCatching {
+                    reputationRepository.changeReputation(
+                        it.post.id,
+                        it.post.user.id,
+                        type,
+                        message
+                    )
+                }.onSuccess {
                     router.showSystemMessage(App.get().getString(R.string.reputation_changed))
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 
     override fun votePost(postId: Int, type: Boolean) {
         getPostById(postId)?.let {
-            themeRepository
-                .votePost(it.post.id, type)
-                .subscribe({
+            viewModelScope.launch {
+                coRunCatching {
+                    themeRepository.votePost(it.post.id, type)
+                }.onSuccess {
                     router.showSystemMessage(it)
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 
@@ -530,32 +540,30 @@ class SearchPresenter(
 
     override fun reportPost(postId: Int, message: String) {
         getPostById(postId)?.let { post ->
-            currentData?.let {
-                themeRepository
-                    .reportPost(post.post.topicId, post.post.id, message)
-                    .subscribe({
-                        router.showSystemMessage("Жалоба отправлена")
-                    }, {
-                        errorHandler.handle(it)
-                    })
-                    .untilDestroy()
+            viewModelScope.launch {
+                coRunCatching {
+                    themeRepository.reportPost(post.post.topicId, post.post.id, message)
+                }.onSuccess {
+                    router.showSystemMessage("Жалоба отправлена")
+                }.onFailure {
+                    errorHandler.handle(it)
+                }
             }
         }
     }
 
     override fun deletePost(postId: Int) {
         getPostById(postId)?.let { post ->
-            themeRepository
-                .deletePost(post.post.id)
-                .subscribe({
-                    if (it) {
-                        viewState.deletePostUi(post)
-                    }
+            viewModelScope.launch {
+                coRunCatching {
+                    themeRepository.deletePost(post.post.id)
+                }.onSuccess {
+                    viewState.deletePostUi(post)
                     router.showSystemMessage(App.get().getString(R.string.message_deleted))
-                }, {
+                }.onFailure {
                     errorHandler.handle(it)
-                })
-                .untilDestroy()
+                }
+            }
         }
     }
 

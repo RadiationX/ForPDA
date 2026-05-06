@@ -32,10 +32,6 @@ class FavoritesRepository(
         return favoritesCache.observeItems()
     }
 
-    suspend fun loadCache(): List<FavItem> {
-        return favoritesCache.getItems()
-    }
-
     suspend fun loadFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
         return favoritesApi.getFavorites(st, all, sorting).also {
             favoritesCache.saveFavorites(it.items)

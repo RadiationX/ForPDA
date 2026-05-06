@@ -5,12 +5,17 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.note.NotesRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -38,94 +43,81 @@ class NotesPresenter(
         super.onFirstViewAttach()
         notesRepository
             .observeItems()
-            .subscribe({
+            .onStart {
+                viewState.setRefreshing(true)
+            }
+            .onEach {
+                viewState.setRefreshing(false)
                 currentItems.clear()
                 currentItems.addAll(it)
                 updateItems()
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            .launchIn(viewModelScope)
 
         closeableInfoHolder
             .observe()
-            .subscribe { info ->
+            .onEach { info ->
                 Log.d("kekeke", "closeable $info")
                 currentInfos.clear()
                 currentInfos.addAll(info.filter { closeableInfoIds.contains(it.id) && !it.isClosed })
                 updateItems()
             }
-            .untilDestroy()
-        loadNotes()
-    }
-
-    fun loadNotes() {
-        notesRepository
-            .loadNotes()
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
-                currentItems.clear()
-                currentItems.addAll(it)
-                updateItems()
-            }, {
-                errorHandler.handle(it)
-            })
-            .untilDestroy()
+            .launchIn(viewModelScope)
     }
 
     fun deleteNote(id: Long) {
-        notesRepository
-            .deleteNote(id)
-            .subscribe({
-            }, {
+        viewModelScope.launch {
+            coRunCatching {
+                notesRepository.deleteNote(id)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun addNote(item: NoteItem) {
-        notesRepository
-            .addNote(item)
-            .subscribe({
-            }, {
+        viewModelScope.launch {
+            coRunCatching {
+                notesRepository.addNote(item)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun addNotes(items: List<NoteItem>) {
-        notesRepository
-            .addNotes(items)
-            .subscribe({
-            }, {
+        viewModelScope.launch {
+            coRunCatching {
+                notesRepository.addNotes(items)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun exportNotes() {
-        notesRepository
-            .exportNotes()
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                notesRepository.exportNotes()
+            }.onSuccess {
                 viewState.onExportNotes(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun importNotes(file: RequestFile) {
-        notesRepository
-            .importNotes(file)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                notesRepository.importNotes(file)
+            }.onSuccess {
                 viewState.onImportNotes()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
-
 
     fun onItemClick(item: NoteItem) {
         linkHandler.handle(item.link, router)

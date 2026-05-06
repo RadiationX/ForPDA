@@ -8,9 +8,18 @@ import io.github.xilinjia.krdb.types.annotations.PrimaryKey
 /**
  * Created by radiationx on 25.03.17.
  */
-class QmsThemesBd(
+class QmsThemesBd : RealmObject {
+
     @PrimaryKey
-    var userId: Int = 0,
-    var nick: String? = null,
-    val themes: RealmList<QmsThemeBd> = realmListOf()
-) : RealmObject
+    var userId: Int = 0
+    var nick: String? = null
+    var themes: RealmList<QmsThemeBd> = realmListOf()
+
+    constructor()
+
+    constructor(userId: Int, nick: String?, themes: RealmList<QmsThemeBd>) {
+        this.userId = userId
+        this.nick = nick
+        this.themes = themes
+    }
+}

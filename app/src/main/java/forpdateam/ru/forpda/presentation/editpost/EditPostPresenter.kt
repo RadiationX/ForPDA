@@ -6,12 +6,14 @@ import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostPermissionException
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -55,53 +57,58 @@ class EditPostPresenter(
         for (item in attachments) {
             postForm.addAttachment(item)
         }
-        editorRepository
-            .sendPost(postForm)
-            .map { themeTemplate.mapEntity(it) }
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                editorRepository.sendPost(postForm)
+            }.map {
+                themeTemplate.mapEntity(it)
+            }.onSuccess {
                 viewState.onPostSend(it, postForm)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun loadForm() {
-        editorRepository
-            .loadForm(postForm.postId)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                editorRepository.loadForm(postForm.postId)
+            }.onSuccess {
                 postForm.fillFrom(it)
                 viewState.showForm(postForm)
-            }, {
+            }.onFailure {
                 if (it is EditPostPermissionException) {
                     viewState.onNoPermission()
                 } else {
                     errorHandler.handle(it)
                 }
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>) {
-        editorRepository
-            .uploadFiles(postForm.postId, files, pending)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                editorRepository.uploadFiles(postForm.postId, files, pending)
+            }.onSuccess {
                 viewState.onUploadFiles(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun deleteFiles(items: List<AttachmentItem>) {
-        editorRepository
-            .deleteFiles(postForm.postId, items)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                editorRepository.deleteFiles(postForm.postId, items)
+            }.onSuccess {
                 viewState.onDeleteFiles(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun onSendClick() {

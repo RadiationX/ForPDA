@@ -4,6 +4,7 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
@@ -14,6 +15,7 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -47,17 +49,18 @@ class TopicsPresenter(
     }
 
     fun loadTopics() {
-        topicsRepository
-            .getTopics(id, currentSt)
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                topicsRepository.getTopics(id, currentSt)
+            }.onSuccess {
                 currentData = it
                 viewState.showTopics(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     fun loadPage(st: Int) {
@@ -66,36 +69,44 @@ class TopicsPresenter(
     }
 
     fun addForumToFavorite(forumId: Int, subType: String) {
-        favoritesRepository
-            .editFavorites(FavoritesApi.ACTION_ADD_FORUM, -1, forumId, subType)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(
+                    FavoritesApi.ACTION_ADD_FORUM,
+                    -1,
+                    forumId,
+                    subType
+                )
+            }.onSuccess {
                 viewState.onAddToFavorite(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
-        favoritesRepository
-            .editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+            }.onSuccess {
                 viewState.onAddToFavorite(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun markRead() {
-        forumRepository
-            .markRead(id)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                forumRepository.markRead(id)
+            }.onSuccess {
                 viewState.onMarkRead()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     private fun markRead(id: Int) {

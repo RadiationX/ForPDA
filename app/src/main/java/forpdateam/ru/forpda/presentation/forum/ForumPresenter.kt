@@ -3,12 +3,14 @@ package forpdateam.ru.forpda.presentation.forum
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
 /**
@@ -32,36 +34,36 @@ class ForumPresenter(
     }
 
     fun loadForums() {
-        forumRepository
-            .getForums()
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
+        viewModelScope.launch {
+            viewState.setRefreshing(true)
+            coRunCatching {
+                forumRepository.getForums()
+            }.onSuccess {
                 viewState.showForums(it)
                 scrollToTarget()
                 saveCacheForums(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+            viewState.setRefreshing(false)
+        }
     }
 
     private fun getCacheForums() {
-        forumRepository
-            .getCache()
-            .doOnSubscribe { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({ it ->
+        viewModelScope.launch {
+            coRunCatching {
+                forumRepository.getCache()
+            }.onSuccess {
                 if (it.forums.isEmpty()) {
                     loadForums()
                 } else {
                     viewState.showForums(it)
                     scrollToTarget()
                 }
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     private fun scrollToTarget() {
@@ -72,49 +74,54 @@ class ForumPresenter(
     }
 
     private fun saveCacheForums(rootForum: ForumItemTree) {
-        forumRepository
-            .saveCache(rootForum)
-            .doOnTerminate { viewState.setRefreshing(true) }
-            .doAfterTerminate { viewState.setRefreshing(false) }
-            .subscribe({
-
-            }, {
+        viewModelScope.launch {
+            coRunCatching {
+                forumRepository.saveCache(rootForum)
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun markRead(id: Int) {
-        forumRepository
-            .markRead(id)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                forumRepository.markRead(id)
+            }.onSuccess {
                 viewState.onMarkRead()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun markAllRead() {
-        forumRepository
-            .markAllRead()
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                forumRepository.markAllRead()
+            }.onSuccess {
                 viewState.onMarkAllRead()
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun addToFavorite(forumId: Int, subType: String) {
-        favoritesRepository
-            .editFavorites(FavoritesApi.ACTION_ADD_FORUM, -1, forumId, subType)
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                favoritesRepository.editFavorites(
+                    FavoritesApi.ACTION_ADD_FORUM,
+                    -1,
+                    forumId,
+                    subType
+                )
+            }.onSuccess {
                 viewState.onAddToFavorite(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
     fun copyLink(item: ForumItemTree) {

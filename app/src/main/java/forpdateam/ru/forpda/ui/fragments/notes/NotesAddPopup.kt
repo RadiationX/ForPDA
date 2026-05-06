@@ -13,7 +13,10 @@ import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * Created by radiationx on 06.09.17.
@@ -27,14 +30,14 @@ class NotesAddPopup(context: Context, item: NoteItem?) {
     private val contentField: EditText
     private var editingMode = false
     private val notesRepository = get().Di().notesRepository
-    private val compositeDisposable = CompositeDisposable()
+    private var saveJob: Job? = null
 
     init {
         dialog.setOnShowListener { dialog1: DialogInterface? ->
             dialog.window!!
                 .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
-        dialog.setOnDismissListener { dialog: DialogInterface? -> compositeDisposable.dispose() }
+        dialog.setOnDismissListener { dialog: DialogInterface? -> saveJob?.cancel() }
         val view = View.inflate(context, R.layout.notes_popup, null)
         title = view.findViewById(R.id.popup_title)
         addButton = view.findViewById(R.id.add_button)
@@ -54,6 +57,9 @@ class NotesAddPopup(context: Context, item: NoteItem?) {
         }
 
         addButton.setOnClickListener { v: View? ->
+            if (saveJob?.isActive == true) {
+                return@setOnClickListener
+            }
             val title = titleField.text.toString().trim { it <= ' ' }
             val link = linkField.text.toString().trim { it <= ' ' }
             val content = contentField.text.toString().trim { it <= ' ' }
@@ -73,10 +79,10 @@ class NotesAddPopup(context: Context, item: NoteItem?) {
                 link = link,
                 content = content
             )
-            val disposable = notesRepository
-                .addNote(result)
-                .subscribe { dialog.dismiss() }
-            compositeDisposable.add(disposable)
+            saveJob = GlobalScope.launch(Dispatchers.Main) {
+                notesRepository.addNote(result)
+                dialog.dismiss()
+            }
         }
 
         dialog.setContentView(view)
