@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.entity.db.forum
 
-import io.realm.kotlin.types.RealmObject
+import io.github.xilinjia.krdb.types.RealmObject
 
 /**
  * Created by radiationx on 25.03.17.

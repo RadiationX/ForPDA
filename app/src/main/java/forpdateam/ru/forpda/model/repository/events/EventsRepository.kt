@@ -5,6 +5,7 @@ import androidx.collection.ArraySet
 import forpdateam.ru.forpda.client.WebSocketController
 import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.NetworkStateProvider
 import forpdateam.ru.forpda.model.data.remote.IWebClient
@@ -382,10 +383,8 @@ class EventsRepository(
             return
         }
 
-        var observable: Single<List<NotificationEvent>>? = null
 
-
-        val loadedEvents = runCatching {
+        val loadedEvents = coRunCatching {
             when {
                 NotificationEvent.fromQms(source) -> eventsApi.getQmsEvents()
                 NotificationEvent.fromTheme(source) -> eventsApi.getFavoritesEvents()

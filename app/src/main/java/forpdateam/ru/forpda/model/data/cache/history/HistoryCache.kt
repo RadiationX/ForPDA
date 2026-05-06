@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.common.realm.wrapper.query
 import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
 import forpdateam.ru.forpda.entity.db.history.HistoryItemBd
-import io.realm.kotlin.query.Sort
+import io.github.xilinjia.krdb.query.Sort
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat

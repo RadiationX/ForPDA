@@ -109,8 +109,8 @@ import forpdateam.ru.forpda.presentation.search.SearchTemplate
 import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
 import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.TemplateManager
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
+import io.github.xilinjia.krdb.Realm
+import io.github.xilinjia.krdb.RealmConfiguration
 
 /**
  * Created by radiationx on 01.01.18.

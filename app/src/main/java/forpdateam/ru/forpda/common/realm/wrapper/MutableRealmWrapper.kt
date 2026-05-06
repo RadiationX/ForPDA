@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.common.realm.wrapper
 
-import io.realm.kotlin.Deleteable
-import io.realm.kotlin.MutableRealm
-import io.realm.kotlin.UpdatePolicy
-import io.realm.kotlin.query.TRUE_PREDICATE
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.TypedRealmObject
+import io.github.xilinjia.krdb.Deleteable
+import io.github.xilinjia.krdb.MutableRealm
+import io.github.xilinjia.krdb.UpdatePolicy
+import io.github.xilinjia.krdb.query.TRUE_PREDICATE
+import io.github.xilinjia.krdb.types.RealmObject
+import io.github.xilinjia.krdb.types.TypedRealmObject
 import kotlin.reflect.KClass
 
 class MutableRealmWrapper(

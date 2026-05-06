@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.common.realm.wrapper.query
 import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.entity.db.notes.NoteItemBd
-import io.realm.kotlin.query.Sort
+import io.github.xilinjia.krdb.query.Sort
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 

@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.common.realm
 
-import io.realm.kotlin.dynamic.getNullableValue
-import io.realm.kotlin.migration.AutomaticSchemaMigration
+import io.github.xilinjia.krdb.dynamic.getNullableValue
+import io.github.xilinjia.krdb.migration.AutomaticSchemaMigration
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date

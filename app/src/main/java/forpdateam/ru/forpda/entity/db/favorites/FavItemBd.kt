@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.entity.db.favorites
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PersistedName
-import io.realm.kotlin.types.annotations.PrimaryKey
+import io.github.xilinjia.krdb.types.RealmObject
+import io.github.xilinjia.krdb.types.annotations.PersistedName
+import io.github.xilinjia.krdb.types.annotations.PrimaryKey
 
 /**
  * Created by radiationx on 25.03.17.

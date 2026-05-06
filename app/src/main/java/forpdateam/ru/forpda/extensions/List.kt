@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.extensions
 
-import javax.annotation.CheckReturnValue
-
 fun <T> MutableList<T>.replace(condition: (T) -> Boolean, map: (T) -> T) {
     val index = indexOfFirst(condition)
     if (index == -1) return
@@ -16,7 +14,6 @@ fun <T> MutableList<T>.replaceAt(index: Int, map: (T) -> T) {
     set(index, newItem)
 }
 
-@CheckReturnValue
 fun <T> List<T>.replace(condition: (T) -> Boolean, map: (T) -> T): List<T> {
     val mutable = toMutableList()
     mutable.replace(condition, map)

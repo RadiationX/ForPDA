@@ -28,6 +28,7 @@ android {
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
+    compileSdk 34
     if (versionPropsFile.canRead()) {
         Properties versionProps = new Properties()
         versionProps.load(new FileInputStream(versionPropsFile))
@@ -37,7 +38,6 @@ android {
         versionProps.store(versionPropsFile.newWriter(), null)
     }
 
-    compileSdkVersion 29
 
     defaultConfig {
         applicationId "ru.forpdateam.forpda"
@@ -107,13 +107,14 @@ android {
         }
     }
 
-    compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+    /*compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17 // Changed to 17
+        targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = '1.8'
-    }
+        jvmTarget = '17' // Changed to 17
+    }*/
     packagingOptions {
         resources {
             excludes += ['META-INF/DEPENDENCIES.txt', 'META-INF/LICENSE.txt', 'META-INF/NOTICE.txt', 'META-INF/NOTICE', 'META-INF/LICENSE', 'META-INF/DEPENDENCIES', 'META-INF/notice.txt', 'META-INF/license.txt', 'META-INF/dependencies.txt']
@@ -134,10 +135,9 @@ android {
         buildConfig true
     }
 }
-/*
 kotlin {
     jvmToolchain(17)
-}*/
+}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

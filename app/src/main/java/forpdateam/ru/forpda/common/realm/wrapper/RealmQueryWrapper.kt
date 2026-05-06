@@ -1,9 +1,9 @@
 package forpdateam.ru.forpda.common.realm.wrapper
 
-import io.realm.kotlin.query.RealmQuery
-import io.realm.kotlin.query.RealmResults
-import io.realm.kotlin.query.Sort
-import io.realm.kotlin.types.BaseRealmObject
+import io.github.xilinjia.krdb.query.RealmQuery
+import io.github.xilinjia.krdb.query.RealmResults
+import io.github.xilinjia.krdb.query.Sort
+import io.github.xilinjia.krdb.types.BaseRealmObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

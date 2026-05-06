@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.common.realm.wrapper
 
-import io.realm.kotlin.Realm
-import io.realm.kotlin.query.TRUE_PREDICATE
-import io.realm.kotlin.types.TypedRealmObject
+import io.github.xilinjia.krdb.Realm
+import io.github.xilinjia.krdb.query.TRUE_PREDICATE
+import io.github.xilinjia.krdb.types.TypedRealmObject
 import kotlin.reflect.KClass
 
 class RealmWrapper(

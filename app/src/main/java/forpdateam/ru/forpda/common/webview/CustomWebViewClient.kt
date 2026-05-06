@@ -15,6 +15,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.extensions.coRunCatching
+import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.net.URLDecoder
@@ -47,8 +49,10 @@ open class CustomWebViewClient : WebViewClient() {
                 var value = matcher.group(2)
                 value = URLDecoder.decode(value, "UTF-8")
                 val avatarUrl = when (type) {
-                    TYPE_NICK -> runCatching {
-                        avatarRepository.getAvatar(value)
+                    TYPE_NICK -> coRunCatching {
+                        runBlocking {
+                            avatarRepository.getAvatar(value)
+                        }
                     }.getOrNull()
 
                     TYPE_URL -> value

@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.entity.db
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
+import io.github.xilinjia.krdb.types.RealmObject
+import io.github.xilinjia.krdb.types.annotations.PrimaryKey
 
 /**
  * Created by radiationx on 08.07.17.
