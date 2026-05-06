@@ -546,7 +546,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
 
 
             val sorted = otherPreferencesHolder.getMessagePanelBbCodes()
-            if (!sorted.isEmpty()) {
+            if (!sorted.isNullOrEmpty()) {
                 val sortedArr =
                     TextUtils.split(sorted, ",")
                 if (sortedArr.size != tempCodes.size) {

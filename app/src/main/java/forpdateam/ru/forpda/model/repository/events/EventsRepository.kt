@@ -448,8 +448,8 @@ class EventsRepository(
         val savedEvents: Set<String> = when {
             NotificationEvent.fromQms(source) -> notificationPreferencesHolder.getDataQmsEvents()
             NotificationEvent.fromTheme(source) -> notificationPreferencesHolder.getDataFavoritesEvents()
-            else -> return emptyList()
-        }
+            else -> null
+        } ?: return emptyList()
 
         val responseBuilder = StringBuilder()
         for (saved in savedEvents) {

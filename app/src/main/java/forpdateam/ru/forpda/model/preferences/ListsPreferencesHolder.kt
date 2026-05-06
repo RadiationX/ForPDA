@@ -1,46 +1,44 @@
 package forpdateam.ru.forpda.model.preferences
 
-import android.content.SharedPreferences
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
+import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.rx2.asFlow
 
 class ListsPreferencesHolder(
-    private val sharedPreferences: SharedPreferences
+    private val preferences: FlowPreferences
 ) {
 
-    private val rxPreferences = RxSharedPreferences.create(sharedPreferences)
 
     private val unreadTop by lazy {
-        rxPreferences.getBoolean(Preferences.Lists.Topic.UNREAD_TOP, false)
+        preferences.getBoolean(Preferences.Lists.Topic.UNREAD_TOP, false)
     }
 
     private val showDot by lazy {
-        rxPreferences.getBoolean(Preferences.Lists.Topic.SHOW_DOT, false)
+        preferences.getBoolean(Preferences.Lists.Topic.SHOW_DOT, false)
     }
 
     private val favLoadAll by lazy {
-        rxPreferences.getBoolean(Preferences.Lists.Favorites.LOAD_ALL, false)
+        preferences.getBoolean(Preferences.Lists.Favorites.LOAD_ALL, false)
     }
 
     private val favSortingKey by lazy {
-        rxPreferences.getString(Preferences.Lists.Favorites.SORTING_KEY, "")
+        preferences.getString(Preferences.Lists.Favorites.SORTING_KEY)
     }
 
     private val favSortingOrder by lazy {
-        rxPreferences.getString(Preferences.Lists.Favorites.SORTING_ORDER, "")
+        preferences.getString(Preferences.Lists.Favorites.SORTING_ORDER)
     }
 
-    fun observeUnreadTop(): Flow<Boolean> = unreadTop.asObservable().asFlow()
+    fun observeUnreadTop(): Flow<Boolean> = unreadTop
 
-    fun observeShowDot(): Flow<Boolean> = showDot.asObservable().asFlow()
+    fun observeShowDot(): Flow<Boolean> = showDot
 
-    fun observeFavLoadAll(): Flow<Boolean> = favLoadAll.asObservable().asFlow()
+    fun observeFavLoadAll(): Flow<Boolean> = favLoadAll
 
-    fun observeSortingKey(): Flow<String> = favSortingKey.asObservable().asFlow()
+    fun observeSortingKey(): Flow<String?> = favSortingKey
 
-    fun observeSortingOrder(): Flow<String> = favSortingOrder.asObservable().asFlow()
+    fun observeSortingOrder(): Flow<String?> = favSortingOrder
 
     fun setSortingKey(key: String): Unit = favSortingKey.set(key)
 
@@ -52,7 +50,7 @@ class ListsPreferencesHolder(
 
     fun getFavLoadAll(): Boolean = favLoadAll.get()
 
-    fun getSortingKey(): String = favSortingKey.get()
+    fun getSortingKey(): String? = favSortingKey.get()
 
-    fun getSortingOrder(): String = favSortingOrder.get()
+    fun getSortingOrder(): String? = favSortingOrder.get()
 }

@@ -290,7 +290,7 @@ class App : Application() {
             .launchIn(GlobalScope + Dispatchers.Main)
 
         try {
-            val inputHistory = dependencies.otherPreferencesHolder.getAppVersionsHistory()
+            val inputHistory = dependencies.otherPreferencesHolder.getAppVersionsHistory().orEmpty()
             val history = TextUtils.split(inputHistory, ";")
 
             var lastVNum = 0

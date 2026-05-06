@@ -45,8 +45,8 @@ class FavoritesPresenter(
     private var currentSt = 0
     private var loadAll = listsPreferencesHolder.getFavLoadAll()
     private var sorting: Sorting = Sorting(
-        listsPreferencesHolder.getSortingKey(),
-        listsPreferencesHolder.getSortingOrder()
+        listsPreferencesHolder.getSortingKey().orEmpty(),
+        listsPreferencesHolder.getSortingOrder().orEmpty()
     )
 
     override fun onFirstViewAttach() {

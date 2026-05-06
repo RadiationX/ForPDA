@@ -51,6 +51,10 @@ class FlowPreferences(
         return get(key, default, BooleanPreferenceAdapter)
     }
 
+    fun <T : Enum<T>> getEnum(key: String, default: T, clazz: Class<T>): FlowPreference<T> {
+        return get(key, default, EnumPreferenceAdapter(clazz))
+    }
+
     fun clear() {
         preferences.edit {
             clear()

@@ -66,3 +66,14 @@ object BooleanPreferenceAdapter : FlowPreferenceAdapter<Boolean> {
         preferencesEditor.putBoolean(key, value)
     }
 }
+
+class EnumPreferenceAdapter<T : Enum<T>>(private val clazz: Class<T>) : FlowPreferenceAdapter<T> {
+    override fun get(preferences: SharedPreferences, key: String, default: T): T {
+        val value = preferences.getString(key, null) ?: return default
+        return java.lang.Enum.valueOf(clazz, value)
+    }
+
+    override fun set(preferencesEditor: SharedPreferences.Editor, key: String, value: T) {
+        preferencesEditor.putString(key, value.name)
+    }
+}

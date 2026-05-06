@@ -1,8 +1,7 @@
 package forpdateam.ru.forpda.model.interactors.other
 
-import android.content.SharedPreferences
 import android.util.Log
-import com.f2prateek.rx.preferences2.RxSharedPreferences
+import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.AuthHolder
@@ -15,7 +14,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class MenuRepository(
-    private val preferences: SharedPreferences,
+    private val preferences: FlowPreferences,
     private val authHolder: AuthHolder,
     private val countersHolder: CountersHolder
 ) {
@@ -122,10 +121,13 @@ class MenuRepository(
 
     private var localCounters: MessageCounters? = null
 
-    private val rxPreferences = RxSharedPreferences.create(preferences)
 
     private val menuSequence by lazy {
-        rxPreferences.getString("menu_items_sequence")
+        preferences.getString("menu_items_sequence")
+    }
+
+    private val menuLastId by lazy {
+        preferences.getInt("app_menu_last_id", -1)
     }
 
     init {
@@ -133,12 +135,13 @@ class MenuRepository(
 
         loadMainMenuGroup()
         menuSequence
-            .asObservable()
-            .subscribe {
+            .onEach {
                 Log.e("kulolo", "menuSequence pref change")
                 loadMainMenuGroup()
                 updateMenuItems()
             }
+            .launchIn(GlobalScope)
+
 
         authHolder
             .observe()
@@ -164,7 +167,7 @@ class MenuRepository(
         mainGroupSequence.addAll(GROUP_MAIN)
 
         menuSequence.get().also { savedArray ->
-            if (savedArray.isNotEmpty()) {
+            if (!savedArray.isNullOrEmpty()) {
                 val array =
                     savedArray.split(',').map { it.toInt() }.filter { GROUP_MAIN.contains(it) }
                 val newItems = GROUP_MAIN.filterNot { array.contains(it) }
@@ -190,12 +193,12 @@ class MenuRepository(
 
     fun setLastOpened(id: Int) {
         if (GROUP_MAIN.indexOfFirst { it == id } >= 0) {
-            preferences.edit().putInt("app_menu_last_id", id).apply()
+            menuLastId.set(id)
         }
     }
 
     fun getLastOpened(): Int {
-        val menuId = preferences.getInt("app_menu_last_id", -1)
+        val menuId = menuLastId.get()
         return if (GROUP_MAIN.indexOfFirst { it == menuId } >= 0) {
             menuId
         } else {

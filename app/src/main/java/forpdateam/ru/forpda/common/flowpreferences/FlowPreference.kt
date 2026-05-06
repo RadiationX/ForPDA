@@ -19,15 +19,17 @@ class FlowPreference<T>(
     private val updatesFlow = keysFlow
         .onStart { emit(key) }
         .filter { it == null || it == key }
-        .map { value }
+        .map { get() }
 
-    var value: T
-        get() = adapter.get(preferences, key, defaultValue)
-        set(value) {
-            preferences.edit {
-                adapter.set(this, key, value)
-            }
+    fun get(): T {
+        return adapter.get(preferences, key, defaultValue)
+    }
+
+    fun set(value: T) {
+        preferences.edit {
+            adapter.set(this, key, value)
         }
+    }
 
     fun remove() {
         preferences.edit {

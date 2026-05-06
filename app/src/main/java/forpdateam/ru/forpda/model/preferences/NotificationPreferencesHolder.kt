@@ -1,103 +1,99 @@
 package forpdateam.ru.forpda.model.preferences
 
-import android.content.SharedPreferences
-import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
+import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.rx2.asFlow
+import kotlinx.coroutines.flow.map
 
 class NotificationPreferencesHolder(
-    private val sharedPreferences: SharedPreferences
+    private val preferences: FlowPreferences
 ) {
 
-    private val rxPreferences = RxSharedPreferences.create(sharedPreferences)
 
     private val mainEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Main.ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Main.ENABLED, true)
     }
 
     private val mainSoundEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Main.SOUND_ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Main.SOUND_ENABLED, true)
     }
 
     private val mainVibrationEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Main.VIBRATION_ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Main.VIBRATION_ENABLED, true)
     }
 
     private val mainIndicatorEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Main.INDICATOR_ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Main.INDICATOR_ENABLED, true)
     }
 
     private val mainAvatarsEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Main.AVATARS_ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Main.AVATARS_ENABLED, true)
     }
 
     private val mainLimit by lazy {
-        rxPreferences.getString(Preferences.Notifications.Main.LIMIT, "10")
+        preferences.getString(Preferences.Notifications.Main.LIMIT, "10")
     }
 
     private val favEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Favorites.ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Favorites.ENABLED, true)
     }
 
     private val favOnlyImportant by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Favorites.ONLY_IMPORTANT, false)
+        preferences.getBoolean(Preferences.Notifications.Favorites.ONLY_IMPORTANT, false)
     }
 
     private val favLiveTab by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Favorites.LIVE_TAB, true)
+        preferences.getBoolean(Preferences.Notifications.Favorites.LIVE_TAB, true)
     }
 
     private val qmsEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Qms.ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Qms.ENABLED, true)
     }
 
     private val mentionsEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Mentions.ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Mentions.ENABLED, true)
     }
 
     private val updateEnabled by lazy {
-        rxPreferences.getBoolean(Preferences.Notifications.Update.ENABLED, true)
+        preferences.getBoolean(Preferences.Notifications.Update.ENABLED, true)
     }
 
     private val dataQmsEvents by lazy {
-        rxPreferences.getStringSet(Preferences.Notifications.Data.QMS_EVENTS)
+        preferences.getStringSet(Preferences.Notifications.Data.QMS_EVENTS, emptySet())
     }
 
     private val dataFavoritesEvents by lazy {
-        rxPreferences.getStringSet(Preferences.Notifications.Data.FAVORITES_EVENTS)
+        preferences.getStringSet(Preferences.Notifications.Data.FAVORITES_EVENTS, emptySet())
     }
 
 
-    fun observeMainEnabled(): Flow<Boolean> = mainEnabled.asObservable().asFlow()
+    fun observeMainEnabled(): Flow<Boolean> = mainEnabled
 
-    fun observeMainSoundEnabled(): Flow<Boolean> = mainSoundEnabled.asObservable().asFlow()
+    fun observeMainSoundEnabled(): Flow<Boolean> = mainSoundEnabled
 
-    fun observeMainVibrationEnabled(): Flow<Boolean> = mainVibrationEnabled.asObservable().asFlow()
+    fun observeMainVibrationEnabled(): Flow<Boolean> = mainVibrationEnabled
 
-    fun observeMainIndicatorEnabled(): Flow<Boolean> = mainIndicatorEnabled.asObservable().asFlow()
+    fun observeMainIndicatorEnabled(): Flow<Boolean> = mainIndicatorEnabled
 
-    fun observeMainAvatarsEnabled(): Flow<Boolean> = mainAvatarsEnabled.asObservable().asFlow()
+    fun observeMainAvatarsEnabled(): Flow<Boolean> = mainAvatarsEnabled
 
-    fun observeMainLimit(): Flow<Long> = mainLimit.asObservable()
-        .map { it.toLong() * 1000 }.asFlow()
+    fun observeMainLimit(): Flow<Long> = mainLimit.map { (it?.toLong() ?: 10) * 1000 }
 
-    fun observeFavEnabled(): Flow<Boolean> = favEnabled.asObservable().asFlow()
+    fun observeFavEnabled(): Flow<Boolean> = favEnabled
 
-    fun observeFavOnlyImportant(): Flow<Boolean> = favOnlyImportant.asObservable().asFlow()
+    fun observeFavOnlyImportant(): Flow<Boolean> = favOnlyImportant
 
-    fun observeFavLiveTab(): Flow<Boolean> = favLiveTab.asObservable().asFlow()
+    fun observeFavLiveTab(): Flow<Boolean> = favLiveTab
 
-    fun observeQmsEnabled(): Flow<Boolean> = qmsEnabled.asObservable().asFlow()
+    fun observeQmsEnabled(): Flow<Boolean> = qmsEnabled
 
-    fun observeMentionsEnabled(): Flow<Boolean> = mentionsEnabled.asObservable().asFlow()
+    fun observeMentionsEnabled(): Flow<Boolean> = mentionsEnabled
 
-    fun observeUpdateEnabled(): Flow<Boolean> = updateEnabled.asObservable().asFlow()
+    fun observeUpdateEnabled(): Flow<Boolean> = updateEnabled
 
-    fun observeDataQmsEvents(): Flow<Set<String>> = dataQmsEvents.asObservable().asFlow()
+    fun observeDataQmsEvents(): Flow<Set<String>?> = dataQmsEvents
 
-    fun observeDataFavoritesEvents(): Flow<Set<String>> =
-        dataFavoritesEvents.asObservable().asFlow()
+    fun observeDataFavoritesEvents(): Flow<Set<String>?> = dataFavoritesEvents
 
 
     fun setDataQmsEvents(value: Set<String>) = dataQmsEvents.set(value)
@@ -115,7 +111,7 @@ class NotificationPreferencesHolder(
 
     fun getMainAvatarsEnabled(): Boolean = mainAvatarsEnabled.get()
 
-    fun getMainLimit(): Long = mainLimit.get().toLong() * 1000
+    fun getMainLimit(): Long = (mainLimit.get()?.toLong() ?: 10) * 1000
 
     fun getFavEnabled(): Boolean = favEnabled.get()
 
@@ -129,8 +125,8 @@ class NotificationPreferencesHolder(
 
     fun getUpdateEnabled(): Boolean = updateEnabled.get()
 
-    fun getDataQmsEvents(): Set<String> = dataQmsEvents.get()
+    fun getDataQmsEvents(): Set<String>? = dataQmsEvents.get()
 
-    fun getDataFavoritesEvents(): Set<String> = dataFavoritesEvents.get()
+    fun getDataFavoritesEvents(): Set<String>? = dataFavoritesEvents.get()
 
 }

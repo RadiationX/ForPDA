@@ -71,8 +71,8 @@ class FavoritesRepository(
     suspend fun handleEvent(event: TabNotification): Int {
         val favItems = favoritesCache.getItems()
         val sorting = Sorting(
-            listsPreferencesHolder.getSortingKey(),
-            listsPreferencesHolder.getSortingOrder()
+            listsPreferencesHolder.getSortingKey().orEmpty(),
+            listsPreferencesHolder.getSortingOrder().orEmpty()
         )
         val count = countersHolder.get().favorites
         return handleEventTransaction(favItems, event, sorting, count).also {

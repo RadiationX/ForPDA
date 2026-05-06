@@ -6,6 +6,7 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import forpdateam.ru.forpda.client.Client
 import forpdateam.ru.forpda.common.DayNightHelper
+import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.common.realm.DbMigration
 import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
@@ -109,6 +110,7 @@ import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.TemplateManager
 import io.github.xilinjia.krdb.Realm
 import io.github.xilinjia.krdb.RealmConfiguration
+import kotlinx.coroutines.GlobalScope
 
 /**
  * Created by radiationx on 01.01.18.
@@ -140,6 +142,8 @@ class Dependencies internal constructor(
     val dataStoragePreferences =
         context.getSharedPreferences("${context.packageName}_data_storage", Context.MODE_PRIVATE)
 
+    val flowPreferences = FlowPreferences(GlobalScope, preferences)
+
     val errorHandler: IErrorHandler by lazy { ErrorHandler(router) }
     val networkState: NetworkStateProvider by lazy { AppNetworkState(context) }
 
@@ -148,11 +152,7 @@ class Dependencies internal constructor(
     val authHolder: AuthHolder by lazy { AuthHolder(preferences) }
     val countersHolder: CountersHolder by lazy { CountersHolder(preferences) }
     val userHolder: IUserHolder by lazy { UserHolder(dataStoragePreferences) }
-    val closeableInfoHolder: CloseableInfoHolder by lazy {
-        CloseableInfoHolder(
-            preferences
-        )
-    }
+    val closeableInfoHolder: CloseableInfoHolder by lazy { CloseableInfoHolder(preferences) }
 
     val templateManager by lazy { TemplateManager(context, dayNightHelper) }
     val themeTemplate by lazy { ThemeTemplate(templateManager, authHolder, topicPreferencesHolder) }
@@ -315,14 +315,14 @@ class Dependencies internal constructor(
             notificationPreferencesHolder
         )
     }
-    val menuRepository by lazy { MenuRepository(preferences, authHolder, countersHolder) }
+    val menuRepository by lazy { MenuRepository(flowPreferences, authHolder, countersHolder) }
     val checkerRepository by lazy { CheckerRepository(checkerApi, patternProvider) }
 
-    val otherPreferencesHolder by lazy { OtherPreferencesHolder(preferences) }
-    val mainPreferencesHolder by lazy { MainPreferencesHolder(preferences) }
-    val topicPreferencesHolder by lazy { TopicPreferencesHolder(preferences) }
-    val listsPreferencesHolder by lazy { ListsPreferencesHolder(preferences) }
-    val notificationPreferencesHolder by lazy { NotificationPreferencesHolder(preferences) }
+    val otherPreferencesHolder by lazy { OtherPreferencesHolder(flowPreferences) }
+    val mainPreferencesHolder by lazy { MainPreferencesHolder(flowPreferences) }
+    val topicPreferencesHolder by lazy { TopicPreferencesHolder(flowPreferences) }
+    val listsPreferencesHolder by lazy { ListsPreferencesHolder(flowPreferences) }
+    val notificationPreferencesHolder by lazy { NotificationPreferencesHolder(flowPreferences) }
 
     val crossScreenInteractor by lazy { CrossScreenInteractor() }
     val qmsInteractor by lazy { QmsInteractor(qmsRepository, eventsRepository) }
