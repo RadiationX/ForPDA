@@ -10,6 +10,7 @@ import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.NetworkStateProvider
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.events.NotificationEventsApi
+import forpdateam.ru.forpda.model.data.remote.api.events.NotificationEventsParser
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -30,6 +31,7 @@ import kotlin.time.Duration.Companion.minutes
 class EventsRepository(
     private val webClient: IWebClient,
     private val eventsApi: NotificationEventsApi,
+    private val eventsParser: NotificationEventsParser,
     private val networkStateProvider: NetworkStateProvider,
     private val authHolder: AuthHolder,
     private val notificationPreferencesHolder: NotificationPreferencesHolder
@@ -67,7 +69,7 @@ class EventsRepository(
             override fun onMessage(text: String) {
                 Log.d(LOG_TAG, "WSContr onMessage $text")
                 try {
-                    eventsApi.parseWebSocketEvent(text)?.also {
+                    eventsParser.parseWebSocketEvent(text)?.also {
                         if (it.type != NotificationEvent.Type.HAT_EDITED) {
                             GlobalScope.launch(Dispatchers.Main) {
                                 handleWebSocketEvent(it)
@@ -458,9 +460,9 @@ class EventsRepository(
         val response = responseBuilder.toString()
 
         if (NotificationEvent.fromQms(source)) {
-            return eventsApi.getQmsEvents(response)
+            return eventsParser.parseQmsEvents(response)
         } else if (NotificationEvent.fromTheme(source)) {
-            return eventsApi.getFavoritesEvents(response)
+            return eventsParser.parseFavoritesEvents(response)
         }
         return emptyList()
     }
