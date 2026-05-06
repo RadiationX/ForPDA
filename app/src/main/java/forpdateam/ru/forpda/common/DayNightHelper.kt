@@ -4,8 +4,9 @@ import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class DayNightHelper(
     private val defaultMode: Boolean
@@ -41,14 +42,14 @@ class DayNightHelper(
         }
     }
 
-    private val isNightRelay = BehaviorRelay.createDefault(defaultMode)
+    private val isNightRelay = MutableStateFlow(defaultMode)
 
-    fun observeIsNight(): Observable<Boolean> = isNightRelay.hide().distinctUntilChanged()
+    fun observeIsNight(): StateFlow<Boolean> = isNightRelay.asStateFlow()
 
-    fun isNight(): Boolean = isNightRelay.value ?: false
+    fun isNight(): Boolean = isNightRelay.value
 
     fun setIsNight(isNight: Boolean) {
-        isNightRelay.accept(isNight)
+        isNightRelay.value = isNight
     }
 
 }

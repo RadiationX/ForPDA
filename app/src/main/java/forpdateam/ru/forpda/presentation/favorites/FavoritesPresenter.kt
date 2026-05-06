@@ -56,22 +56,22 @@ class FavoritesPresenter(
 
         listsPreferencesHolder
             .observeFavLoadAll()
-            .subscribe { loadAll = it }
-            .untilDestroy()
+            .onEach { loadAll = it }
+            .launchIn(viewModelScope)
 
         listsPreferencesHolder
             .observeShowDot()
-            .subscribe {
+            .onEach {
                 viewState.setShowDot(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         listsPreferencesHolder
             .observeUnreadTop()
-            .subscribe {
+            .onEach {
                 viewState.setUnreadTop(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         eventsRepository
             .observeEventsTab()
@@ -94,10 +94,10 @@ class FavoritesPresenter(
 
         crossScreenInteractor
             .observeTopic()
-            .subscribe {
+            .onEach {
                 markRead(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
     }
 
     fun updateSorting(key: String, order: String) {

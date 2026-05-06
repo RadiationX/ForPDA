@@ -22,6 +22,8 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.IThemePresenter
 import forpdateam.ru.forpda.ui.TemplateManager
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
@@ -89,38 +91,38 @@ class SearchPresenter(
 
         topicPreferencesHolder
             .observeShowAvatars()
-            .subscribe {
+            .onEach {
                 viewState.updateShowAvatarState(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         topicPreferencesHolder
             .observeCircleAvatars()
-            .subscribe {
+            .onEach {
                 viewState.updateTypeAvatarState(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         mainPreferencesHolder
             .observeScrollButtonEnabled()
-            .subscribe {
+            .onEach {
                 viewState.updateScrollButtonState(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         mainPreferencesHolder
             .observeWebViewFontSize()
-            .subscribe {
+            .onEach {
                 viewState.setFontSize(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         templateManager
             .observeThemeType()
-            .subscribe {
+            .onEach {
                 viewState.setStyleType(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         viewState.fillSettingsData(settings, fields)
         refreshData()
     }

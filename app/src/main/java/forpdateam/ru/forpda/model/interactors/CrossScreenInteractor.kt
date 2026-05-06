@@ -1,29 +1,29 @@
 package forpdateam.ru.forpda.model.interactors
 
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 class CrossScreenInteractor {
 
-    private val announceRelay = PublishRelay.create<Int>()
-    private val articleRelay = PublishRelay.create<Int>()
-    private val deviceRelay = PublishRelay.create<Int>()
-    private val profileRelay = PublishRelay.create<Int>()
-    private val chatRelay = PublishRelay.create<Int>()
-    private val topicRelay = PublishRelay.create<Int>()
+    private val announceRelay = MutableSharedFlow<Int>()
+    private val articleRelay = MutableSharedFlow<Int>()
+    private val deviceRelay = MutableSharedFlow<Int>()
+    private val profileRelay = MutableSharedFlow<Int>()
+    private val chatRelay = MutableSharedFlow<Int>()
+    private val topicRelay = MutableSharedFlow<Int>()
 
-    fun observeAnnounce(): Observable<Int> = announceRelay.hide()
-    fun observeArticle(): Observable<Int> = articleRelay.hide()
-    fun observeDevice(): Observable<Int> = deviceRelay.hide()
-    fun observeProfile(): Observable<Int> = profileRelay.hide()
-    fun observeChat(): Observable<Int> = chatRelay.hide()
-    fun observeTopic(): Observable<Int> = topicRelay.hide()
+    fun observeAnnounce(): Flow<Int> = announceRelay
+    fun observeArticle(): Flow<Int> = articleRelay
+    fun observeDevice(): Flow<Int> = deviceRelay
+    fun observeProfile(): Flow<Int> = profileRelay
+    fun observeChat(): Flow<Int> = chatRelay
+    fun observeTopic(): Flow<Int> = topicRelay
 
-    fun onLoadAnnounce(id: Int) = announceRelay.accept(id)
-    fun onLoadArticle(id: Int) = articleRelay.accept(id)
-    fun onLoadDevice(id: Int) = deviceRelay.accept(id)
-    fun onLoadProfile(id: Int) = profileRelay.accept(id)
-    fun onLoadChat(id: Int) = chatRelay.accept(id)
-    fun onLoadTopic(id: Int) = topicRelay.accept(id)
+    suspend fun onLoadAnnounce(id: Int) = announceRelay.emit(id)
+    suspend fun onLoadArticle(id: Int) = articleRelay.emit(id)
+    suspend fun onLoadDevice(id: Int) = deviceRelay.emit(id)
+    suspend fun onLoadProfile(id: Int) = profileRelay.emit(id)
+    suspend fun onLoadChat(id: Int) = chatRelay.emit(id)
+    suspend fun onLoadTopic(id: Int) = topicRelay.emit(id)
 
 }

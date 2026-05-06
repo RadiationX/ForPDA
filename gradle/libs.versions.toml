@@ -36,9 +36,12 @@ spectrum = "0.7.1"
 tagsoup = "1.2.1"
 universal-image-loader = "1.9.5"
 viewbindingpropertydelegate = "1.5.9"
+kotlin-coroutines = "1.10.2"
 
 
 [libraries]
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-coroutines-rx2 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2", version.ref = "kotlin-coroutines" }
 adapterdelegates3 = { module = "com.hannesdorfmann:adapterdelegates3", version.ref = "adapterdelegates3" }
 android-job = { module = "com.evernote:android-job", version.ref = "android-job" }
 android-material-design-colors = { module = "com.wada811:android-material-design-colors", version.ref = "android-material-design-colors" }

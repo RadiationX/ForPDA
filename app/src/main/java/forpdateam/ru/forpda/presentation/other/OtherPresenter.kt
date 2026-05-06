@@ -59,11 +59,11 @@ class OtherPresenter(
 
         menuRepository
             .observerMenu()
-            .subscribe {
+            .onEach {
                 localMenu = it
                 updateMenuItems()
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         closeableInfoHolder
             .observe()

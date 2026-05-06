@@ -49,7 +49,6 @@ import com.yandex.metrica.YandexMetricaConfig
 import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
-import forpdateam.ru.forpda.common.Preferences.Main.ThemeMode
 import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.notifications.NotificationsJob
@@ -60,6 +59,12 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.plus
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -287,16 +292,14 @@ class App : Application() {
             YandexMetrica.reportError("Крит " + throwable.message, throwable)
         }
 
-        val disposable = dependencies
+        dependencies
             .mainPreferencesHolder
             .observeThemeMode()
             .distinctUntilChanged()
-            .subscribe(
-                { mode: ThemeMode ->
-                    DayNightHelper.applyTheme(mode)
-                },
-                { obj: Throwable -> obj.printStackTrace() }
-            )
+            .onEach {
+                DayNightHelper.applyTheme(it)
+            }
+            .launchIn(GlobalScope + Dispatchers.Main)
 
         try {
             val inputHistory = dependencies.otherPreferencesHolder.getAppVersionsHistory()

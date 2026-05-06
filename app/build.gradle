@@ -141,6 +141,9 @@ kotlin {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation libs.kotlin.coroutines.core
+    implementation libs.kotlin.coroutines.rx2
+
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.palette.ktx
     implementation libs.androidx.appcompat

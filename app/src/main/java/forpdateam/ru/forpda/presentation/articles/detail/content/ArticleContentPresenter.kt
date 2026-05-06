@@ -27,19 +27,21 @@ class ArticleContentPresenter(
         super.onFirstViewAttach()
         templateManager
             .observeThemeType()
-            .subscribe {
+            .onEach {
                 viewState.setStyleType(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         mainPreferencesHolder
             .observeWebViewFontSize()
-            .subscribe {
+            .onEach {
                 viewState.setFontSize(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         articleInteractor
             .observeData()
-            .onEach { viewState.showData(it) }
+            .onEach {
+                viewState.showData(it)
+            }
             .launchIn(viewModelScope)
     }
 

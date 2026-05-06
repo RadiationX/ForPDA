@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
 import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.rx2.asFlow
 
 class TopicPreferencesHolder(
     private val sharedPreferences: SharedPreferences
@@ -27,13 +29,13 @@ class TopicPreferencesHolder(
         rxPreferences.getBoolean(Preferences.Theme.HAT_OPENED, false)
     }
 
-    fun observeShowAvatars(): Observable<Boolean> = showAvatars.asObservable()
+    fun observeShowAvatars(): Flow<Boolean> = showAvatars.asObservable().asFlow()
 
-    fun observeCircleAvatars(): Observable<Boolean> = circleAvatars.asObservable()
+    fun observeCircleAvatars(): Flow<Boolean> = circleAvatars.asObservable().asFlow()
 
-    fun observeAnchorHistory(): Observable<Boolean> = anchorHistory.asObservable()
+    fun observeAnchorHistory(): Flow<Boolean> = anchorHistory.asObservable().asFlow()
 
-    fun observeHatOpened(): Observable<Boolean> = hatOpened.asObservable()
+    fun observeHatOpened(): Flow<Boolean> = hatOpened.asObservable().asFlow()
 
     fun getShowAvatars(): Boolean = showAvatars.get()
 

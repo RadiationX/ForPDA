@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
 import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.rx2.asFlow
 
 class ListsPreferencesHolder(
     private val sharedPreferences: SharedPreferences
@@ -31,15 +33,15 @@ class ListsPreferencesHolder(
         rxPreferences.getString(Preferences.Lists.Favorites.SORTING_ORDER, "")
     }
 
-    fun observeUnreadTop(): Observable<Boolean> = unreadTop.asObservable()
+    fun observeUnreadTop(): Flow<Boolean> = unreadTop.asObservable().asFlow()
 
-    fun observeShowDot(): Observable<Boolean> = showDot.asObservable()
+    fun observeShowDot(): Flow<Boolean> = showDot.asObservable().asFlow()
 
-    fun observeFavLoadAll(): Observable<Boolean> = favLoadAll.asObservable()
+    fun observeFavLoadAll(): Flow<Boolean> = favLoadAll.asObservable().asFlow()
 
-    fun observeSortingKey(): Observable<String> = favSortingKey.asObservable()
+    fun observeSortingKey(): Flow<String> = favSortingKey.asObservable().asFlow()
 
-    fun observeSortingOrder(): Observable<String> = favSortingOrder.asObservable()
+    fun observeSortingOrder(): Flow<String> = favSortingOrder.asObservable().asFlow()
 
     fun setSortingKey(key: String): Unit = favSortingKey.set(key)
 

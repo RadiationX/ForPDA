@@ -60,17 +60,17 @@ class QmsChatPresenter(
 
         mainPreferencesHolder
             .observeWebViewFontSize()
-            .subscribe {
+            .onEach {
                 viewState.setFontSize(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         templateManager
             .observeThemeType()
-            .subscribe {
+            .onEach {
                 viewState.setStyleType(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         eventsRepository
             .observeEventsTab()
             .onEach {

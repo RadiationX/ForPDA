@@ -4,6 +4,8 @@ import android.content.Context
 import biz.source_code.miniTemplator.MiniTemplator
 import forpdateam.ru.forpda.common.DayNightHelper
 import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 
@@ -30,7 +32,7 @@ class TemplateManager(
         staticStrings.putAll(strings)
     }
 
-    fun observeThemeType(): Observable<String> = dayNightHelper
+    fun observeThemeType(): Flow<String> = dayNightHelper
         .observeIsNight()
         .map { if (it) "dark" else "light" }
 

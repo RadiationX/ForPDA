@@ -5,6 +5,8 @@ import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.ui.TemplateManager
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
@@ -27,10 +29,10 @@ class AnnouncePresenter(
         super.onFirstViewAttach()
         templateManager
             .observeThemeType()
-            .subscribe {
+            .onEach {
                 viewState.setStyleType(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         loadData()
     }
 

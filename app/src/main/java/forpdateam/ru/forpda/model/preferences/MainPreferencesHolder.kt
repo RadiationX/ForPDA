@@ -3,7 +3,8 @@ package forpdateam.ru.forpda.model.preferences
 import android.content.SharedPreferences
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.rx2.asFlow
 import kotlin.math.max
 import kotlin.math.min
 
@@ -45,20 +46,20 @@ class MainPreferencesHolder(
         rxPreferences.getBoolean(Preferences.Main.SHOW_BOTTOM_ARROW, false)
     }
 
-    fun observeWebViewFontSize(): Observable<Int> = webViewFontSize.asObservable()
-        .map { max(min(it, 64), 8) }
+    fun observeWebViewFontSize(): Flow<Int> = webViewFontSize.asObservable()
+        .map { max(min(it, 64), 8) }.asFlow()
 
-    fun observeSystemDownloader(): Observable<Boolean> = systemDownloader.asObservable()
+    fun observeSystemDownloader(): Flow<Boolean> = systemDownloader.asObservable().asFlow()
 
-    fun observeEditorMonospace(): Observable<Boolean> = editorMonospace.asObservable()
+    fun observeEditorMonospace(): Flow<Boolean> = editorMonospace.asObservable().asFlow()
 
-    fun observeEditorDefaultHidden(): Observable<Boolean> = editorDefaultHidden.asObservable()
+    fun observeEditorDefaultHidden(): Flow<Boolean> = editorDefaultHidden.asObservable().asFlow()
 
-    fun observeScrollButtonEnabled(): Observable<Boolean> = scrollButtonEnabled.asObservable()
+    fun observeScrollButtonEnabled(): Flow<Boolean> = scrollButtonEnabled.asObservable().asFlow()
 
-    fun observeThemeMode(): Observable<Preferences.Main.ThemeMode> = themeMode.asObservable()
+    fun observeThemeMode(): Flow<Preferences.Main.ThemeMode> = themeMode.asObservable().asFlow()
 
-    fun observeShowBottomArrow(): Observable<Boolean> = showBottomArrow.asObservable()
+    fun observeShowBottomArrow(): Flow<Boolean> = showBottomArrow.asObservable().asFlow()
 
 
     fun getWebViewFontSize(): Int = max(min(webViewFontSize.get(), 64), 8)

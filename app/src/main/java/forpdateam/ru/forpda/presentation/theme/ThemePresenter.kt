@@ -82,38 +82,38 @@ class ThemePresenter(
         super.onFirstViewAttach()
         topicPreferencesHolder
             .observeShowAvatars()
-            .subscribe {
+            .onEach {
                 viewState.updateShowAvatarState(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         topicPreferencesHolder
             .observeCircleAvatars()
-            .subscribe {
+            .onEach {
                 viewState.updateTypeAvatarState(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         mainPreferencesHolder
             .observeScrollButtonEnabled()
-            .subscribe {
+            .onEach {
                 viewState.updateScrollButtonState(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         mainPreferencesHolder
             .observeWebViewFontSize()
-            .subscribe {
+            .onEach {
                 viewState.setFontSize(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         templateManager
             .observeThemeType()
-            .subscribe {
+            .onEach {
                 viewState.setStyleType(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         eventsRepository
             .observeEventsTab()
             .debounce(2.seconds)
@@ -193,7 +193,9 @@ class ThemePresenter(
 
     private fun onLoadData(page: ThemePage) {
         if (!page.pagination.hasNext()) {
-            crossScreenInteractor.onLoadTopic(page.id)
+            viewModelScope.launch {
+                crossScreenInteractor.onLoadTopic(page.id)
+            }
         }
         currentPage = page
         viewState.onLoadData(page)

@@ -6,6 +6,8 @@ import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.ui.TemplateManager
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
@@ -26,17 +28,17 @@ class ForumRulesPresenter(
         super.onFirstViewAttach()
         templateManager
             .observeThemeType()
-            .subscribe {
+            .onEach {
                 viewState.setStyleType(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         mainPreferencesHolder
             .observeWebViewFontSize()
-            .subscribe {
+            .onEach {
                 viewState.setFontSize(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
 
         loadData()
     }

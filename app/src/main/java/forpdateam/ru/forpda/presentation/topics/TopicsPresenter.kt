@@ -15,6 +15,8 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
@@ -41,10 +43,10 @@ class TopicsPresenter(
         super.onFirstViewAttach()
         crossScreenInteractor
             .observeTopic()
-            .subscribe {
+            .onEach {
                 markRead(it)
             }
-            .untilDestroy()
+            .launchIn(viewModelScope)
         loadTopics()
     }
 

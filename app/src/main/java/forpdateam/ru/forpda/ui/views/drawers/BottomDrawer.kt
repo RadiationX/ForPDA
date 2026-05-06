@@ -32,7 +32,12 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.BottomMenuAdapter
 import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TabAdapter
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TabSwipeToDeleteCallback
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.math.min
 
 class BottomDrawer(
@@ -63,7 +68,7 @@ class BottomDrawer(
 
     private val tabsAdapter = TabAdapter()
 
-    private val compositeDisposable = CompositeDisposable()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorFixed<View>
 
@@ -184,54 +189,49 @@ class BottomDrawer(
                 }
             })
 
-            compositeDisposable.add(
-                mainPreferencesHolder
-                    .observeShowBottomArrow()
-                    .subscribe {
-                        updateArrowVisible(it)
-                    }
-            )
+            mainPreferencesHolder
+                .observeShowBottomArrow()
+                .onEach {
+                    updateArrowVisible(it)
+                }
+                .launchIn(coroutineScope)
 
-            compositeDisposable.add(
-                menuRepository
-                    .observerMenu()
-                    .subscribe {
-                        it[MenuRepository.group_main]?.let { newItems ->
-                            val mainItems = newItems
-                                .filter { it.id != MenuRepository.item_auth }
-                                .take(min(newItems.size, 4))
-                                .map { MenuMapper.mapToDrawer(it) }
-                            val notExistMainCounters = newItems
-                                .filterNot { newItem ->
-                                    mainItems.indexOfFirst { newItem.id == it.appItem.id } >= 0
-                                }
-                                .filter { it.count > 0 }
-                            otherMenuItem.appItem.count = notExistMainCounters.sumOf { it.count }
-                            localItems = mainItems.plusElement(otherMenuItem)
-                        }
-                        updateMenu()
-                    }
-            )
-
-            compositeDisposable.add(
-                tabNavigator
-                    .observeSubscribers()
-                    .subscribe({
-                        Log.e("lalala", "Menu subscribe")
-                        tabsAdapter.setCurrentFragmentTag(tabNavigator.getCurrentFragment()?.tag)
-                        tabsAdapter.addAll(it)
-                        it.firstOrNull { tabNavigator.tabController.isCurrent(it.tag) }?.also {
-                            Log.e("lalala", "Menu activetab: $it")
-                            val screen = TabHelper.findScreenByFragment(it)
-                            Log.e("lalala", "Menu activescreen: $screen")
-                            findMenuItem(screen)?.also {
-                                selectMenuItem(it)
+            menuRepository
+                .observerMenu()
+                .onEach {
+                    it[MenuRepository.group_main]?.let { newItems ->
+                        val mainItems = newItems
+                            .filter { it.id != MenuRepository.item_auth }
+                            .take(min(newItems.size, 4))
+                            .map { MenuMapper.mapToDrawer(it) }
+                        val notExistMainCounters = newItems
+                            .filterNot { newItem ->
+                                mainItems.indexOfFirst { newItem.id == it.appItem.id } >= 0
                             }
+                            .filter { it.count > 0 }
+                        otherMenuItem.appItem.count = notExistMainCounters.sumOf { it.count }
+                        localItems = mainItems.plusElement(otherMenuItem)
+                    }
+                    updateMenu()
+                }
+                .launchIn(coroutineScope)
+
+            tabNavigator
+                .observeSubscribers()
+                .onEach {
+                    Log.e("lalala", "Menu subscribe")
+                    tabsAdapter.setCurrentFragmentTag(tabNavigator.getCurrentFragment()?.tag)
+                    tabsAdapter.addAll(it)
+                    it.firstOrNull { tabNavigator.tabController.isCurrent(it.tag) }?.also {
+                        Log.e("lalala", "Menu activetab: $it")
+                        val screen = TabHelper.findScreenByFragment(it)
+                        Log.e("lalala", "Menu activescreen: $screen")
+                        findMenuItem(screen)?.also {
+                            selectMenuItem(it)
                         }
-                    }, {
-                        Log.d("lalala", "menu error: ${it.message}")
-                    })
-            )
+                    }
+                }
+                .launchIn(coroutineScope)
         }
     }
 
@@ -287,7 +287,7 @@ class BottomDrawer(
     }
 
     fun destroy() {
-        compositeDisposable.dispose()
+        coroutineScope.cancel()
     }
 
     private fun selectMenuItem(item: DrawerMenuItem) {

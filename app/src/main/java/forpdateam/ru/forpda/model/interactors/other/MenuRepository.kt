@@ -3,14 +3,14 @@ package forpdateam.ru.forpda.model.interactors.other
 import android.content.SharedPreferences
 import android.util.Log
 import com.f2prateek.rx.preferences2.RxSharedPreferences
-import com.jakewharton.rxrelay2.BehaviorRelay
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.presentation.Screen
-import io.reactivex.Observable
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -118,7 +118,7 @@ class MenuRepository(
     private val systemMenu = mutableListOf<AppMenuItem>()
     private val linkMenu = mutableListOf<AppMenuItem>()
 
-    private val menuRelay = BehaviorRelay.create<Map<Int, List<AppMenuItem>>>()
+    private val menuRelay = MutableStateFlow<Map<Int, List<AppMenuItem>>>(emptyMap())
 
     private var localCounters: MessageCounters? = null
 
@@ -179,7 +179,7 @@ class MenuRepository(
         }
     }
 
-    fun observerMenu(): Observable<Map<Int, List<AppMenuItem>>> = menuRelay.hide()
+    fun observerMenu(): Flow<Map<Int, List<AppMenuItem>>> = menuRelay
 
     fun setMainMenuSequence(items: List<AppMenuItem>) {
         mainGroupSequence.clear()
@@ -242,12 +242,10 @@ class MenuRepository(
             }
         }
 
-        menuRelay.accept(
-            mapOf(
-                group_main to mainMenu,
-                group_system to systemMenu,
-                group_link to linkMenu
-            )
+        menuRelay.value = mapOf(
+            group_main to mainMenu,
+            group_system to systemMenu,
+            group_link to linkMenu
         )
     }
 

@@ -11,7 +11,9 @@ import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import io.reactivex.Single
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 
 /**
@@ -87,18 +89,17 @@ class ProfilePresenter(
     }
 
     private fun loadAvatar(profile: ProfileModel) {
-        Single
-            .fromCallable {
-                ImageLoader.getInstance().loadImageSync(profile.user.avatar)
-            }
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
-            .subscribe({
+        viewModelScope.launch {
+            coRunCatching {
+                withContext(Dispatchers.IO){
+                    ImageLoader.getInstance().loadImageSync(profile.user.avatar)
+                }
+            }.onSuccess {
                 viewState.showAvatar(it)
-            }, {
+            }.onFailure {
                 errorHandler.handle(it)
-            })
-            .untilDestroy()
+            }
+        }
     }
 
 }

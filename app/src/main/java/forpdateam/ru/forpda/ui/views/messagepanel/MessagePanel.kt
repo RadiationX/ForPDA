@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
@@ -23,7 +22,12 @@ import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.ui.views.CodeEditor
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.AdvancedPopup
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * Created by radiationx on 07.01.17.
@@ -51,11 +55,12 @@ class MessagePanel(
     private val advancedListeners: MutableList<OnClickListener> = ArrayList()
     private val attachmentsListeners: MutableList<OnClickListener> = ArrayList()
     private val sendListeners: MutableList<OnClickListener> = ArrayList()
-     var messageField: CodeEditor? = null
+    var messageField: CodeEditor? = null
     private var panelBehavior: MessagePanelBehavior? = null
     private var advancedPopup: AdvancedPopup? = null
     var attachmentsPopup: AttachmentsPopup? = null
         private set
+
     @JvmField
     val fragmentContainer: ViewGroup
     private var sendProgress: ProgressBar? = null
@@ -69,7 +74,7 @@ class MessagePanel(
     private var params: CoordinatorLayout.LayoutParams? = null
     private var isMonospace = true
     private val mainPreferencesHolder = get().Di().mainPreferencesHolder
-    private val disposables = CompositeDisposable()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     init {
         isMonospace = mainPreferencesHolder.getEditorMonospace()
@@ -152,14 +157,14 @@ class MessagePanel(
             }
         })
         messageField!!.setTypeface(if (isMonospace) Typeface.MONOSPACE else Typeface.DEFAULT)
-        disposables.add(
-            mainPreferencesHolder
-                .observeEditorMonospace()
-                .subscribe { value: Boolean ->
-                    isMonospace = value
-                    messageField!!.setTypeface(if (isMonospace) Typeface.MONOSPACE else Typeface.DEFAULT)
-                }
-        )
+
+        mainPreferencesHolder
+            .observeEditorMonospace()
+            .onEach { value: Boolean ->
+                isMonospace = value
+                messageField!!.setTypeface(if (isMonospace) Typeface.MONOSPACE else Typeface.DEFAULT)
+            }
+            .launchIn(coroutineScope)
     }
 
     fun disableBehavior() {
@@ -309,9 +314,7 @@ class MessagePanel(
 
     fun onDestroy() {
         if (advancedPopup != null) advancedPopup!!.onDestroy()
-        if (!disposables.isDisposed) {
-            disposables.dispose()
-        }
+        coroutineScope.cancel()
     }
 
     fun onPause() {
