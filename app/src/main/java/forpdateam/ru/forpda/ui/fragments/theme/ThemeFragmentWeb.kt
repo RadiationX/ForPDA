@@ -11,6 +11,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.lifecycle.lifecycleScope
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
@@ -24,6 +25,7 @@ import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 /**
@@ -97,12 +99,22 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
                 menu.clear()
 
                 menu.add(0, R.id.action_mode_item_copy, 0, R.string.copy)
-                    .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_content_copy))
+                    .setIcon(
+                        App.getVecDrawable(
+                            requireContext(),
+                            R.drawable.ic_toolbar_content_copy
+                        )
+                    )
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
                 if (!authHolder.get().isAuth() || presenter.canQuote()) {
                     menu.add(0, R.id.action_mode_item_quote, 0, R.string.quote)
-                        .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_quote_post))
+                        .setIcon(
+                            App.getVecDrawable(
+                                requireContext(),
+                                R.drawable.ic_toolbar_quote_post
+                            )
+                        )
                         .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
                 }
 
@@ -176,7 +188,13 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
 
     override fun updateView(page: ThemePage) {
         super.updateView(page)
-        webView.loadDataWithBaseURL("https://4pda.to/forum/", page.html?.value.orEmpty(), "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL(
+            "https://4pda.to/forum/",
+            page.html?.value.orEmpty(),
+            "text/html",
+            "utf-8",
+            null
+        )
         webView.updatePaddingBottom()
     }
 
@@ -210,7 +228,9 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
 
     @JavascriptInterface
     fun callbackUpdateHistoryHtml(value: String) {
-        runInUiThread(Runnable { presenter.updateHistoryLastHtml(value, webView.scrollY) })
+        viewLifecycleOwner.lifecycleScope.launch {
+            presenter.updateHistoryLastHtml(value, webView.scrollY)
+        }
     }
 
     override fun onDestroyView() {

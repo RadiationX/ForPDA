@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
@@ -27,6 +28,7 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
+import kotlinx.coroutines.launch
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -97,7 +99,13 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
     }
 
     override fun showData(data: ForumRules) {
-        webView.loadDataWithBaseURL("https://4pda.to/forum/", data.html.orEmpty(), "text/html", "utf-8", null)
+        webView.loadDataWithBaseURL(
+            "https://4pda.to/forum/",
+            data.html.orEmpty(),
+            "text/html",
+            "utf-8",
+            null
+        )
     }
 
     override fun setStyleType(type: String) {
@@ -110,11 +118,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
 
     @JavascriptInterface
     fun copyRule(text: String) {
-        if (context == null)
-            return
-        runInUiThread(Runnable {
-            if (context == null)
-                return@Runnable
+        viewLifecycleOwner.lifecycleScope.launch {
             AlertDialog.Builder(requireContext())
                 .setMessage("Скопировать правило в буфер обмена?")
                 .setPositiveButton(R.string.ok) { _, _ ->
@@ -122,7 +126,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .show()
-        })
+        }
     }
 
     private fun addSearchOnPageItem(menu: Menu) {

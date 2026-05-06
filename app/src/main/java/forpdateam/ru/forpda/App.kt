@@ -19,6 +19,7 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.Messenger
 import android.os.PowerManager
 import android.preference.PreferenceManager
@@ -168,7 +169,7 @@ class App : Application() {
             .resetViewBeforeLoading(true)
             .cacheOnDisk(true)
             .bitmapConfig(Bitmap.Config.ARGB_8888)
-            .handler(Handler())
+            .handler(Handler(Looper.getMainLooper()))
             .displayer(FadeInBitmapDisplayer(500, true, true, false))
 
         fun initImageLoader(context: Context) {

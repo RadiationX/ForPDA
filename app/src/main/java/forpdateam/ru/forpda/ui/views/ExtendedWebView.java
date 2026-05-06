@@ -311,7 +311,7 @@ public class ExtendedWebView extends NestedWebView implements IBase {
 
     public void tryPlayClickEffect() {
         try {
-            audioManager.playSoundEffect(SoundEffectConstants.CLICK);
+            audioManager.playSoundEffect(AudioManager.FX_KEY_CLICK);
         } catch (Exception ignore) {
         }
     }

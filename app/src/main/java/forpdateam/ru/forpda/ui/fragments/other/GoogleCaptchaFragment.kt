@@ -2,10 +2,10 @@ package forpdateam.ru.forpda.ui.fragments.other
 
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
@@ -14,6 +14,8 @@ import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
@@ -78,15 +80,17 @@ class GoogleCaptchaFragment : TabFragment() {
     }
 
     private fun onResponse() {
-        Toast.makeText(App.getContext(), "Приложение будет перезапущено", Toast.LENGTH_SHORT).show()
-        Handler().postDelayed({
+        viewLifecycleOwner.lifecycleScope.launch {
+            Toast.makeText(App.getContext(), "Приложение будет перезапущено", Toast.LENGTH_SHORT)
+                .show()
+            delay(1000)
             val activity = App.getActivity()
             if (activity == null) {
                 Toast.makeText(App.getContext(), "Перезапустите приложение", Toast.LENGTH_SHORT)
                     .show()
-                return@postDelayed
+                return@launch
             }
             MainActivity.restartApplication(activity)
-        }, 1000)
+        }
     }
 }

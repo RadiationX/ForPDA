@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -73,9 +71,6 @@ fun <T : ViewBinding> TabFragment.tabToolbarBinding(
 open class TabFragment(
     @LayoutRes private val contentLayoutId: Int = 0
 ) : MvpAppCompatFragment(R.layout.fragment_base) {
-
-    private val mHandler = Handler(Looper.getMainLooper())
-    private lateinit var mUiThread: Thread
 
     val configuration = TabConfiguration()
 
@@ -192,7 +187,6 @@ open class TabFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainActivity.tabNavigator.subscribe(this)
-        mUiThread = Thread.currentThread()
         Log.d(LOG_TAG, "onCreate " + this)
 
         savedInstanceState?.also {
@@ -435,14 +429,6 @@ open class TabFragment(
 
     protected open fun attachWebView(webView: ExtendedWebView) {
         this.attachedWebView = webView
-    }
-
-    fun runInUiThread(action: Runnable) {
-        if (Thread.currentThread() === mUiThread) {
-            action.run()
-        } else {
-            mHandler.post(action)
-        }
     }
 
     protected fun startRefreshing() {

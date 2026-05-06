@@ -17,8 +17,6 @@ class ScrollAwareFABBehavior(
     context: Context?,
     attrs: AttributeSet?
 ) : CoordinatorLayout.Behavior<FloatingActionButton>(context, attrs) {
-    private val handler = Handler()
-    private val currentRunnable: Runnable? = null
     private val interpolator: Interpolator = AccelerateDecelerateInterpolator()
 
 

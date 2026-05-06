@@ -2,8 +2,6 @@ package forpdateam.ru.forpda.ui.views.messagepanel.attachments
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.os.Handler
-import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +21,9 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.ui.views.drawers.adapters.AttachmentListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.AttachmentSelectorListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 /**
@@ -232,16 +233,10 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private var name: TextView
         private var attributes: TextView
         private var description: View
-        private val handler: Handler = @SuppressLint("HandlerLeak")
-        object : Handler() {
-            override fun handleMessage(msg: Message) {
-                updateProgress(msg.obj as Int)
-            }
-        }
         private var progressListener = IWebClient.ProgressListener { percent ->
-            handler.sendMessage(handler.obtainMessage().apply {
-                obj = percent
-            })
+            GlobalScope.launch(Dispatchers.Main) {
+                updateProgress(percent)
+            }
         }
 
         init {

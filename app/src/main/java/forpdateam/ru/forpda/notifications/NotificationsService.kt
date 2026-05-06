@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.notifications
 
 import android.R
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,12 +9,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.os.Message
-import android.os.Messenger
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -42,7 +37,6 @@ import kotlin.math.min
  * Created by radiationx on 31.07.17.
  */
 class NotificationsService : Service() {
-    private val myMessenger = Messenger(IncomingHandler())
     private var lastHardCheckTime: Long = 0
 
     private val avatarRepository = get().Di().avatarRepository
@@ -51,19 +45,8 @@ class NotificationsService : Service() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    override fun onBind(intent: Intent): IBinder? {
-        Log.v(LOG_TAG, "onBind")
-        return myMessenger.binder
-    }
-
-    override fun onRebind(intent: Intent) {
-        Log.v(LOG_TAG, "onRebind")
-        super.onRebind(intent)
-    }
-
-    override fun onUnbind(intent: Intent): Boolean {
-        Log.v(LOG_TAG, "onUnbind")
-        return true
+    override fun onBind(p0: Intent?): IBinder? {
+        return null
     }
 
     override fun onCreate() {
@@ -471,13 +454,6 @@ class NotificationsService : Service() {
         return ""
     }
 
-    @SuppressLint("HandlerLeak")
-    internal inner class IncomingHandler : Handler() {
-        override fun handleMessage(msg: Message) {
-            Toast.makeText(applicationContext, "" + msg.data, Toast.LENGTH_SHORT).show()
-        }
-    }
-
     companion object {
         private val LOG_TAG = NotificationsService::class.java.simpleName
         private const val CHANNEL_DEFAULT_ID = "forpda_channel_default"
@@ -501,7 +477,6 @@ class NotificationsService : Service() {
                     CHECK_LAST_EVENTS
                 )
                 getContext().startService(intent)
-                getContext().bindService(intent, get().serviceConnection, BIND_AUTO_CREATE)
             } catch (ignore: Exception) {
             }
         }

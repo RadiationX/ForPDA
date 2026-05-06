@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.views
 
 import android.content.Context
 import android.graphics.Color
-import android.os.Handler
 import android.text.Editable
 import android.text.Spannable
 import android.text.TextWatcher
@@ -15,6 +14,11 @@ import android.view.View
 import android.widget.ScrollView
 import androidx.appcompat.widget.AppCompatEditText
 import forpdateam.ru.forpda.common.Html
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.math.max
@@ -39,11 +43,7 @@ class CodeEditor : AppCompatEditText {
         )
     }
 
-    private val updateHandler = Handler()
-    private val updateRunnable = Runnable {
-        val e = text
-        highlightWithoutChange(e!!)
-    }
+    private var updateJob: Job? = null
 
     private var updateDelay = 500
     private var modified = true
@@ -138,7 +138,11 @@ class CodeEditor : AppCompatEditText {
         if (!modified) {
             return
         }
-        updateHandler.postDelayed(updateRunnable, updateDelay.toLong())
+        updateJob = GlobalScope.launch(Dispatchers.Main) {
+            delay(updateDelay.toLong())
+            val e = text
+            highlightWithoutChange(e!!)
+        }
     }
 
     private fun setSyntaxColors() {
@@ -148,7 +152,8 @@ class CodeEditor : AppCompatEditText {
     }
 
     private fun cancelUpdate() {
-        updateHandler.removeCallbacks(updateRunnable)
+        updateJob?.cancel()
+        updateJob = null
     }
 
     private fun highlightWithoutChange(e: Editable) {

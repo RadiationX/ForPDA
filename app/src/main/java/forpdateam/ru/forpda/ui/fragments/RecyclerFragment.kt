@@ -1,13 +1,16 @@
 package forpdateam.ru.forpda.ui.fragments
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.AppBarLayout
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBaseListBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by radiationx on 14.08.17.
@@ -59,7 +62,10 @@ abstract class RecyclerFragment : TabFragment(R.layout.fragment_base_list), TabT
     }
 
     protected fun listScrollTop() {
-        Handler().postDelayed({ recyclerView.smoothScrollToPosition(0) }, 225)
+        GlobalScope.launch(Dispatchers.Main) {
+            delay(225)
+            recyclerView.smoothScrollToPosition(0)
+        }
     }
 
     override fun toggleScrollTop() {

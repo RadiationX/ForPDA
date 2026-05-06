@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.client
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.entity.common.AuthData
@@ -35,7 +33,6 @@ class Client(
     private val countersHolder: CountersHolder
 ) : IWebClient {
     private val clientCookies: MutableMap<String, Cookie> = HashMap()
-    private val observerHandler = Handler(Looper.getMainLooper())
     private val privateHeaders: List<String> =
         ArrayList(mutableListOf("pass_hash", "session_id", "auth_key", "password"))
     private val mobileCookie = Cookie.parse("https://4pda.to/".toHttpUrl(), "ngx_mb=1;")
