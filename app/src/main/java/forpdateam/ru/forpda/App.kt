@@ -55,15 +55,12 @@ import forpdateam.ru.forpda.notifications.NotificationsJob
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator
 import forpdateam.ru.forpda.notifications.NotificationsService
 import forpdateam.ru.forpda.ui.fragments.TabFragment
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.plugins.RxJavaPlugins
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import java.io.IOException
 import java.io.InputStream
@@ -282,16 +279,6 @@ class App : Application() {
         YandexMetrica.activate(applicationContext, config)
         YandexMetrica.enableActivityAutoTracking(this)
 
-
-        RxJavaPlugins.setErrorHandler { throwable: Throwable ->
-            Log.d(
-                "SUKA",
-                "RxJavaPlugins errorHandler $throwable"
-            )
-            throwable.printStackTrace()
-            YandexMetrica.reportError("Крит " + throwable.message, throwable)
-        }
-
         dependencies
             .mainPreferencesHolder
             .observeThemeMode()
@@ -372,30 +359,25 @@ class App : Application() {
         registerReceiver(WakeUpReceiver(), wakeUpFilter)
 
         //На каких-то диких калькуляторах может быть ANR, поэтому в фоновый поток
-        Observable
-            .fromCallable {
-                JobConfig.addLogger { priority: Int, tag: String, message: String, t: Throwable? ->
-                    Log.e(
-                        "JobLogger",
-                        "Job: pr=$priority; t=$tag; m=$message; th=$t"
-                    )
-                }
-                JobConfig.setLogcatEnabled(false)
-                JobManager.create(this).addJobCreator(NotificationsJobCreator())
-                JobManager.instance().cancelAllForTag(NotificationsJob.TAG)
-                JobRequest.Builder(NotificationsJob.TAG)
-                    .setPeriodic(TimeUnit.MINUTES.toMillis(16L)) //only non periodic
-                    //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
-                    .setRequiresCharging(false)
-                    .setRequiresDeviceIdle(false)
-                    .setRequiredNetworkType(JobRequest.NetworkType.ANY)
-                    .build()
-                    .schedule()
-                true
+        GlobalScope.launch(Dispatchers.Default) {
+            JobConfig.addLogger { priority: Int, tag: String, message: String, t: Throwable? ->
+                Log.e(
+                    "JobLogger",
+                    "Job: pr=$priority; t=$tag; m=$message; th=$t"
+                )
             }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            JobConfig.setLogcatEnabled(false)
+            JobManager.create(this).addJobCreator(NotificationsJobCreator())
+            JobManager.instance().cancelAllForTag(NotificationsJob.TAG)
+            JobRequest.Builder(NotificationsJob.TAG)
+                .setPeriodic(TimeUnit.MINUTES.toMillis(16L)) //only non periodic
+                //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
+                .build()
+                .schedule()
+        }
 
         Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time))
 

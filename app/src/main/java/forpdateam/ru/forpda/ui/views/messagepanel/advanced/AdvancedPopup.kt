@@ -15,7 +15,12 @@ import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * Created by radiationx on 07.01.17.
@@ -27,7 +32,8 @@ class AdvancedPopup(private val context: Context, private val messagePanel: Mess
     private var stateListener: StateListener? = null
 
     private val dimensionsProvider = get().Di().dimensionsProvider
-    private val disposables = CompositeDisposable()
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     init {
         val popupView = View.inflate(context, R.layout.message_panel_advanced, null)
@@ -74,26 +80,18 @@ class AdvancedPopup(private val context: Context, private val messagePanel: Mess
             if (popupWindow.isShowing) hidePopup()
             else showPopup()
         }
-        disposables.add(
-            dimensionsProvider
-                .observeDimensions()
-                .subscribe { dimensions: Dimensions ->
-                    if (messagePanel != null) {
-                        messagePanel.doOnLayout {
-                            if (messagePanel != null) {
-                                updateDimens(dimensions)
-                            }
-                        }
-                    }
+        dimensionsProvider
+            .observeDimensions()
+            .onEach { dimensions: Dimensions ->
+                messagePanel.doOnLayout {
                     updateDimens(dimensions)
                 }
-        )
+                updateDimens(dimensions)
+            }
+            .launchIn(coroutineScope)
     }
 
     private fun updateDimens(dimensions: Dimensions) {
-        if (popupWindow == null || messagePanel == null) {
-            return
-        }
         if (dimensions.isKeyboardShow()) {
             popupWindow.height = dimensions.savedKeyboardHeight
             popupWindow.update()
@@ -203,7 +201,7 @@ class AdvancedPopup(private val context: Context, private val messagePanel: Mess
 
     fun onDestroy() {
         //fragmentContainer.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
-        disposables.dispose()
+        coroutineScope.cancel()
         hidePopup()
     }
 

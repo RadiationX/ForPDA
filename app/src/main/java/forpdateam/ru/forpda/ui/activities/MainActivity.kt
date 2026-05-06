@@ -15,6 +15,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.doOnLayout
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
@@ -31,10 +32,11 @@ import forpdateam.ru.forpda.ui.DimensionHelper
 import forpdateam.ru.forpda.ui.activities.updatechecker.SimpleUpdateChecker
 import forpdateam.ru.forpda.ui.navigation.TabNavigator
 import forpdateam.ru.forpda.ui.views.drawers.BottomDrawer
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -53,7 +55,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
 
     val tabNavigator = TabNavigator(this, R.id.fragments_container)
     private val dimensionsProvider = App.get().Di().dimensionsProvider
-    private val disposables = CompositeDisposable()
     private val notificationPreferencesRepository = App.get().Di().notificationPreferencesHolder
     private val mainPreferencesRepository = App.get().Di().mainPreferencesHolder
     private val checkerRepository = App.get().Di().checkerRepository
@@ -89,21 +90,17 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
             checkWebView = intent.getBooleanExtra(ARG_CHECK_WEBVIEW, checkWebView)
         }
         if (checkWebView) {
-            disposables.add(Single
-                .fromCallable { App.get().isWebViewFound(this) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { aBoolean ->
-                    if (!aBoolean) {
-                        startActivity(
-                            Intent(
-                                App.getContext(),
-                                WebVewNotFoundActivity::class.java
-                            )
-                        )
-                        finish()
-                    }
-                })
+            lifecycleScope.launch {
+                val webviewFound = withContext(Dispatchers.Default) {
+                    App.get().isWebViewFound(this@MainActivity)
+                }
+                if (webviewFound) {
+                    return@launch
+                }
+                val intent = Intent(App.getContext(), WebVewNotFoundActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
 
 
@@ -171,15 +168,14 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
             defaultKeyboardHeight
         )
 
-        disposables.add(
-            dimensionsProvider
-                .observeDimensions()
-                .subscribe { dimensions ->
-                    binding.bottomMenuRecycler.doOnLayout {
-                        binding.fragmentsContainer.also { updateDimens(dimensions) }
-                    }
+        dimensionsProvider
+            .observeDimensions()
+            .onEach { dimensions ->
+                binding.bottomMenuRecycler.doOnLayout {
+                    binding.fragmentsContainer.also { updateDimens(dimensions) }
                 }
-        )
+            }
+            .launchIn(lifecycleScope)
 
         if (notificationPreferencesRepository.getUpdateEnabled()) {
             updateChecker.checkUpdate()
@@ -188,7 +184,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-         tabNavigator.onRestoreInstanceState(savedInstanceState)
+        tabNavigator.onRestoreInstanceState(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -199,13 +195,14 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     override fun showFirstStartAnimation() {
         val height = resources.getDimensionPixelSize(R.dimen.dp48)
         firstStartAnimator =
-            ObjectAnimator.ofFloat(binding.bottomSheet2, "translationY", 0f, -height.toFloat(), 0f).apply {
-                interpolator = EasingInterpolator(Ease.BOUNCE_IN_OUT)
-                startDelay = 500
-                duration = 1500
-                repeatCount = 2
-                start()
-            }
+            ObjectAnimator.ofFloat(binding.bottomSheet2, "translationY", 0f, -height.toFloat(), 0f)
+                .apply {
+                    interpolator = EasingInterpolator(Ease.BOUNCE_IN_OUT)
+                    startDelay = 500
+                    duration = 1500
+                    repeatCount = 2
+                    start()
+                }
     }
 
     private fun cancelStartAnimation() {
@@ -217,7 +214,10 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         binding.fragmentsContainer.apply {
             val pb =
                 dimensions.keyboardHeight + if (dimensions.isKeyboardShow() || dimensions.isFakeKeyboardShow) 0 else binding.bottomMenuRecycler.height
-            Log.e("lalala", "Post Dim: $dimensions, bmr=${binding.bottomMenuRecycler.height}, pb=$pb")
+            Log.e(
+                "lalala",
+                "Post Dim: $dimensions, bmr=${binding.bottomMenuRecycler.height}, pb=$pb"
+            )
             setPadding(
                 paddingLeft,
                 paddingTop,
@@ -283,7 +283,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     override fun onDestroy() {
         Log.d(LOG_TAG, "onDestroy")
         super.onDestroy()
-        disposables.dispose()
         bottomDrawer.destroy()
         updateChecker.cancel()
     }

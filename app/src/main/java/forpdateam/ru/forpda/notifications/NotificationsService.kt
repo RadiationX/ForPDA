@@ -28,8 +28,6 @@ import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.spannedFromHtml
 import forpdateam.ru.forpda.ui.activities.MainActivity
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -52,11 +50,6 @@ class NotificationsService : Service() {
     private val notificationPreferencesHolder = get().Di().notificationPreferencesHolder
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    protected var disposables: CompositeDisposable = CompositeDisposable()
-
-    private fun addToDisposable(disposable: Disposable) {
-        disposables.add(disposable)
-    }
 
     override fun onBind(intent: Intent): IBinder? {
         Log.v(LOG_TAG, "onBind")
@@ -75,41 +68,34 @@ class NotificationsService : Service() {
 
     override fun onCreate() {
         Log.i(LOG_TAG, "onCreate")
-        addToDisposable(
-            notificationPreferencesHolder
-                .observeFavEnabled()
-                .subscribe { enabled: Boolean ->
-                    if (enabled) {
-                        coroutineScope.launch {
-                            eventsRepository.updateEvents(NotificationEvent.Source.THEME)
-                        }
-                    }
+        notificationPreferencesHolder
+            .observeFavEnabled()
+            .onEach { enabled: Boolean ->
+                if (enabled) {
+                    eventsRepository.updateEvents(NotificationEvent.Source.THEME)
                 }
-        )
+            }
+            .launchIn(coroutineScope)
 
-        addToDisposable(
-            notificationPreferencesHolder
-                .observeQmsEnabled()
-                .subscribe { enabled: Boolean ->
-                    if (enabled) {
-                        coroutineScope.launch {
-                            eventsRepository.updateEvents(NotificationEvent.Source.QMS)
-                        }
-                    }
+        notificationPreferencesHolder
+            .observeQmsEnabled()
+            .onEach { enabled: Boolean ->
+                if (enabled) {
+                    eventsRepository.updateEvents(NotificationEvent.Source.QMS)
                 }
-        )
+            }
+            .launchIn(coroutineScope)
 
-        addToDisposable(
-            notificationPreferencesHolder
-                .observeMainLimit()
-                .subscribe { limit: Long ->
-                    Log.d(
-                        LOG_TAG,
-                        "NEW timer period $limit"
-                    )
-                    eventsRepository.setTimerPeriod(limit)
-                }
-        )
+        notificationPreferencesHolder
+            .observeMainLimit()
+            .onEach { limit: Long ->
+                Log.d(
+                    LOG_TAG,
+                    "NEW timer period $limit"
+                )
+                eventsRepository.setTimerPeriod(limit)
+            }
+            .launchIn(coroutineScope)
 
         eventsRepository
             .observeEvents()
@@ -187,9 +173,10 @@ class NotificationsService : Service() {
                         ImageLoader.getInstance().loadImageSync("assets://av.png")
                     }
                 }.mapCatching { bitmap ->
-                    withContext(Dispatchers.Default){
+                    withContext(Dispatchers.Default) {
                         val res = getContext().resources
-                        val height = res.getDimension(R.dimen.notification_large_icon_height).toInt()
+                        val height =
+                            res.getDimension(R.dimen.notification_large_icon_height).toInt()
                         val width = res.getDimension(R.dimen.notification_large_icon_width).toInt()
 
                         centerCrop(bitmap, width, height, 1.0f).let {

@@ -2,9 +2,7 @@ package forpdateam.ru.forpda.ui.fragments.auth
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.EditorInfo
@@ -95,7 +93,6 @@ class AuthFragment : TabFragment(R.layout.fragment_auth), AuthView {
         App.get().Di().authRepository,
         App.get().Di().profileRepository,
         App.get().Di().router,
-        App.get().Di().schedulers,
         App.get().Di().authHolder,
         App.get().Di().errorHandler,
         App.get().Di().systemLinkHandler

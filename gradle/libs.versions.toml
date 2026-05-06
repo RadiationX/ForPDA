@@ -5,6 +5,9 @@ android-material-design-colors = "3.0.0"
 android-plugin = "8.13.2"
 android-simple-tooltip = "0.2.0"
 appcompat = "1.2.0"
+androidx-activity = "1.11.0"
+androidx-fragment = "1.8.9"
+androidx-lifecycle = "2.9.4"
 atv = "1.2.9"
 cardview = "1.0.0"
 cicerone = "7.1"
@@ -42,6 +45,11 @@ kotlin-coroutines = "1.10.2"
 [libraries]
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlin-coroutines-rx2 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2", version.ref = "kotlin-coroutines" }
+androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
+androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 adapterdelegates3 = { module = "com.hannesdorfmann:adapterdelegates3", version.ref = "adapterdelegates3" }
 android-job = { module = "com.evernote:android-job", version.ref = "android-job" }
 android-material-design-colors = { module = "com.wada811:android-material-design-colors", version.ref = "android-material-design-colors" }

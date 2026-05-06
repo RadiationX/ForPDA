@@ -13,7 +13,6 @@ import com.github.terrakok.cicerone.Command
 import com.github.terrakok.cicerone.Forward
 import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.Replace
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.activities.SettingsActivity
@@ -21,7 +20,6 @@ import forpdateam.ru.forpda.ui.activities.WebVewNotFoundActivity
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.activities.updatechecker.UpdateCheckerActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONObject
@@ -37,11 +35,9 @@ class TabNavigator(
 
     private val fragmentManager by lazy { activity.supportFragmentManager }
     val tabController by lazy { TabController() }
-    private val compositeDisposable = CompositeDisposable()
-    private val schedulers = App.get().Di().schedulers
 
     private val subscribers = mutableListOf<TabFragment>()
-    private val subscribersRelay = MutableStateFlow<List<TabFragment>>(subscribers)
+    private val subscribersState = MutableStateFlow<List<TabFragment>>(subscribers)
 
     init {
 
@@ -64,21 +60,21 @@ class TabNavigator(
     fun subscribe(tab: TabFragment) {
         Log.e("TabNavigator", "subscribe $tab")
         subscribers.add(tab)
-        subscribersRelay.value = subscribers
+        subscribersState.value = subscribers
     }
 
     fun unsubscribe(tab: TabFragment) {
         Log.e("TabNavigator", "unsubscribe $tab")
         subscribers.remove(tab)
-        subscribersRelay.value = subscribers
+        subscribersState.value = subscribers
     }
 
     fun notifyUpdate(tab: TabFragment) {
         Log.e("TabNavigator", "notifyUpdate $tab")
-        subscribersRelay.value = subscribers
+        subscribersState.value = subscribers
     }
 
-    fun observeSubscribers(): Flow<List<TabFragment>> = subscribersRelay
+    fun observeSubscribers(): Flow<List<TabFragment>> = subscribersState
 
     fun getCurrentFragment(): TabFragment? {
         return tabController.getCurrent()?.let {
@@ -157,7 +153,7 @@ class TabNavigator(
         }
 
         transaction.commit()
-        subscribersRelay.value = subscribers
+        subscribersState.value = subscribers
     }
 
     private fun getByTag(tag: String): TabFragment? {

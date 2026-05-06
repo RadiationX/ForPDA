@@ -14,11 +14,11 @@ class CheckerRepository(
     private val patternProvider: IPatternProvider
 ) {
 
-    private val currentDataRelay = MutableStateFlow<UpdateData?>(null)
+    private val currentDataState = MutableStateFlow<UpdateData?>(null)
 
     suspend fun checkUpdate(force: Boolean = false): UpdateData {
-        val updateData = if (!force && currentDataRelay.value != null)
-            currentDataRelay.value!!
+        val updateData = if (!force && currentDataState.value != null)
+            currentDataState.value!!
         else
             checkerApi.checkUpdate()
         Log.e(
@@ -29,7 +29,7 @@ class CheckerRepository(
             val patterns = checkerApi.loadPatterns()
             patternProvider.update(patterns)
         }
-        currentDataRelay.value = updateData
+        currentDataState.value = updateData
         return updateData
     }
 

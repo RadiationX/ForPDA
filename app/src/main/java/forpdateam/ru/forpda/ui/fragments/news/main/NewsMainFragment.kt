@@ -37,8 +37,7 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
         App.get().Di().authHolder,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().schedulers
+        App.get().Di().errorHandler
     )
 
     init {

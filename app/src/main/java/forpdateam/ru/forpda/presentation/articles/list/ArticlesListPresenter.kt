@@ -8,7 +8,6 @@ import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.remote.api.news.Constants
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.news.NewsRepository
@@ -32,8 +31,7 @@ class ArticlesListPresenter(
     private val authHolder: AuthHolder,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler,
-    private val schedulers: SchedulersProvider
+    private val errorHandler: IErrorHandler
 ) : BasePresenter<ArticlesListView>() {
     private val category = Constants.NEWS_CATEGORY_ROOT
     private var currentPage = 1

@@ -14,6 +14,7 @@ import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
@@ -25,6 +26,7 @@ import forpdateam.ru.forpda.common.LinkMovementMethod
 import forpdateam.ru.forpda.databinding.FragmentProfileBinding
 import forpdateam.ru.forpda.databinding.ToolbarProfileBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.presentation.profile.ProfilePresenter
 import forpdateam.ru.forpda.presentation.profile.ProfileView
 import forpdateam.ru.forpda.ui.activities.MainActivity
@@ -33,9 +35,9 @@ import forpdateam.ru.forpda.ui.fragments.profile.adapters.ProfileAdapter
 import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import forpdateam.ru.forpda.ui.views.ScrimHelper
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -85,8 +87,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
         App.get().Di().profileRepository,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().schedulers
+        App.get().Di().errorHandler
     )
 
     init {
@@ -278,26 +279,24 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
         }
         lastBlurWidth = blurWidth
         lastBlurHeight = blurHeight
-        val disposable = Single
-            .fromCallable {
-                val overlay =
-                    BitmapUtils.centerCrop(bkg, lastBlurWidth, lastBlurHeight, scaleFactor)
-                BitmapUtils.fastBlur(overlay, radius, true)
-                overlay
-            }
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ bitmap ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            coRunCatching {
+                withContext(Dispatchers.Default) {
+                    val overlay =
+                        BitmapUtils.centerCrop(bkg, lastBlurWidth, lastBlurHeight, scaleFactor)
+                    BitmapUtils.fastBlur(overlay, radius, true)
+                }
+            }.onSuccess {
                 toolbarBackground.startAnimation(AlphaAnimation(0f, 1f).apply {
                     duration = 500
                     fillAfter = true
                 })
-                toolbarBackground.setImageBitmap(bitmap)
-            }, { throwable ->
-                throwable.printStackTrace()
-                Toast.makeText(App.getContext(), throwable.message, Toast.LENGTH_SHORT).show()
-            })
-        addToDisposable(disposable)
+                toolbarBackground.setImageBitmap(it)
+            }.onFailure {
+                it.printStackTrace()
+                Toast.makeText(App.getContext(), it.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onDestroyView() {

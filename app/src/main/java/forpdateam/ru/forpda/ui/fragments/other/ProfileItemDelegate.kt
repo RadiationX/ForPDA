@@ -5,22 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
-import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemOtherProfileBinding
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ProfileListItem
-import io.reactivex.disposables.CompositeDisposable
 
 class ProfileItemDelegate(
     private val clickListener: (ForumUser?) -> Unit,
     private val logoutClickListener: () -> Unit
 ) : AdapterDelegate<MutableList<ListItem>>() {
-    //private val dimensionsProvider = App.injections.dimensionsProvider
-    private var compositeDisposable = CompositeDisposable()
 
     override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
         items[position] is ProfileListItem
@@ -44,7 +41,6 @@ class ProfileItemDelegate(
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
         super.onViewDetachedFromWindow(holder)
-        compositeDisposable.dispose()
     }
 
     inner class ViewHolder(

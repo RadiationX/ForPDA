@@ -118,7 +118,7 @@ class MenuRepository(
     private val systemMenu = mutableListOf<AppMenuItem>()
     private val linkMenu = mutableListOf<AppMenuItem>()
 
-    private val menuRelay = MutableStateFlow<Map<Int, List<AppMenuItem>>>(emptyMap())
+    private val menuState = MutableStateFlow<Map<Int, List<AppMenuItem>>>(emptyMap())
 
     private var localCounters: MessageCounters? = null
 
@@ -179,7 +179,7 @@ class MenuRepository(
         }
     }
 
-    fun observerMenu(): Flow<Map<Int, List<AppMenuItem>>> = menuRelay
+    fun observerMenu(): Flow<Map<Int, List<AppMenuItem>>> = menuState
 
     fun setMainMenuSequence(items: List<AppMenuItem>) {
         mainGroupSequence.clear()
@@ -242,7 +242,7 @@ class MenuRepository(
             }
         }
 
-        menuRelay.value = mapOf(
+        menuState.value = mapOf(
             group_main to mainMenu,
             group_system to systemMenu,
             group_link to linkMenu

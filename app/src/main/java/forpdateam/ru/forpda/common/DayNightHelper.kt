@@ -42,14 +42,14 @@ class DayNightHelper(
         }
     }
 
-    private val isNightRelay = MutableStateFlow(defaultMode)
+    private val isNightState = MutableStateFlow(defaultMode)
 
-    fun observeIsNight(): StateFlow<Boolean> = isNightRelay.asStateFlow()
+    fun observeIsNight(): StateFlow<Boolean> = isNightState.asStateFlow()
 
-    fun isNight(): Boolean = isNightRelay.value
+    fun isNight(): Boolean = isNightState.value
 
     fun setIsNight(isNight: Boolean) {
-        isNightRelay.value = isNight
+        isNightState.value = isNight
     }
 
 }

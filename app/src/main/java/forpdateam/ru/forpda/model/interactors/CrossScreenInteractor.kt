@@ -5,25 +5,25 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 class CrossScreenInteractor {
 
-    private val announceRelay = MutableSharedFlow<Int>()
-    private val articleRelay = MutableSharedFlow<Int>()
-    private val deviceRelay = MutableSharedFlow<Int>()
-    private val profileRelay = MutableSharedFlow<Int>()
-    private val chatRelay = MutableSharedFlow<Int>()
-    private val topicRelay = MutableSharedFlow<Int>()
+    private val announceFlow = MutableSharedFlow<Int>()
+    private val articleflow = MutableSharedFlow<Int>()
+    private val deviceflow = MutableSharedFlow<Int>()
+    private val profileflow = MutableSharedFlow<Int>()
+    private val chatflow = MutableSharedFlow<Int>()
+    private val topicflow = MutableSharedFlow<Int>()
 
-    fun observeAnnounce(): Flow<Int> = announceRelay
-    fun observeArticle(): Flow<Int> = articleRelay
-    fun observeDevice(): Flow<Int> = deviceRelay
-    fun observeProfile(): Flow<Int> = profileRelay
-    fun observeChat(): Flow<Int> = chatRelay
-    fun observeTopic(): Flow<Int> = topicRelay
+    fun observeAnnounce(): Flow<Int> = announceFlow
+    fun observeArticle(): Flow<Int> = articleflow
+    fun observeDevice(): Flow<Int> = deviceflow
+    fun observeProfile(): Flow<Int> = profileflow
+    fun observeChat(): Flow<Int> = chatflow
+    fun observeTopic(): Flow<Int> = topicflow
 
-    suspend fun onLoadAnnounce(id: Int) = announceRelay.emit(id)
-    suspend fun onLoadArticle(id: Int) = articleRelay.emit(id)
-    suspend fun onLoadDevice(id: Int) = deviceRelay.emit(id)
-    suspend fun onLoadProfile(id: Int) = profileRelay.emit(id)
-    suspend fun onLoadChat(id: Int) = chatRelay.emit(id)
-    suspend fun onLoadTopic(id: Int) = topicRelay.emit(id)
+    suspend fun onLoadAnnounce(id: Int) = announceFlow.emit(id)
+    suspend fun onLoadArticle(id: Int) = articleflow.emit(id)
+    suspend fun onLoadDevice(id: Int) = deviceflow.emit(id)
+    suspend fun onLoadProfile(id: Int) = profileflow.emit(id)
+    suspend fun onLoadChat(id: Int) = chatflow.emit(id)
+    suspend fun onLoadTopic(id: Int) = topicflow.emit(id)
 
 }

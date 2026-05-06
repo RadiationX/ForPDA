@@ -22,7 +22,6 @@ import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.NetworkStateProvider
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import forpdateam.ru.forpda.model.data.cache.forum.ForumCache
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
@@ -91,7 +90,6 @@ import forpdateam.ru.forpda.model.repository.search.SearchRepository
 import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
 import forpdateam.ru.forpda.model.repository.topics.TopicsRepository
 import forpdateam.ru.forpda.model.system.AppNetworkState
-import forpdateam.ru.forpda.model.system.AppSchedulers
 import forpdateam.ru.forpda.model.system.ExternalStorage
 import forpdateam.ru.forpda.model.system.PatternProvider
 import forpdateam.ru.forpda.presentation.ErrorHandler
@@ -144,7 +142,6 @@ class Dependencies internal constructor(
 
     val errorHandler: IErrorHandler by lazy { ErrorHandler(router) }
     val networkState: NetworkStateProvider by lazy { AppNetworkState(context) }
-    val schedulers: SchedulersProvider by lazy { AppSchedulers() }
 
     val externalStorage: ExternalStorageProvider by lazy { ExternalStorage() }
 

@@ -7,7 +7,6 @@ import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.SchedulersProvider
 import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
@@ -26,7 +25,6 @@ class AuthPresenter(
     private val authRepository: AuthRepository,
     private val profileRepository: ProfileRepository,
     private val router: TabRouter,
-    private val schedulers: SchedulersProvider,
     private val authHolder: AuthHolder,
     private val errorHandler: IErrorHandler,
     private val systemLinkHandler: ISystemLinkHandler

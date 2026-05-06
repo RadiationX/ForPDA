@@ -3,7 +3,8 @@ package forpdateam.ru.forpda.model.preferences
 import android.content.SharedPreferences
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.rx2.asFlow
 
 class NotificationPreferencesHolder(
     private val sharedPreferences: SharedPreferences
@@ -68,34 +69,35 @@ class NotificationPreferencesHolder(
     }
 
 
-    fun observeMainEnabled(): Observable<Boolean> = mainEnabled.asObservable()
+    fun observeMainEnabled(): Flow<Boolean> = mainEnabled.asObservable().asFlow()
 
-    fun observeMainSoundEnabled(): Observable<Boolean> = mainSoundEnabled.asObservable()
+    fun observeMainSoundEnabled(): Flow<Boolean> = mainSoundEnabled.asObservable().asFlow()
 
-    fun observeMainVibrationEnabled(): Observable<Boolean> = mainVibrationEnabled.asObservable()
+    fun observeMainVibrationEnabled(): Flow<Boolean> = mainVibrationEnabled.asObservable().asFlow()
 
-    fun observeMainIndicatorEnabled(): Observable<Boolean> = mainIndicatorEnabled.asObservable()
+    fun observeMainIndicatorEnabled(): Flow<Boolean> = mainIndicatorEnabled.asObservable().asFlow()
 
-    fun observeMainAvatarsEnabled(): Observable<Boolean> = mainAvatarsEnabled.asObservable()
+    fun observeMainAvatarsEnabled(): Flow<Boolean> = mainAvatarsEnabled.asObservable().asFlow()
 
-    fun observeMainLimit(): Observable<Long> = mainLimit.asObservable()
-        .map { it.toLong() * 1000 }
+    fun observeMainLimit(): Flow<Long> = mainLimit.asObservable()
+        .map { it.toLong() * 1000 }.asFlow()
 
-    fun observeFavEnabled(): Observable<Boolean> = favEnabled.asObservable()
+    fun observeFavEnabled(): Flow<Boolean> = favEnabled.asObservable().asFlow()
 
-    fun observeFavOnlyImportant(): Observable<Boolean> = favOnlyImportant.asObservable()
+    fun observeFavOnlyImportant(): Flow<Boolean> = favOnlyImportant.asObservable().asFlow()
 
-    fun observeFavLiveTab(): Observable<Boolean> = favLiveTab.asObservable()
+    fun observeFavLiveTab(): Flow<Boolean> = favLiveTab.asObservable().asFlow()
 
-    fun observeQmsEnabled(): Observable<Boolean> = qmsEnabled.asObservable()
+    fun observeQmsEnabled(): Flow<Boolean> = qmsEnabled.asObservable().asFlow()
 
-    fun observeMentionsEnabled(): Observable<Boolean> = mentionsEnabled.asObservable()
+    fun observeMentionsEnabled(): Flow<Boolean> = mentionsEnabled.asObservable().asFlow()
 
-    fun observeUpdateEnabled(): Observable<Boolean> = updateEnabled.asObservable()
+    fun observeUpdateEnabled(): Flow<Boolean> = updateEnabled.asObservable().asFlow()
 
-    fun observeDataQmsEvents(): Observable<Set<String>> = dataQmsEvents.asObservable()
+    fun observeDataQmsEvents(): Flow<Set<String>> = dataQmsEvents.asObservable().asFlow()
 
-    fun observeDataFavoritesEvents(): Observable<Set<String>> = dataFavoritesEvents.asObservable()
+    fun observeDataFavoritesEvents(): Flow<Set<String>> =
+        dataFavoritesEvents.asObservable().asFlow()
 
 
     fun setDataQmsEvents(value: Set<String>) = dataQmsEvents.set(value)

@@ -1,16 +1,16 @@
 package forpdateam.ru.forpda.ui
 
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Created by radiationx on 09.01.18.
  */
 class DimensionsProvider {
-    private val relay = BehaviorRelay.createDefault(DimensionHelper.Dimensions())
-    fun observeDimensions(): Observable<DimensionHelper.Dimensions> = relay
-    fun getDimensions(): DimensionHelper.Dimensions = relay.value!!
+    private val dimensionsState = MutableStateFlow(DimensionHelper.Dimensions())
+    fun observeDimensions(): Flow<DimensionHelper.Dimensions> = dimensionsState
+    fun getDimensions(): DimensionHelper.Dimensions = dimensionsState.value
     fun update(dimensions: DimensionHelper.Dimensions) {
-        relay.accept(dimensions)
+        dimensionsState.value = dimensions
     }
 }

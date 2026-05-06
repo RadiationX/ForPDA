@@ -48,17 +48,13 @@ class EventsRepository(
     )
 
     private var checkTimerJob: Job? = null
-    private val timerRunnable = {
-
-    }
 
     private val eventsHistory = mutableMapOf<Int, NotificationEvent>()
 
-
-    private val notifyRelay = MutableSharedFlow<NotificationEvent>()
-    private val notifyStackRelay = MutableSharedFlow<List<NotificationEvent>>()
-    private val cancelRelay = MutableSharedFlow<NotificationEvent>()
-    private val notifyTabRelay = MutableSharedFlow<TabNotification>()
+    private val notifyFlow = MutableSharedFlow<NotificationEvent>()
+    private val notifyStackFlow = MutableSharedFlow<List<NotificationEvent>>()
+    private val cancelFlow = MutableSharedFlow<NotificationEvent>()
+    private val notifyTabFlow = MutableSharedFlow<TabNotification>()
 
     private val controllerListener: WebSocketController.Listener =
         object : WebSocketController.Listener() {
@@ -139,13 +135,13 @@ class EventsRepository(
         timerPeriod = notificationPreferencesHolder.getMainLimit()
     }
 
-    fun observeEvents(): Flow<NotificationEvent> = notifyRelay
+    fun observeEvents(): Flow<NotificationEvent> = notifyFlow
 
-    fun observeEventsStack(): Flow<List<NotificationEvent>> = notifyStackRelay
+    fun observeEventsStack(): Flow<List<NotificationEvent>> = notifyStackFlow
 
-    fun observeCancel(): Flow<NotificationEvent> = cancelRelay
+    fun observeCancel(): Flow<NotificationEvent> = cancelFlow
 
-    fun observeEventsTab(): Flow<TabNotification> = notifyTabRelay
+    fun observeEventsTab(): Flow<TabNotification> = notifyTabFlow
 
     fun setTimerPeriod(period: Long) {
         timerPeriod = period
@@ -217,7 +213,7 @@ class EventsRepository(
         if (!checkNotify(event, event.source)) {
             return
         }
-        notifyRelay.emit(event)
+        notifyFlow.emit(event)
     }
 
     private suspend fun sendNotifications(
@@ -236,12 +232,12 @@ class EventsRepository(
         if (!checkNotify(null, tSource)) {
             return
         }
-        notifyStackRelay.emit(events)
+        notifyStackFlow.emit(events)
     }
 
     private suspend fun notifyTabs(event: TabNotification) {
         Log.d("SUKA", "notifyTabs")
-        notifyTabRelay.emit(event)
+        notifyTabFlow.emit(event)
     }
 
     private fun checkNotify(event: NotificationEvent?, source: NotificationEvent.Source): Boolean {
@@ -275,21 +271,21 @@ class EventsRepository(
         if (event.fromTheme()) {
             //Убираем уведомления избранного
             if (oldEvent != null && event.messageId >= oldEvent.messageId) {
-                cancelRelay.emit(oldEvent)
+                cancelFlow.emit(oldEvent)
                 delete = true
             }
 
             //Убираем уведомление упоминаний
             oldEvent = eventsHistory[event.notifyId(NotificationEvent.Type.MENTION)]
             if (oldEvent != null) {
-                cancelRelay.emit(oldEvent)
+                cancelFlow.emit(oldEvent)
                 delete = true
             }
         } else if (event.fromQms()) {
 
             //Убираем уведомление кумыса
             if (oldEvent != null) {
-                cancelRelay.emit(oldEvent)
+                cancelFlow.emit(oldEvent)
                 delete = true
             }
         }
@@ -324,7 +320,7 @@ class EventsRepository(
                 }
             }
             if (!exist) {
-                cancelRelay.emit(oldEvent)
+                cancelFlow.emit(oldEvent)
                 eventsHistory.remove(oldEvent.notifyId(NotificationEvent.Type.NEW))
                 notifyTabs(
                     TabNotification(

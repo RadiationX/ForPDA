@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.model
 
 
-import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 
 /**

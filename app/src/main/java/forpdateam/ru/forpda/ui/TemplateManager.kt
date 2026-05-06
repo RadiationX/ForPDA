@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.ui
 import android.content.Context
 import biz.source_code.miniTemplator.MiniTemplator
 import forpdateam.ru.forpda.common.DayNightHelper
-import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.ByteArrayInputStream

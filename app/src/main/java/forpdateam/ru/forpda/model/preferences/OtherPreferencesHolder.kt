@@ -3,7 +3,8 @@ package forpdateam.ru.forpda.model.preferences
 import android.content.SharedPreferences
 import com.f2prateek.rx.preferences2.RxSharedPreferences
 import forpdateam.ru.forpda.common.Preferences
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.rx2.asFlow
 
 class OtherPreferencesHolder(
     private val sharedPreferences: SharedPreferences
@@ -39,20 +40,21 @@ class OtherPreferencesHolder(
         rxPreferences.getBoolean(Preferences.Other.TOOLTIP_MESSAGE_PANEL_SORTING, true)
     }
 
-    fun observeAppFirstStart(): Observable<Boolean> = appFirstStart.asObservable()
+    fun observeAppFirstStart(): Flow<Boolean> = appFirstStart.asObservable().asFlow()
 
-    fun observeAppVersionsHistory(): Observable<String> = appVersionsHistory.asObservable()
+    fun observeAppVersionsHistory(): Flow<String> = appVersionsHistory.asObservable().asFlow()
 
-    fun observeSearchSettings(): Observable<String> = searchSettings.asObservable()
+    fun observeSearchSettings(): Flow<String> = searchSettings.asObservable().asFlow()
 
-    fun observeMessagePanelBbCodes(): Observable<String> = messagePanelBbCodes.asObservable()
+    fun observeMessagePanelBbCodes(): Flow<String> = messagePanelBbCodes.asObservable().asFlow()
 
-    fun observeShowReportWarning(): Observable<Boolean> = showReportWarning.asObservable()
+    fun observeShowReportWarning(): Flow<Boolean> = showReportWarning.asObservable().asFlow()
 
-    fun observeTooltipSearchSettings(): Observable<Boolean> = tooltipSearchSettings.asObservable()
+    fun observeTooltipSearchSettings(): Flow<Boolean> =
+        tooltipSearchSettings.asObservable().asFlow()
 
-    fun observeTooltipMessagePanelSorting(): Observable<Boolean> =
-        tooltipMessagePanelSorting.asObservable()
+    fun observeTooltipMessagePanelSorting(): Flow<Boolean> =
+        tooltipMessagePanelSorting.asObservable().asFlow()
 
 
     fun setAppFirstStart(value: Boolean) = appFirstStart.set(value)

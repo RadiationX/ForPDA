@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
@@ -43,6 +44,8 @@ import forpdateam.ru.forpda.ui.fragments.devdb.device.specs.SpecsFragment
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import java.util.Locale
@@ -166,16 +169,15 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
         })
 
         if (configuration.isFitSystemWindow) {
-            disposables.add(
-                dimensionsProvider
-                    .observeDimensions()
-                    .subscribe { dimensions ->
-                        toolbarContent.doOnLayout {
-                            updateDimens(dimensions)
-                        }
+            dimensionsProvider
+                .observeDimensions()
+                .onEach { dimensions ->
+                    toolbarContent.doOnLayout {
                         updateDimens(dimensions)
                     }
-            )
+                    updateDimens(dimensions)
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 

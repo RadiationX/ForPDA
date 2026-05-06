@@ -24,7 +24,12 @@ import forpdateam.ru.forpda.App.Companion.getToolBarHeight
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * Created by radiationx on 03.03.17.
@@ -34,7 +39,7 @@ class PaginationHelper(context: Activity) {
     private var tabLayoutInToolbar: TabLayout? = null
 
     private val dimensionsProvider = get().Di().dimensionsProvider
-    private val disposables = CompositeDisposable()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     var currentPage: Int = 0
         private set
@@ -83,20 +88,19 @@ class PaginationHelper(context: Activity) {
         target.addView(tabLayout, target.indexOfChild(target.findViewById(R.id.toolbar)))
         tabLayoutInToolbar = tabLayout
         if (enablePadding) {
-            disposables.add(
-                dimensionsProvider
-                    .observeDimensions()
-                    .subscribe { dimensions: Dimensions ->
-                        if (tabLayoutInToolbar != null) {
-                            tabLayoutInToolbar!!.doOnLayout {
-                                if (tabLayoutInToolbar != null) {
-                                    updateDimens(dimensions)
-                                }
+            dimensionsProvider
+                .observeDimensions()
+                .onEach { dimensions: Dimensions ->
+                    if (tabLayoutInToolbar != null) {
+                        tabLayoutInToolbar!!.doOnLayout {
+                            if (tabLayoutInToolbar != null) {
+                                updateDimens(dimensions)
                             }
                         }
-                        updateDimens(dimensions)
                     }
-            )
+                    updateDimens(dimensions)
+                }
+                .launchIn(coroutineScope)
         }
 
         val params = target.layoutParams as AppBarLayout.LayoutParams
@@ -253,7 +257,7 @@ class PaginationHelper(context: Activity) {
     }
 
     fun destroy() {
-        disposables.dispose()
+        coroutineScope.cancel()
     }
 
     interface PaginationListener {

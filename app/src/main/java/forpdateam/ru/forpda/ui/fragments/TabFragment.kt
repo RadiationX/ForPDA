@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewStub
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -18,20 +17,20 @@ import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.CallSuper
-import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewbinding.ViewBinding
+import by.kirich1409.viewbindingdelegate.ViewBindingProperty
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import by.kirich1409.viewbindingdelegate.ViewBindingProperty
-import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBaseBinding
@@ -40,8 +39,8 @@ import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.ScrollAwareFABBehavior
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moxy.MvpAppCompatFragment
 
 /**
@@ -126,7 +125,6 @@ open class TabFragment(
         ContentController(contentProgress, additionalContent, fragmentContent)
     }
 
-    protected var disposables = CompositeDisposable()
     protected var networkState = App.get().Di().networkState
     private val countersHolder = App.get().Di().countersHolder
     private val dimensionsProvider = App.get().Di().dimensionsProvider
@@ -173,10 +171,6 @@ open class TabFragment(
     fun setTabTitle(tabTitle: String) {
         this.tabTitleText = tabTitle
         mainActivity.tabNavigator.notifyUpdate(this)
-    }
-
-    protected fun addToDisposable(disposable: Disposable) {
-        disposables.add(disposable)
     }
 
     //False - можно закрывать
@@ -269,16 +263,15 @@ open class TabFragment(
         setSubtitle(subtitleText)
         addBaseToolbarMenu(toolbar.menu)
 
-        disposables.add(
-            dimensionsProvider
-                .observeDimensions()
-                .subscribe { dimensions ->
-                    toolbar.doOnLayout {
-                        updateDimens(dimensions)
-                    }
+        dimensionsProvider
+            .observeDimensions()
+            .onEach { dimensions ->
+                toolbar.doOnLayout {
                     updateDimens(dimensions)
                 }
-        )
+                updateDimens(dimensions)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun updateDimens(dimensions: DimensionHelper.Dimensions) {
@@ -430,9 +423,6 @@ open class TabFragment(
         mainActivity.tabNavigator.unsubscribe(this)
         attachedWebView = null
         Log.d(LOG_TAG, "onDestroyView " + this)
-        if (!disposables.isDisposed) {
-            disposables.dispose()
-        }
         hideKeyboard()
         contentController.destroy()
     }
