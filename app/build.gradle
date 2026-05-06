@@ -28,7 +28,6 @@ android {
 
     def versionBuild = -1
     def versionPropsFile = file('version.properties')
-    compileSdk 34
     if (versionPropsFile.canRead()) {
         Properties versionProps = new Properties()
         versionProps.load(new FileInputStream(versionPropsFile))
@@ -38,13 +37,14 @@ android {
         versionProps.store(versionPropsFile.newWriter(), null)
     }
 
+    compileSdk 36
 
     defaultConfig {
         applicationId "ru.forpdateam.forpda"
         versionCode versionNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch} (${versionBuild})"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 36
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         ndk {

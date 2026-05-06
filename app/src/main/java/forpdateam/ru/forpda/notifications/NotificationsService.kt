@@ -143,7 +143,6 @@ class NotificationsService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.i(LOG_TAG, "onDestroy")
-        if (!disposables.isDisposed) disposables.dispose()
         coroutineScope.cancel()
     }
 

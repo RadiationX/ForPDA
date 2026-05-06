@@ -367,7 +367,7 @@ class App : Application() {
                 )
             }
             JobConfig.setLogcatEnabled(false)
-            JobManager.create(this).addJobCreator(NotificationsJobCreator())
+            JobManager.create(this@App).addJobCreator(NotificationsJobCreator())
             JobManager.instance().cancelAllForTag(NotificationsJob.TAG)
             JobRequest.Builder(NotificationsJob.TAG)
                 .setPeriodic(TimeUnit.MINUTES.toMillis(16L)) //only non periodic
