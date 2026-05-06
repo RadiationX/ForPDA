@@ -30,10 +30,6 @@ preference-ktx = "1.1.1"
 realm-kotlin = "3.3.3"
 recyclerview = "1.1.0"
 roundedimageview = "2.3.0"
-rx-preferences = "2.0.1"
-rxandroid = "2.1.1"
-rxjava = "2.2.21"
-rxrelay = "2.1.1"
 sectioned-recyclerview = "0.5.0"
 spectrum = "0.7.1"
 tagsoup = "1.2.1"
@@ -44,7 +40,6 @@ kotlin-coroutines = "1.10.2"
 
 [libraries]
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
-kotlin-coroutines-rx2 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2", version.ref = "kotlin-coroutines" }
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "androidx-lifecycle" }
@@ -82,10 +77,6 @@ permissionsdispatcher = { module = "com.github.permissions-dispatcher:permission
 permissionsdispatcher-processor = { module = "com.github.permissions-dispatcher:permissionsdispatcher-processor", version.ref = "permissionsdispatcher" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
-rx-preferences = { module = "com.f2prateek.rx.preferences2:rx-preferences", version.ref = "rx-preferences" }
-rxandroid = { module = "io.reactivex.rxjava2:rxandroid", version.ref = "rxandroid" }
-rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
-rxrelay = { module = "com.jakewharton.rxrelay2:rxrelay", version.ref = "rxrelay" }
 sectioned-recyclerview = { module = "com.afollestad:sectioned-recyclerview", version.ref = "sectioned-recyclerview" }
 spectrum = { module = "com.thebluealliance:spectrum", version.ref = "spectrum" }
 tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }

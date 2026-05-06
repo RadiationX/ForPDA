@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.model.preferences
 import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.rx2.asFlow
 
 class TopicPreferencesHolder(
     private val preferences: FlowPreferences

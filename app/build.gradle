@@ -118,7 +118,6 @@ android {
     packagingOptions {
         resources {
             excludes += ['META-INF/DEPENDENCIES.txt', 'META-INF/LICENSE.txt', 'META-INF/NOTICE.txt', 'META-INF/NOTICE', 'META-INF/LICENSE', 'META-INF/DEPENDENCIES', 'META-INF/notice.txt', 'META-INF/license.txt', 'META-INF/dependencies.txt']
-            pickFirsts += ['META-INF/rxjava.properties']
         }
     }
     splits {
@@ -142,7 +141,6 @@ kotlin {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation libs.kotlin.coroutines.core
-    implementation libs.kotlin.coroutines.rx2
 
 
     implementation(libs.androidx.activity)
@@ -165,8 +163,6 @@ dependencies {
     implementation libs.okhttp.urlconnection
     implementation libs.okhttp.logging.interceptor
     //implementation 'com.annimon:stream:1.1.4'
-    implementation libs.rxandroid
-    implementation libs.rxjava
     implementation libs.universal.image.loader
     implementation libs.circularprogressview
     implementation libs.circleimageview
@@ -187,13 +183,11 @@ dependencies {
     implementation libs.moxy.androidx
     kapt libs.moxy.compiler
 
-    implementation libs.rxrelay
     implementation libs.kotlin.stdlib
 
     implementation libs.cicerone
     implementation libs.adapterdelegates3
     implementation libs.easinginterpolator
-    implementation libs.rx.preferences
 
     implementation libs.realm.base
 
