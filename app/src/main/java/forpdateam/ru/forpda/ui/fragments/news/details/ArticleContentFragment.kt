@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
+import androidx.lifecycle.lifecycleScope
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
@@ -15,6 +16,7 @@ import forpdateam.ru.forpda.presentation.articles.detail.content.ArticleContentV
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
+import kotlinx.coroutines.launch
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -94,18 +96,14 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
 
     @JavascriptInterface
     fun toComments() {
-        if (context == null)
-            return
-        webView.runInUiThread {
+        viewLifecycleOwner.lifecycleScope.launch {
             (parentFragment as NewsDetailsFragment).fragmentsPager.currentItem = 1
         }
     }
 
     @JavascriptInterface
     fun sendPoll(id: String, answer: String, from: String) {
-        if (context == null)
-            return
-        webView.runInUiThread {
+        viewLifecycleOwner.lifecycleScope.launch {
             val pollId = Integer.parseInt(id)
             val answers = answer.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val answersId = IntArray(answers.size)

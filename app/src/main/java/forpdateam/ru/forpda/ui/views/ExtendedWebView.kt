@@ -1,188 +1,176 @@
-package forpdateam.ru.forpda.ui.views;
+package forpdateam.ru.forpda.ui.views
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Rect;
-import android.media.AudioManager;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.ActionMode;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SoundEffectConstants;
-import android.view.View;
-import android.view.ViewParent;
-import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
-import android.webkit.WebSettings;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.common.webview.DialogsHelper;
-import forpdateam.ru.forpda.common.webview.jsinterfaces.IBase;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
+import android.media.AudioManager
+import android.os.Build
+import android.os.Handler
+import android.os.Message
+import android.util.AttributeSet
+import android.util.Log
+import android.view.ActionMode
+import android.view.ContextMenu
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.webkit.JavascriptInterface
+import android.webkit.ValueCallback
+import android.webkit.WebSettings
+import android.webkit.WebViewClient
+import forpdateam.ru.forpda.App.Companion.getColorFromAttr
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.webview.DialogsHelper
+import forpdateam.ru.forpda.common.webview.jsinterfaces.IBase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.util.LinkedList
+import java.util.Queue
 
 /**
  * Created by radiationx on 01.11.16.
  */
+class ExtendedWebView : NestedWebView, IBase {
+    var direction: Int = DIRECTION_NONE
+        private set
+    private var relativeScale = 100
+    private var fontScale = 1.0f
+    private var paddingBottom = 0
+    var isJsReady: Boolean = false
 
-public class ExtendedWebView extends NestedWebView implements IBase {
-    private final static String LOG_TAG = ExtendedWebView.class.getSimpleName();
-    public final static int DIRECTION_NONE = 0;
-    public final static int DIRECTION_UP = 1;
-    public final static int DIRECTION_DOWN = 2;
-    private int direction = DIRECTION_NONE;
-    private int relativeScale = 100;
-    private float fontScale = 1.0f;
-    private int paddingBottom = 0;
-    boolean isJsReady = false;
+    private var onDirectionListener: OnDirectionListener? = null
+    private var onScrollListener: OnScrollListener? = null
+    private var audioManager: AudioManager? = null
+    private val actionsForWebView: Queue<Runnable> = LinkedList<Runnable>()
+    private var jsLifeCycleListener: JsLifeCycleListener? = null
 
-    private OnDirectionListener onDirectionListener;
-    private OnScrollListener onScrollListener;
-    private AudioManager audioManager;
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private Thread mUiThread;
-    private final Queue<Runnable> actionsForWebView = new LinkedList<>();
-    private JsLifeCycleListener jsLifeCycleListener;
+    private var dialogsHelper: DialogsHelper? = null
 
-    private DialogsHelper dialogsHelper;
-
-    public interface OnDirectionListener {
-        void onDirectionChanged(int direction);
+    fun interface OnDirectionListener {
+        fun onDirectionChanged(direction: Int)
     }
 
-    public interface OnScrollListener {
-        void onScrollChange(int scrollX, int scrollY, int oldScrollX, int oldScrollY);
+    fun interface OnScrollListener {
+        fun onScrollChange(scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int)
     }
 
-    public ExtendedWebView(Context context) {
-        super(context);
-        init();
+    constructor(context: Context?) : super(context) {
+        init()
     }
 
-    public ExtendedWebView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+        init()
     }
 
-    public ExtendedWebView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init()
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.e(LOG_TAG, "onPause " + this);
+    override fun onPause() {
+        super.onPause()
+        Log.e(LOG_TAG, "onPause " + this)
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e(LOG_TAG, "onResume " + this);
+    override fun onResume() {
+        super.onResume()
+        Log.e(LOG_TAG, "onResume " + this)
     }
 
-    public void setOnDirectionListener(OnDirectionListener onDirectionListener) {
-        this.onDirectionListener = onDirectionListener;
+    fun setOnDirectionListener(onDirectionListener: OnDirectionListener?) {
+        this.onDirectionListener = onDirectionListener
     }
 
-    public void setOnScrollListener(OnScrollListener onScrollListener) {
-        this.onScrollListener = onScrollListener;
+    fun setOnScrollListener(onScrollListener: OnScrollListener?) {
+        this.onScrollListener = onScrollListener
     }
 
-    @Override
-    protected void onScrollChanged(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-        super.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);
+    override fun onScrollChanged(scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {
+        super.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY)
         if (onScrollListener != null) {
-            onScrollListener.onScrollChange(scrollX, scrollY, oldScrollX, oldScrollY);
+            onScrollListener!!.onScrollChange(scrollX, scrollY, oldScrollX, oldScrollY)
         }
-        int newDirection = scrollY > oldScrollY ? DIRECTION_DOWN : DIRECTION_UP;
+        val newDirection: Int = if (scrollY > oldScrollY) DIRECTION_DOWN else DIRECTION_UP
         if (newDirection != direction) {
-            direction = newDirection;
+            direction = newDirection
             if (onDirectionListener != null) {
-                onDirectionListener.onDirectionChanged(newDirection);
+                onDirectionListener!!.onDirectionChanged(newDirection)
             }
         }
     }
 
-    public int getDirection() {
-        return direction;
-    }
-
     @SuppressLint("SetJavaScriptEnabled")
-    public void init() {
-        mUiThread = Thread.currentThread();
-        audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        addJavascriptInterface(this, IBase.JS_BASE_INTERFACE);
-        WebSettings settings = getSettings();
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
-        settings.setBuiltInZoomControls(false);
-        settings.setMinimumFontSize(1);
-        settings.setMinimumLogicalFontSize(1);
-        settings.setDefaultFontSize(16);
-        settings.setTextZoom(100);
-        settings.setJavaScriptEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccessFromFileURLs(true);
-        settings.setAllowUniversalAccessFromFileURLs(true);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        setRelativeFontSize(16);
-        setBackgroundColor(App.getColorFromAttr(getContext(), R.attr.background_base));
-        settings.setTextZoom((int) (getResources().getConfiguration().fontScale * 100));
+    fun init() {
+        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        addJavascriptInterface(this, IBase.JS_BASE_INTERFACE)
+        val settings = getSettings()
+        settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+        settings.builtInZoomControls = false
+        settings.minimumFontSize = 1
+        settings.minimumLogicalFontSize = 1
+        settings.defaultFontSize = 16
+        settings.textZoom = 100
+        settings.javaScriptEnabled = true
+        settings.allowFileAccess = true
+        settings.allowContentAccess = true
+        settings.allowFileAccessFromFileURLs = true
+        settings.allowUniversalAccessFromFileURLs = true
+        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        setRelativeFontSize(16)
+        setBackgroundColor(getColorFromAttr(context, R.attr.background_base))
+        settings.textZoom = (resources.configuration.fontScale * 100).toInt()
 
-        Log.e("kokosina", "fontscale " + (getResources().getConfiguration().fontScale) + " : " + getResources().getConfiguration().densityDpi + " : " + getResources().getDisplayMetrics().density + " : " + getResources().getDisplayMetrics().densityDpi + " : " + getResources().getDisplayMetrics().scaledDensity + " : " + getResources().getDisplayMetrics().xdpi);
+        Log.e(
+            "kokosina",
+            "fontscale " + (resources.configuration.fontScale) + " : " + resources.configuration.densityDpi + " : " + resources.displayMetrics.density + " : " + resources.displayMetrics.densityDpi + " : " + resources.displayMetrics.scaledDensity + " : " + resources.displayMetrics.xdpi
+        )
     }
 
-    @Override
-    public void loadData(String data, String mimeType, String encoding) {
-        isJsReady = false;
-        super.loadData(data, mimeType, encoding);
+    override fun loadData(data: String, mimeType: String?, encoding: String?) {
+        isJsReady = false
+        super.loadData(data, mimeType, encoding)
     }
 
-    @Override
-    public void loadDataWithBaseURL(String baseUrl, String data, String mimeType, String encoding, String historyUrl) {
-        isJsReady = false;
-        super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
+    override fun loadDataWithBaseURL(
+        baseUrl: String?,
+        data: String,
+        mimeType: String?,
+        encoding: String?,
+        historyUrl: String?
+    ) {
+        isJsReady = false
+        super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl)
     }
 
-    @Override
-    public void loadUrl(String url) {
-        isJsReady = false;
-        super.loadUrl(url);
+    override fun loadUrl(url: String) {
+        isJsReady = false
+        super.loadUrl(url)
     }
 
-    @Override
-    public void loadUrl(String url, Map<String, String> additionalHttpHeaders) {
-        isJsReady = false;
-        super.loadUrl(url, additionalHttpHeaders);
+    override fun loadUrl(url: String, additionalHttpHeaders: MutableMap<String?, String?>) {
+        isJsReady = false
+        super.loadUrl(url, additionalHttpHeaders)
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        Log.e("kikosina", "onAttachedToWindow");
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.e("kikosina", "onAttachedToWindow")
         //requestFocus();
-        isJsReady = false;
+        isJsReady = false
         /*for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);
         }
         actionsForWebView.clear();*/
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        Log.e("kikosina", "onDetachedFromWindow");
-        isJsReady = false;
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Log.e("kikosina", "onDetachedFromWindow")
+        isJsReady = false
         /*for (Runnable action : actionsForWebView) {
             mHandler.removeCallbacks(action);
         }
@@ -190,318 +178,308 @@ public class ExtendedWebView extends NestedWebView implements IBase {
     }
 
     //@Deprecated
-    @Override
-    public void setInitialScale(int scaleInPercent) {
-        super.setInitialScale(scaleInPercent);
-        Log.d(LOG_TAG, "SET INIT SCALE " + scaleInPercent);
-        setPaddingBottom(paddingBottom);
+    override fun setInitialScale(scaleInPercent: Int) {
+        super.setInitialScale(scaleInPercent)
+        Log.d(LOG_TAG, "SET INIT SCALE " + scaleInPercent)
+        setPaddingBottom(paddingBottom)
     }
 
 
     //0.0f, 1.0f, 2.3f, etc
-    public void setRelativeScale(float scale) {
+    fun setRelativeScale(scale: Float) {
         try {
-            relativeScale = (int) (scale * (getResources().getDisplayMetrics().density * 100));
-            fontScale = scale;
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
+            relativeScale = (scale * (resources.displayMetrics.density * 100)).toInt()
+            fontScale = scale
+        } catch (ignore: Exception) {
+            ignore.printStackTrace()
         }
-        setInitialScale(relativeScale);
+        setInitialScale(relativeScale)
     }
 
-    public void setRelativeFontSize(int fontSize) {
+    fun setRelativeFontSize(fontSize: Int) {
         //setRelativeScale(fontSize / 16f);
-        getSettings().setDefaultFontSize(fontSize);
+        getSettings().defaultFontSize = fontSize
         //fontScale = fontSize / 16f;
-        updatePaddingBottom();
+        updatePaddingBottom()
     }
 
-    public void updatePaddingBottom() {
-        setPaddingBottom(paddingBottom);
+    fun updatePaddingBottom() {
+        setPaddingBottom(paddingBottom)
     }
 
-    public void setPaddingBottom(int padding) {
-        Log.e("kokosina", "setPaddingBottom " + padding + " : " + fontScale + " : " + ((paddingBottom / getResources().getDisplayMetrics().density) * (1 / fontScale)));
-        paddingBottom = padding;
+    fun setPaddingBottom(padding: Int) {
+        Log.e(
+            "kokosina",
+            "setPaddingBottom " + padding + " : " + fontScale + " : " + ((paddingBottom / resources.displayMetrics.density) * (1 / fontScale))
+        )
+        paddingBottom = padding
 
-        evalJs("setPaddingBottom(" + ((paddingBottom / getResources().getDisplayMetrics().density) * (1 / fontScale)) + ");");
+        evalJs("setPaddingBottom(" + ((paddingBottom / resources.displayMetrics.density) * (1 / fontScale)) + ");")
     }
 
-    public void evalJs(String script) {
+    fun evalJs(script: String) {
         //Log.d("EWV", "evalJs: " + script);
         try {
-            evalJs(script, null);
-        } catch (Exception error) {
-            Log.e("ExtendedWebView", "evalJs", error);
-            loadUrl("javascript:" + script);
+            evalJs(script, null)
+        } catch (error: Exception) {
+            Log.e("ExtendedWebView", "evalJs", error)
+            loadUrl("javascript:" + script)
         }
     }
 
-    public void evalJs(String script, ValueCallback<String> resultCallback) {
-        syncWithJs(() -> evaluateJavascript(script, resultCallback));
+    fun evalJs(script: String, resultCallback: ValueCallback<String?>?) {
+        syncWithJs(Runnable { evaluateJavascript(script, resultCallback) })
     }
+
 
     /*
      * JS LIFECYCLE
      * */
-
-
-    @Override
     @JavascriptInterface
-    public void playClickEffect() {
-        runInUiThread(this::tryPlayClickEffect);
+    override fun playClickEffect() {
+        runInUiThread(Runnable { this.tryPlayClickEffect() })
     }
 
-    @Override
     @JavascriptInterface
-    public void domContentLoaded() {
-        runInUiThread(() -> {
-            Log.d(LOG_TAG, "domContentLoaded " + isJsReady);
-            isJsReady = true;
-            for (Runnable action : actionsForWebView) {
+    override fun domContentLoaded() {
+        runInUiThread(Runnable {
+            Log.d(LOG_TAG, "domContentLoaded " + isJsReady)
+            isJsReady = true
+            for (action in actionsForWebView) {
                 try {
-                    runInUiThread(action);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
+                    runInUiThread(action)
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
                 }
             }
-            actionsForWebView.clear();
+            actionsForWebView.clear()
 
-            ArrayList<String> actions = new ArrayList<>();
+            val actions = ArrayList<String>()
             if (jsLifeCycleListener != null) {
                 try {
-                    jsLifeCycleListener.onDomContentComplete(actions);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
+                    jsLifeCycleListener!!.onDomContentComplete(actions)
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
                 }
             }
-            actions.add("nativeEvents.onNativeDomComplete();");
+            actions.add("nativeEvents.onNativeDomComplete();")
 
-            String script = "";
-            for (String action : actions) {
-                script += action;
+            var script: String? = ""
+            for (action in actions) {
+                script += action
             }
-            evalJs(script);
-        });
+            evalJs(script!!)
+        })
     }
 
-    @Override
     @JavascriptInterface
-    public void onPageLoaded() {
-        runInUiThread(() -> {
-            Log.d(LOG_TAG, "onPageLoaded " + isJsReady);
-            ArrayList<String> actions = new ArrayList<>();
+    override fun onPageLoaded() {
+        runInUiThread(Runnable {
+            Log.d(LOG_TAG, "onPageLoaded " + isJsReady)
+            val actions = ArrayList<String>()
             if (jsLifeCycleListener != null) {
                 try {
-                    jsLifeCycleListener.onPageComplete(actions);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
+                    jsLifeCycleListener!!.onPageComplete(actions)
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
                 }
             }
-            actions.add("nativeEvents.onNativePageComplete();");
+            actions.add("nativeEvents.onNativePageComplete();")
 
-            String script = "";
-            for (String action : actions) {
-                script += action;
+            var script: String? = ""
+            for (action in actions) {
+                script += action
             }
-            evalJs(script);
-        });
+            evalJs(script!!)
+        })
     }
 
 
-    public void tryPlayClickEffect() {
+    fun tryPlayClickEffect() {
         try {
-            audioManager.playSoundEffect(AudioManager.FX_KEY_CLICK);
-        } catch (Exception ignore) {
+            audioManager!!.playSoundEffect(AudioManager.FX_KEY_CLICK)
+        } catch (ignore: Exception) {
         }
     }
 
-    public final void runInUiThread(final Runnable action) {
-        //Log.d(LOG_TAG, "runInUiThread " + (Thread.currentThread() == mUiThread));
-        if (Thread.currentThread() == mUiThread) {
-            action.run();
-        } else {
-            mHandler.post(action);
+    fun runInUiThread(action: Runnable) {
+        GlobalScope.launch(Dispatchers.Main.immediate) {
+            action.run()
         }
     }
 
-    public void setJsLifeCycleListener(JsLifeCycleListener jsLifeCycleListener) {
-        this.jsLifeCycleListener = jsLifeCycleListener;
+    fun setJsLifeCycleListener(jsLifeCycleListener: JsLifeCycleListener?) {
+        this.jsLifeCycleListener = jsLifeCycleListener
     }
 
-    public interface JsLifeCycleListener {
-        void onDomContentComplete(final ArrayList<String> actions);
+    interface JsLifeCycleListener {
+        fun onDomContentComplete(actions: ArrayList<String>)
 
-        void onPageComplete(final ArrayList<String> actions);
+        fun onPageComplete(actions: ArrayList<String>)
     }
 
 
-    public void syncWithJs(final Runnable action) {
+    fun syncWithJs(action: Runnable) {
         //Log.d(LOG_TAG, "syncWithJs " + isJsReady);
         if (!isJsReady) {
-            actionsForWebView.add(action);
+            actionsForWebView.add(action)
         } else {
             try {
-                runInUiThread(action);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                runInUiThread(action)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
-
-
 
 
     /*
      * OVERRIDE CONTEXT MENU
      * */
-
     @JavascriptInterface
-    public void onActionModeComplete() {
-        runInUiThread(() -> {
+    fun onActionModeComplete() {
+        runInUiThread(Runnable {
             if (currentActionMode != null) {
-                currentActionMode.finish();
+                currentActionMode!!.finish()
             }
-        });
+        })
     }
 
-    private OnStartActionModeListener actionModeListener;
-    private ActionMode currentActionMode = null;
+    private var actionModeListener: OnStartActionModeListener? = null
+    private var currentActionMode: ActionMode? = null
 
-    public interface OnStartActionModeListener {
-        void onCreate(ActionMode actionMode, ActionMode.Callback callback);
+    interface OnStartActionModeListener {
+        fun onCreate(actionMode: ActionMode, callback: ActionMode.Callback)
 
-        boolean onClick(ActionMode actionMode, MenuItem item);
+        fun onClick(actionMode: ActionMode, item: MenuItem): Boolean
     }
 
-    public void setActionModeListener(OnStartActionModeListener actionModeListener) {
-        this.actionModeListener = actionModeListener;
+    fun setActionModeListener(actionModeListener: OnStartActionModeListener?) {
+        this.actionModeListener = actionModeListener
     }
 
-    public void setDialogsHelper(DialogsHelper dialogsHelper) {
-        this.dialogsHelper = dialogsHelper;
+    fun setDialogsHelper(dialogsHelper: DialogsHelper?) {
+        this.dialogsHelper = dialogsHelper
     }
 
-    @Override
-    public ActionMode startActionMode(ActionMode.Callback callback) {
-        return myActionMode(callback, 0);
+    override fun startActionMode(callback: ActionMode.Callback): ActionMode? {
+        return myActionMode(callback, 0)
     }
 
-    @Override
-    public ActionMode startActionMode(ActionMode.Callback callback, int type) {
-        return myActionMode(callback, type);
+    override fun startActionMode(callback: ActionMode.Callback, type: Int): ActionMode? {
+        return myActionMode(callback, type)
     }
 
-    private ActionMode myActionMode(ActionMode.Callback callback, int type) {
-        ViewParent parent = getParent();
+    private fun myActionMode(callback: ActionMode.Callback, type: Int): ActionMode? {
+        val parent = getParent()
         if (parent == null) {
-            return null;
+            return null
         }
 
-        ActionMode.Callback customCallback = getActionModeCallback(callback);
-        ActionMode actionMode;
+        val customCallback = getActionModeCallback(callback)
+        val actionMode: ActionMode?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            actionMode = super.startActionMode(customCallback, type);
+            actionMode = super.startActionMode(customCallback, type)
         } else {
-            actionMode = super.startActionMode(customCallback);
+            actionMode = super.startActionMode(customCallback)
         }
 
-        currentActionMode = actionMode;
+        currentActionMode = actionMode
         if (actionModeListener != null) {
-            actionModeListener.onCreate(actionMode, customCallback);
+            actionModeListener!!.onCreate(actionMode, customCallback)
         }
-        return actionMode;
+        return actionMode
     }
 
-    private ActionMode.Callback getActionModeCallback(ActionMode.Callback callback) {
+    private fun getActionModeCallback(callback: ActionMode.Callback): ActionMode.Callback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return new ActionMode.Callback2() {
-
-                @Override
-                public void onGetContentRect(ActionMode mode, View view, Rect outRect) {
-                    if (callback instanceof ActionMode.Callback2) {
-                        ((ActionMode.Callback2) callback).onGetContentRect(mode, view, outRect);
+            return object : ActionMode.Callback2() {
+                override fun onGetContentRect(mode: ActionMode?, view: View?, outRect: Rect?) {
+                    if (callback is ActionMode.Callback2) {
+                        callback.onGetContentRect(mode, view, outRect)
                     } else {
-                        super.onGetContentRect(mode, view, outRect);
+                        super.onGetContentRect(mode, view, outRect)
                     }
                 }
 
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    return callback.onCreateActionMode(mode, menu);
+                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                    return callback.onCreateActionMode(mode, menu)
                 }
 
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return callback.onPrepareActionMode(mode, menu);
+                override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                    return callback.onPrepareActionMode(mode, menu)
                 }
 
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    if (actionModeListener != null && actionModeListener.onClick(mode, item)) {
-                        return true;
+                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                    if (actionModeListener != null && actionModeListener!!.onClick(mode, item)) {
+                        return true
                     }
-                    return callback.onActionItemClicked(mode, item);
+                    return callback.onActionItemClicked(mode, item)
                 }
 
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    currentActionMode = null;
-                    callback.onDestroyActionMode(mode);
+                override fun onDestroyActionMode(mode: ActionMode?) {
+                    currentActionMode = null
+                    callback.onDestroyActionMode(mode)
                 }
-            };
+            }
         } else {
-            return new ActionMode.Callback() {
-
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    return callback.onCreateActionMode(mode, menu);
+            return object : ActionMode.Callback {
+                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                    return callback.onCreateActionMode(mode, menu)
                 }
 
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return callback.onPrepareActionMode(mode, menu);
+                override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                    return callback.onPrepareActionMode(mode, menu)
                 }
 
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    if (actionModeListener != null && actionModeListener.onClick(mode, item)) {
-                        return true;
+                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                    if (actionModeListener != null && actionModeListener!!.onClick(mode, item)) {
+                        return true
                     }
-                    return callback.onActionItemClicked(mode, item);
+                    return callback.onActionItemClicked(mode, item)
                 }
 
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    currentActionMode = null;
-                    callback.onDestroyActionMode(mode);
+                override fun onDestroyActionMode(mode: ActionMode?) {
+                    currentActionMode = null
+                    callback.onDestroyActionMode(mode)
                 }
-            };
+            }
         }
     }
 
-    @Override
-    protected void onCreateContextMenu(ContextMenu menu) {
-        super.onCreateContextMenu(menu);
-        requestFocusNodeHref(new Handler(msg -> {
-            HitTestResult result = getHitTestResult();
+    override fun onCreateContextMenu(menu: ContextMenu?) {
+        super.onCreateContextMenu(menu)
+        requestFocusNodeHref(Handler(Handler.Callback { msg: Message? ->
+            val result = getHitTestResult()
             if (dialogsHelper != null) {
-                dialogsHelper.handleContextMenu(getContext(), result.getType(), result.getExtra(), (String) msg.getData().get("url"));
+                dialogsHelper!!.handleContextMenu(
+                    context,
+                    result.type,
+                    result.extra!!,
+                    msg!!.getData().get("url") as String?
+                )
             }
-            return true;
-        }).obtainMessage());
+            true
+        }).obtainMessage())
     }
 
-    public void endWork() {
-        setActionModeListener(null);
-        setWebChromeClient(null);
-        setWebViewClient(null);
-        loadUrl("about:blank");
-        clearHistory();
-        clearSslPreferences();
-        clearDisappearingChildren();
-        clearFocus();
-        clearFormData();
-        clearMatches();
+    fun endWork() {
+        setActionModeListener(null)
+        setWebChromeClient(null)
+        setWebViewClient(WebViewClient())
+        loadUrl("about:blank")
+        clearHistory()
+        clearSslPreferences()
+        clearDisappearingChildren()
+        clearFocus()
+        clearFormData()
+        clearMatches()
+    }
+
+    companion object {
+        private val LOG_TAG: String = ExtendedWebView::class.java.getSimpleName()
+        const val DIRECTION_NONE: Int = 0
+        const val DIRECTION_UP: Int = 1
+        const val DIRECTION_DOWN: Int = 2
     }
 }
