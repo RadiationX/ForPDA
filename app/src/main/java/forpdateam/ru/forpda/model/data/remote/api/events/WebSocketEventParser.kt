@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.events
 
-import forpdateam.ru.forpda.entity.remote.events.InspectorEvents
+import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.map
@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 /**
  * Created by radiationx on 31.07.17.
  */
-class NotificationEventsParserNew {
+class WebSocketEventParser {
 
     fun parseWebSocketEvent(message: String): WebSocketEvent? {
         return webSocketEventPattern.matcher(message).mapOnce { matcher ->
@@ -26,43 +26,6 @@ class NotificationEventsParserNew {
                 SRC_SOURCE_FORUM -> createWebSocketForum(type, sourceId, messageId)
                 else -> null
             }
-        }
-    }
-
-    fun parseFavoritesEvents(response: String): List<InspectorEvents.Theme> {
-        return inspectorFavoritesPattern.matcher(response).map { matcher ->
-            InspectorEvents.Theme(
-                topicId = matcher.group(1).toInt(),
-                sourceTitle = fromHtml(matcher.group(2))!!,
-                msgCount = matcher.group(3).toInt(),
-                user = User.required(
-                    id = matcher.group(4).toInt(),
-                    nick = fromHtml(matcher.group(5))
-                ),
-                timeStamp = matcher.group(6).toInt().toLong(),
-                lastTimeStamp = matcher.group(7).toInt().toLong(),
-                isImportant = matcher.group(8) == "1",
-            )
-        }
-    }
-
-    fun parseQmsEvents(response: String): List<InspectorEvents.Qms> {
-        return inspectorQmsPattern.matcher(response).map { matcher ->
-            val sourceId = matcher.group(1).toInt()
-            var userNick = fromHtml(matcher.group(4))!!
-            if (userNick.isEmpty() && sourceId == 0) {
-                userNick = "Сообщения 4PDA"
-            }
-            InspectorEvents.Qms(
-                themeId = sourceId,
-                sourceTitle = fromHtml(matcher.group(2))!!,
-                user = User.required(
-                    id = matcher.group(3).toInt(),
-                    nick = userNick
-                ),
-                timeStamp = matcher.group(5).toInt().toLong(),
-                msgCount = matcher.group(6).toInt(),
-            )
         }
     }
 
@@ -156,10 +119,6 @@ class NotificationEventsParserNew {
         private const val SRC_SOURCE_QMS = "q"
         private const val SRC_SOURCE_FORUM = "f"
 
-        private val inspectorFavoritesPattern: Pattern =
-            Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)")
-        private val inspectorQmsPattern: Pattern =
-            Pattern.compile("(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)")
         private val webSocketEventPattern: Pattern =
             Pattern.compile("\\[(\\d+),(\\d+),\"([\\s\\S])(\\d+)\",(\\d+),(\\d+)\\]")
     }

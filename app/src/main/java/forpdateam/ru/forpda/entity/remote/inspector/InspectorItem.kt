@@ -1,8 +1,8 @@
-package forpdateam.ru.forpda.entity.remote.events
+package forpdateam.ru.forpda.entity.remote.inspector
 
 import forpdateam.ru.forpda.entity.remote.others.user.User
 
-sealed interface InspectorEvents {
+sealed interface InspectorItem {
 
     data class Theme(
         val topicId: Int,
@@ -12,7 +12,7 @@ sealed interface InspectorEvents {
         val isImportant: Boolean,
         val sourceTitle: String,
         val user: User,
-    ) : InspectorEvents
+    ) : InspectorItem
 
     data class Qms(
         val themeId: Int,
@@ -20,6 +20,6 @@ sealed interface InspectorEvents {
         val msgCount: Int,
         val sourceTitle: String,
         val user: User,
-    ) : InspectorEvents
+    ) : InspectorItem
 
 }
