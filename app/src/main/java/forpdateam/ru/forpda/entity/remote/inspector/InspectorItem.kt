@@ -4,7 +4,7 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 
 sealed interface InspectorItem {
 
-    data class Theme(
+    data class Favorite(
         val topicId: Int,
         val timeStamp: Long,
         val lastTimeStamp: Long,

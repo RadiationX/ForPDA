@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.entity.remote.events
 
 sealed interface WebSocketEvent {
 
-    data class Theme(
+    data class Favorite(
         val type: Type,
         val topicId: Int,
         val postId: Int,
@@ -88,11 +88,11 @@ fun WebSocketEvent.needNotification(): Boolean {
             WebSocketEvent.Site.Type.Read -> false
         }
 
-        is WebSocketEvent.Theme -> when (type) {
-            WebSocketEvent.Theme.Type.New -> true
-            WebSocketEvent.Theme.Type.Read -> false
-            WebSocketEvent.Theme.Type.Mention -> true
-            WebSocketEvent.Theme.Type.HatUpdate -> false
+        is WebSocketEvent.Favorite -> when (type) {
+            WebSocketEvent.Favorite.Type.New -> true
+            WebSocketEvent.Favorite.Type.Read -> false
+            WebSocketEvent.Favorite.Type.Mention -> true
+            WebSocketEvent.Favorite.Type.HatUpdate -> false
         }
     }
 }
@@ -120,11 +120,11 @@ fun WebSocketEvent.needCancelNotification(): Boolean {
             WebSocketEvent.Site.Type.Read -> true
         }
 
-        is WebSocketEvent.Theme -> when (type) {
-            WebSocketEvent.Theme.Type.New -> false
-            WebSocketEvent.Theme.Type.Read -> true
-            WebSocketEvent.Theme.Type.Mention -> false
-            WebSocketEvent.Theme.Type.HatUpdate -> false
+        is WebSocketEvent.Favorite -> when (type) {
+            WebSocketEvent.Favorite.Type.New -> false
+            WebSocketEvent.Favorite.Type.Read -> true
+            WebSocketEvent.Favorite.Type.Mention -> false
+            WebSocketEvent.Favorite.Type.HatUpdate -> false
         }
     }
 }

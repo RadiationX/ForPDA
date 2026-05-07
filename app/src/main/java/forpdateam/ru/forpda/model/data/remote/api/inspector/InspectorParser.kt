@@ -11,9 +11,9 @@ import java.util.regex.Pattern
  */
 class InspectorParser {
 
-    fun parseFavoritesEvents(response: String): List<InspectorItem.Theme> {
+    fun parseFavoritesEvents(response: String): List<InspectorItem.Favorite> {
         return inspectorFavoritesPattern.matcher(response).map { matcher ->
-            InspectorItem.Theme(
+            InspectorItem.Favorite(
                 topicId = matcher.group(1).toInt(),
                 sourceTitle = fromHtml(matcher.group(2))!!,
                 msgCount = matcher.group(3).toInt(),

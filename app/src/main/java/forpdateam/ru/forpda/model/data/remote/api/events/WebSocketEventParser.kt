@@ -1,11 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.events
 
-import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
-import forpdateam.ru.forpda.entity.remote.others.user.User
-import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.extensions.mapOnce
-import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.fromHtml
 import java.util.regex.Pattern
 
 /**
@@ -20,7 +16,7 @@ class WebSocketEventParser {
             val messageId = matcher.group(6).toInt()
             val type = matcher.group(5).toInt()
             return when (matcher.group(3)) {
-                SRC_SOURCE_THEME -> createWebSocketTheme(type, sourceId, messageId)
+                SRC_SOURCE_FAVORITE -> createWebSocketFavorite(type, sourceId, messageId)
                 SRC_SOURCE_SITE -> createWebSocketSite(type, sourceId, messageId)
                 SRC_SOURCE_QMS -> createWebSocketQms(type, sourceId, messageId)
                 SRC_SOURCE_FORUM -> createWebSocketForum(type, sourceId, messageId)
@@ -29,15 +25,15 @@ class WebSocketEventParser {
         }
     }
 
-    private fun createWebSocketTheme(srcType: Int, sourceId: Int, messageId: Int): WebSocketEvent.Theme? {
+    private fun createWebSocketFavorite(srcType: Int, sourceId: Int, messageId: Int): WebSocketEvent.Favorite? {
         val type = when (srcType) {
-            SRC_TYPE_NEW -> WebSocketEvent.Theme.Type.New
-            SRC_TYPE_READ -> WebSocketEvent.Theme.Type.Read
-            SRC_TYPE_MENTION -> WebSocketEvent.Theme.Type.Mention
-            SRC_TYPE_HAT_UPDATE -> WebSocketEvent.Theme.Type.HatUpdate
+            SRC_TYPE_NEW -> WebSocketEvent.Favorite.Type.New
+            SRC_TYPE_READ -> WebSocketEvent.Favorite.Type.Read
+            SRC_TYPE_MENTION -> WebSocketEvent.Favorite.Type.Mention
+            SRC_TYPE_HAT_UPDATE -> WebSocketEvent.Favorite.Type.HatUpdate
             else -> return null
         }
-        return WebSocketEvent.Theme(
+        return WebSocketEvent.Favorite(
             type = type,
             topicId = sourceId,
             postId = messageId
@@ -115,7 +111,7 @@ class WebSocketEventParser {
         private const val SRC_QMS_ACTION_UPLOADING = 1
 
         private const val SRC_SOURCE_SITE = "s"
-        private const val SRC_SOURCE_THEME = "t"
+        private const val SRC_SOURCE_FAVORITE = "t"
         private const val SRC_SOURCE_QMS = "q"
         private const val SRC_SOURCE_FORUM = "f"
 
