@@ -24,6 +24,7 @@ class InspectorParser {
                 timeStamp = matcher.group(6).toInt().toLong(),
                 lastTimeStamp = matcher.group(7).toInt().toLong(),
                 isImportant = matcher.group(8) == "1",
+                rawContent = matcher.group()
             )
         }
     }
@@ -44,6 +45,7 @@ class InspectorParser {
                 ),
                 timeStamp = matcher.group(5).toInt().toLong(),
                 msgCount = matcher.group(6).toInt(),
+                rawContent = matcher.group()
             )
         }
     }

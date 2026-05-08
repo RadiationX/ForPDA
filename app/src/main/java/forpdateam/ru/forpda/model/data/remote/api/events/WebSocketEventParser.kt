@@ -36,7 +36,8 @@ class WebSocketEventParser {
         return WebSocketEvent.Favorite(
             type = type,
             topicId = sourceId,
-            postId = messageId
+            postId = messageId,
+            timeStamp = System.currentTimeMillis()
         )
     }
 
@@ -49,7 +50,8 @@ class WebSocketEventParser {
         return WebSocketEvent.Site(
             type = type,
             postId = sourceId,
-            commentId = messageId
+            commentId = messageId,
+            timeStamp = System.currentTimeMillis()
         )
     }
 
@@ -70,7 +72,8 @@ class WebSocketEventParser {
         return WebSocketEvent.QmsMessage(
             type = type,
             themeId = sourceId,
-            messageId = messageId
+            messageId = messageId,
+            timeStamp = System.currentTimeMillis()
         )
     }
 
@@ -83,6 +86,7 @@ class WebSocketEventParser {
         return WebSocketEvent.QmsAction(
             type = type,
             themeId = sourceId,
+            timeStamp = System.currentTimeMillis()
         )
     }
 
@@ -95,7 +99,8 @@ class WebSocketEventParser {
         return WebSocketEvent.Forum(
             type = type,
             topicId = sourceId,
-            postId = messageId
+            postId = messageId,
+            timeStamp = System.currentTimeMillis()
         )
     }
 

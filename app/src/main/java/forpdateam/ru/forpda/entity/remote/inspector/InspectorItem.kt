@@ -4,6 +4,10 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 
 sealed interface InspectorItem {
 
+    val baseId: Int
+    val baseTimeStamp: Long
+    val baseRawContent: String
+
     data class Favorite(
         val topicId: Int,
         val timeStamp: Long,
@@ -12,7 +16,13 @@ sealed interface InspectorItem {
         val isImportant: Boolean,
         val sourceTitle: String,
         val user: User,
-    ) : InspectorItem
+        val rawContent: String
+    ) : InspectorItem {
+
+        override val baseId: Int = topicId
+        override val baseTimeStamp: Long = timeStamp
+        override val baseRawContent: String = rawContent
+    }
 
     data class Qms(
         val themeId: Int,
@@ -20,6 +30,12 @@ sealed interface InspectorItem {
         val msgCount: Int,
         val sourceTitle: String,
         val user: User,
-    ) : InspectorItem
+        val rawContent: String
+    ) : InspectorItem {
+
+        override val baseId: Int = themeId
+        override val baseTimeStamp: Long = timeStamp
+        override val baseRawContent: String = rawContent
+    }
 
 }

@@ -6,6 +6,7 @@ sealed interface WebSocketEvent {
         val type: Type,
         val topicId: Int,
         val postId: Int,
+        val timeStamp: Long
     ) : WebSocketEvent {
 
         enum class Type {
@@ -20,6 +21,7 @@ sealed interface WebSocketEvent {
         val type: Type,
         val postId: Int,
         val commentId: Int,
+        val timeStamp: Long
     ) : WebSocketEvent {
 
         enum class Type {
@@ -32,6 +34,7 @@ sealed interface WebSocketEvent {
         val type: Type,
         val themeId: Int,
         val messageId: Int,
+        val timeStamp: Long
     ) : WebSocketEvent {
 
         enum class Type {
@@ -44,6 +47,7 @@ sealed interface WebSocketEvent {
     data class QmsAction(
         val type: Type,
         val themeId: Int,
+        val timeStamp: Long
     ) : WebSocketEvent {
 
         enum class Type {
@@ -56,6 +60,7 @@ sealed interface WebSocketEvent {
         val type: Type,
         val topicId: Int,
         val postId: Int,
+        val timeStamp: Long
     ) : WebSocketEvent {
 
         enum class Type {
