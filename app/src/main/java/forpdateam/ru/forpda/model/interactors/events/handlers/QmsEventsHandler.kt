@@ -12,14 +12,16 @@ class QmsEventsHandler(
 ) {
 
     suspend fun handle(event: WebSocketEvent) {
-        if (event !is WebSocketEvent.QmsMessage) {
+        if (event !is WebSocketEvent.Qms) {
             return
         }
         updateCounter(event.themeId) { count ->
             when (event.type) {
-                WebSocketEvent.QmsMessage.Type.New -> count + 1
-                WebSocketEvent.QmsMessage.Type.Read -> count
-                WebSocketEvent.QmsMessage.Type.ReadAll -> 0
+                is WebSocketEvent.Qms.Type.New -> count + 1
+                is WebSocketEvent.Qms.Type.Read -> count
+                is WebSocketEvent.Qms.Type.ReadAll -> 0
+                WebSocketEvent.Qms.Type.Typing -> count
+                WebSocketEvent.Qms.Type.Uploading -> count
             }
         }
     }
@@ -33,6 +35,9 @@ class QmsEventsHandler(
     private suspend fun updateCounter(themeId: Int, block: (Int) -> Int) {
         val target = findTarget(themeId) ?: return
         val newThemeCount = block(target.theme.countNew)
+        if (newThemeCount == target.theme.countNew) {
+            return
+        }
         val updatedThemes = target.themes.themes.map {
             if (it.id == themeId) {
                 it.copy(countNew = newThemeCount)

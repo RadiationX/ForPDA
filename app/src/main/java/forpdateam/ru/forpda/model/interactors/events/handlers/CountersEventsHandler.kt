@@ -25,38 +25,38 @@ class CountersEventsHandler(
     private fun handleCounterEvent(event: CounterEvent) {
         countersHolder.update { counters ->
             when (event) {
-                CounterEvent.FavoriteMention -> counters.copy(mentions = counters.mentions + 1)
-                CounterEvent.FavoriteRead -> counters.copy(favorites = counters.favorites - 1)
+                CounterEvent.TopicMention -> counters.copy(mentions = counters.mentions + 1)
                 is CounterEvent.FavoriteState -> counters.copy(favorites = event.count)
                 CounterEvent.QmsNew -> counters.copy(qms = counters.qms + 1)
                 CounterEvent.QmsReadAll -> counters.copy(qms = counters.qms - 1)
                 is CounterEvent.QmsState -> counters.copy(qms = event.count)
+                CounterEvent.SiteMention -> counters.copy(mentions = counters.mentions + 1)
             }
         }
     }
 
     private fun WebSocketEvent.toCounterEvent(): CounterEvent? {
         return when (this) {
-            is WebSocketEvent.Favorite -> {
-                when (type) {
-                    WebSocketEvent.Favorite.Type.New -> null
-                    WebSocketEvent.Favorite.Type.Read -> CounterEvent.FavoriteRead
-                    WebSocketEvent.Favorite.Type.Mention -> CounterEvent.FavoriteMention
-                    WebSocketEvent.Favorite.Type.HatUpdate -> null
-                }
+            is WebSocketEvent.Topic -> when (type) {
+                is WebSocketEvent.Topic.Type.HatUpdate -> null
+                is WebSocketEvent.Topic.Type.Mention -> CounterEvent.TopicMention
+                is WebSocketEvent.Topic.Type.New -> null
+                is WebSocketEvent.Topic.Type.Read -> null
             }
 
             is WebSocketEvent.Forum -> null
-            is WebSocketEvent.QmsAction -> null
-            is WebSocketEvent.QmsMessage -> {
-                when (type) {
-                    WebSocketEvent.QmsMessage.Type.New -> CounterEvent.QmsNew
-                    WebSocketEvent.QmsMessage.Type.Read -> null
-                    WebSocketEvent.QmsMessage.Type.ReadAll -> CounterEvent.QmsReadAll
-                }
+            is WebSocketEvent.Qms -> when (type) {
+                is WebSocketEvent.Qms.Type.New -> CounterEvent.QmsNew
+                is WebSocketEvent.Qms.Type.Read -> null
+                is WebSocketEvent.Qms.Type.ReadAll -> CounterEvent.QmsReadAll
+                WebSocketEvent.Qms.Type.Typing -> null
+                WebSocketEvent.Qms.Type.Uploading -> null
             }
 
-            is WebSocketEvent.Site -> null
+            is WebSocketEvent.Site -> when (type) {
+                is WebSocketEvent.Site.Type.Mention -> CounterEvent.SiteMention
+                is WebSocketEvent.Site.Type.Read -> null
+            }
         }
     }
 
@@ -69,11 +69,11 @@ class CountersEventsHandler(
     }
 
     private sealed interface CounterEvent {
-        data object FavoriteRead : CounterEvent
-        data object FavoriteMention : CounterEvent
+        data object TopicMention : CounterEvent
         data class FavoriteState(val count: Int) : CounterEvent
         data object QmsNew : CounterEvent
         data object QmsReadAll : CounterEvent
         data class QmsState(val count: Int) : CounterEvent
+        data object SiteMention : CounterEvent
     }
 }

@@ -34,7 +34,7 @@ interface IWebClient {
 
     companion object {
         val countsPattern: Pattern =
-            Pattern.compile("<a href=\"(?:https?)?\\/\\/4pda\\.(?:ru|to)\\/forum\\/index\\.php\\?act=mentions\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?act=fav&amp;code=no\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?span id=\"events-count\"[\\s\\S]*?(?:data-count=\"(\\d+)\")")
+            Pattern.compile("act=mentions\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?act=fav[^\"]*?\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?span id=\"events-count\"[\\s\\S]*?(?:data-count=\"(\\d+)\")")
         val errorPattern: Pattern =
             Pattern.compile("^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)</div></div></div></div><div class=\"footer\">")
         const val MINIMAL_PAGE: String = "https://4pda.to/forum/index.php?showforum=200#afterauth"

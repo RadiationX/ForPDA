@@ -13,19 +13,19 @@ class FavoritesEventsHandler(
 ) {
 
     suspend fun handle(event: WebSocketEvent) {
-        if (event !is WebSocketEvent.Favorite) {
+        if (event !is WebSocketEvent.Topic) {
             return
         }
         updateItem(event.topicId) { favItem ->
             when (event.type) {
-                WebSocketEvent.Favorite.Type.New -> favItem.copy(
+                is WebSocketEvent.Topic.Type.New -> favItem.copy(
                     isNew = true,
                     date = Utils.getForumDateTime(Date(event.timeStamp))
                 )
 
-                WebSocketEvent.Favorite.Type.Read -> favItem.copy(isNew = false)
-                WebSocketEvent.Favorite.Type.Mention -> favItem
-                WebSocketEvent.Favorite.Type.HatUpdate -> favItem
+                is WebSocketEvent.Topic.Type.Read -> favItem
+                is WebSocketEvent.Topic.Type.Mention -> favItem
+                is WebSocketEvent.Topic.Type.HatUpdate -> favItem
             }
         }
     }

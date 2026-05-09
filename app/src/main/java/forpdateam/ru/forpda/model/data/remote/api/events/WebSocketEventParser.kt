@@ -13,93 +13,78 @@ class WebSocketEventParser {
         return webSocketEventPattern.matcher(message).mapOnce { matcher ->
             //// TODO: 02.10.17 сделать обратку нотификации форума
             val sourceId = matcher.group(4).toInt()
-            val messageId = matcher.group(6).toInt()
             val type = matcher.group(5).toInt()
+            val typeParam = matcher.group(6).toLong()
             return when (matcher.group(3)) {
-                SRC_SOURCE_FAVORITE -> createWebSocketFavorite(type, sourceId, messageId)
-                SRC_SOURCE_SITE -> createWebSocketSite(type, sourceId, messageId)
-                SRC_SOURCE_QMS -> createWebSocketQms(type, sourceId, messageId)
-                SRC_SOURCE_FORUM -> createWebSocketForum(type, sourceId, messageId)
+                SRC_SOURCE_TOPIC -> createWebSocketTopic(sourceId, type, typeParam)
+                SRC_SOURCE_SITE -> createWebSocketSite(sourceId, type, typeParam)
+                SRC_SOURCE_QMS -> createWebSocketQms(sourceId, type, typeParam)
+                SRC_SOURCE_FORUM -> createWebSocketForum(sourceId, type, typeParam)
                 else -> null
             }
         }
     }
 
-    private fun createWebSocketFavorite(srcType: Int, sourceId: Int, messageId: Int): WebSocketEvent.Favorite? {
+    private fun createWebSocketTopic(sourceId: Int, srcType: Int, typeParam: Long): WebSocketEvent.Topic? {
         val type = when (srcType) {
-            SRC_TYPE_NEW -> WebSocketEvent.Favorite.Type.New
-            SRC_TYPE_READ -> WebSocketEvent.Favorite.Type.Read
-            SRC_TYPE_MENTION -> WebSocketEvent.Favorite.Type.Mention
-            SRC_TYPE_HAT_UPDATE -> WebSocketEvent.Favorite.Type.HatUpdate
-            else -> return null
-        }
-        return WebSocketEvent.Favorite(
+            SRC_TYPE_NEW -> WebSocketEvent.Topic.Type.New(postTimestamp = typeParam * 1000L)
+            SRC_TYPE_READ -> WebSocketEvent.Topic.Type.Read(postTimestamp = typeParam * 1000L)
+            SRC_TYPE_MENTION -> WebSocketEvent.Topic.Type.Mention(postId = typeParam.toInt())
+            SRC_TYPE_HAT_UPDATE -> WebSocketEvent.Topic.Type.HatUpdate(postTimestamp = typeParam * 1000L)
+            else -> null
+        } ?: return null
+        return WebSocketEvent.Topic(
             type = type,
             topicId = sourceId,
-            postId = messageId,
             timeStamp = System.currentTimeMillis()
         )
     }
 
-    private fun createWebSocketSite(srcType: Int, sourceId: Int, messageId: Int): WebSocketEvent.Site? {
+
+    private fun createWebSocketSite(sourceId: Int, srcType: Int, typeParam: Long): WebSocketEvent.Site? {
         val type = when (srcType) {
-            SRC_TYPE_MENTION -> WebSocketEvent.Site.Type.Mention
-            SRC_TYPE_READ -> WebSocketEvent.Site.Type.Read
-            else -> return null
-        }
+            SRC_TYPE_MENTION -> WebSocketEvent.Site.Type.Mention(commentId = typeParam.toInt())
+            SRC_TYPE_READ -> WebSocketEvent.Site.Type.Read(commentId = typeParam.toInt())
+            else -> null
+        } ?: return null
         return WebSocketEvent.Site(
             type = type,
             postId = sourceId,
-            commentId = messageId,
             timeStamp = System.currentTimeMillis()
         )
     }
 
-    private fun createWebSocketQms(srcType: Int, sourceId: Int, messageId: Int): WebSocketEvent? {
-        if (srcType == SRC_TYPE_QMS_ACTION) {
-            return parseWebSocketQmsAction(sourceId, messageId)
-        }
-        return parseWebSocketQmsMessage(srcType, sourceId, messageId)
-    }
-
-    private fun parseWebSocketQmsMessage(srcType: Int, sourceId: Int, messageId: Int): WebSocketEvent.QmsMessage? {
+    private fun createWebSocketQms(sourceId: Int, srcType: Int, typeParam: Long): WebSocketEvent.Qms? {
         val type = when (srcType) {
-            SRC_TYPE_NEW -> WebSocketEvent.QmsMessage.Type.New
-            SRC_TYPE_READ -> WebSocketEvent.QmsMessage.Type.Read
-            SRC_TYPE_QMS_FULL_READ -> WebSocketEvent.QmsMessage.Type.ReadAll
-            else -> return null
-        }
-        return WebSocketEvent.QmsMessage(
-            type = type,
-            themeId = sourceId,
-            messageId = messageId,
-            timeStamp = System.currentTimeMillis()
-        )
-    }
+            SRC_TYPE_NEW -> WebSocketEvent.Qms.Type.New(messageId = typeParam.toInt())
+            SRC_TYPE_READ -> WebSocketEvent.Qms.Type.Read(messageId = typeParam.toInt())
+            SRC_TYPE_QMS_FULL_READ -> WebSocketEvent.Qms.Type.ReadAll(messageId = typeParam.toInt())
+            SRC_TYPE_QMS_ACTION -> {
+                when (typeParam.toInt()) {
+                    SRC_QMS_ACTION_TYPING -> WebSocketEvent.Qms.Type.Typing
+                    SRC_QMS_ACTION_UPLOADING -> WebSocketEvent.Qms.Type.Uploading
+                    else -> null
+                }
+            }
 
-    private fun parseWebSocketQmsAction(sourceId: Int, messageId: Int): WebSocketEvent.QmsAction? {
-        val type = when (messageId) {
-            SRC_QMS_ACTION_TYPING -> WebSocketEvent.QmsAction.Type.Typing
-            SRC_QMS_ACTION_UPLOADING -> WebSocketEvent.QmsAction.Type.Uploading
-            else -> return null
-        }
-        return WebSocketEvent.QmsAction(
+            else -> null
+        } ?: return null
+        return WebSocketEvent.Qms(
             type = type,
             themeId = sourceId,
             timeStamp = System.currentTimeMillis()
         )
     }
 
-    private fun createWebSocketForum(srcType: Int, sourceId: Int, messageId: Int): WebSocketEvent.Forum? {
+    private fun createWebSocketForum(sourceId: Int, srcType: Int, typeParam: Long): WebSocketEvent.Forum? {
         val type = when (srcType) {
-            SRC_TYPE_NEW -> WebSocketEvent.Forum.Type.New
-            SRC_TYPE_READ -> WebSocketEvent.Forum.Type.Read
+            SRC_TYPE_NEW -> WebSocketEvent.Forum.Type.New(postTimestamp = typeParam * 1000L)
+            SRC_TYPE_READ -> WebSocketEvent.Forum.Type.Read(readTimestamp = typeParam * 1000L)
             else -> return null
         }
         return WebSocketEvent.Forum(
             type = type,
-            topicId = sourceId,
-            postId = messageId,
+            forumId = sourceId,
             timeStamp = System.currentTimeMillis()
         )
     }
@@ -116,7 +101,7 @@ class WebSocketEventParser {
         private const val SRC_QMS_ACTION_UPLOADING = 1
 
         private const val SRC_SOURCE_SITE = "s"
-        private const val SRC_SOURCE_FAVORITE = "t"
+        private const val SRC_SOURCE_TOPIC = "t"
         private const val SRC_SOURCE_QMS = "q"
         private const val SRC_SOURCE_FORUM = "f"
 
