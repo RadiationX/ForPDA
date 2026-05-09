@@ -35,7 +35,7 @@ class InspectorRepository(
         preferences.setDataQmsEvents(response)
     }
 
-    suspend fun getMentionsCound(): InspectorMention {
+    suspend fun getMentionsCount(): InspectorMention {
         return inspectorApi.getMentionsCount()
     }
 

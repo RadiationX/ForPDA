@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.presentation.favorites
 import android.util.Log
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.CountersHolder
@@ -73,14 +72,6 @@ class FavoritesPresenter(
             }
             .launchIn(viewModelScope)
 
-        eventsRepository
-            .observeEventsTab()
-            .onEach {
-                Log.e("testtabnotify", "fav observeEventsTab $it")
-                handleEvent(it)
-            }
-            .launchIn(viewModelScope)
-
         favoritesRepository
             .observeItems()
             .onEach {
@@ -133,18 +124,6 @@ class FavoritesPresenter(
         viewModelScope.launch {
             coRunCatching {
                 favoritesRepository.markRead(topicId)
-            }.onFailure {
-                errorHandler.handle(it)
-            }
-        }
-    }
-
-    private fun handleEvent(event: TabNotification) {
-        viewModelScope.launch {
-            coRunCatching {
-                favoritesRepository.handleEvent(event)
-            }.onSuccess {
-                Log.e("testtabnotify", "fav handleEvent $it")
             }.onFailure {
                 errorHandler.handle(it)
             }

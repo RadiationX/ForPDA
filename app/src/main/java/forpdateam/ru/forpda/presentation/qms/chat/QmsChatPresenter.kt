@@ -1,18 +1,17 @@
 package forpdateam.ru.forpda.presentation.qms.chat
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
-import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
+import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.asRegular
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
+import forpdateam.ru.forpda.model.interactors.events.EventsController
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
-import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
@@ -30,9 +29,8 @@ import moxy.InjectViewState
 @InjectViewState
 class QmsChatPresenter(
     private val qmsInteractor: QmsInteractor,
-    private val qmsChatTemplate: QmsChatTemplate,
     private val avatarRepository: AvatarRepository,
-    private val eventsRepository: EventsRepository,
+    private val eventsController: EventsController,
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val templateManager: TemplateManager,
     private val router: TabRouter,
@@ -71,8 +69,8 @@ class QmsChatPresenter(
                 viewState.setStyleType(it)
             }
             .launchIn(viewModelScope)
-        eventsRepository
-            .observeEventsTab()
+        eventsController
+            .observeWebSocketEvents()
             .onEach {
                 handleEvent(it)
             }
@@ -214,32 +212,31 @@ class QmsChatPresenter(
         }
     }
 
-    fun handleEvent(event: TabNotification) {
-        val themeId = event.event.sourceId
-        val messageId = event.event.messageId
-        currentData?.let {
-            if (themeId == it.themeId) {
-                when (event.type) {
-                    NotificationEvent.Type.NEW -> {
-                        onNewWsMessage(themeId, messageId)
-                    }
-
-                    NotificationEvent.Type.READ -> {
-                        viewState.makeAllRead()
-                    }
-
-                    NotificationEvent.Type.MENTION -> {
-                    }
-
-                    NotificationEvent.Type.HAT_EDITED -> {
-                    }
-
-                    null -> {
-                    }
-                }
-            }
+    fun handleEvent(event: WebSocketEvent) {
+        if (event !is WebSocketEvent.Qms) {
+            return
+        }
+        val currentThemeId = currentData?.themeId ?: return
+        if (event.themeId != currentThemeId) {
+            return
         }
 
+        when (event.type) {
+            is WebSocketEvent.Qms.Type.New -> {
+                onNewWsMessage(themeId, event.type.messageId)
+            }
+
+            is WebSocketEvent.Qms.Type.Read -> {
+                viewState.makeAllRead()
+            }
+
+            is WebSocketEvent.Qms.Type.ReadAll -> {
+                viewState.makeAllRead()
+            }
+
+            WebSocketEvent.Qms.Type.Typing -> Unit
+            WebSocketEvent.Qms.Type.Uploading -> Unit
+        }
     }
 
     private fun onNewWsMessage(themeId: Int, messageId: Int) {

@@ -50,7 +50,6 @@ import com.yandex.metrica.YandexMetricaConfig
 import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
-import forpdateam.ru.forpda.common.receivers.NetworkStateReceiver
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.notifications.NotificationsJob
 import forpdateam.ru.forpda.notifications.NotificationsJobCreator
@@ -381,11 +380,6 @@ class App : Application() {
         }
 
         Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time))
-
-        registerReceiver(
-            NetworkStateReceiver(),
-            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        )
     }
 
     private fun updateStaticRes() {

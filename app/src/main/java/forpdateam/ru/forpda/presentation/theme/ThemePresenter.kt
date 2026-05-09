@@ -8,13 +8,12 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
-import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
-import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
+import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
@@ -25,10 +24,9 @@ import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
+import forpdateam.ru.forpda.model.interactors.events.EventsController
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
-import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
-import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
@@ -59,12 +57,11 @@ class ThemePresenter(
     private val reputationRepository: ReputationRepository,
     private val editorRepository: PostEditorRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val eventsRepository: EventsRepository,
+    private val eventsController: EventsController,
     private val userHolder: IUserHolder,
     private val authHolder: AuthHolder,
     private val topicPreferencesHolder: TopicPreferencesHolder,
     private val mainPreferencesHolder: MainPreferencesHolder,
-    private val otherPreferencesHolder: OtherPreferencesHolder,
     private val crossScreenInteractor: CrossScreenInteractor,
     private val themeTemplate: ThemeTemplate,
     private val templateManager: TemplateManager,
@@ -114,8 +111,8 @@ class ThemePresenter(
                 viewState.setStyleType(it)
             }
             .launchIn(viewModelScope)
-        eventsRepository
-            .observeEventsTab()
+        eventsController
+            .observeWebSocketEvents()
             .debounce(2.seconds)
             .onEach {
                 handleEvent(it)
@@ -128,30 +125,26 @@ class ThemePresenter(
         router.exit()
     }
 
-    private fun handleEvent(event: TabNotification) {
-        Log.e(
-            "SUKAT",
-            "handleEvent " + event.isWebSocket + " : " + event.source + " : " + event.type
-        )
-        if (!event.isWebSocket)
+    private fun handleEvent(event: WebSocketEvent) {
+        if (event !is WebSocketEvent.Topic) {
             return
-        if (!isPageLoaded())
+        }
+        if (!isPageLoaded()) {
             return
-        Log.e("SUKAT", "handleEvent " + event.event.sourceId + " : " + getId())
-        if (event.event.sourceId != getId())
+        }
+        if (event.topicId != getId()) {
             return
-        if (event.event.user?.id == authHolder.get().userId)
-            return
+        }
 
-        if (event.source == NotificationEvent.Source.THEME) {
-            when (event.type) {
-                NotificationEvent.Type.NEW -> viewState.onEventNew(event)
-                NotificationEvent.Type.READ -> viewState.onEventRead(event)
-                NotificationEvent.Type.MENTION -> {
-                }
+        when (event.type) {
+            is WebSocketEvent.Topic.Type.HatUpdate -> Unit
+            is WebSocketEvent.Topic.Type.Mention -> Unit
+            is WebSocketEvent.Topic.Type.New -> {
+                viewState.onEventNew()
+            }
 
-                else -> {
-                }
+            is WebSocketEvent.Topic.Type.Read -> {
+                viewState.onEventRead()
             }
         }
     }

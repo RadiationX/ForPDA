@@ -112,16 +112,6 @@
                 <action android:name="android.intent.action.SCREEN_ON" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".common.receivers.NetworkStateReceiver"
-            android:enabled="false"
-            android:exported="false">
-            <intent-filter>
-                <action
-                    android:name="android.net.conn.CONNECTIVITY_CHANGE"
-                    tools:ignore="BatteryLife" />
-            </intent-filter>
-        </receiver>
 
         <service
             android:name=".notifications.JobSchedulerService"

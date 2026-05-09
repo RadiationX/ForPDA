@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.model.interactors.events.handlers
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
+import forpdateam.ru.forpda.model.interactors.events.models.InspectorTrigger
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationEvent
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationId
 import kotlinx.coroutines.flow.Flow
@@ -14,9 +15,13 @@ class NotificationEventsHandler {
 
     private val cancelIds = MutableSharedFlow<NotificationId>()
 
+    private val triggers = MutableSharedFlow<InspectorTrigger>()
+
     fun observeNewEvents(): Flow<NotificationEvent> = newEvents
 
     fun observeCancelIds(): Flow<NotificationId> = cancelIds
+
+    fun observeTriggers(): Flow<InspectorTrigger> = triggers
 
     suspend fun handle(event: WebSocketEvent) {
         when (event) {
@@ -31,7 +36,10 @@ class NotificationEventsHandler {
             }
 
             is WebSocketEvent.Qms -> when (event.type) {
-                is WebSocketEvent.Qms.Type.New -> Unit
+                is WebSocketEvent.Qms.Type.New -> {
+                    triggers.emit(InspectorTrigger.Qms)
+                }
+
                 is WebSocketEvent.Qms.Type.Read -> {
                     cancelIds.emit(NotificationId.Qms(event.themeId))
                 }
@@ -58,9 +66,13 @@ class NotificationEventsHandler {
                 is WebSocketEvent.Topic.Type.HatUpdate -> Unit
                 is WebSocketEvent.Topic.Type.Mention -> {
                     newEvents.emit(NotificationEvent.TopicMention(NotificationId.TopicMention(event.topicId), event.type.postId))
+                    triggers.emit(InspectorTrigger.Mentions)
                 }
 
-                is WebSocketEvent.Topic.Type.New -> Unit
+                is WebSocketEvent.Topic.Type.New -> {
+                    triggers.emit(InspectorTrigger.Mentions)
+                }
+
                 is WebSocketEvent.Topic.Type.Read -> {
                     cancelIds.emit(NotificationId.Favorite(event.topicId))
                     cancelIds.emit(NotificationId.TopicMention(event.topicId))

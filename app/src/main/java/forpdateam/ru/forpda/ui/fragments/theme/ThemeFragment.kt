@@ -33,7 +33,6 @@ import forpdateam.ru.forpda.common.FilePickHelper
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.databinding.FragmentThemeBinding
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
-import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
@@ -118,12 +117,12 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         App.get().Di().errorHandler
     )
 
-    override fun onEventNew(event: TabNotification) {
+    override fun onEventNew() {
         Log.d("SUKAT", "onEventNew")
         notificationView.visibility = View.VISIBLE
     }
 
-    override fun onEventRead(event: TabNotification) {
+    override fun onEventRead() {
         Log.d("SUKAT", "onEventRead")
         notificationView.visibility = View.GONE
     }

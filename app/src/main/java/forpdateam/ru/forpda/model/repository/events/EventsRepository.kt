@@ -3,11 +3,9 @@ package forpdateam.ru.forpda.model.repository.events
 import android.util.Log
 import androidx.collection.ArraySet
 import forpdateam.ru.forpda.client.WebSocketController
-import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.NetworkStateProvider
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.events.NotificationEventsApi
 import forpdateam.ru.forpda.model.data.remote.api.events.NotificationEventsParser
@@ -32,7 +30,6 @@ class EventsRepository(
     private val webClient: IWebClient,
     private val eventsApi: NotificationEventsApi,
     private val eventsParser: NotificationEventsParser,
-    private val networkStateProvider: NetworkStateProvider,
     private val authHolder: AuthHolder,
     private val notificationPreferencesHolder: NotificationPreferencesHolder
 ) {
@@ -56,7 +53,6 @@ class EventsRepository(
     private val notifyFlow = MutableSharedFlow<NotificationEvent>()
     private val notifyStackFlow = MutableSharedFlow<List<NotificationEvent>>()
     private val cancelFlow = MutableSharedFlow<NotificationEvent>()
-    private val notifyTabFlow = MutableSharedFlow<TabNotification>()
 
     private val controllerListener: WebSocketController.Listener =
         object : WebSocketController.Listener() {
@@ -95,17 +91,6 @@ class EventsRepository(
     private val webSocketController = WebSocketController(webClient, controllerListener)
 
     init {
-        networkStateProvider
-            .observeState()
-            .distinctUntilChanged()
-            .onEach {
-                if (it) {
-                    Log.d(LOG_TAG, "start networkStateProvider.observeState")
-                    start(true)
-                }
-            }
-            .launchIn(GlobalScope)
-
         authHolder
             .observe()
             .distinctUntilChanged()
@@ -143,7 +128,6 @@ class EventsRepository(
 
     fun observeCancel(): Flow<NotificationEvent> = cancelFlow
 
-    fun observeEventsTab(): Flow<TabNotification> = notifyTabFlow
 
     fun setTimerPeriod(period: Long) {
         timerPeriod = period
@@ -162,9 +146,9 @@ class EventsRepository(
     private suspend fun start(checkEvents: Boolean) {
         Log.e(
             LOG_TAG,
-            "Start: ${networkStateProvider.getState()} : ${webSocketController.isConnected()} : $checkEvents : ${webSocketController.getCurrentId()}"
+            "Start: ${webSocketController.isConnected()} : $checkEvents : ${webSocketController.getCurrentId()}"
         )
-        if (networkStateProvider.getState() && authHolder.get().isAuth()) {
+        if (authHolder.get().isAuth()) {
             if (!webSocketController.isConnected()) {
                 webSocketController.connect()
             }
@@ -237,11 +221,6 @@ class EventsRepository(
         notifyStackFlow.emit(events)
     }
 
-    private suspend fun notifyTabs(event: TabNotification) {
-        Log.d("SUKA", "notifyTabs")
-        notifyTabFlow.emit(event)
-    }
-
     private fun checkNotify(event: NotificationEvent?, source: NotificationEvent.Source): Boolean {
         if (!notificationPreferencesHolder.getMainEnabled()) {
             return false
@@ -292,19 +271,6 @@ class EventsRepository(
             }
         }
 
-        if (delete || oldEvent == null) {
-            notifyTabs(
-                TabNotification(
-                    event.source,
-                    event.type,
-                    event,
-                    true
-                )
-            )
-        }
-        if (delete) {
-            eventsHistory.remove(event.notifyId(NotificationEvent.Type.NEW))
-        }
     }
 
     private suspend fun checkOldEvents(
@@ -324,14 +290,7 @@ class EventsRepository(
             if (!exist) {
                 cancelFlow.emit(oldEvent)
                 eventsHistory.remove(oldEvent.notifyId(NotificationEvent.Type.NEW))
-                notifyTabs(
-                    TabNotification(
-                        oldEvent.source,
-                        NotificationEvent.Type.READ,
-                        oldEvent,
-                        true
-                    )
-                )
+
             }
         }
     }
@@ -342,14 +301,7 @@ class EventsRepository(
             return
         }
         eventsHistory[event.notifyId()] = event
-        notifyTabs(
-            TabNotification(
-                event.source,
-                event.type,
-                event,
-                true
-            )
-        )
+
         handleEvent(listOf(event), event.source)
     }
 
@@ -413,17 +365,6 @@ class EventsRepository(
                         val eventToSend = newEvent.copy(
                             type = event.type,
                             messageId = event.messageId
-                        )
-
-                        notifyTabs(
-                            TabNotification(
-                                eventToSend.source,
-                                eventToSend.type,
-                                eventToSend,
-                                false,
-                                loadedEvents.toList(),
-                                newEvents.toList()
-                            )
                         )
 
                         sendNotification(eventToSend)

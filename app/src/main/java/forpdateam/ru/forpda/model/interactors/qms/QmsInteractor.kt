@@ -9,29 +9,12 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import forpdateam.ru.forpda.model.repository.qms.QmsRepository
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 class QmsInteractor(
     private val qmsRepository: QmsRepository,
     private val eventsRepository: EventsRepository
 ) {
-
-    private var eventsJob: Job? = null
-
-    fun subscribeEvents() {
-        if (eventsJob != null) return
-        eventsJob = eventsRepository
-            .observeEventsTab()
-            .onEach {
-                qmsRepository.handleEvent(it)
-            }
-            .launchIn(GlobalScope)
-    }
-
 
     fun observeContacts(): Flow<List<QmsContact>> {
         return qmsRepository.observeContacts()

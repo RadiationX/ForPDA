@@ -120,8 +120,6 @@ open class TabFragment(
         ContentController(contentProgress, additionalContent, fragmentContent)
     }
 
-    protected var networkState = App.get().Di().networkState
-    private val countersHolder = App.get().Di().countersHolder
     private val dimensionsProvider = App.get().Di().dimensionsProvider
 
     protected open fun isShadowVisible(): Boolean = true

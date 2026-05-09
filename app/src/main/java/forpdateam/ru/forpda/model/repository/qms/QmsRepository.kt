@@ -1,16 +1,11 @@
 package forpdateam.ru.forpda.model.repository.qms
 
-import android.util.Log
-import forpdateam.ru.forpda.entity.app.TabNotification
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
-import forpdateam.ru.forpda.entity.remote.events.NotificationEvent
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
-import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
-import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.cache.qms.QmsCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
@@ -26,8 +21,7 @@ class QmsRepository(
     private val qmsApi: QmsApi,
     private val attachmentsApi: AttachmentsApi,
     private val qmsCache: QmsCache,
-    private val forumUsersCache: ForumUsersCache,
-    private val countersHolder: CountersHolder
+    private val forumUsersCache: ForumUsersCache
 ) {
 
     fun observeContacts(): Flow<List<QmsContact>> {
@@ -125,74 +119,5 @@ class QmsRepository(
         pending: List<AttachmentItem>
     ): List<AttachmentItem> {
         return attachmentsApi.uploadQmsFiles(files, pending)
-    }
-
-    suspend fun handleEvent(event: TabNotification) {
-        if (!NotificationEvent.fromQms(event.source)) {
-            return
-        }
-        val themesList = qmsCache.getAllThemes()
-        val allContacts = qmsCache.getContacts()
-
-        var targetTheme: QmsTheme? = null
-        var targetDialog: QmsThemes? = null
-
-        for (dialog in themesList) {
-            for (theme in dialog.themes) {
-                if (theme.id == event.event.sourceId) {
-                    targetDialog = dialog
-                    targetTheme = theme
-                    break
-                }
-            }
-            if (targetTheme != null) {
-                break
-            }
-        }
-        Log.d("kokoso", "$targetDialog : $targetTheme")
-
-        if (targetDialog != null && targetTheme != null) {
-            Log.d(
-                "kokoso",
-                "${event.isWebSocket}, ${event.type}, ${event.source}, ${event.event.msgCount}"
-            )
-
-            val newThemeCount = when {
-                NotificationEvent.isRead(event.type) -> 0
-                NotificationEvent.isNew(event.type) -> if (event.isWebSocket) {
-                    targetTheme.countNew + 1
-                } else {
-                    event.event.msgCount
-                }
-
-                else -> targetTheme.countNew
-            }
-
-            val updatedThemes = targetDialog.themes.map {
-                if (it == targetTheme) {
-                    it.copy(countNew = newThemeCount)
-                } else {
-                    it
-                }
-            }
-            val updatedDialog = targetDialog.copy(themes = updatedThemes)
-            qmsCache.saveThemes(updatedDialog)
-
-            allContacts.firstOrNull { it.user.id == targetDialog.user.id }?.let { contact ->
-                val newContactCount = targetDialog.themes.sumOf { it.countNew }
-                Log.d("kokoso", "upd contact cound ${contact.count} to $newContactCount")
-                val newContact = contact.copy(count = newContactCount)
-                qmsCache.updateContact(newContact)
-            }
-        }
-
-        val newCounters = countersHolder.get().copy(
-            qms = if (event.isWebSocket) {
-                allContacts.sumOf { it.count }
-            } else {
-                event.loadedEvents.sumOf { it.msgCount }
-            }
-        )
-        countersHolder.set(newCounters)
     }
 }
