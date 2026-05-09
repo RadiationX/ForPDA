@@ -5,14 +5,10 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.preferences.ListsPreferencesHolder
-import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
-import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
-import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
@@ -29,14 +25,10 @@ import moxy.InjectViewState
 @InjectViewState
 class FavoritesPresenter(
     private val favoritesRepository: FavoritesRepository,
-    private val forumRepository: ForumRepository,
-    private val eventsRepository: EventsRepository,
     private val listsPreferencesHolder: ListsPreferencesHolder,
-    private val notificationPreferencesHolder: NotificationPreferencesHolder,
     private val crossScreenInteractor: CrossScreenInteractor,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val countersHolder: CountersHolder,
     private val errorHandler: IErrorHandler
 ) : BasePresenter<FavoritesView>() {
 

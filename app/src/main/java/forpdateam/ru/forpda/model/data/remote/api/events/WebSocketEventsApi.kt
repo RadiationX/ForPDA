@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.events
 
-import forpdateam.ru.forpda.client.websocket.WebSocketControllerNew
+import forpdateam.ru.forpda.client.websocket.WebSocketController
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.mapNotNull
  * Created by radiationx on 31.07.17.
  */
 class WebSocketEventsApi(
-    private val webSocketController: WebSocketControllerNew,
+    private val webSocketController: WebSocketController,
     private val parser: WebSocketEventParser
 ) {
 

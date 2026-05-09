@@ -5,6 +5,8 @@ import android.preference.PreferenceManager
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import forpdateam.ru.forpda.client.Client
+import forpdateam.ru.forpda.client.NetworkObserver
+import forpdateam.ru.forpda.client.websocket.WebSocketController
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.common.realm.DbMigration
@@ -40,11 +42,14 @@ import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbApi
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbParser
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostApi
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostParser
-import forpdateam.ru.forpda.model.data.remote.api.events.NotificationEventsApi
+import forpdateam.ru.forpda.model.data.remote.api.events.WebSocketEventParser
+import forpdateam.ru.forpda.model.data.remote.api.events.WebSocketEventsApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesParser
 import forpdateam.ru.forpda.model.data.remote.api.forum.ForumApi
 import forpdateam.ru.forpda.model.data.remote.api.forum.ForumParser
+import forpdateam.ru.forpda.model.data.remote.api.inspector.InspectorApi
+import forpdateam.ru.forpda.model.data.remote.api.inspector.InspectorParser
 import forpdateam.ru.forpda.model.data.remote.api.mentions.MentionsApi
 import forpdateam.ru.forpda.model.data.remote.api.mentions.MentionsParser
 import forpdateam.ru.forpda.model.data.remote.api.news.ArticleParser
@@ -64,6 +69,11 @@ import forpdateam.ru.forpda.model.data.remote.api.topcis.TopicsParser
 import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
+import forpdateam.ru.forpda.model.interactors.events.EventsController
+import forpdateam.ru.forpda.model.interactors.events.handlers.CountersEventsHandler
+import forpdateam.ru.forpda.model.interactors.events.handlers.FavoritesEventsHandler
+import forpdateam.ru.forpda.model.interactors.events.handlers.NotificationEventsHandler
+import forpdateam.ru.forpda.model.interactors.events.handlers.QmsEventsHandler
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.ListsPreferencesHolder
@@ -75,10 +85,10 @@ import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
-import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.model.repository.history.HistoryRepository
+import forpdateam.ru.forpda.model.repository.inspector.InspectorRepository
 import forpdateam.ru.forpda.model.repository.mentions.MentionsRepository
 import forpdateam.ru.forpda.model.repository.news.NewsRepository
 import forpdateam.ru.forpda.model.repository.note.NotesRepository
@@ -202,7 +212,6 @@ class Dependencies internal constructor(
             themeParser
         )
     }
-    val eventsApi by lazy { NotificationEventsApi(webClient) }
     val favoritesApi by lazy { FavoritesApi(webClient, favoritesParser) }
     val forumApi by lazy { ForumApi(webClient, forumParser) }
     val mentionsApi by lazy { MentionsApi(webClient, mentionsParser) }
@@ -248,11 +257,7 @@ class Dependencies internal constructor(
     val favoritesRepository by lazy {
         FavoritesRepository(
             favoritesApi,
-            favoritesCache,
-            authHolder,
-            countersHolder,
-            listsPreferencesHolder,
-            notificationPreferencesHolder
+            favoritesCache
         )
     }
     val historyRepository by lazy { HistoryRepository(historyCache) }
@@ -302,24 +307,69 @@ class Dependencies internal constructor(
         )
     }
     val notesRepository by lazy { NotesRepository(notesCache, externalStorage) }
-    val eventsRepository by lazy {
-        EventsRepository(
+    val menuRepository by lazy { MenuRepository(flowPreferences, authHolder, countersHolder) }
+    val checkerRepository by lazy { CheckerRepository(checkerApi, patternProvider) }
+
+    val networkObserver by lazy {
+        NetworkObserver(context)
+    }
+
+    val webSocketController by lazy {
+        WebSocketController(
             webClient,
-            eventsApi,
-            networkState,
+            authHolder,
+            networkObserver
+        )
+    }
+
+    val webSocketEventParser by lazy {
+        WebSocketEventParser()
+    }
+
+    val webSocketEventsApi by lazy {
+        WebSocketEventsApi(
+            webSocketController,
+            webSocketEventParser
+        )
+    }
+
+    val inspectorParser by lazy {
+        InspectorParser()
+    }
+
+    val inspectorApi by lazy {
+        InspectorApi(
+            webClient,
+            inspectorParser
+        )
+    }
+
+    val inspectorRepository by lazy {
+        InspectorRepository(
+            inspectorApi,
             notificationPreferencesHolder
         )
     }
-    val menuRepository by lazy { MenuRepository(flowPreferences, authHolder, countersHolder) }
-    val checkerRepository by lazy { CheckerRepository(checkerApi, patternProvider) }
+
+    val eventsController by lazy {
+        EventsController(
+            webSocketEventsApi = webSocketEventsApi,
+            countersEventsHandler = CountersEventsHandler(countersHolder),
+            favoritesEventsHandler = FavoritesEventsHandler(favoritesCache),
+            qmsEventsHandler = QmsEventsHandler(qmsCache),
+            notificationEventsHandler = NotificationEventsHandler(),
+            inspectorRepository = inspectorRepository,
+            notificationPreferencesHolder = notificationPreferencesHolder
+        )
+    }
 
     val otherPreferencesHolder by lazy { OtherPreferencesHolder(flowPreferences) }
     val mainPreferencesHolder by lazy { MainPreferencesHolder(flowPreferences) }
     val topicPreferencesHolder by lazy { TopicPreferencesHolder(flowPreferences) }
     val listsPreferencesHolder by lazy { ListsPreferencesHolder(flowPreferences) }
-    val notificationPreferencesHolder by lazy { NotificationPreferencesHolder(flowPreferences) }
+    val notificationPreferencesHolder by lazy { NotificationPreferencesHolder(flowPreferences,inspectorParser) }
 
     val crossScreenInteractor by lazy { CrossScreenInteractor() }
-    val qmsInteractor by lazy { QmsInteractor(qmsRepository, eventsRepository) }
+    val qmsInteractor by lazy { QmsInteractor(qmsRepository) }
 
 }

@@ -7,13 +7,11 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
-import forpdateam.ru.forpda.model.repository.events.EventsRepository
 import forpdateam.ru.forpda.model.repository.qms.QmsRepository
 import kotlinx.coroutines.flow.Flow
 
 class QmsInteractor(
-    private val qmsRepository: QmsRepository,
-    private val eventsRepository: EventsRepository
+    private val qmsRepository: QmsRepository
 ) {
 
     fun observeContacts(): Flow<List<QmsContact>> {

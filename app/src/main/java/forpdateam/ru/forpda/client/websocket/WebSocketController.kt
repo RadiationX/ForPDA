@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.shareIn
 import okhttp3.WebSocket
 import kotlin.time.Duration.Companion.milliseconds
 
-class WebSocketControllerNew(
+class WebSocketController(
     private val webClient: IWebClient,
     private val authHolder: AuthHolder,
     private val networkObserver: NetworkObserver

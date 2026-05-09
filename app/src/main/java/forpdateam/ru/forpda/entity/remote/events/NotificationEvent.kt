@@ -6,6 +6,7 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
  * Created by radiationx on 29.07.17.
  */
 
+@Deprecated("")
 data class NotificationEvent(
     val type: Type,
     val source: Source,

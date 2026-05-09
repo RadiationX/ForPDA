@@ -51,34 +51,6 @@ class NotificationsService : Service() {
 
     override fun onCreate() {
         Log.i(LOG_TAG, "onCreate")
-        notificationPreferencesHolder
-            .favEnabled
-            .onEach { enabled: Boolean ->
-                if (enabled) {
-                    eventsRepository.updateEvents(NotificationEvent.Source.THEME)
-                }
-            }
-            .launchIn(coroutineScope)
-
-        notificationPreferencesHolder
-            .qmsEnabled
-            .onEach { enabled: Boolean ->
-                if (enabled) {
-                    eventsRepository.updateEvents(NotificationEvent.Source.QMS)
-                }
-            }
-            .launchIn(coroutineScope)
-
-        notificationPreferencesHolder
-            .mainPeriodDuration
-            .onEach {
-                Log.d(
-                    LOG_TAG,
-                    "NEW timer period $it"
-                )
-                eventsRepository.setTimerPeriod(it.inWholeMilliseconds)
-            }
-            .launchIn(coroutineScope)
 
         eventsRepository
             .observeEvents()

@@ -81,14 +81,10 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     internal fun providePresenter(): FavoritesPresenter {
         return FavoritesPresenter(
             App.get().Di().favoritesRepository,
-            App.get().Di().forumRepository,
-            App.get().Di().eventsRepository,
             App.get().Di().listsPreferencesHolder,
-            App.get().Di().notificationPreferencesHolder,
             App.get().Di().crossScreenInteractor,
             App.get().Di().router,
             App.get().Di().linkHandler,
-            App.get().Di().countersHolder,
             App.get().Di().errorHandler
         )
     }
