@@ -42,10 +42,10 @@ class FavoritesPresenter(
 
 
     private var currentSt = 0
-    private var loadAll = listsPreferencesHolder.getFavLoadAll()
+    private var loadAll = listsPreferencesHolder.favLoadAll.get()
     private var sorting: Sorting = Sorting(
-        listsPreferencesHolder.getSortingKey().orEmpty(),
-        listsPreferencesHolder.getSortingOrder().orEmpty()
+        listsPreferencesHolder.favSortingKey.get().orEmpty(),
+        listsPreferencesHolder.favSortingOrder.get().orEmpty()
     )
 
     override fun onFirstViewAttach() {
@@ -54,19 +54,19 @@ class FavoritesPresenter(
         viewState.initSorting(sorting)
 
         listsPreferencesHolder
-            .observeFavLoadAll()
+            .favLoadAll
             .onEach { loadAll = it }
             .launchIn(viewModelScope)
 
         listsPreferencesHolder
-            .observeShowDot()
+            .showDot
             .onEach {
                 viewState.setShowDot(it)
             }
             .launchIn(viewModelScope)
 
         listsPreferencesHolder
-            .observeUnreadTop()
+            .unreadTop
             .onEach {
                 viewState.setUnreadTop(it)
             }
@@ -96,8 +96,8 @@ class FavoritesPresenter(
             it.key = key
             it.order = order
         }
-        listsPreferencesHolder.setSortingKey(key)
-        listsPreferencesHolder.setSortingOrder(order)
+        listsPreferencesHolder.favSortingKey.set(key)
+        listsPreferencesHolder.favSortingOrder.set(order)
         loadFavorites(currentSt)
     }
 

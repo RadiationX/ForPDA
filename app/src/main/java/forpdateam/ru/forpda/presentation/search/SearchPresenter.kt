@@ -77,7 +77,7 @@ class SearchPresenter(
     private var currentData: SearchResult? = null
 
     init {
-        initSearchSettings(otherPreferencesHolder.getSearchSettings())
+        initSearchSettings(otherPreferencesHolder.searchSettings.get())
     }
 
     fun initSearchSettings(url: String?) {
@@ -90,28 +90,28 @@ class SearchPresenter(
         super.onFirstViewAttach()
 
         topicPreferencesHolder
-            .observeShowAvatars()
+            .showAvatars
             .onEach {
                 viewState.updateShowAvatarState(it)
             }
             .launchIn(viewModelScope)
 
         topicPreferencesHolder
-            .observeCircleAvatars()
+            .circleAvatars
             .onEach {
                 viewState.updateTypeAvatarState(it)
             }
             .launchIn(viewModelScope)
 
         mainPreferencesHolder
-            .observeScrollButtonEnabled()
+            .scrollButtonEnabled
             .onEach {
                 viewState.updateScrollButtonState(it)
             }
             .launchIn(viewModelScope)
 
         mainPreferencesHolder
-            .observeWebViewFontSize()
+            .webViewFontSize
             .onEach {
                 viewState.setFontSize(it)
             }
@@ -250,7 +250,7 @@ class SearchPresenter(
             source = settings.source
         )
         val saveUrl = saveSettings.toUrl()
-        otherPreferencesHolder.setSearchSettings(saveUrl)
+        otherPreferencesHolder.searchSettings.set(saveUrl)
     }
 
     fun onItemClick(item: SearchItem) {

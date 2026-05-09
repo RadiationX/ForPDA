@@ -86,11 +86,11 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         touchHelper.attachToRecyclerView(recyclerView)
         recyclerView.adapter = adapter
 
-        if (otherPreferencesHolder.getTooltipMessagePanelSorting()) {
+        if (otherPreferencesHolder.tooltipMessagePanelSorting.get()) {
             val instruction = SimpleInstruction(getContext())
             instruction.setText(get().getString(R.string.code_panel_instruction))
             instruction.setOnCloseClick { v: View? ->
-                otherPreferencesHolder.setTooltipMessagePanelSorting(false)
+                otherPreferencesHolder.tooltipMessagePanelSorting.set(false)
             }
             addView(instruction)
         }
@@ -377,7 +377,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             listCodes.add(item.text)
         }
         val sorted = TextUtils.join(",", listCodes)
-        otherPreferencesHolder.setMessagePanelBbCodes(sorted)
+        otherPreferencesHolder.messagePanelBbCodes.set(sorted)
         super.onDetachedFromWindow()
     }
 
@@ -545,12 +545,12 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             )
 
 
-            val sorted = otherPreferencesHolder.getMessagePanelBbCodes()
+            val sorted = otherPreferencesHolder.messagePanelBbCodes.get()
             if (!sorted.isNullOrEmpty()) {
                 val sortedArr =
                     TextUtils.split(sorted, ",")
                 if (sortedArr.size != tempCodes.size) {
-                    otherPreferencesHolder.deleteMessagePanelBbCodes()
+                    otherPreferencesHolder.messagePanelBbCodes.remove()
                     codes.addAll(tempCodes)
                 } else {
                     for (code in sortedArr) {

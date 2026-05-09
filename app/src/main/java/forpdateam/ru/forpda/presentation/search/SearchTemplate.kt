@@ -49,12 +49,12 @@ class SearchTemplate(
             setVariableOpt("next_disable", TempHelper.getDisableStr(nextDisabled))
             setVariableOpt("last_disable", TempHelper.getDisableStr(nextDisabled))
 
-            val isEnableAvatars = topicPreferencesHolder.getShowAvatars()
+            val isEnableAvatars = topicPreferencesHolder.showAvatars.get()
             setVariableOpt("enable_avatars_bool", java.lang.Boolean.toString(isEnableAvatars))
             setVariableOpt("enable_avatars", if (isEnableAvatars) "show_avatar" else "hide_avatar")
             setVariableOpt(
                 "avatar_type",
-                if (topicPreferencesHolder.getCircleAvatars()) "circle_avatar" else "square_avatar"
+                if (topicPreferencesHolder.circleAvatars.get()) "circle_avatar" else "square_avatar"
             )
 
 

@@ -60,12 +60,12 @@ class ThemeTemplate(
             setVariableOpt("last_disable", TempHelper.getDisableStr(nextDisabled))
 
             setVariableOpt("in_favorite_bool", java.lang.Boolean.toString(page.isInFavorite))
-            val isEnableAvatars = topicPreferencesHolder.getShowAvatars()
+            val isEnableAvatars = topicPreferencesHolder.showAvatars.get()
             setVariableOpt("enable_avatars_bool", java.lang.Boolean.toString(isEnableAvatars))
             setVariableOpt("enable_avatars", if (isEnableAvatars) "show_avatar" else "hide_avatar")
             setVariableOpt(
                 "avatar_type",
-                if (topicPreferencesHolder.getCircleAvatars()) "circle_avatar" else "square_avatar"
+                if (topicPreferencesHolder.circleAvatars.get()) "circle_avatar" else "square_avatar"
             )
 
 
@@ -104,7 +104,7 @@ class ThemeTemplate(
                 //Post body
                 if (page.posts.size > 1 && hatPostId == post.id) {
                     val hatOpened =
-                        topicPreferencesHolder.getHatOpened() || prevDisabled || page.isHatOpen
+                        topicPreferencesHolder.hatOpened.get() || prevDisabled || page.isHatOpen
                     setVariableOpt("hat_state_class", if (hatOpened) "open" else "close")
                     //t.setVariableOpt("hat_body_state", prevDisabled || page.isHatOpen() ? "" : "hidden");
                     addBlockOpt("hat_button")

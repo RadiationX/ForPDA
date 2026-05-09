@@ -177,7 +177,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
             }
             .launchIn(lifecycleScope)
 
-        if (notificationPreferencesRepository.getUpdateEnabled()) {
+        if (notificationPreferencesRepository.updateEnabled.get()) {
             updateChecker.checkUpdate()
         }
     }

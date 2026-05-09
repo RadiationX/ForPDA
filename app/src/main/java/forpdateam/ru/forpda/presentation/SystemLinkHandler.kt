@@ -95,7 +95,7 @@ class SystemLinkHandler(
                         this
                     }
                 }
-                if (!mainPreferencesHolder.getSystemDownloader() || activity == null) {
+                if (!mainPreferencesHolder.systemDownloader.get() || activity == null) {
                     externalDownloader(downloadUrl)
                 } else {
                     val checkAction = {

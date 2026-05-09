@@ -32,7 +32,7 @@ class ArticleContentPresenter(
             }
             .launchIn(viewModelScope)
         mainPreferencesHolder
-            .observeWebViewFontSize()
+            .webViewFontSize
             .onEach {
                 viewState.setFontSize(it)
             }

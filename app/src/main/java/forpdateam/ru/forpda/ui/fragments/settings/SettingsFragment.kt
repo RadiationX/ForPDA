@@ -87,7 +87,7 @@ class SettingsFragment : BaseSettingFragment() {
                 val seekBar = dialogView.findViewById<View>(R.id.value_seekbar) as SeekBar
                 val textView = dialogView.findViewById<View>(R.id.value_textview) as TextView
 
-                seekBar.progress = mainPreferencesHolder.getWebViewFontSize() - 1 - 7
+                seekBar.progress = mainPreferencesHolder.webViewFontSize.get() - 1 - 7
 
                 textView.text = (seekBar.progress + 1 + 7).toString()
                 textView.textSize = (seekBar.progress + 1 + 7).toFloat()
@@ -105,7 +105,7 @@ class SettingsFragment : BaseSettingFragment() {
                     .setTitle(R.string.text_size)
                     .setView(dialogView)
                     .setPositiveButton(R.string.ok) { _, _ ->
-                        mainPreferencesHolder.setWebViewFontSize(seekBar.progress + 1 + 7)
+                        mainPreferencesHolder.webViewFontSize.set(seekBar.progress + 1 + 7)
                     }
                     .setNegativeButton(R.string.cancel, null)
                     .setNeutralButton(R.string.reset, null)
@@ -113,7 +113,7 @@ class SettingsFragment : BaseSettingFragment() {
                     .getButton(DialogInterface.BUTTON_NEUTRAL)
                     .setOnClickListener {
                         seekBar.progress = 16 - 1 - 7
-                        mainPreferencesHolder.setWebViewFontSize(16)
+                        mainPreferencesHolder.webViewFontSize.set(16)
                     }
 
                 false

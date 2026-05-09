@@ -34,7 +34,7 @@ class ForumRulesPresenter(
             .launchIn(viewModelScope)
 
         mainPreferencesHolder
-            .observeWebViewFontSize()
+            .webViewFontSize
             .onEach {
                 viewState.setFontSize(it)
             }

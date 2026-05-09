@@ -24,7 +24,7 @@ class FlowPreferences(
     }.shareIn(coroutineScope, SharingStarted.Eagerly)
 
     fun <T> get(key: String, default: T, adapter: FlowPreferenceAdapter<T>): FlowPreference<T> {
-        return FlowPreference(preferences, key, default, adapter, keysFlow)
+        return FlowPreferenceImpl(preferences, key, default, adapter, keysFlow)
     }
 
     fun getString(key: String, default: String? = null): FlowPreference<String?> {

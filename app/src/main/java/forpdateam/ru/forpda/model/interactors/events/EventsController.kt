@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 class EventsController(
@@ -58,7 +59,7 @@ class EventsController(
     private fun resetTimer() {
         cancelTimer()
         checkTimerJob = notificationPreferencesHolder
-            .observeMainLimit()
+            .mainPeriodDuration
             .flatMapLatest { timerPeriod ->
                 flow {
                     while (true) {

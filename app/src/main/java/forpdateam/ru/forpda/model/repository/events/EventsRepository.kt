@@ -119,7 +119,7 @@ class EventsRepository(
                 start(false)
             }
         }.launchIn(GlobalScope)
-        timerPeriod = notificationPreferencesHolder.getMainLimit()
+        timerPeriod = notificationPreferencesHolder.mainPeriodDuration.get().inWholeMilliseconds
     }
 
     fun observeEvents(): Flow<NotificationEvent> = notifyFlow
@@ -222,20 +222,20 @@ class EventsRepository(
     }
 
     private fun checkNotify(event: NotificationEvent?, source: NotificationEvent.Source): Boolean {
-        if (!notificationPreferencesHolder.getMainEnabled()) {
+        if (!notificationPreferencesHolder.mainEnabled.get()) {
             return false
         }
         if (NotificationEvent.fromQms(source)) {
-            if (!notificationPreferencesHolder.getQmsEnabled()) {
+            if (!notificationPreferencesHolder.qmsEnabled.get()) {
                 return false
             }
         } else if (NotificationEvent.fromTheme(source)) {
             if (event != null && event.isMention) {
-                if (!notificationPreferencesHolder.getMentionsEnabled()) {
+                if (!notificationPreferencesHolder.mentionsEnabled.get()) {
                     return false
                 }
             } else {
-                if (!notificationPreferencesHolder.getFavEnabled()) {
+                if (!notificationPreferencesHolder.favEnabled.get()) {
                     return false
                 }
             }
@@ -325,7 +325,7 @@ class EventsRepository(
     ) {
         Log.d("SUKA", "hardHandleEvent " + events.size + " : " + source)
         if (NotificationEvent.fromSite(source)) {
-            if (notificationPreferencesHolder.getMentionsEnabled()) {
+            if (notificationPreferencesHolder.mentionsEnabled.get()) {
                 for (event in events) {
                     sendNotification(event)
                 }
@@ -368,7 +368,7 @@ class EventsRepository(
                         )
 
                         sendNotification(eventToSend)
-                    } else if (event.isMention && !notificationPreferencesHolder.getFavEnabled()) {
+                    } else if (event.isMention && !notificationPreferencesHolder.favEnabled.get()) {
                         stackedNewEvents.remove(newEvent)
                     }
                 }
@@ -389,8 +389,8 @@ class EventsRepository(
 
     private fun getSavedEvents(source: NotificationEvent.Source): List<NotificationEvent> {
         val savedEvents: Set<String> = when {
-            NotificationEvent.fromQms(source) -> notificationPreferencesHolder.getDataQmsEvents()
-            NotificationEvent.fromTheme(source) -> notificationPreferencesHolder.getDataFavoritesEvents()
+            NotificationEvent.fromQms(source) -> notificationPreferencesHolder.dataQmsEvents.get()
+            NotificationEvent.fromTheme(source) -> notificationPreferencesHolder.dataFavoritesEvents.get()
             else -> null
         } ?: return emptyList()
 
@@ -417,9 +417,9 @@ class EventsRepository(
             savedEvents.add(event.sourceEventText)
         }
         if (NotificationEvent.fromQms(source)) {
-            notificationPreferencesHolder.setDataQmsEvents(savedEvents)
+            notificationPreferencesHolder.dataQmsEvents.set(savedEvents)
         } else if (NotificationEvent.fromTheme(source)) {
-            notificationPreferencesHolder.setDataFavoritesEvents(savedEvents)
+            notificationPreferencesHolder.dataFavoritesEvents.set(savedEvents)
         }
     }
 
@@ -445,7 +445,7 @@ class EventsRepository(
             }
         }
 
-        if (NotificationEvent.fromTheme(source) && notificationPreferencesHolder.getFavOnlyImportant()) {
+        if (NotificationEvent.fromTheme(source) && notificationPreferencesHolder.favOnlyImportant.get()) {
             val toRemove = mutableListOf<NotificationEvent>()
             for (newEvent in newEvents) {
                 var remove = false

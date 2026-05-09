@@ -78,28 +78,28 @@ class ThemePresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         topicPreferencesHolder
-            .observeShowAvatars()
+            .showAvatars
             .onEach {
                 viewState.updateShowAvatarState(it)
             }
             .launchIn(viewModelScope)
 
         topicPreferencesHolder
-            .observeCircleAvatars()
+            .circleAvatars
             .onEach {
                 viewState.updateTypeAvatarState(it)
             }
             .launchIn(viewModelScope)
 
         mainPreferencesHolder
-            .observeScrollButtonEnabled()
+            .scrollButtonEnabled
             .onEach {
                 viewState.updateScrollButtonState(it)
             }
             .launchIn(viewModelScope)
 
         mainPreferencesHolder
-            .observeWebViewFontSize()
+            .webViewFontSize
             .onEach {
                 viewState.setFontSize(it)
             }
@@ -581,7 +581,7 @@ class ThemePresenter(
                             }
                             Log.d(LOG_TAG, " scroll to $postId : $elem")
                             val finalAnchor = (if (elem == null) "entry" else "") + (elem ?: postId)
-                            if (topicPreferencesHolder.getAnchorHistory()) {
+                            if (topicPreferencesHolder.anchorHistory.get()) {
                                 currentPage = currentPage?.let {
                                     it.copy(anchors = it.anchors + finalAnchor)
                                 }
@@ -649,7 +649,7 @@ class ThemePresenter(
     }
 
     fun onBackPressed(): Boolean {
-        if (topicPreferencesHolder.getAnchorHistory()) {
+        if (topicPreferencesHolder.anchorHistory.get()) {
             currentPage?.let {
                 if (it.anchors.size > 1) {
                     val newAnchors = it.anchors.toMutableList()

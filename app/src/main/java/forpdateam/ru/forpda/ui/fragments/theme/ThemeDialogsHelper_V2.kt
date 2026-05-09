@@ -139,12 +139,12 @@ class ThemeDialogsHelper_V2(
     }
 
     fun tryReportPost(presenter: IThemePresenter, post: ForumPost) {
-        if (otherPreferencesHolder.getShowReportWarning()) {
+        if (otherPreferencesHolder.showReportWarning.get()) {
             AlertDialog.Builder(context)
                 .setTitle(R.string.attention)
                 .setMessage(R.string.report_warning)
                 .setPositiveButton(R.string.ok) { dialogInterface: DialogInterface?, i: Int ->
-                    otherPreferencesHolder.setShowReportWarning(false)
+                    otherPreferencesHolder.showReportWarning.set(false)
                     showReportDialog(presenter, post)
                 }
                 .show()

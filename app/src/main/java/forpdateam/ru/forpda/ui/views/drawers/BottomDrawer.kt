@@ -127,7 +127,7 @@ class BottomDrawer(
             binding.bottomToggleArrow.setOnClickListener {
                 toggle()
             }
-            updateArrowVisible(mainPreferencesHolder.getShowBottomArrow())
+            updateArrowVisible(mainPreferencesHolder.showBottomArrow.get())
 
             binding.bottomMenuRecycler.apply {
                 layoutManager = GridLayoutManager(context, 5)
@@ -190,7 +190,7 @@ class BottomDrawer(
             })
 
             mainPreferencesHolder
-                .observeShowBottomArrow()
+                .showBottomArrow
                 .onEach {
                     updateArrowVisible(it)
                 }

@@ -48,7 +48,7 @@
             android:dialogTitle="Раз в"
             android:entries="@array/entries_notify_limit"
             android:entryValues="@array/entry_values_notify_limit"
-            android:key="notifications.main.limit_period"
+            android:key="notifications.main.period_sec"
             android:layout="@layout/preference_custom"
             android:summary="%s"
             android:title="Ограничение частоты"

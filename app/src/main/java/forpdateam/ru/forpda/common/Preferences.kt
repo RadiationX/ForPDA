@@ -91,7 +91,7 @@ class Preferences {
             const val VIBRATION_ENABLED: String = PREFIX + "vibration_enabled"
             const val INDICATOR_ENABLED: String = PREFIX + "indicator_enabled"
             const val AVATARS_ENABLED: String = PREFIX + "avatars_enabled"
-            const val LIMIT: String = PREFIX + "limit_period"
+            const val PERIOD_SEC: String = PREFIX + "period_sec"
         }
 
         object Favorites {

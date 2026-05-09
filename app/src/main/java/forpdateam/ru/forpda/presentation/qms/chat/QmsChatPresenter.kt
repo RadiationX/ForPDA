@@ -57,7 +57,7 @@ class QmsChatPresenter(
         super.onFirstViewAttach()
 
         mainPreferencesHolder
-            .observeWebViewFontSize()
+            .webViewFontSize
             .onEach {
                 viewState.setFontSize(it)
             }

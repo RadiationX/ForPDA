@@ -52,7 +52,7 @@ class NotificationsService : Service() {
     override fun onCreate() {
         Log.i(LOG_TAG, "onCreate")
         notificationPreferencesHolder
-            .observeFavEnabled()
+            .favEnabled
             .onEach { enabled: Boolean ->
                 if (enabled) {
                     eventsRepository.updateEvents(NotificationEvent.Source.THEME)
@@ -61,7 +61,7 @@ class NotificationsService : Service() {
             .launchIn(coroutineScope)
 
         notificationPreferencesHolder
-            .observeQmsEnabled()
+            .qmsEnabled
             .onEach { enabled: Boolean ->
                 if (enabled) {
                     eventsRepository.updateEvents(NotificationEvent.Source.QMS)
@@ -70,13 +70,13 @@ class NotificationsService : Service() {
             .launchIn(coroutineScope)
 
         notificationPreferencesHolder
-            .observeMainLimit()
-            .onEach { limit: Long ->
+            .mainPeriodDuration
+            .onEach {
                 Log.d(
                     LOG_TAG,
-                    "NEW timer period $limit"
+                    "NEW timer period $it"
                 )
-                eventsRepository.setTimerPeriod(limit)
+                eventsRepository.setTimerPeriod(it.inWholeMilliseconds)
             }
             .launchIn(coroutineScope)
 
@@ -145,7 +145,7 @@ class NotificationsService : Service() {
     fun sendNotification(event: NotificationEvent) {
         Log.e("kulolo", "sendNotification " + event.notifyId())
         val user = event.user
-        if (user != null && notificationPreferencesHolder.getMainAvatarsEnabled()) {
+        if (user != null && notificationPreferencesHolder.mainAvatarsEnabled.get()) {
             coroutineScope.launch {
                 val avatarUrl = avatarRepository.getAvatar(user.id, user.nick)
                 val avatar = withContext(Dispatchers.IO) {
@@ -282,13 +282,13 @@ class NotificationsService : Service() {
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
         builder.setCategory(NotificationCompat.CATEGORY_SOCIAL)
         var defaults = 0
-        if (notificationPreferencesHolder.getMainSoundEnabled()) {
+        if (notificationPreferencesHolder.mainSoundEnabled.get()) {
             defaults = defaults or NotificationCompat.DEFAULT_SOUND
         }
-        if (notificationPreferencesHolder.getMainVibrationEnabled()) {
+        if (notificationPreferencesHolder.mainVibrationEnabled.get()) {
             defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
         }
-        if (notificationPreferencesHolder.getMainIndicatorEnabled()) {
+        if (notificationPreferencesHolder.mainIndicatorEnabled.get()) {
             defaults = defaults or NotificationCompat.DEFAULT_LIGHTS
         }
         builder.setDefaults(defaults)

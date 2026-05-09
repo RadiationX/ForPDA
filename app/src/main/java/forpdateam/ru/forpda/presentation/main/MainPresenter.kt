@@ -33,10 +33,10 @@ class MainPresenter(
         qmsInteractor.subscribeEvents()
 
 
-        val firstAppStart = otherPreferencesHolder.getAppFirstStart()
+        val firstAppStart = otherPreferencesHolder.appFirstStart.get()
         if (firstAppStart) {
             viewState.showFirstStartAnimation()
-            otherPreferencesHolder.setAppFirstStart(false)
+            otherPreferencesHolder.appFirstStart.set(false)
         }
 
         val linkHandled = linkHandler.handle(startLink, router)

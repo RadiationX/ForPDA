@@ -281,7 +281,7 @@ class App : Application() {
 
         dependencies
             .mainPreferencesHolder
-            .observeThemeMode()
+            .themeMode
             .distinctUntilChanged()
             .onEach {
                 DayNightHelper.applyTheme(it)
@@ -289,7 +289,7 @@ class App : Application() {
             .launchIn(GlobalScope + Dispatchers.Main)
 
         try {
-            val inputHistory = dependencies.otherPreferencesHolder.getAppVersionsHistory().orEmpty()
+            val inputHistory = dependencies.otherPreferencesHolder.appVersionsHistory.get().orEmpty()
             val history = TextUtils.split(inputHistory, ";")
 
             var lastVNum = 0
@@ -308,7 +308,7 @@ class App : Application() {
             if (lastVNum < nVCode) {
                 val list: MutableList<String?> = ArrayList(Arrays.asList(*history))
                 list.add(nVCode.toString())
-                dependencies.otherPreferencesHolder.setAppVersionsHistory(
+                dependencies.otherPreferencesHolder.appVersionsHistory.set(
                     TextUtils.join(
                         ";",
                         list

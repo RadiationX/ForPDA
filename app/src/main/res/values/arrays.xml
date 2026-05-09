@@ -32,7 +32,7 @@
         <item>30m</item>
         <item>1h</item>
     </string-array>
-    <string-array name="entry_values_notify_limit">
+    <integer-array name="entry_values_notify_limit">
         <item>10</item>
         <item>30</item>
         <item>60</item>
@@ -41,5 +41,5 @@
         <item>600</item>
         <item>1800</item>
         <item>3600</item>
-    </string-array>
+    </integer-array>
 </resources>

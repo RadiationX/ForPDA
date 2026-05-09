@@ -77,7 +77,7 @@ class MessagePanel(
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     init {
-        isMonospace = mainPreferencesHolder.getEditorMonospace()
+        isMonospace = mainPreferencesHolder.editorMonospace.get()
         this.fragmentContainer = fragmentContainer
         this.fullForm = fullForm
         init()
@@ -159,7 +159,7 @@ class MessagePanel(
         messageField!!.setTypeface(if (isMonospace) Typeface.MONOSPACE else Typeface.DEFAULT)
 
         mainPreferencesHolder
-            .observeEditorMonospace()
+            .editorMonospace
             .onEach { value: Boolean ->
                 isMonospace = value
                 messageField!!.setTypeface(if (isMonospace) Typeface.MONOSPACE else Typeface.DEFAULT)

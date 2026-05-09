@@ -166,7 +166,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         contentController.setMainRefresh(refreshLayout)
 
 
-        setFontSize(mainPreferencesHolder.getWebViewFontSize())
+        setFontSize(mainPreferencesHolder.webViewFontSize.get())
 
         notificationButton.setColorFilter(
             App.getColorFromAttr(requireContext(), R.attr.contrast_text_color),
@@ -213,7 +213,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         })
 
         fab.size = FloatingActionButton.SIZE_MINI
-        if (mainPreferencesHolder.getScrollButtonEnabled()) {
+        if (mainPreferencesHolder.scrollButtonEnabled.get()) {
             fab.visibility = View.VISIBLE
         } else {
             fab.visibility = View.GONE
@@ -226,7 +226,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         refreshLayout.setOnRefreshListener { presenter.reload() }
 
 
-        if (mainPreferencesHolder.getEditorDefaultHidden()) {
+        if (mainPreferencesHolder.editorDefaultHidden.get()) {
             hideMessagePanel()
         } else {
             showMessagePanel(false)
@@ -591,7 +591,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     override fun onMessageSent() {
         messagePanel.clearAttachments()
         messagePanel.clearMessage()
-        if (mainPreferencesHolder.getEditorDefaultHidden()) {
+        if (mainPreferencesHolder.editorDefaultHidden.get()) {
             hideMessagePanel()
         }
     }

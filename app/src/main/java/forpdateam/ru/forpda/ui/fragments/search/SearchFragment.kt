@@ -297,10 +297,10 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
 
         webView.setJsLifeCycleListener(this)
         webView.addJavascriptInterface(jsInterface, ThemeFragmentWeb.JS_INTERFACE)
-        webView.setRelativeFontSize(mainPreferencesHolder.getWebViewFontSize())
+        webView.setRelativeFontSize(mainPreferencesHolder.webViewFontSize.get())
 
         fab.size = FloatingActionButton.SIZE_MINI
-        if (mainPreferencesHolder.getScrollButtonEnabled()) {
+        if (mainPreferencesHolder.scrollButtonEnabled.get()) {
             fab.visibility = View.VISIBLE
         } else {
             fab.visibility = View.GONE
@@ -366,7 +366,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         refreshLayout.setOnRefreshListener { presenter.refreshData() }
         adapter.setOnItemClickListener(this)
 
-        if (otherPreferencesHolder.getTooltipSearchSettings()) {
+        if (otherPreferencesHolder.tooltipSearchSettings.get()) {
             for (toolbarChildIndex in 0 until toolbar.childCount) {
                 val childView = toolbar.getChildAt(toolbarChildIndex)
                 if (childView is ActionMenuView) {
@@ -401,7 +401,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
                 }
             }
 
-            otherPreferencesHolder.setTooltipSearchSettings(false)
+            otherPreferencesHolder.tooltipSearchSettings.set(false)
         }
 
 
