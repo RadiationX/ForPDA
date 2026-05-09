@@ -47,16 +47,20 @@ class NotificationPreferencesHolder(
         preferences.getBoolean(Preferences.Notifications.Favorites.ONLY_IMPORTANT, false)
     }
 
-    val favLiveTab by lazy {
-        preferences.getBoolean(Preferences.Notifications.Favorites.LIVE_TAB, true)
-    }
-
     val qmsEnabled by lazy {
         preferences.getBoolean(Preferences.Notifications.Qms.ENABLED, true)
     }
 
-    val mentionsEnabled by lazy {
-        preferences.getBoolean(Preferences.Notifications.Mentions.ENABLED, true)
+    val topicMentionsEnabled by lazy {
+        preferences.getBoolean(Preferences.Notifications.TopicMentions.ENABLED, true)
+    }
+
+    val siteMentionsEnabled by lazy {
+        preferences.getBoolean(Preferences.Notifications.SiteMentions.ENABLED, true)
+    }
+
+    val forumsEnabled by lazy {
+        preferences.getBoolean(Preferences.Notifications.Forums.ENABLED, true)
     }
 
     val updateEnabled by lazy {

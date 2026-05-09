@@ -98,7 +98,6 @@ class Preferences {
             private const val PREFIX = Notifications.PREFIX + "fav."
             const val ENABLED: String = PREFIX + "enabled"
             const val ONLY_IMPORTANT: String = PREFIX + "only_important"
-            const val LIVE_TAB: String = PREFIX + "live_tab"
         }
 
         object Qms {
@@ -106,8 +105,18 @@ class Preferences {
             const val ENABLED: String = PREFIX + "enabled"
         }
 
-        object Mentions {
+        object TopicMentions {
             private const val PREFIX = Notifications.PREFIX + "mentions."
+            const val ENABLED: String = PREFIX + "enabled"
+        }
+
+        object SiteMentions {
+            private const val PREFIX = Notifications.PREFIX + "comments."
+            const val ENABLED: String = PREFIX + "enabled"
+        }
+
+        object Forums {
+            private const val PREFIX = Notifications.PREFIX + "forums."
             const val ENABLED: String = PREFIX + "enabled"
         }
 

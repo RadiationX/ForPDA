@@ -70,6 +70,7 @@ import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.interactors.events.EventsController
+import forpdateam.ru.forpda.model.interactors.events.NotificationEventSender
 import forpdateam.ru.forpda.model.interactors.events.handlers.CountersEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.FavoritesEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.NotificationEventsHandler
@@ -353,13 +354,20 @@ class Dependencies internal constructor(
 
     val eventsController by lazy {
         EventsController(
-            webSocketEventsApi = webSocketEventsApi,
-            countersEventsHandler = CountersEventsHandler(countersHolder),
-            favoritesEventsHandler = FavoritesEventsHandler(favoritesCache),
-            qmsEventsHandler = QmsEventsHandler(qmsCache),
-            notificationEventsHandler = NotificationEventsHandler(),
-            inspectorRepository = inspectorRepository,
-            notificationPreferencesHolder = notificationPreferencesHolder
+            webSocketEventsApi,
+            CountersEventsHandler(countersHolder),
+            FavoritesEventsHandler(favoritesCache),
+            QmsEventsHandler(qmsCache),
+            NotificationEventsHandler(),
+            inspectorRepository,
+            notificationPreferencesHolder
+        )
+    }
+
+    val notificationEventSender by lazy {
+        NotificationEventSender(
+            notificationPreferencesHolder,
+            avatarRepository
         )
     }
 
@@ -367,7 +375,7 @@ class Dependencies internal constructor(
     val mainPreferencesHolder by lazy { MainPreferencesHolder(flowPreferences) }
     val topicPreferencesHolder by lazy { TopicPreferencesHolder(flowPreferences) }
     val listsPreferencesHolder by lazy { ListsPreferencesHolder(flowPreferences) }
-    val notificationPreferencesHolder by lazy { NotificationPreferencesHolder(flowPreferences,inspectorParser) }
+    val notificationPreferencesHolder by lazy { NotificationPreferencesHolder(flowPreferences, inspectorParser) }
 
     val crossScreenInteractor by lazy { CrossScreenInteractor() }
     val qmsInteractor by lazy { QmsInteractor(qmsRepository) }

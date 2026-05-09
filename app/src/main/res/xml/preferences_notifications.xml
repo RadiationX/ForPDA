@@ -71,27 +71,44 @@
             android:dependency="notifications.fav.enabled"
             android:key="notifications.fav.only_important"
             android:layout="@layout/preference_custom"
-            android:title="@string/pref_title_only_important"
-            app:iconSpaceReserved="false" />
-
-        <forpdateam.ru.forpda.ui.views.SwitchPreference
-            android:defaultValue="true"
-            android:dependency="notifications.fav.enabled"
-            android:key="notifications.fav.live_tab"
-            android:layout="@layout/preference_custom"
-            android:summary="Обновлять данные во вкладке"
-            android:title="Живой список"
+            android:title="@string/pref_title_favorites_only_important"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
-        android:title="@string/pref_title_mentions">
+        android:title="@string/pref_title_topic_mentions">
         <forpdateam.ru.forpda.ui.views.SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications.main.enabled"
             android:key="notifications.mentions.enabled"
+            android:layout="@layout/preference_custom"
+            android:title="@string/pref_title_notify"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category_custom"
+        android:title="@string/pref_title_site_mentions">
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notifications.main.enabled"
+            android:key="notifications.comments.enabled"
+            android:layout="@layout/preference_custom"
+            android:title="@string/pref_title_notify"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category_custom"
+        android:title="@string/pref_title_site_mentions">
+        <forpdateam.ru.forpda.ui.views.SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notifications.main.enabled"
+            android:key="notifications.forums.enabled"
             android:layout="@layout/preference_custom"
             android:title="@string/pref_title_notify"
             app:iconSpaceReserved="false" />

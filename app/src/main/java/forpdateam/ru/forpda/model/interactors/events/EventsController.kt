@@ -8,6 +8,8 @@ import forpdateam.ru.forpda.model.interactors.events.handlers.FavoritesEventsHan
 import forpdateam.ru.forpda.model.interactors.events.handlers.NotificationEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.QmsEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.models.InspectorTrigger
+import forpdateam.ru.forpda.model.interactors.events.models.NotificationEvent
+import forpdateam.ru.forpda.model.interactors.events.models.NotificationId
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
 import forpdateam.ru.forpda.model.repository.inspector.InspectorRepository
 import kotlinx.coroutines.GlobalScope
@@ -20,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 class EventsController(
@@ -36,6 +37,10 @@ class EventsController(
     private var checkTimerJob: Job? = null
 
     fun observeWebSocketEvents(): Flow<WebSocketEvent> = webSocketEventsApi.observeEvents()
+
+    fun observeNewEvents(): Flow<NotificationEvent> = notificationEventsHandler.observeNewEvents()
+
+    fun observeCancelIds(): Flow<NotificationId> = notificationEventsHandler.observeCancelIds()
 
     fun kek() {
         webSocketEventsApi
@@ -56,6 +61,10 @@ class EventsController(
             .launchIn(GlobalScope)
     }
 
+    suspend fun checkEvents() {
+        processInspector(InspectorTrigger.entries.toList())
+    }
+
     private fun resetTimer() {
         cancelTimer()
         checkTimerJob = notificationPreferencesHolder
@@ -69,7 +78,7 @@ class EventsController(
                 }
             }
             .onEach {
-                processInspector(InspectorTrigger.entries.toList())
+                checkEvents()
             }
             .launchIn(GlobalScope)
     }

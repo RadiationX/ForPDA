@@ -360,12 +360,14 @@
     <string name="open_forum">Open subforum</string>
     <!-- Notifications -->
     <string name="notification_content_qms_Nick_Count" formatted="false">%s:%d unread messages</string>
-    <string name="notification_content_mention_Title" formatted="false">Replied to you in the topic \"%s\"</string>
+    <string name="notification_content_topic_mention" formatted="false">You have received a reply in the topic</string>
     <string name="notification_content_theme_Title" formatted="false">Wrote a post in the topic \"%s\"</string>
     <string name="notification_content_news">You\'ve been mentioned in a comment on the portal</string>
+    <string name="notification_content_forum">New message on forum</string>
     <string name="notification_summary_mention">Mention</string>
     <string name="notification_summary_qms">QMS Chat</string>
     <string name="notification_summary_fav">Favorites</string>
+    <string name="notification_summary_forum">Forum</string>
     <string name="notification_summary_comment">Comment</string>
     <!-- Search -->
     <string name="search_settings_resource">Search from</string>
@@ -424,8 +426,10 @@
     <string name="pref_title_indicator">Indication</string>
     <string name="pref_title_enable_avatars">Load userpics</string>
     <string name="pref_title_favorites">Favorites</string>
-    <string name="pref_title_only_important">Pinned only</string>
-    <string name="pref_title_mentions">Mentions</string>
+    <string name="pref_title_favorites_only_important">Pinned only</string>
+    <string name="pref_title_topic_mentions">Mentions</string>
+    <string name="pref_title_site_mentions">Comments</string>
+    <string name="pref_title_forum">Forums</string>
     <string name="pref_title_pm_qms">QMS private messages</string>
     <string name="pref_title_app_updates">App updates</string>
     <string name="pref_title_notify">Notify</string>

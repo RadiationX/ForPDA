@@ -409,12 +409,14 @@
 
     <!-- Notifications -->
     <string name="notification_content_qms_Nick_Count" formatted="false">%s: %d непрочитанных сообщений</string>
-    <string name="notification_content_mention_Title" formatted="false">Ответил Вам в теме \"%s\"</string>
+    <string name="notification_content_topic_mention" formatted="false">Вам ответили в теме</string>
     <string name="notification_content_theme_Title" formatted="false">Написал сообщение в теме \"%s\"</string>
     <string name="notification_content_news">Вам ответили на комментарий на сайте</string>
+    <string name="notification_content_forum">Новое сообщение на форуме</string>
     <string name="notification_summary_mention">Упоминание</string>
     <string name="notification_summary_qms">Чат QMS</string>
     <string name="notification_summary_fav">Избранное</string>
+    <string name="notification_summary_forum">Форум</string>
     <string name="notification_summary_comment">Комментарий</string>
 
     <!-- Search -->
@@ -490,8 +492,10 @@
     <string name="pref_title_indicator">Индикатор</string>
     <string name="pref_title_enable_avatars">Загружать аватары</string>
     <string name="pref_title_favorites">Избранное</string>
-    <string name="pref_title_only_important">Только важные</string>
-    <string name="pref_title_mentions">Ответы</string>
+    <string name="pref_title_favorites_only_important">Только важные</string>
+    <string name="pref_title_topic_mentions">Упоминания</string>
+    <string name="pref_title_site_mentions">Комментарии</string>
+    <string name="pref_title_forum">Форумы</string>
     <string name="pref_title_pm_qms">Личные сообщения QMS</string>
     <string name="pref_title_app_updates">Обновления программы</string>
     <string name="pref_title_notify">Уведомлять</string>
