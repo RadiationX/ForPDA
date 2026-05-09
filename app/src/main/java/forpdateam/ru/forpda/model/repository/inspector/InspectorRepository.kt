@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.model.repository.inspector
 
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
+import forpdateam.ru.forpda.entity.remote.inspector.InspectorMention
 import forpdateam.ru.forpda.model.data.remote.api.inspector.InspectorApi
 import forpdateam.ru.forpda.model.data.remote.api.inspector.InspectorParser
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
@@ -32,6 +33,10 @@ class InspectorRepository(
     fun saveQms(diff: InspectorDiff<InspectorItem.Qms>) {
         val response = diff.loadedItems.map { it.rawContent }.toSet()
         preferences.setDataQmsEvents(response)
+    }
+
+    suspend fun getMentionsCound(): InspectorMention {
+        return inspectorApi.getMentionsCount()
     }
 
     private fun getSavedQms(): List<InspectorItem.Qms> {

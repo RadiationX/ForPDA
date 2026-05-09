@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.inspector
 
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
+import forpdateam.ru.forpda.entity.remote.inspector.InspectorMention
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 
 /**
@@ -19,6 +20,11 @@ class InspectorApi(
     suspend fun getQms(): List<InspectorItem.Qms> {
         val response = webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=qms")
         return parser.parseQmsEvents(response.body)
+    }
+
+    suspend fun getMentionsCount(): InspectorMention {
+        val response = webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=mentions")
+        return InspectorMention(response.body.toInt())
     }
 
 }

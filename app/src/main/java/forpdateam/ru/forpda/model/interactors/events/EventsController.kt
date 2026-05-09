@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.model.interactors.events.handlers.CountersEventsHand
 import forpdateam.ru.forpda.model.interactors.events.handlers.FavoritesEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.NotificationEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.QmsEventsHandler
+import forpdateam.ru.forpda.model.repository.inspector.InspectorRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -14,9 +15,9 @@ class EventsController(
     private val countersEventsHandler: CountersEventsHandler,
     private val favoritesEventsHandler: FavoritesEventsHandler,
     private val qmsEventsHandler: QmsEventsHandler,
-    private val notificationEventsHandler: NotificationEventsHandler
+    private val notificationEventsHandler: NotificationEventsHandler,
+    private val inspectorRepository: InspectorRepository,
 ) {
-
 
     fun kek() {
         webSocketEventsApi

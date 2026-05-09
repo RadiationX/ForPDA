@@ -18,7 +18,7 @@ sealed interface WebSocketEvent {
 
     data class Site(
         val type: Type,
-        val postId: Int,
+        val articleId: Int,
         val timeStamp: Long
     ) : WebSocketEvent {
 

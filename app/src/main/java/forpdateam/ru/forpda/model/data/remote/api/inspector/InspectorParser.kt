@@ -45,6 +45,7 @@ class InspectorParser {
                 ),
                 timeStamp = matcher.group(5).toLong() * 1000L,
                 msgCount = matcher.group(6).toInt(),
+                messageId = matcher.group(7).toInt(),
                 rawContent = matcher.group()
             )
         }

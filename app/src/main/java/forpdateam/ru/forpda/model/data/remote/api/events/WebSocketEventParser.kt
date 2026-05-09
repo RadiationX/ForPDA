@@ -49,7 +49,7 @@ class WebSocketEventParser {
         } ?: return null
         return WebSocketEvent.Site(
             type = type,
-            postId = sourceId,
+            articleId = sourceId,
             timeStamp = System.currentTimeMillis()
         )
     }

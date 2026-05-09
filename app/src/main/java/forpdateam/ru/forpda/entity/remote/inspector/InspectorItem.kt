@@ -30,6 +30,7 @@ sealed interface InspectorItem {
         val msgCount: Int,
         val sourceTitle: String,
         val user: User,
+        val messageId: Int,
         val rawContent: String
     ) : InspectorItem {
 
