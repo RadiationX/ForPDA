@@ -40,7 +40,7 @@ sealed interface WebSocketEvent {
         enum class Type {
             New,
             Read,
-            FullRead
+            ReadAll
         }
     }
 
@@ -85,7 +85,7 @@ fun WebSocketEvent.needNotification(): Boolean {
         is WebSocketEvent.QmsMessage -> when (type) {
             WebSocketEvent.QmsMessage.Type.New -> true
             WebSocketEvent.QmsMessage.Type.Read -> false
-            WebSocketEvent.QmsMessage.Type.FullRead -> false
+            WebSocketEvent.QmsMessage.Type.ReadAll -> false
         }
 
         is WebSocketEvent.Site -> when (type) {
@@ -117,7 +117,7 @@ fun WebSocketEvent.needCancelNotification(): Boolean {
         is WebSocketEvent.QmsMessage -> when (type) {
             WebSocketEvent.QmsMessage.Type.New -> false
             WebSocketEvent.QmsMessage.Type.Read -> true
-            WebSocketEvent.QmsMessage.Type.FullRead -> true
+            WebSocketEvent.QmsMessage.Type.ReadAll -> true
         }
 
         is WebSocketEvent.Site -> when (type) {

@@ -66,7 +66,7 @@ class WebSocketEventParser {
         val type = when (srcType) {
             SRC_TYPE_NEW -> WebSocketEvent.QmsMessage.Type.New
             SRC_TYPE_READ -> WebSocketEvent.QmsMessage.Type.Read
-            SRC_TYPE_QMS_FULL_READ -> WebSocketEvent.QmsMessage.Type.FullRead
+            SRC_TYPE_QMS_FULL_READ -> WebSocketEvent.QmsMessage.Type.ReadAll
             else -> return null
         }
         return WebSocketEvent.QmsMessage(

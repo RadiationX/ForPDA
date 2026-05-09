@@ -6,7 +6,7 @@ data class InspectorDiff<T : InspectorItem>(
     val savedItems: List<T>
 ) {
 
-    fun findDiff(): List<Item<T>> {
+    val diff by lazy<List<Item<T>>> {
         val result = mutableListOf<Item<T>>()
 
         val loadedMap = loadedItems.associateBy { it.baseId }
@@ -36,7 +36,7 @@ data class InspectorDiff<T : InspectorItem>(
             result.add(event)
         }
 
-        return result
+        result
     }
 
     sealed interface Item<T : InspectorItem> {

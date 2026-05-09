@@ -21,8 +21,8 @@ class InspectorParser {
                     id = matcher.group(4).toInt(),
                     nick = fromHtml(matcher.group(5))
                 ),
-                timeStamp = matcher.group(6).toInt().toLong(),
-                lastTimeStamp = matcher.group(7).toInt().toLong(),
+                timeStamp = matcher.group(6).toLong() * 1000L,
+                lastTimeStamp = matcher.group(7).toLong() * 1000L,
                 isImportant = matcher.group(8) == "1",
                 rawContent = matcher.group()
             )
@@ -43,7 +43,7 @@ class InspectorParser {
                     id = matcher.group(3).toInt(),
                     nick = userNick
                 ),
-                timeStamp = matcher.group(5).toInt().toLong(),
+                timeStamp = matcher.group(5).toLong() * 1000L,
                 msgCount = matcher.group(6).toInt(),
                 rawContent = matcher.group()
             )

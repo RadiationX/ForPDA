@@ -1,0 +1,77 @@
+package forpdateam.ru.forpda.model.interactors.events.handlers
+
+import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
+import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
+import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
+import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
+import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
+import forpdateam.ru.forpda.model.data.cache.qms.QmsCache
+
+class QmsEventsHandler(
+    private val qmsCache: QmsCache,
+) {
+
+    suspend fun handle(event: WebSocketEvent) {
+        if (event !is WebSocketEvent.QmsMessage) {
+            return
+        }
+        updateCounter(event.themeId) { count ->
+            when (event.type) {
+                WebSocketEvent.QmsMessage.Type.New -> count + 1
+                WebSocketEvent.QmsMessage.Type.Read -> count
+                WebSocketEvent.QmsMessage.Type.ReadAll -> 0
+            }
+        }
+    }
+
+    suspend fun handle(diff: InspectorDiff<InspectorItem.Qms>) {
+        diff.loadedItems.forEach { item ->
+            updateCounter(item.themeId) { item.msgCount }
+        }
+    }
+
+    private suspend fun updateCounter(themeId: Int, block: (Int) -> Int) {
+        val target = findTarget(themeId) ?: return
+        val newThemeCount = block(target.theme.countNew)
+        val updatedThemes = target.themes.themes.map {
+            if (it.id == themeId) {
+                it.copy(countNew = newThemeCount)
+            } else {
+                it
+            }
+        }
+        val updatedTarget = target.copy(
+            themes = target.themes.copy(
+                themes = updatedThemes
+            )
+        )
+        qmsCache.saveThemes(updatedTarget.themes)
+
+        updateContact(target.theme.user.id)
+    }
+
+    private suspend fun findTarget(themeId: Int): Target? {
+        val themesList = qmsCache.getAllThemes()
+        for (themes in themesList) {
+            for (theme in themes.themes) {
+                if (theme.id == themeId) {
+                    return Target(themes, theme)
+                }
+            }
+        }
+        return null
+    }
+
+    private suspend fun updateContact(userId: Int) {
+        qmsCache.getContact(userId)?.also { contact ->
+            val newContactCount = qmsCache.getThemes(userId).themes.sumOf { it.countNew }
+            val newContact = contact.copy(count = newContactCount)
+            qmsCache.updateContact(newContact)
+        }
+    }
+
+    private data class Target(
+        val themes: QmsThemes,
+        val theme: QmsTheme
+    )
+}

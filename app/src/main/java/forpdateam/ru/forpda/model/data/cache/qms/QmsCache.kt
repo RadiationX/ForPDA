@@ -31,6 +31,12 @@ class QmsCache(
         return observeContacts().first()
     }
 
+    suspend fun getContact(userId: Int): QmsContact? {
+        return realm
+            .queryEquals<QmsContactBd>("userId", userId)
+            .mapFirst { it.toDomain() }
+    }
+
     suspend fun saveContacts(items: List<QmsContact>) {
         realm.write {
             delete(QmsContactBd::class)

@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.model
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +24,10 @@ class CountersHolder(
                 putInt("counter_mentions", value.mentions)
             }
         dataFlow.value = value
+    }
+
+    fun update(block: (MessageCounters) -> MessageCounters) {
+        set(block(get()))
     }
 
     private fun load(): MessageCounters {
