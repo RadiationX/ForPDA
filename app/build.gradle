@@ -177,7 +177,7 @@ dependencies {
     implementation libs.spectrum
     implementation libs.android.simple.tooltip
     implementation libs.pagerbullet
-    implementation libs.android.job
+    implementation libs.androidx.work.runtime.ktx
 
     implementation libs.moxy
     implementation libs.moxy.androidx

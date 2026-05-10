@@ -1,6 +1,5 @@
 [versions]
 adapterdelegates3 = "3.0.1"
-android-job = "1.2.6"
 android-material-design-colors = "3.0.0"
 android-plugin = "8.13.2"
 android-simple-tooltip = "0.2.0"
@@ -36,9 +35,11 @@ tagsoup = "1.2.1"
 universal-image-loader = "1.9.5"
 viewbindingpropertydelegate = "1.5.9"
 kotlin-coroutines = "1.10.2"
+work-runtime-ktx = "2.11.2"
 
 
 [libraries]
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
@@ -46,7 +47,6 @@ androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-lived
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 adapterdelegates3 = { module = "com.hannesdorfmann:adapterdelegates3", version.ref = "adapterdelegates3" }
-android-job = { module = "com.evernote:android-job", version.ref = "android-job" }
 android-material-design-colors = { module = "com.wada811:android-material-design-colors", version.ref = "android-material-design-colors" }
 android-simple-tooltip = { module = "com.github.douglasjunior:android-simple-tooltip", version.ref = "android-simple-tooltip" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }

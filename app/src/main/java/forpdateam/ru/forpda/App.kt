@@ -3,25 +3,19 @@ package forpdateam.ru.forpda
 import android.Manifest
 import android.app.Activity
 import android.app.Application
-import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
-import android.os.IBinder
 import android.os.Looper
 import android.os.Messenger
-import android.os.PowerManager
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.DisplayMetrics
@@ -31,13 +25,9 @@ import android.webkit.WebSettings
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import com.evernote.android.job.JobConfig
-import com.evernote.android.job.JobManager
-import com.evernote.android.job.JobRequest
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
 import com.nostra13.universalimageloader.core.DisplayImageOptions
@@ -51,10 +41,8 @@ import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
-import forpdateam.ru.forpda.notifications.NotificationsJob
-import forpdateam.ru.forpda.notifications.NotificationsJobCreator
-import forpdateam.ru.forpda.notifications.NotificationsService
 import forpdateam.ru.forpda.ui.fragments.TabFragment
+import forpdateam.ru.forpda.work.WorkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -66,7 +54,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.util.Arrays
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 /**
@@ -335,23 +322,7 @@ class App : Application() {
 
         //На каких-то диких калькуляторах может быть ANR, поэтому в фоновый поток
         GlobalScope.launch(Dispatchers.Default) {
-            JobConfig.addLogger { priority: Int, tag: String, message: String, t: Throwable? ->
-                Log.e(
-                    "JobLogger",
-                    "Job: pr=$priority; t=$tag; m=$message; th=$t"
-                )
-            }
-            JobConfig.setLogcatEnabled(false)
-            JobManager.create(this@App).addJobCreator(NotificationsJobCreator())
-            JobManager.instance().cancelAllForTag(NotificationsJob.TAG)
-            JobRequest.Builder(NotificationsJob.TAG)
-                .setPeriodic(TimeUnit.MINUTES.toMillis(16L)) //only non periodic
-                //.setBackoffCriteria(JobRequest.DEFAULT_BACKOFF_MS, JobRequest.BackoffPolicy.LINEAR)
-                .setRequiresCharging(false)
-                .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
-                .build()
-                .schedule()
+            WorkUtils.enqueuePeriodicInspectorCheck(this@App)
         }
 
         Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time))
