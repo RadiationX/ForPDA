@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.theme
 
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
@@ -11,7 +12,8 @@ import java.util.regex.Pattern
  */
 class ThemeApi(
     private val webClient: IWebClient,
-    private val themeParser: ThemeParser
+    private val themeParser: ThemeParser,
+    private val authHolder: AuthHolder
 ) {
 
     suspend fun getTheme(url: String, hatOpen: Boolean, pollOpen: Boolean): ThemePage {
@@ -40,7 +42,7 @@ class ThemeApi(
 
     suspend fun deletePost(postId: Int) {
         val url =
-            "https://4pda.to/forum/index.php?act=zmod&auth_key=${webClient.getAuthKey()}&code=postchoice&tact=delete&selectedpids=$postId"
+            "https://4pda.to/forum/index.php?act=zmod&auth_key=${authHolder.getAuthKey().orEmpty()}&code=postchoice&tact=delete&selectedpids=$postId"
         val response = webClient.request(NetworkRequest.Builder().url(url).xhrHeader().build())
         val body = response.body
         if (body != "ok") {

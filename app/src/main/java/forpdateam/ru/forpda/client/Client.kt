@@ -1,22 +1,13 @@
 package forpdateam.ru.forpda.client
 
-import android.content.Context
 import android.util.Log
-import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.entity.common.AuthData
-import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.common.MessageCounters
-import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
-import okhttp3.Cookie
-import okhttp3.CookieJar
 import okhttp3.FormBody
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -24,94 +15,12 @@ import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okhttp3.coroutines.executeAsync
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class Client(
-    context: Context?,
-    private val authHolder: AuthHolder,
+    private val cookieJar: AppCookieJar,
     private val countersHolder: CountersHolder
 ) : IWebClient {
-    private val clientCookies: MutableMap<String, Cookie> = HashMap()
-    private val privateHeaders: List<String> =
-        ArrayList(mutableListOf("pass_hash", "session_id", "auth_key", "password"))
-    private val mobileCookie = Cookie.parse("https://4pda.to/".toHttpUrl(), "ngx_mb=1;")
-
-    override fun getAuthKey(): String {
-        return get().preferences.getString("auth_key", null) ?: ""
-    }
-
-    private fun parseCookie(cookieFields: String): Cookie? {
-        /*Хранение: Url|:|Cookie*/
-        val fields =
-            cookieFields.split("\\|:\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        return Cookie.parse(fields[0].toHttpUrl(), fields[1])
-    }
-
-    private fun cookieToPref(url: String, cookie: Cookie): String {
-        return "$url|:|$cookie"
-    }
-
-    override fun getClientCookies(): Map<String, Cookie> {
-        return clientCookies
-    }
-
-    private val cookieJar: CookieJar = object : CookieJar {
-        override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-            val editor = get().preferences.edit()
-            /*for (Cookie cookie : cookies) {
-                Log.e("SUKA", "save COOK " + cookie.name() + " : " + cookie.value());
-            }*/
-            for (cookie in cookies) {
-                if (cookie.value == "deleted") {
-                    editor.remove("cookie_" + cookie.name)
-                    clientCookies.remove(cookie.name)
-                } else {
-                    editor.putString(
-                        "cookie_" + cookie.name,
-                        cookieToPref(url.toString(), cookie)
-                    )
-                    if (cookie.name == "member_id") {
-                        editor.putString("member_id", cookie.value)
-                        val userId = cookie.value.toInt()
-                        val authData = authHolder.get().copy(
-                            userId = userId,
-                            state = if (userId == AuthData.NO_ID) AuthState.NO_AUTH else AuthState.AUTH
-                        )
-                        authHolder.set(authData)
-                    }
-                    if (!clientCookies.containsKey(cookie.name)) {
-                        clientCookies.remove(cookie.name)
-                    }
-                    clientCookies[cookie.name] = cookie
-                }
-            }
-            editor.apply()
-        }
-
-        override fun loadForRequest(url: HttpUrl): List<Cookie> {
-            val external = !url.host.lowercase(Locale.getDefault()).contains("4pda")
-            if (!external) {
-                clientCookies["ngx_mb"] = mobileCookie!!
-            }
-
-            val cookies: MutableList<Cookie> = ArrayList(clientCookies.values)
-            if (external) {
-                for (privateName in privateHeaders) {
-                    for (i in cookies.indices) {
-                        if (cookies[i].name == privateName) {
-                            cookies.removeAt(i)
-                            break
-                        }
-                    }
-                }
-            }
-            /*for (Cookie cookie : cookies) {
-                Log.e("SUKA", "load COOK " + cookie.name() + " : " + cookie.value());
-            }*/
-            return cookies
-        }
-    }
 
     private val client: OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(45, TimeUnit.SECONDS)
@@ -127,46 +36,6 @@ class Client(
         .retryOnConnectionFailure(true)
         .cookieJar(cookieJar)
         .build()
-
-
-    //Контекст нужен, для чтения настроек
-    //Не необходимо, но вдруг случится шо у App не будет контекста
-    init {
-        val preferences = get().preferences
-        val member_id = preferences.getString("cookie_member_id", null)
-        val pass_hash = preferences.getString("cookie_pass_hash", null)
-        val session_id = preferences.getString("cookie_session_id", null)
-        val anonymous = preferences.getString("cookie_anonymous", null)
-        val clearance = preferences.getString("cookie_cf_clearance", null)
-
-        clientCookies["ngx_mb"] = mobileCookie!!
-        if (clearance != null) {
-            clientCookies["cf_clearance"] = parseCookie(clearance)!!
-        }
-
-        if (member_id != null && pass_hash != null) {
-            val userId = preferences.getString("member_id", "0")!!.toInt()
-            val authData = authHolder.get().copy(
-                state = AuthState.AUTH,
-                userId = userId
-            )
-            authHolder.set(authData)
-
-            //Первичная загрузка кукисов
-            clientCookies["member_id"] = parseCookie(member_id)!!
-            clientCookies["pass_hash"] = parseCookie(pass_hash)!!
-            if (session_id != null) clientCookies["session_id"] = parseCookie(session_id)!!
-            if (anonymous != null) {
-                clientCookies["anonymous"] = parseCookie(anonymous)!!
-            }
-        } else {
-            val authData = authHolder.get().copy(
-                userId = AuthData.NO_ID,
-                state = AuthState.SKIP
-            )
-            authHolder.set(authData)
-        }
-    }
 
     //Network
     @Throws(Exception::class)
@@ -202,12 +71,7 @@ class Client(
             .header("User-Agent", USER_AGENT)
         if (request.headers != null) {
             for ((key, value) in request.headers) {
-                Log.d(
-                    LOG_TAG, "Header $key : " + (if (privateHeaders.contains(
-                            key
-                        )
-                    ) "private" else value)
-                )
+                Log.d(LOG_TAG, "Header $key : " + getPrivateHeaderValue(key, value))
                 requestBuilder.header(key, value)
             }
         }
@@ -215,12 +79,7 @@ class Client(
             Log.d(LOG_TAG, "Multipart " + request.isMultipartForm)
             if (request.formHeaders != null) {
                 for ((key, value) in request.formHeaders) {
-                    Log.d(
-                        LOG_TAG, "Form header $key : " + (if (privateHeaders.contains(
-                                key
-                            )
-                        ) "private" else value)
-                    )
+                    Log.d(LOG_TAG, "Form header $key : " + getPrivateHeaderValue(key, value))
                 }
             }
             if (request.file != null) {
@@ -347,8 +206,12 @@ class Client(
         }
     }
 
-    override fun clearCookies() {
-        clientCookies.clear()
+    private fun getPrivateHeaderValue(key: String, value: String): String {
+        return if (key in CookieStorage.AUTH_COOKIES) {
+            "private"
+        } else {
+            value
+        }
     }
 
     companion object {

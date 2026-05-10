@@ -4,10 +4,10 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostPermissionException
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
-import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 
 /**
@@ -16,10 +16,10 @@ import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 
 class EditPostApi(
     private val webClient: IWebClient,
-    private val themeApi: ThemeApi,
     private val editPostParser: EditPostParser,
     private val attachmentsParser: AttachmentsParser,
-    private val themeParser: ThemeParser
+    private val themeParser: ThemeParser,
+    private val authHolder: AuthHolder
 ) {
 
     suspend fun loadForm(postId: Int): EditPost {
@@ -56,7 +56,7 @@ class EditPostApi(
             .formHeader("CODE", if (form.type == EditPostForm.TYPE_NEW_POST) "03" else "9")
             .formHeader("f", form.forumId.toString())
             .formHeader("t", form.topicId.toString())
-            .formHeader("auth_key", webClient.getAuthKey())
+            .formHeader("auth_key", authHolder.getAuthKey().orEmpty())
             .formHeader("Post", form.message)
             .formHeader("enablesig", "yes")
             .formHeader("enableemo", "yes")

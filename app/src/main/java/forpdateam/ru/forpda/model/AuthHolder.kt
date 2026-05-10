@@ -1,43 +1,93 @@
 package forpdateam.ru.forpda.model
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
+import forpdateam.ru.forpda.client.CookieStorage
+import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.entity.common.AuthData
 import forpdateam.ru.forpda.entity.common.AuthState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlin.time.Duration.Companion.seconds
 
 class AuthHolder(
-    private val preferences: SharedPreferences
+    private val preferences: FlowPreferences,
+    private val cookieStorage: CookieStorage
 ) {
 
-    private val dataFlow = MutableStateFlow<AuthData>(load())
+    private val skipPreference by lazy {
+        preferences.getBoolean("auth_skip_flag", false)
+    }
 
-    fun observe(): Flow<AuthData> = dataFlow
+    private val authKeyPreference by lazy {
+        preferences.getString("auth_key")
+    }
+
+    val dataFlow by lazy {
+        combine(
+            flow = cookieStorage.observe(),
+            flow2 = skipPreference,
+            transform = { cookies, skipFlag ->
+                createAuthData(cookies, skipFlag)
+            }
+        ).stateIn(GlobalScope, SharingStarted.WhileSubscribed(1.seconds), getAuthData())
+    }
+
+    fun observe(): StateFlow<AuthData> = dataFlow
 
     fun get(): AuthData = dataFlow.value
 
-    fun set(value: AuthData) {
-        preferences.edit {
-            putString("member_id", value.userId.toString())
-            putString("auth_state", value.state.toString())
-        }
-        dataFlow.value = value
+    fun clearData() {
+        authKeyPreference.remove()
+        cookieStorage.removeByCookieName(CookieStorage.AUTH_COOKIES)
     }
 
-    private fun load(): AuthData {
-        val userId = preferences.getString("member_id", null)?.toInt() ?: AuthData.NO_ID
-        var state = enumValueOf<AuthState>(
-            preferences.getString("auth_state", null) ?: AuthState.NO_AUTH.toString()
-        )
-        val cookieMemberId = preferences.getString("cookie_member_id", null)
-        val cookiePassHash = preferences.getString("cookie_pass_hash", null)
-        if (cookieMemberId != null && cookiePassHash != null) {
-            state = AuthState.AUTH
+    fun setSkip() {
+        skipPreference.set(true)
+    }
+
+    fun getAuthKey(): String? {
+        return authKeyPreference.get()
+    }
+
+    fun setAuthKey(authKey: String) {
+        authKeyPreference.set(authKey)
+    }
+
+    private fun getAuthData(): AuthData {
+        return createAuthData(cookieStorage.getAll(), skipPreference.get())
+    }
+
+    private fun createAuthData(cookies: List<CookieStorage.AppCookie>, skipFlag: Boolean): AuthData {
+        val memberIdCookie = cookies.find { it.cookie.name == CookieStorage.MEMBER_ID }
+        val passHashCookie = cookies.find { it.cookie.name == CookieStorage.PASS_HASH }
+        if (memberIdCookie == null || passHashCookie == null) {
+            return createUnauthData(skipFlag)
+        }
+        val memberId = memberIdCookie.cookie.value.toIntOrNull() ?: AuthData.NO_ID
+        if (memberId == AuthData.NO_ID) {
+            return createUnauthData(skipFlag)
         }
         return AuthData(
-            userId = userId,
-            state = state
+            userId = memberId,
+            state = skipFlag.toAuthState()
         )
+    }
+
+    private fun createUnauthData(skipFlag: Boolean): AuthData {
+        return AuthData(
+            userId = AuthData.NO_ID,
+            state = skipFlag.toAuthState()
+        )
+    }
+
+    private fun Boolean.toAuthState(): AuthState {
+        return if (this) {
+            AuthState.SKIP
+        } else {
+            AuthState.NO_AUTH
+        }
     }
 }

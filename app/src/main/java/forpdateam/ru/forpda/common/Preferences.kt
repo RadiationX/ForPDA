@@ -4,16 +4,6 @@ package forpdateam.ru.forpda.common
  * Created by radiationx on 28.05.17.
  */
 class Preferences {
-    object Auth {
-        const val USER_ID: String = "member_id"
-        const val AUTH_KEY: String = "auth_key"
-
-        const val COOKIE_MEMBER_ID: String = "cookie_member_id"
-        const val COOKIE_PASS_HASH: String = "cookie_pass_hash"
-        const val COOKIE_SESSION_ID: String = "cookie_session_id"
-        const val COOKIE_ANONYMOUS: String = "cookie_anonymous"
-        const val COOKIE_CF_CLEARANCE: String = "cookie_cf_clearance"
-    }
 
     object Other {
         const val APP_FIRST_START: String = "main.is_first_start"

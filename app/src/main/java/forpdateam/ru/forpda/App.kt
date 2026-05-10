@@ -12,7 +12,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.Messenger
@@ -50,11 +49,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.util.Arrays
-import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 28.07.16.
@@ -161,8 +160,6 @@ class App : Application() {
         fun initImageLoader(context: Context) {
             val config = ImageLoaderConfiguration.Builder(context)
                 .imageDownloader(object : BaseImageDownloader(context) {
-                    val pattern4pda: Pattern =
-                        Pattern.compile("(?:http?s?:)?\\/\\/.*?4pda\\.(?:ru|to)")
 
                     @Throws(IOException::class)
                     override fun getStream(imageUri: String, extra: Any?): InputStream {
@@ -178,13 +175,12 @@ class App : Application() {
                     @Throws(IOException::class)
                     override fun createConnection(url: String, extra: Any?): HttpURLConnection {
                         val conn = super.createConnection(url, extra)
-                        if (pattern4pda.matcher(url).find()) {
-                            val cookies = get().Di().webClient.getClientCookies()
-                            var stringCookies = ""
-                            for ((key, value) in cookies) {
-                                stringCookies = stringCookies + key + "=" + value.value + ";"
+                        val cookies = get().Di().cookieJar.loadForRequest(url.toHttpUrl())
+                        if (cookies.isNotEmpty()) {
+                            val headerValue = cookies.joinToString(separator = ";") {
+                                "${it.name}=${it.value}"
                             }
-                            conn.setRequestProperty("Cookie", stringCookies)
+                            conn.setRequestProperty("Cookie", headerValue)
                         }
                         return conn
                     }
@@ -268,7 +264,6 @@ class App : Application() {
         dependencies
             .mainPreferencesHolder
             .themeMode
-            .distinctUntilChanged()
             .onEach {
                 DayNightHelper.applyTheme(it)
             }

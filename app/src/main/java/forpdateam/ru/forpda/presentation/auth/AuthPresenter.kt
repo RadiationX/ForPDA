@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.presentation.auth
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.common.AuthData
-import forpdateam.ru.forpda.entity.common.AuthState
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.extensions.coRunCatching
@@ -63,18 +61,7 @@ class AuthPresenter(
     }
 
     fun onClickSkip() {
-        val data = authHolder.get()
-        val state = if (data.state != AuthState.AUTH) {
-            AuthState.SKIP
-        } else {
-            data.state
-        }
-        authHolder.set(
-            AuthData(
-                userId = AuthData.NO_ID,
-                state = state
-            )
-        )
+        authHolder.setSkip()
         router.exit()
     }
 

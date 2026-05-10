@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.model.data.remote
 
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
-import okhttp3.Cookie
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.util.regex.Pattern
@@ -19,12 +18,6 @@ interface IWebClient {
 
     @Throws(Exception::class)
     suspend fun request(request: NetworkRequest, progressListener: ProgressListener): NetworkResponse
-
-    fun getAuthKey(): String
-
-    fun getClientCookies(): Map<String, Cookie>
-
-    fun clearCookies()
 
     fun createWebSocketConnection(webSocketListener: WebSocketListener): WebSocket
 

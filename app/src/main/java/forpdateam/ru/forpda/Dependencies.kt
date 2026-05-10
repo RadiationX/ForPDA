@@ -4,7 +4,9 @@ import android.content.Context
 import android.preference.PreferenceManager
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
+import forpdateam.ru.forpda.client.AppCookieJar
 import forpdateam.ru.forpda.client.Client
+import forpdateam.ru.forpda.client.CookieStorage
 import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.client.websocket.WebSocketController
 import forpdateam.ru.forpda.common.DayNightHelper
@@ -157,7 +159,9 @@ class Dependencies internal constructor(
 
     val externalStorage: ExternalStorageProvider by lazy { ExternalStorage() }
 
-    val authHolder: AuthHolder by lazy { AuthHolder(preferences) }
+    val cookieStorage by lazy { CookieStorage(flowPreferences) }
+    val cookieJar by lazy { AppCookieJar(cookieStorage) }
+    val authHolder: AuthHolder by lazy { AuthHolder(flowPreferences, cookieStorage) }
     val countersHolder: CountersHolder by lazy { CountersHolder(preferences) }
     val userHolder: IUserHolder by lazy { UserHolder(dataStoragePreferences) }
     val closeableInfoHolder: CloseableInfoHolder by lazy { CloseableInfoHolder(preferences) }
@@ -176,7 +180,7 @@ class Dependencies internal constructor(
     val announceTemplate by lazy { AnnounceTemplate(templateManager) }
     val qmsChatTemplate by lazy { QmsChatTemplate(templateManager) }
 
-    val webClient: IWebClient by lazy { Client(context, authHolder, countersHolder) }
+    val webClient: IWebClient by lazy { Client(cookieJar, countersHolder) }
 
     val patternProvider: IPatternProvider by lazy {
         PatternProvider(
@@ -201,16 +205,16 @@ class Dependencies internal constructor(
     val checkerParser by lazy { CheckerParser() }
     val attachmentsParser by lazy { AttachmentsParser(patternProvider) }
 
-    val authApi by lazy { AuthApi(webClient, authParser) }
+    val authApi by lazy { AuthApi(webClient, authParser,authHolder) }
     val devDbApi by lazy { DevDbApi(webClient, devDbParser) }
-    val themeApi by lazy { ThemeApi(webClient, themeParser) }
+    val themeApi by lazy { ThemeApi(webClient, themeParser,authHolder) }
     val editPostApi by lazy {
         EditPostApi(
             webClient,
-            themeApi,
             editPostParser,
             attachmentsParser,
-            themeParser
+            themeParser,
+            authHolder
         )
     }
     val favoritesApi by lazy { FavoritesApi(webClient, favoritesParser) }
@@ -266,7 +270,6 @@ class Dependencies internal constructor(
     val authRepository by lazy {
         AuthRepository(
             authApi,
-            authHolder,
             countersHolder,
             userHolder
         )
