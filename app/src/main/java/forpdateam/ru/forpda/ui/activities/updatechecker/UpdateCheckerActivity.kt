@@ -11,8 +11,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.databinding.ActivityUpdaterBinding
 import forpdateam.ru.forpda.entity.remote.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
@@ -62,11 +62,11 @@ class UpdateCheckerActivity : MvpAppCompatActivity(R.layout.activity_updater), C
         binding.toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
 
         binding.currentInfo.text =
-            generateCurrentInfo(BuildConfig.VERSION_NAME, BuildConfig.BUILD_DATE)
+            generateCurrentInfo(AppBuildConfig.versionName, AppBuildConfig.buildDate)
     }
 
     override fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = BuildConfig.VERSION_CODE
+        val currentVersionCode = AppBuildConfig.versionCode
 
         if (update.code > currentVersionCode) {
             binding.updateInfo.text = generateCurrentInfo(update.name, update.date)

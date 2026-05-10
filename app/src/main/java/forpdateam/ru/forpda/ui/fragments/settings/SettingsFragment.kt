@@ -11,8 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.ui.activities.SettingsActivity
@@ -69,7 +69,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<Preference>("about.application")?.apply {
-            summary = String.format(getString(R.string.version_Build), BuildConfig.VERSION_NAME)
+            summary = String.format(getString(R.string.version_Build), AppBuildConfig.versionName)
         }
 
         findPreference<Preference>("about.check_update")?.apply {

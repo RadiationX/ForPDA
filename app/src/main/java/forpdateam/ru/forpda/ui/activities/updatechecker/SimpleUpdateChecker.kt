@@ -10,8 +10,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.BuildConfig
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.entity.remote.checker.UpdateData
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
@@ -49,7 +49,7 @@ class SimpleUpdateChecker(
 
     @SuppressLint("NewApi")
     private fun showUpdateData(update: UpdateData) {
-        val currentVersionCode = BuildConfig.VERSION_CODE
+        val currentVersionCode = AppBuildConfig.versionCode
 
         if (update.code > currentVersionCode) {
             val context: Context = App.getContext()

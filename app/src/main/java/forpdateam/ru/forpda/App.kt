@@ -35,6 +35,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader
 import forpdateam.ru.forpda.R.string
+import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
@@ -44,7 +45,6 @@ import io.appmetrica.analytics.AppMetrica
 import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -282,7 +282,7 @@ class App : Application() {
                 }
                 lastVNum = vNum
             }
-            val vCode: Int = BuildConfig.VERSION_CODE
+            val vCode: Int = AppBuildConfig.versionCode
             val sVCode = "" + vCode
             val nVCode = sVCode.toInt()
 
