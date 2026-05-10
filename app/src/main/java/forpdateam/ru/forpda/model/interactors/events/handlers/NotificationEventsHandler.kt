@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.model.interactors.events.handlers
 
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
-import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.model.interactors.events.models.InspectorTrigger
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationEvent
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationId
@@ -81,7 +80,7 @@ class NotificationEventsHandler {
         }
     }
 
-    suspend fun handle(diff: InspectorDiff<InspectorItem.Favorite>) {
+    suspend fun handle(diff: InspectorDiff.Favorites) {
         diff.diff.forEach { diffItem ->
             when (diffItem) {
                 is InspectorDiff.Item.New -> {
@@ -101,7 +100,7 @@ class NotificationEventsHandler {
         }
     }
 
-    suspend fun handle(diff: InspectorDiff<InspectorItem.Qms>) {
+    suspend fun handle(diff: InspectorDiff.Qms) {
         diff.diff.forEach { diffItem ->
             when (diffItem) {
                 is InspectorDiff.Item.New -> {

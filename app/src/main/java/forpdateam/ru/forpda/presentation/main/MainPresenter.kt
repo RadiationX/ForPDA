@@ -30,8 +30,6 @@ class MainPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        qmsInteractor.subscribeEvents()
-
 
         val firstAppStart = otherPreferencesHolder.appFirstStart.get()
         if (firstAppStart) {

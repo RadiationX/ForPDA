@@ -15,11 +15,11 @@ class CountersEventsHandler(
         handleCounterEvent(counterEvent)
     }
 
-    fun handle(diff: InspectorDiff<InspectorItem.Favorite>) {
+    fun handle(diff: InspectorDiff.Favorites) {
         handleCounterEvent(diff.toCounterEvent())
     }
 
-    fun handle(diff: InspectorDiff<InspectorItem.Qms>) {
+    fun handle(diff: InspectorDiff.Qms) {
         handleCounterEvent(diff.toCounterEvent())
     }
 
@@ -66,11 +66,11 @@ class CountersEventsHandler(
         }
     }
 
-    private fun InspectorDiff<InspectorItem.Favorite>.toCounterEvent(): CounterEvent {
+    private fun InspectorDiff.Favorites.toCounterEvent(): CounterEvent {
         return CounterEvent.FavoriteState(loadedItems.size)
     }
 
-    private fun InspectorDiff<InspectorItem.Qms>.toCounterEvent(): CounterEvent {
+    private fun InspectorDiff.Qms.toCounterEvent(): CounterEvent {
         return CounterEvent.QmsState(loadedItems.sumOf { it.msgCount })
     }
 

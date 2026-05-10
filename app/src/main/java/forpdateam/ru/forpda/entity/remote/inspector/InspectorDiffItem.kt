@@ -1,9 +1,9 @@
 package forpdateam.ru.forpda.entity.remote.inspector
 
 
-data class InspectorDiff<T : InspectorItem>(
-    val loadedItems: List<T>,
-    val savedItems: List<T>
+sealed class InspectorDiff<T : InspectorItem>(
+    open val loadedItems: List<T>,
+    open val savedItems: List<T>
 ) {
 
     val diff by lazy<List<Item<T>>> {
@@ -38,6 +38,16 @@ data class InspectorDiff<T : InspectorItem>(
 
         result
     }
+
+    data class Favorites(
+        override val loadedItems: List<InspectorItem.Favorite>,
+        override val savedItems: List<InspectorItem.Favorite>
+    ) : InspectorDiff<InspectorItem.Favorite>(loadedItems, savedItems)
+
+    data class Qms(
+        override val loadedItems: List<InspectorItem.Qms>,
+        override val savedItems: List<InspectorItem.Qms>
+    ) : InspectorDiff<InspectorItem.Qms>(loadedItems, savedItems)
 
     sealed interface Item<T : InspectorItem> {
 

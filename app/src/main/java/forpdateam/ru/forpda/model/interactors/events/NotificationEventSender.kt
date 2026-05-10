@@ -127,7 +127,7 @@ class NotificationEventSender(
 
         configureNotification(builder)
 
-        cancel(context, params.id)
+        cancel(params.id)
         manager.notify(params.id::class.qualifiedName, params.id.hashCode(), builder.build())
     }
 

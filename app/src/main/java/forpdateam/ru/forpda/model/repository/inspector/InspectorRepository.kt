@@ -11,23 +11,23 @@ class InspectorRepository(
     private val preferences: NotificationPreferencesHolder
 ) {
 
-    suspend fun getFavoritesDiff(): InspectorDiff<InspectorItem.Favorite> {
+    suspend fun getFavoritesDiff(): InspectorDiff.Favorites {
         val loadedItems = inspectorApi.getFavorites()
         val savedItems = preferences.dataFavoritesEvents.get()
-        return InspectorDiff(loadedItems, savedItems)
+        return InspectorDiff.Favorites(loadedItems, savedItems)
     }
 
-    fun saveFavorites(diff: InspectorDiff<InspectorItem.Favorite>) {
+    fun saveFavorites(diff: InspectorDiff.Favorites) {
         preferences.dataFavoritesEvents.set(diff.loadedItems)
     }
 
-    suspend fun getQmsDiff(): InspectorDiff<InspectorItem.Qms> {
+    suspend fun getQmsDiff(): InspectorDiff.Qms {
         val loadedItems = inspectorApi.getQms()
         val savedItems = preferences.dataQmsEvents.get()
-        return InspectorDiff(loadedItems, savedItems)
+        return InspectorDiff.Qms(loadedItems, savedItems)
     }
 
-    fun saveQms(diff: InspectorDiff<InspectorItem.Qms>) {
+    fun saveQms(diff: InspectorDiff.Qms) {
         preferences.dataQmsEvents.set(diff.loadedItems)
     }
 

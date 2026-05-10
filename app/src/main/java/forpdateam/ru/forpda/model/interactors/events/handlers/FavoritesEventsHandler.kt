@@ -4,7 +4,6 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
-import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import java.sql.Date
 
@@ -30,7 +29,7 @@ class FavoritesEventsHandler(
         }
     }
 
-    suspend fun handle(diff: InspectorDiff<InspectorItem.Favorite>) {
+    suspend fun handle(diff: InspectorDiff.Favorites) {
         diff.diff.forEach { diffItem ->
             val inspectorItem = diffItem.item
             updateItem(inspectorItem.topicId) { favItem ->

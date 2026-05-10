@@ -26,7 +26,7 @@ class QmsEventsHandler(
         }
     }
 
-    suspend fun handle(diff: InspectorDiff<InspectorItem.Qms>) {
+    suspend fun handle(diff: InspectorDiff.Qms) {
         diff.loadedItems.forEach { item ->
             updateCounter(item.themeId) { item.msgCount }
         }
