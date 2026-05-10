@@ -14,7 +14,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.os.Handler
 import android.os.Looper
-import android.os.Messenger
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.DisplayMetrics
@@ -33,7 +32,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import com.nostra13.universalimageloader.core.download.BaseImageDownloader
 import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.common.DayNightHelper
@@ -49,10 +47,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
 import java.util.Arrays
 
 /**
@@ -157,34 +151,9 @@ class App : Application() {
             .handler(Handler(Looper.getMainLooper()))
             .displayer(FadeInBitmapDisplayer(500, true, true, false))
 
-        fun initImageLoader(context: Context) {
+        fun initImageLoader(context: Context, dependencies: Dependencies) {
             val config = ImageLoaderConfiguration.Builder(context)
-                .imageDownloader(object : BaseImageDownloader(context) {
-
-                    @Throws(IOException::class)
-                    override fun getStream(imageUri: String, extra: Any?): InputStream {
-                        var imageUri = imageUri
-                        if (imageUri.startsWith("//")) imageUri = "http:$imageUri"
-                        Log.d(
-                            App::class.java.simpleName,
-                            "ImageLoader getStream $imageUri"
-                        )
-                        return super.getStream(imageUri, extra)
-                    }
-
-                    @Throws(IOException::class)
-                    override fun createConnection(url: String, extra: Any?): HttpURLConnection {
-                        val conn = super.createConnection(url, extra)
-                        val cookies = get().Di().cookieJar.loadForRequest(url.toHttpUrl())
-                        if (cookies.isNotEmpty()) {
-                            val headerValue = cookies.joinToString(separator = ";") {
-                                "${it.name}=${it.value}"
-                            }
-                            conn.setRequestProperty("Cookie", headerValue)
-                        }
-                        return conn
-                    }
-                })
+                .imageDownloader(dependencies.appImageDownloader)
                 .threadPoolSize(5)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()
@@ -233,8 +202,6 @@ class App : Application() {
     }
 
     private var webViewFound: Boolean? = null
-    private var mBoundService: Messenger? = null
-    private var mServiceBound = false
 
 
     fun isWebViewFound(context: Context?): Boolean {
@@ -304,7 +271,7 @@ class App : Application() {
             AppMetrica.reportError("VERSIONS_HISTORY", ex)
         }
 
-        initImageLoader(this)
+        initImageLoader(this, dependencies)
 
         updateStaticRes()
 

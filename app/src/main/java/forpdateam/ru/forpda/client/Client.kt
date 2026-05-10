@@ -15,27 +15,11 @@ import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okhttp3.coroutines.executeAsync
-import java.util.concurrent.TimeUnit
 
 class Client(
-    private val cookieJar: AppCookieJar,
+    private val client: OkHttpClient,
     private val countersHolder: CountersHolder
 ) : IWebClient {
-
-    private val client: OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(45, TimeUnit.SECONDS)
-        .writeTimeout(45, TimeUnit.SECONDS)
-        .readTimeout(45, TimeUnit.SECONDS)
-        .cookieJar(cookieJar)
-        .build()
-
-    private val webSocketClient: OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .retryOnConnectionFailure(true)
-        .cookieJar(cookieJar)
-        .build()
 
     //Network
     @Throws(Exception::class)
@@ -178,7 +162,7 @@ class Client(
         val request = Request.Builder()
             .url("ws://app.4pda.to/ws/")
             .build()
-        return webSocketClient.newWebSocket(request, webSocketListener)
+        return client.newWebSocket(request, webSocketListener)
     }
 
     @Throws(Exception::class)

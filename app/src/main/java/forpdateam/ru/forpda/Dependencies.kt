@@ -4,7 +4,9 @@ import android.content.Context
 import android.preference.PreferenceManager
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader
 import forpdateam.ru.forpda.client.AppCookieJar
+import forpdateam.ru.forpda.client.AppImageDownloader
 import forpdateam.ru.forpda.client.Client
 import forpdateam.ru.forpda.client.CookieStorage
 import forpdateam.ru.forpda.client.NetworkObserver
@@ -122,6 +124,9 @@ import forpdateam.ru.forpda.ui.TemplateManager
 import io.github.xilinjia.krdb.Realm
 import io.github.xilinjia.krdb.RealmConfiguration
 import kotlinx.coroutines.GlobalScope
+import okhttp3.OkHttpClient
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Created by radiationx on 01.01.18.
@@ -180,7 +185,28 @@ class Dependencies internal constructor(
     val announceTemplate by lazy { AnnounceTemplate(templateManager) }
     val qmsChatTemplate by lazy { QmsChatTemplate(templateManager) }
 
-    val webClient: IWebClient by lazy { Client(cookieJar, countersHolder) }
+    val webOkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(45.seconds)
+            .writeTimeout(45.seconds)
+            .readTimeout(45.seconds)
+            .cookieJar(cookieJar)
+            .build()
+    }
+
+    val imagesOkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(BaseImageDownloader.DEFAULT_HTTP_CONNECT_TIMEOUT.milliseconds)
+            .readTimeout(BaseImageDownloader.DEFAULT_HTTP_READ_TIMEOUT.milliseconds)
+            .cookieJar(cookieJar)
+            .build()
+    }
+
+    val appImageDownloader by lazy {
+        AppImageDownloader(context, imagesOkHttpClient)
+    }
+
+    val webClient: IWebClient by lazy { Client(webOkHttpClient, countersHolder) }
 
     val patternProvider: IPatternProvider by lazy {
         PatternProvider(
@@ -205,9 +231,9 @@ class Dependencies internal constructor(
     val checkerParser by lazy { CheckerParser() }
     val attachmentsParser by lazy { AttachmentsParser(patternProvider) }
 
-    val authApi by lazy { AuthApi(webClient, authParser,authHolder) }
+    val authApi by lazy { AuthApi(webClient, authParser, authHolder) }
     val devDbApi by lazy { DevDbApi(webClient, devDbParser) }
-    val themeApi by lazy { ThemeApi(webClient, themeParser,authHolder) }
+    val themeApi by lazy { ThemeApi(webClient, themeParser, authHolder) }
     val editPostApi by lazy {
         EditPostApi(
             webClient,
