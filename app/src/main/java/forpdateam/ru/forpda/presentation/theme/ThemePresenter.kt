@@ -19,14 +19,13 @@ import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replaceAt
-import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
-import forpdateam.ru.forpda.model.interactors.events.EventsController
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
+import forpdateam.ru.forpda.model.repository.events.WebSocketEventsRepository
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
@@ -39,6 +38,7 @@ import forpdateam.ru.forpda.ui.TemplateManager
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -57,9 +57,8 @@ class ThemePresenter(
     private val reputationRepository: ReputationRepository,
     private val editorRepository: PostEditorRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val eventsController: EventsController,
+    private val webSocketEventsRepository: WebSocketEventsRepository,
     private val userHolder: IUserHolder,
-    private val authHolder: AuthHolder,
     private val topicPreferencesHolder: TopicPreferencesHolder,
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val crossScreenInteractor: CrossScreenInteractor,
@@ -111,8 +110,9 @@ class ThemePresenter(
                 viewState.setStyleType(it)
             }
             .launchIn(viewModelScope)
-        eventsController
-            .observeWebSocketEvents()
+        webSocketEventsRepository
+            .observeEvents()
+            .filterIsInstance<WebSocketEvent.Topic>()
             .debounce(2.seconds)
             .onEach {
                 handleEvent(it)
@@ -125,10 +125,7 @@ class ThemePresenter(
         router.exit()
     }
 
-    private fun handleEvent(event: WebSocketEvent) {
-        if (event !is WebSocketEvent.Topic) {
-            return
-        }
+    private fun handleEvent(event: WebSocketEvent.Topic) {
         if (!isPageLoaded()) {
             return
         }

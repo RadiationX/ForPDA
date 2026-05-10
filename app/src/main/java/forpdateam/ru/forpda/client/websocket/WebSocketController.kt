@@ -5,19 +5,16 @@ import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
@@ -26,6 +23,7 @@ import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.shareIn
 import okhttp3.WebSocket
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class WebSocketController(
     private val webClient: IWebClient,
@@ -37,9 +35,17 @@ class WebSocketController(
         private const val LOG_TAG = "WebSocketControllerNew"
     }
 
-    private var sessionJob: Job? = null
+    private val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
 
-    private val emptyWebSocketFlow = MutableSharedFlow<WebSocketFlow.Event>().asSharedFlow()
+    private val enabledFlow = combine(
+        authHolder.observe().map { it.isAuth() },
+        networkObserver.observeAvailable()
+    ) { (hasAuth, hasNetwork) ->
+        Log.d(LOG_TAG, "session combine  $hasAuth, $hasNetwork")
+        hasAuth && hasNetwork
+    }
+
+    private val emptyWebSocketFlow = MutableSharedFlow<WebSocketFlow.Event>()
 
     private val webSocketFlow = WebSocketFlow(webClient::createWebSocketConnection)
         .retryWhen { cause, attempt ->
@@ -66,47 +72,28 @@ class WebSocketController(
                     connectionState.value = ConnectionState.Connected(sessionId, event.webSocket)
                 }
 
-                is WebSocketFlow.Event.TextMessage -> {
-                    messagesFlow.emit(event.text)
-                }
+                is WebSocketFlow.Event.TextMessage -> Unit
             }
         }
         .shareIn(GlobalScope, SharingStarted.WhileSubscribed(100.milliseconds))
 
-    private val connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
-
-    private val messagesFlow = MutableSharedFlow<String>()
-
-    fun start() {
-        if (sessionJob?.isActive == true) {
-            return
-        }
-        sessionJob = combine(
-            messagesFlow.subscriptionCount.map { it > 0 },
-            authHolder.observe().map { it.isAuth() },
-            networkObserver.observeAvailable()
-        ) { (hasSubscribers, hasAuth, hasNetwork) ->
-            Log.d(LOG_TAG, "session combine $hasSubscribers, $hasAuth, $hasNetwork")
-            hasSubscribers && hasAuth && hasNetwork
-        }.flatMapLatest {
+    private val messagesFlow = enabledFlow
+        .flatMapLatest {
             if (it) {
                 webSocketFlow
             } else {
                 emptyWebSocketFlow
             }
-        }.launchIn(GlobalScope)
-    }
-
-    fun stop() {
-        sessionJob?.cancel()
-        sessionJob = null
-    }
+        }
+        .filterIsInstance<WebSocketFlow.Event.TextMessage>()
+        .map { it.text }
+        .shareIn(GlobalScope, SharingStarted.WhileSubscribed(1.seconds))
 
     fun observeMessages(): Flow<String> = messagesFlow
 
-    suspend fun sendMessage(message: String) {
+    suspend fun sendMessage(text: String) {
         val session = connectionState.filterIsInstance<ConnectionState.Connected>().first()
-        session.webSocket.send(message)
+        session.webSocket.send(text)
     }
 
     sealed interface ConnectionState {

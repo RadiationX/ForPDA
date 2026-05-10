@@ -11,8 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -22,7 +20,6 @@ class NotificationsService : Service() {
     private var lastHardCheckTime: Long = 0
 
     private val eventsRepository = get().Di().eventsController
-    private val notificationEventSender = get().Di().notificationEventSender
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
@@ -32,21 +29,12 @@ class NotificationsService : Service() {
 
     override fun onCreate() {
         Log.i(LOG_TAG, "onCreate")
-
-        eventsRepository
-            .observeNewEvents()
-            .onEach { notificationEventSender.send(this, it) }
-            .launchIn(coroutineScope)
-
-        eventsRepository
-            .observeCancelIds()
-            .onEach { notificationEventSender.cancel(this, it) }
-            .launchIn(coroutineScope)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(LOG_TAG, "onStartCommand args $flags : $startId : $intent")
 
+        eventsRepository.start()
         val time = SystemClock.elapsedRealtime()
 
         Log.d(LOG_TAG, "Handle check last events: $time : $lastHardCheckTime : ${time - lastHardCheckTime}")

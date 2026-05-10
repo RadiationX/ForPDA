@@ -1,8 +1,6 @@
 package forpdateam.ru.forpda.model.interactors.events
 
-import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.data.remote.api.events.WebSocketEventsApi
 import forpdateam.ru.forpda.model.interactors.events.handlers.CountersEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.FavoritesEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.NotificationEventsHandler
@@ -11,11 +9,14 @@ import forpdateam.ru.forpda.model.interactors.events.models.InspectorTrigger
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationEvent
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationId
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
+import forpdateam.ru.forpda.model.repository.events.WebSocketEventsRepository
 import forpdateam.ru.forpda.model.repository.inspector.InspectorRepository
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -25,25 +26,26 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class EventsController(
-    private val webSocketEventsApi: WebSocketEventsApi,
+    private val webSocketEventsRepository: WebSocketEventsRepository,
     private val countersEventsHandler: CountersEventsHandler,
     private val favoritesEventsHandler: FavoritesEventsHandler,
     private val qmsEventsHandler: QmsEventsHandler,
     private val notificationEventsHandler: NotificationEventsHandler,
     private val inspectorRepository: InspectorRepository,
-    private val notificationPreferencesHolder: NotificationPreferencesHolder
+    private val notificationPreferencesHolder: NotificationPreferencesHolder,
+    private val notificationEventSender: NotificationEventSender
 ) {
 
-    private var checkTimerJob: Job? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    fun observeWebSocketEvents(): Flow<WebSocketEvent> = webSocketEventsApi.observeEvents()
+    private var started = false
 
-    fun observeNewEvents(): Flow<NotificationEvent> = notificationEventsHandler.observeNewEvents()
-
-    fun observeCancelIds(): Flow<NotificationId> = notificationEventsHandler.observeCancelIds()
-
-    fun kek() {
-        webSocketEventsApi
+    fun start() {
+        if (started) {
+            return
+        }
+        started = true
+        webSocketEventsRepository
             .observeEvents()
             .onEach {
                 countersEventsHandler.handle(it)
@@ -51,23 +53,24 @@ class EventsController(
                 qmsEventsHandler.handle(it)
                 notificationEventsHandler.handle(it)
             }
-            .launchIn(GlobalScope)
+            .launchIn(coroutineScope)
 
         notificationEventsHandler
             .observeTriggers()
-            .onEach {
-                processInspector(listOf(it))
-            }
-            .launchIn(GlobalScope)
-    }
+            .onEach { processInspector(listOf(it)) }
+            .launchIn(coroutineScope)
 
-    suspend fun checkEvents() {
-        processInspector(InspectorTrigger.entries.toList())
-    }
+        notificationEventsHandler
+            .observeNewEvents()
+            .onEach { notificationEventSender.send(it) }
+            .launchIn(coroutineScope)
 
-    private fun resetTimer() {
-        cancelTimer()
-        checkTimerJob = notificationPreferencesHolder
+        notificationEventsHandler
+            .observeCancelIds()
+            .onEach { notificationEventSender.cancel(it) }
+            .launchIn(coroutineScope)
+
+        notificationPreferencesHolder
             .mainPeriodDuration
             .flatMapLatest { timerPeriod ->
                 flow {
@@ -80,12 +83,16 @@ class EventsController(
             .onEach {
                 checkEvents()
             }
-            .launchIn(GlobalScope)
+            .launchIn(coroutineScope)
     }
 
-    private fun cancelTimer() {
-        checkTimerJob?.cancel()
-        checkTimerJob = null
+    fun stop() {
+        coroutineScope.coroutineContext.cancelChildren()
+        started = false
+    }
+
+    suspend fun checkEvents() {
+        processInspector(InspectorTrigger.entries.toList())
     }
 
     private suspend fun processInspector(triggers: List<InspectorTrigger>) {
@@ -137,6 +144,4 @@ class EventsController(
             it.printStackTrace()
         }
     }
-
-
 }

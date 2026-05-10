@@ -80,8 +80,8 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     @ProvidePresenter
     fun providePresenter(): QmsChatPresenter = QmsChatPresenter(
         App.get().Di().qmsInteractor,
-        App.get().Di().qmsChatTemplate,
         App.get().Di().avatarRepository,
+        App.get().Di().webSocketEventsRepository,
         App.get().Di().mainPreferencesHolder,
         App.get().Di().templateManager,
         App.get().Di().router,

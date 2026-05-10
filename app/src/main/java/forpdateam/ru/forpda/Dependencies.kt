@@ -43,7 +43,6 @@ import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbParser
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostApi
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostParser
 import forpdateam.ru.forpda.model.data.remote.api.events.WebSocketEventParser
-import forpdateam.ru.forpda.model.data.remote.api.events.WebSocketEventsApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesParser
 import forpdateam.ru.forpda.model.data.remote.api.forum.ForumApi
@@ -86,6 +85,7 @@ import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
+import forpdateam.ru.forpda.model.repository.events.WebSocketEventsRepository
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.model.repository.history.HistoryRepository
@@ -327,8 +327,8 @@ class Dependencies internal constructor(
         WebSocketEventParser()
     }
 
-    val webSocketEventsApi by lazy {
-        WebSocketEventsApi(
+    val webSocketEventsRepository by lazy {
+        WebSocketEventsRepository(
             webSocketController,
             webSocketEventParser
         )
@@ -352,24 +352,26 @@ class Dependencies internal constructor(
         )
     }
 
+    val notificationEventSender by lazy {
+        NotificationEventSender(
+            context,
+            notificationPreferencesHolder,
+            avatarRepository
+        )
+    }
     val eventsController by lazy {
         EventsController(
-            webSocketEventsApi,
+            webSocketEventsRepository,
             CountersEventsHandler(countersHolder),
             FavoritesEventsHandler(favoritesCache),
             QmsEventsHandler(qmsCache),
             NotificationEventsHandler(),
             inspectorRepository,
-            notificationPreferencesHolder
+            notificationPreferencesHolder,
+            notificationEventSender
         )
     }
 
-    val notificationEventSender by lazy {
-        NotificationEventSender(
-            notificationPreferencesHolder,
-            avatarRepository
-        )
-    }
 
     val otherPreferencesHolder by lazy { OtherPreferencesHolder(flowPreferences) }
     val mainPreferencesHolder by lazy { MainPreferencesHolder(flowPreferences) }

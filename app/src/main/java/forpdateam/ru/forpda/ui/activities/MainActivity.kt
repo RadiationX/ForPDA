@@ -236,7 +236,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     override fun onStart() {
         super.onStart()
         bottomDrawer.onStart()
-        NotificationsService.startAndCheck()
+        App.get().Di().eventsController.start()
         YandexMetrica.resumeSession(this)
     }
 

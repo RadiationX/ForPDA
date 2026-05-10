@@ -8,15 +8,16 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.asRegular
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
-import forpdateam.ru.forpda.model.interactors.events.EventsController
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
+import forpdateam.ru.forpda.model.repository.events.WebSocketEventsRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -30,7 +31,7 @@ import moxy.InjectViewState
 class QmsChatPresenter(
     private val qmsInteractor: QmsInteractor,
     private val avatarRepository: AvatarRepository,
-    private val eventsController: EventsController,
+    private val webSocketEventsRepository: WebSocketEventsRepository,
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val templateManager: TemplateManager,
     private val router: TabRouter,
@@ -69,8 +70,9 @@ class QmsChatPresenter(
                 viewState.setStyleType(it)
             }
             .launchIn(viewModelScope)
-        eventsController
-            .observeWebSocketEvents()
+        webSocketEventsRepository
+            .observeEvents()
+            .filterIsInstance<WebSocketEvent.Qms>()
             .onEach {
                 handleEvent(it)
             }
@@ -212,10 +214,7 @@ class QmsChatPresenter(
         }
     }
 
-    fun handleEvent(event: WebSocketEvent) {
-        if (event !is WebSocketEvent.Qms) {
-            return
-        }
+    fun handleEvent(event: WebSocketEvent.Qms) {
         val currentThemeId = currentData?.themeId ?: return
         if (event.themeId != currentThemeId) {
             return

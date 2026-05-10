@@ -328,31 +328,6 @@ class App : Application() {
         updateStaticRes()
 
 
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val receiver: BroadcastReceiver = object : BroadcastReceiver() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                override fun onReceive(context: Context, intent: Intent) {
-                    Log.d(App::class.java.simpleName, "DOZE ON RECEIVE $intent")
-                    val pm =
-                        context.getSystemService(POWER_SERVICE) as PowerManager
-                            ?: return
-                    if (pm.isDeviceIdleMode) {
-                        // the device is now in doze mode
-                        Log.d(App::class.java.simpleName, "DOZE MODE ENABLYA")
-                    } else {
-                        // the device just woke up from doze mode
-                        Log.d(App::class.java.simpleName, "DOZE MODE DISABLYA")
-                        NotificationsService.startAndCheck()
-                    }
-                }
-            }
-
-            registerReceiver(receiver, IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED))
-        }
-
-
         val wakeUpFilter = IntentFilter()
         wakeUpFilter.addAction(Intent.ACTION_BOOT_COMPLETED)
         wakeUpFilter.addAction(Intent.ACTION_SCREEN_ON)
@@ -422,22 +397,6 @@ class App : Application() {
 
     fun Di(): Dependencies {
         return dependencies
-    }
-
-    val serviceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceDisconnected(name: ComponentName) {
-            mBoundService = null
-            mServiceBound = false
-        }
-
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val n1 = name.className
-            val n2 = NotificationsService::class.java.name
-            if (n1 == n2) {
-                mBoundService = Messenger(service)
-                mServiceBound = true
-            }
-        }
     }
 
     fun dpToPx(dp: Int, context: Context): Int {

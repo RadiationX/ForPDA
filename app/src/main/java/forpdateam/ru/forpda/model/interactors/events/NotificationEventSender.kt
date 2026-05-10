@@ -33,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class NotificationEventSender(
+    private val context: Context,
     private val preferences: NotificationPreferencesHolder,
     private val avatarRepository: AvatarRepository
 ) {
@@ -55,7 +56,7 @@ class NotificationEventSender(
         private const val CHANNEL_SITE_ID = "forpda_channel_site_v2"
     }
 
-    suspend fun send(context: Context, event: NotificationEvent) {
+    suspend fun send(event: NotificationEvent) {
         if (!preferences.mainEnabled.get()) {
             return
         }
@@ -74,7 +75,7 @@ class NotificationEventSender(
         }
     }
 
-    fun cancel(context: Context, id: NotificationId) {
+    fun cancel(id: NotificationId) {
         NotificationManagerCompat
             .from(context)
             .cancel(id::class.qualifiedName, id.hashCode())
