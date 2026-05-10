@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Environment
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.yandex.metrica.YandexMetrica
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.MimeTypeUtil
@@ -19,6 +18,7 @@ import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
+import io.appmetrica.analytics.AppMetrica
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ class SystemLinkHandler(
                 ).addFlags(FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (e: ActivityNotFoundException) {
-            YandexMetrica.reportError(e.message.orEmpty(), e)
+            AppMetrica.reportError(e.message.orEmpty(), e)
         }
     }
 
@@ -113,7 +113,7 @@ class SystemLinkHandler(
                     App.get().checkStoragePermission(checkAction, activity)
                 }
             }.onFailure {
-                YandexMetrica.reportError(it.message.orEmpty(), it)
+                AppMetrica.reportError(it.message.orEmpty(), it)
             }
         }
     }
@@ -138,7 +138,7 @@ class SystemLinkHandler(
                 ).addFlags(FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (e: ActivityNotFoundException) {
-            YandexMetrica.reportError(e.message.orEmpty(), e)
+            AppMetrica.reportError(e.message.orEmpty(), e)
         }
 
     }

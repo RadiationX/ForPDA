@@ -19,13 +19,11 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
-import com.yandex.metrica.YandexMetrica
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.databinding.ActivityMainBinding
-import forpdateam.ru.forpda.notifications.NotificationsService
 import forpdateam.ru.forpda.presentation.main.MainPresenter
 import forpdateam.ru.forpda.presentation.main.MainView
 import forpdateam.ru.forpda.ui.DimensionHelper
@@ -237,7 +235,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         super.onStart()
         bottomDrawer.onStart()
         App.get().Di().eventsController.start()
-        YandexMetrica.resumeSession(this)
     }
 
     override fun onResumeFragments() {
@@ -277,7 +274,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     override fun onStop() {
         super.onStop()
         bottomDrawer.onStop()
-        YandexMetrica.pauseSession(this)
     }
 
     override fun onDestroy() {

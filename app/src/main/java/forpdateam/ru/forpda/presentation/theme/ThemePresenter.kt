@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.presentation.theme
 
 import android.net.Uri
 import android.util.Log
-import com.yandex.metrica.YandexMetrica
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
@@ -37,6 +36,7 @@ import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
+import io.appmetrica.analytics.AppMetrica
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
@@ -615,7 +615,7 @@ class ThemePresenter(
                 }
             }
         } catch (ex: Exception) {
-            YandexMetrica.reportError("${ex.message ?: ex.toString()}; uri $uri", ex)
+            AppMetrica.reportError("${ex.message ?: ex.toString()}; uri $uri", ex)
         }
         linkHandler.handle(url, router)
     }

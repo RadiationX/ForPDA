@@ -18,7 +18,7 @@ kotlin-plugin = "2.3.21"
 kotlin-stdlib = "2.3.21"
 material = "1.13.0"
 minitemplator-repackaged = "1.4.1"
-mobmetricalib = "3.13.1"
+appmetrica = "8.1.0"
 moxy = "2.2.2"
 okhttp = "5.3.2"
 pagerbullet = "1.2.0"
@@ -63,7 +63,7 @@ easinginterpolator = { module = "com.github.MasayukiSuda:EasingInterpolator", ve
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin-stdlib" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 minitemplator-repackaged = { module = "org.bsc.util:minitemplator-repackaged", version.ref = "minitemplator-repackaged" }
-mobmetricalib = { module = "com.yandex.android:mobmetricalib", version.ref = "mobmetricalib" }
+appmetrica = { module = "io.appmetrica.analytics:analytics", version.ref = "appmetrica" }
 moxy = { module = "com.github.moxy-community:moxy", version.ref = "moxy" }
 moxy-androidx = { module = "com.github.moxy-community:moxy-androidx", version.ref = "moxy" }
 moxy-compiler = { module = "com.github.moxy-community:moxy-compiler", version.ref = "moxy" }

@@ -35,14 +35,14 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader
-import com.yandex.metrica.YandexMetrica
-import com.yandex.metrica.YandexMetricaConfig
 import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.work.WorkUtils
+import io.appmetrica.analytics.AppMetrica
+import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -261,10 +261,9 @@ class App : Application() {
         super.onCreate()
         instance = this
         val time = System.currentTimeMillis()
-        val config =
-            YandexMetricaConfig.newConfigBuilder("a94d9236-cdf3-4a5e-af30-d6dbffaea362").build()
-        YandexMetrica.activate(applicationContext, config)
-        YandexMetrica.enableActivityAutoTracking(this)
+        val config = AppMetricaConfig.newConfigBuilder("a94d9236-cdf3-4a5e-af30-d6dbffaea362").build()
+        AppMetrica.activate(applicationContext, config)
+        AppMetrica.enableActivityAutoTracking(this)
 
         dependencies
             .mainPreferencesHolder
@@ -307,7 +306,7 @@ class App : Application() {
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
-            YandexMetrica.reportError("VERSIONS_HISTORY", ex)
+            AppMetrica.reportError("VERSIONS_HISTORY", ex)
         }
 
         initImageLoader(this)

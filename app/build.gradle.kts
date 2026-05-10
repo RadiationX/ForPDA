@@ -191,7 +191,7 @@ dependencies {
     implementation(libs.permissionsdispatcher)
     kapt(libs.permissionsdispatcher.processor)
 
-    implementation(libs.mobmetricalib)
+    implementation(libs.appmetrica)
 
     implementation(libs.roundedimageview)
     implementation(libs.viewbindingpropertydelegate)

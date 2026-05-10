@@ -6,8 +6,8 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
-import com.yandex.metrica.YandexMetrica
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
+import io.appmetrica.analytics.AppMetrica
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -72,7 +72,7 @@ object FilePickHelper {
             checkNotNull(inputStream)
             requestFile = RequestFile(name, mimeType, inputStream)
         } catch (e: Exception) {
-            YandexMetrica.reportError(e.message!!, e)
+            AppMetrica.reportError(e.message!!, e)
         }
         return requestFile
     }
