@@ -371,18 +371,12 @@ class ExtendedWebView : NestedWebView, IBase {
     }
 
     private fun myActionMode(callback: ActionMode.Callback, type: Int): ActionMode? {
-        val parent = getParent()
         if (parent == null) {
             return null
         }
 
         val customCallback = getActionModeCallback(callback)
-        val actionMode: ActionMode?
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            actionMode = super.startActionMode(customCallback, type)
-        } else {
-            actionMode = super.startActionMode(customCallback)
-        }
+        val actionMode = super.startActionMode(customCallback, type)
 
         currentActionMode = actionMode
         if (actionModeListener != null) {
@@ -392,57 +386,33 @@ class ExtendedWebView : NestedWebView, IBase {
     }
 
     private fun getActionModeCallback(callback: ActionMode.Callback): ActionMode.Callback {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return object : ActionMode.Callback2() {
-                override fun onGetContentRect(mode: ActionMode?, view: View?, outRect: Rect?) {
-                    if (callback is ActionMode.Callback2) {
-                        callback.onGetContentRect(mode, view, outRect)
-                    } else {
-                        super.onGetContentRect(mode, view, outRect)
-                    }
-                }
-
-                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                    return callback.onCreateActionMode(mode, menu)
-                }
-
-                override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                    return callback.onPrepareActionMode(mode, menu)
-                }
-
-                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                    if (actionModeListener != null && actionModeListener!!.onClick(mode, item)) {
-                        return true
-                    }
-                    return callback.onActionItemClicked(mode, item)
-                }
-
-                override fun onDestroyActionMode(mode: ActionMode?) {
-                    currentActionMode = null
-                    callback.onDestroyActionMode(mode)
+        return object : ActionMode.Callback2() {
+            override fun onGetContentRect(mode: ActionMode?, view: View?, outRect: Rect?) {
+                if (callback is ActionMode.Callback2) {
+                    callback.onGetContentRect(mode, view, outRect)
+                } else {
+                    super.onGetContentRect(mode, view, outRect)
                 }
             }
-        } else {
-            return object : ActionMode.Callback {
-                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                    return callback.onCreateActionMode(mode, menu)
-                }
 
-                override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                    return callback.onPrepareActionMode(mode, menu)
-                }
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                return callback.onCreateActionMode(mode, menu)
+            }
 
-                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                    if (actionModeListener != null && actionModeListener!!.onClick(mode, item)) {
-                        return true
-                    }
-                    return callback.onActionItemClicked(mode, item)
-                }
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                return callback.onPrepareActionMode(mode, menu)
+            }
 
-                override fun onDestroyActionMode(mode: ActionMode?) {
-                    currentActionMode = null
-                    callback.onDestroyActionMode(mode)
+            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                if (actionModeListener != null && actionModeListener!!.onClick(mode, item)) {
+                    return true
                 }
+                return callback.onActionItemClicked(mode, item)
+            }
+
+            override fun onDestroyActionMode(mode: ActionMode?) {
+                currentActionMode = null
+                callback.onDestroyActionMode(mode)
             }
         }
     }

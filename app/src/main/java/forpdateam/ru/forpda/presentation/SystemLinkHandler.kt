@@ -88,13 +88,7 @@ class SystemLinkHandler(
 
             coRunCatching {
                 val activity = App.getActivity()
-                val downloadUrl = response.redirect.run {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                        replace("https", "http")
-                    } else {
-                        this
-                    }
-                }
+                val downloadUrl = response.redirect
                 if (!mainPreferencesHolder.systemDownloader.get() || activity == null) {
                     externalDownloader(downloadUrl)
                 } else {

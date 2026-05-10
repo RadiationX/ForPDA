@@ -1763,7 +1763,7 @@ public class BottomSheetBehaviorFixed<V extends View> extends CoordinatorLayout.
 
         CoordinatorLayout parent = (CoordinatorLayout) viewParent;
         final int childCount = parent.getChildCount();
-        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) && expanded) {
+        if (expanded) {
             if (importantForAccessibilityMap == null) {
                 importantForAccessibilityMap = new HashMap<>(childCount);
             } else {
@@ -1780,9 +1780,7 @@ public class BottomSheetBehaviorFixed<V extends View> extends CoordinatorLayout.
 
             if (expanded) {
                 // Saves the important for accessibility value of the child view.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    importantForAccessibilityMap.put(child, child.getImportantForAccessibility());
-                }
+                importantForAccessibilityMap.put(child, child.getImportantForAccessibility());
                 if (updateImportantForAccessibilityOnSiblings) {
                     ViewCompat.setImportantForAccessibility(
                             child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);

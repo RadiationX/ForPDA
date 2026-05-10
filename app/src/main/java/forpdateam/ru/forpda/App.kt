@@ -383,16 +383,14 @@ class App : Application() {
     fun checkStoragePermission(runnable: Runnable?, activity: Activity?) {
         if (runnable == null || activity == null) return
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                    activity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    TabFragment.REQUEST_STORAGE
-                )
-                permissionCallbacks.add(runnable)
-                return
-            }
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                TabFragment.REQUEST_STORAGE
+            )
+            permissionCallbacks.add(runnable)
+            return
         }
         runnable.run()
     }

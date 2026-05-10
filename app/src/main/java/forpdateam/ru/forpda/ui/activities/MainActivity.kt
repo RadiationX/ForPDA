@@ -357,16 +357,14 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         }
 
         fun setLightStatusBar(activity: Activity, value: Boolean) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val view = activity.window.decorView
-                var flags = view.systemUiVisibility
-                if (value) {
-                    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                } else {
-                    flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-                }
-                view.systemUiVisibility = flags
+            val view = activity.window.decorView
+            var flags = view.systemUiVisibility
+            if (value) {
+                flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
             }
+            view.systemUiVisibility = flags
         }
 
         fun getDefaultLightStatusBar(context: Activity): Boolean {

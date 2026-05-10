@@ -23,8 +23,6 @@ import java.util.GregorianCalendar
  * Created by isanechek on 30.07.16.
  */
 object Utils {
-    val isMM: Boolean
-        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
     fun getFileNameFromUrl(url: String): String {
         var fileName = url
