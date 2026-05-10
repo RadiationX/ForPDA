@@ -2,11 +2,15 @@ package forpdateam.ru.forpda.common.flowpreferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlin.time.Duration.Companion.seconds
 
 class FlowPreferenceImpl<T>(
     private val preferences: SharedPreferences,
@@ -16,13 +20,15 @@ class FlowPreferenceImpl<T>(
     private val keysFlow: Flow<String?>
 ) : FlowPreference<T> {
 
-    private val updatesFlow = keysFlow
-        .onStart { emit(key) }
-        .filter { it == null || it == key }
-        .map { get() }
+    private val updatesFlow by lazy {
+        keysFlow
+            .filter { it == null || it == key }
+            .map { loadValue() }
+            .stateIn(GlobalScope, SharingStarted.WhileSubscribed(1.seconds), loadValue())
+    }
 
     override fun get(): T {
-        return adapter.get(preferences, key, defaultValue)
+        return updatesFlow.value
     }
 
     override fun set(value: T) {
@@ -37,8 +43,18 @@ class FlowPreferenceImpl<T>(
         }
     }
 
-    override suspend fun collect(collector: FlowCollector<T>) {
+    override val value: T
+        get() = updatesFlow.value
+
+    override val replayCache: List<T>
+        get() = updatesFlow.replayCache
+
+    override suspend fun collect(collector: FlowCollector<T>): Nothing {
         updatesFlow.collect(collector)
+    }
+
+    private fun loadValue(): T {
+        return adapter.get(preferences, key, defaultValue)
     }
 
 }

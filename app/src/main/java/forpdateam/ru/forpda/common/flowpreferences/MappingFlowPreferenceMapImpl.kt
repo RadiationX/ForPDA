@@ -2,11 +2,11 @@ package forpdateam.ru.forpda.common.flowpreferences
 
 import kotlinx.coroutines.flow.FlowCollector
 
-class MappingFlowPreferenceImpl<T, R>(
-    private val flowPreference: FlowPreference<T>,
+class MappingFlowPreferenceMapImpl<T, R>(
+    private val flowPreference: FlowPreferenceMap<T>,
     private val transformGet: (T) -> R,
     private val transformSet: (R) -> T
-) : FlowPreference<R> {
+) : FlowPreferenceMap<R> {
 
     private val transformedFlow by lazy {
         TransformStateFlow(flowPreference, transformGet)
@@ -20,8 +20,8 @@ class MappingFlowPreferenceImpl<T, R>(
         flowPreference.set(transformSet.invoke(value))
     }
 
-    override fun remove() {
-        flowPreference.remove()
+    override fun remove(keys: Iterable<String>) {
+        flowPreference.remove(keys)
     }
 
     override val value: R

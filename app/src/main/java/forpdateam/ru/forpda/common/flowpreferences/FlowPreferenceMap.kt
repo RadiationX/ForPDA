@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.common.flowpreferences
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface FlowPreference<T> : StateFlow<T> {
+interface FlowPreferenceMap<T> : StateFlow<T> {
     fun get(): T
     fun set(value: T)
-    fun remove()
+    fun remove(keys: Iterable<String>)
 }
 

@@ -23,6 +23,10 @@ class FlowPreferences(
         }
     }.shareIn(coroutineScope, SharingStarted.Eagerly)
 
+    fun getAll(keysFilter: ((String) -> Boolean)? = null): FlowPreferenceMap<Map<String, PreferenceValue>> {
+        return FlowPreferenceMapImpl(preferences, keysFilter, keysFlow)
+    }
+
     fun <T> get(key: String, default: T, adapter: FlowPreferenceAdapter<T>): FlowPreference<T> {
         return FlowPreferenceImpl(preferences, key, default, adapter, keysFlow)
     }
