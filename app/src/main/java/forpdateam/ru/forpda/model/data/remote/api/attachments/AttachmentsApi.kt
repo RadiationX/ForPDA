@@ -40,6 +40,29 @@ class AttachmentsApi(
         files: List<RequestFile>,
         pending: List<AttachmentItem>
     ): List<AttachmentItem> {
+        files.indices.forEach {
+            val file = files[it]
+            val item = pending[it]
+            if (getUploadedAttachment(postId, file, item) == null) {
+                uploadAttachment(postId, relType, file, item)
+            }
+        }
+        return pending
+    }
+
+    private suspend fun getUploadedAttachment(
+        postId: Int,
+        file: RequestFile,
+        item: AttachmentItem
+    ): AttachmentItem? {
+        val metaData = file.getMetaData(context)
+        val md5Hash = file.openInputStream(context).source().use { source ->
+            val hashingSource = HashingSource.md5(source)
+            hashingSource.buffer().use { bufferedSource ->
+                bufferedSource.readAll(blackholeSink())
+            }
+            hashingSource.hash.hex()
+        }
 
         val builder = NetworkRequest.Builder()
             .url("https://4pda.to/forum/index.php?act=attach")
@@ -49,52 +72,48 @@ class AttachmentsApi(
             .formHeader("allowExt", "")
             .formHeader("forum-attach-files", "")
             .formHeader("code", "check")
+            .formHeader("md5", md5Hash)
+            .formHeader("size", metaData.size.toString())
+            .formHeader("name", metaData.name)
         if (postId != -1) {
             builder.formHeader("relId", postId.toString())
         }
-        for (i in files.indices) {
-            val file = files[i]
-            val item = pending[i]
-
-            val metaData = file.getMetaData(context)
-            val md5Hash = file.openInputStream(context).source().use { source ->
-                val hashingSource = HashingSource.md5(source)
-                hashingSource.buffer().use { bufferedSource ->
-                    bufferedSource.readAll(blackholeSink())
-                }
-                hashingSource.hash.hex()
-            }
-
-            builder
-                .formHeader("md5", md5Hash)
-                .formHeader("size", metaData.size.toString())
-                .formHeader("name", metaData.name)
-
-            var response = webClient.request(builder.build())
-            if (response.body == "0") {
-                val uploadRequest = NetworkRequest.Builder()
-                    .url("https://4pda.to/forum/index.php?act=attach")
-                    .xhrHeader()
-                    .formHeader("index", "1")
-                    .formHeader("maxSize", "134217728")
-                    .formHeader("allowExt", "")
-                    .formHeader("forum-attach-files", "")
-                    .formHeader("code", "upload")
-                    .file(NetworkRequest.File("FILE_UPLOAD[]",file))
-
-                if (postId != -1) {
-                    uploadRequest.formHeader("relId", postId.toString())
-                }
-                if (relType != null) {
-                    uploadRequest.formHeader("relType", relType)
-                }
-
-                response = webClient.request(uploadRequest.build(), item.itemProgressListener)
-            }
-            attachmentsParser.parseAttachment(response.body, item)
-            item.status = AttachmentItem.STATUS_UPLOADED
+        val response = webClient.request(builder.build())
+        if (response.body == "0") {
+            return null
         }
-        return pending
+        return attachmentsParser.parseAttachment(response.body, item).also {
+            it.status = AttachmentItem.STATUS_UPLOADED
+        }
+    }
+
+    private suspend fun uploadAttachment(
+        postId: Int,
+        relType: String?,
+        file: RequestFile,
+        item: AttachmentItem
+    ): AttachmentItem {
+        val uploadRequest = NetworkRequest.Builder()
+            .url("https://4pda.to/forum/index.php?act=attach")
+            .xhrHeader()
+            .formHeader("index", "1")
+            .formHeader("maxSize", "134217728")
+            .formHeader("allowExt", "")
+            .formHeader("forum-attach-files", "")
+            .formHeader("code", "upload")
+            .file(NetworkRequest.File("FILE_UPLOAD[]", file, item.itemProgressListener))
+
+        if (postId != -1) {
+            uploadRequest.formHeader("relId", postId.toString())
+        }
+        if (relType != null) {
+            uploadRequest.formHeader("relType", relType)
+        }
+
+        val response = webClient.request(uploadRequest.build())
+        return attachmentsParser.parseAttachment(response.body, item).also {
+            it.status = AttachmentItem.STATUS_UPLOADED
+        }
     }
 
     private suspend fun deleteFiles(

@@ -8,10 +8,7 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import forpdateam.ru.forpda.model.data.remote.api.RequestFile
-import org.json.JSONObject
 import java.net.URLEncoder
-import java.util.regex.Pattern
 
 
 /**
@@ -21,9 +18,6 @@ class QmsApi(
     private val webClient: IWebClient,
     private val qmsParser: QmsParser
 ) {
-
-    private val imgBbPattern =
-        Pattern.compile("PF\\.obj\\.config\\.json_api=\"([^\"]*?)\"[\\s\\S]*?PF\\.obj\\.config\\.auth_token=\"([^\"]*?)\"")
 
     suspend fun getBlackList(): List<QmsContact> {
         val builder = NetworkRequest.Builder()
@@ -163,58 +157,6 @@ class QmsApi(
             .formHeader("action", "del-member")
             .formHeader("del-mid", Integer.toString(mid))
         return webClient.request(builder.build()).body
-    }
-
-    suspend fun uploadFiles(
-        files: List<RequestFile>,
-        pending: List<AttachmentItem>
-    ): List<AttachmentItem> {
-        val baseUrl = "https://ru.imgbb.com/"
-        var uploadUrl = "https://ru.imgbb.com/json"
-        var authToken = "null"
-
-        val baseResponse = webClient.get(baseUrl)
-        val baseMatcher = imgBbPattern.matcher(baseResponse.body)
-        if (baseMatcher.find()) {
-            uploadUrl = baseMatcher.group(1)
-            authToken = baseMatcher.group(2)
-        }
-
-
-        val headers = HashMap<String, String>()
-        headers["type"] = "file"
-        headers["action"] = "upload"
-        headers["privacy"] = "undefined"
-        headers["timestamp"] = java.lang.Long.toString(System.currentTimeMillis())
-        headers["auth_token"] = authToken
-        headers["nsfw"] = "0"
-        //Matcher matcher = null;
-        for (i in files.indices) {
-            val file = files[i]
-            val item = pending[i]
-
-            val builder = NetworkRequest.Builder()
-                .url(uploadUrl)
-                .formHeaders(headers)
-                .file(NetworkRequest.File("source", file))
-            val response = webClient.request(builder.build(), item.itemProgressListener)
-
-            val responseJson = JSONObject(response.body)
-            forpdateam.ru.forpda.common.Utils.longLog(responseJson.toString(4))
-            if (responseJson.getInt("status_code") == 200) {
-                val imageJson = responseJson.getJSONObject("image")
-                item.name = imageJson.getString("filename")
-                item.id = 0
-                item.extension = imageJson.getString("extension")
-                item.weight = imageJson.getString("size_formatted")
-                item.typeFile = AttachmentItem.TYPE_IMAGE
-                item.loadState = AttachmentItem.STATE_LOADED
-                item.imageUrl = imageJson.getJSONObject("medium").getString("url")
-                item.url = imageJson.getJSONObject("image").getString("url")
-            }
-        }
-
-        return pending
     }
 
 }

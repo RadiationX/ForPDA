@@ -1,55 +1,53 @@
 package forpdateam.ru.forpda.model.data.remote.api
 
+import forpdateam.ru.forpda.model.data.remote.IWebClient
+
 /**
  * Created by radiationx on 02.05.17.
  */
-class NetworkRequest(builder: Builder) {
-    var url: String = ""
-    val headers: LinkedHashMap<String, String>?
-    val formHeaders: LinkedHashMap<String, String>?
-    val encodedFormHeaders: Set<String>?
-    var isMultipartForm: Boolean = false
-    var file: File? = null
-
-    //true - get, false - post
-    var method: Boolean = true
-    var isWithoutBody: Boolean = false
-
-    init {
-        this.url = builder.url
-        this.headers = builder.headers
-        this.formHeaders = builder.formHeaders
-        this.encodedFormHeaders = builder.encodedFormHeaders
-        this.isMultipartForm = builder.isMultipartForm
-        this.file = builder.file
-        this.method = builder.method
-        this.isWithoutBody = builder.withoutBody
-    }
+class NetworkRequest(
+    val url: String,
+    val headers: Map<String, String>,
+    val formHeaders: Map<String, String>,
+    val encodedFormHeaders: Set<String>,
+    val isMultipartForm: Boolean,
+    val file: File?,
+    val isWithoutBody: Boolean
+) {
 
     class Builder {
-        internal var url: String = ""
-        var headers: LinkedHashMap<String, String>? = null
-        var formHeaders: LinkedHashMap<String, String>? = null
-        var encodedFormHeaders: MutableSet<String>? = null
-        var isMultipartForm: Boolean = false
-        var file: File? = null
-        var method: Boolean = true
-        var withoutBody: Boolean = false
+        private var url: String = ""
+        private var headers: MutableMap<String, String>? = null
+        private var formHeaders: MutableMap<String, String>? = null
+        private var encodedFormHeaders: MutableSet<String>? = null
+        private var isMultipartForm: Boolean = false
+        private var file: File? = null
+        private var withoutBody: Boolean = false
+
+        private fun getHeaders(): MutableMap<String, String> {
+            return (headers ?: mutableMapOf()).also { headers = it }
+        }
+
+        private fun getFormHeaders(): MutableMap<String, String> {
+            return (formHeaders ?: mutableMapOf()).also { formHeaders = it }
+        }
+
+        private fun getEncodedFormHeaders(): MutableSet<String> {
+            return (encodedFormHeaders ?: mutableSetOf()).also { encodedFormHeaders = it }
+        }
 
         fun url(url: String): Builder {
             this.url = url
             return this
         }
 
-        fun addHeaders(headers: LinkedHashMap<String, String>): Builder {
-            if (this.headers == null) this.headers = LinkedHashMap()
-            this.headers!!.putAll(headers)
+        fun addHeaders(headers: Map<String, String>): Builder {
+            getHeaders().putAll(headers)
             return this
         }
 
         fun addHeader(name: String, value: String): Builder {
-            if (this.headers == null) this.headers = LinkedHashMap()
-            headers!![name] = value
+            getHeaders()[name] = value
             return this
         }
 
@@ -63,15 +61,10 @@ class NetworkRequest(builder: Builder) {
         }
 
         fun formHeaders(formHeaders: Map<String, String>, encoded: Boolean): Builder {
-            if (this.formHeaders == null) this.formHeaders = LinkedHashMap()
-            this.formHeaders!!.putAll(formHeaders)
+            getFormHeaders().putAll(formHeaders)
             if (encoded) {
-                if (this.encodedFormHeaders == null) {
-                    encodedFormHeaders = HashSet()
-                }
-                encodedFormHeaders!!.addAll(this.formHeaders!!.keys)
+                getEncodedFormHeaders().addAll(formHeaders.keys)
             }
-            method = false
             return this
         }
 
@@ -80,15 +73,10 @@ class NetworkRequest(builder: Builder) {
         }
 
         fun formHeader(name: String, value: String, encoded: Boolean): Builder {
-            if (this.formHeaders == null) this.formHeaders = LinkedHashMap()
-            formHeaders!![name] = value
+            getFormHeaders()[name] = value
             if (encoded) {
-                if (this.encodedFormHeaders == null) {
-                    encodedFormHeaders = HashSet()
-                }
-                encodedFormHeaders!!.add(name)
+                getEncodedFormHeaders().add(name)
             }
-            method = false
             return this
         }
 
@@ -105,17 +93,25 @@ class NetworkRequest(builder: Builder) {
         fun file(file: File?): Builder {
             this.file = file
             isMultipartForm = true
-            method = false
             return this
         }
 
         fun build(): NetworkRequest {
-            return NetworkRequest(this)
+            return NetworkRequest(
+                url = url,
+                headers = headers?.toMap().orEmpty(),
+                formHeaders = formHeaders?.toMap().orEmpty(),
+                encodedFormHeaders = encodedFormHeaders?.toSet().orEmpty(),
+                isMultipartForm = isMultipartForm,
+                file = file,
+                isWithoutBody = withoutBody,
+            )
         }
     }
 
     data class File(
         val requestName: String,
-        val file: RequestFile
+        val file: RequestFile,
+        val progressListener: IWebClient.ProgressListener
     )
 }

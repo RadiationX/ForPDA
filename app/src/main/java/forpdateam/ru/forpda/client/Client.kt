@@ -8,9 +8,6 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
-import okhttp3.FormBody
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -23,6 +20,8 @@ class Client(
     private val countersHolder: CountersHolder
 ) : IWebClient {
 
+    private val mapper = NetworkRequestMapper(context)
+
     //Network
     @Throws(Exception::class)
     override suspend fun get(url: String): NetworkResponse {
@@ -31,102 +30,8 @@ class Client(
 
     @Throws(Exception::class)
     override suspend fun request(request: NetworkRequest): NetworkResponse {
-        return request(request, this.client, null)
-    }
-
-    @Throws(Exception::class)
-    override suspend fun request(
-        request: NetworkRequest,
-        progressListener: IWebClient.ProgressListener
-    ): NetworkResponse {
-        return request(request, this.client, progressListener)
-    }
-
-    private fun prepareRequest(
-        request: NetworkRequest,
-        uploadProgressListener: IWebClient.ProgressListener?
-    ): Request.Builder {
-        var url = request.url
-        if (request.url.startsWith("//")) {
-            url = "https:" + request.url
-        }
-        Log.d(LOG_TAG, "Request url " + request.url)
-        val requestBuilder = Request.Builder()
-            .url(url)
-            .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4")
-            .header("User-Agent", USER_AGENT)
-        if (request.headers != null) {
-            for ((key, value) in request.headers) {
-                Log.d(LOG_TAG, "Header $key : " + getPrivateHeaderValue(key, value))
-                requestBuilder.header(key, value)
-            }
-        }
-        if (request.formHeaders != null || request.file != null) {
-            Log.d(LOG_TAG, "Multipart " + request.isMultipartForm)
-            if (request.formHeaders != null) {
-                for ((key, value) in request.formHeaders) {
-                    Log.d(LOG_TAG, "Form header $key : " + getPrivateHeaderValue(key, value))
-                }
-            }
-            if (request.file != null) {
-                Log.d(LOG_TAG, "Form file " + request.file.toString())
-            }
-            if (!request.isMultipartForm) {
-                if (request.formHeaders != null) {
-                    val formBuilder = FormBody.Builder()
-                    for ((key, value) in request.formHeaders) {
-                        formBuilder.add(key, value)
-                        if (request.encodedFormHeaders != null && request.encodedFormHeaders.contains(
-                                key
-                            )
-                        ) {
-                            formBuilder.addEncoded(key, value)
-                        } else {
-                            formBuilder.add(key, value)
-                        }
-                    }
-                    val formBody = formBuilder.build()
-                    requestBuilder.post(formBody)
-                }
-            } else {
-                val multipartBuilder = MultipartBody.Builder()
-                multipartBuilder.setType(MultipartBody.FORM)
-                if (request.formHeaders != null) {
-                    for ((key, value) in request.formHeaders) {
-                        multipartBuilder.addFormDataPart(key, value)
-                    }
-                }
-                request.file?.also { file ->
-                    val metaData = file.file.getMetaData(context)
-                    val type = metaData.mimeType.toMediaTypeOrNull()
-                    val requestBody = InputStreamRequestBody(type, file.file.openInputStream(context))
-                    multipartBuilder.addFormDataPart(
-                        name = file.requestName,
-                        filename = metaData.name,
-                        body = requestBody
-                    )
-                }
-                val multipartBody = multipartBuilder.build()
-                if (uploadProgressListener == null) {
-                    requestBuilder.post(multipartBody)
-                } else {
-                    requestBuilder.post(ProgressRequestBody(multipartBody, uploadProgressListener))
-                }
-            }
-        }
-        return requestBuilder
-    }
-
-    @Throws(Exception::class)
-    private suspend fun request(
-        request: NetworkRequest,
-        client: OkHttpClient,
-        uploadProgressListener: IWebClient.ProgressListener?
-    ): NetworkResponse {
-        val requestBuilder = prepareRequest(request, uploadProgressListener)
-
-        val call = client.newCall(requestBuilder.build())
-
+        val okHttpRequest = mapper.map(request)
+        val call = client.newCall(okHttpRequest)
         return call.executeAsync().use { response ->
             if (!response.isSuccessful) {
                 if (response.code == 403) {
@@ -151,11 +56,11 @@ class Client(
             checkForumErrors(body)
 
             NetworkResponse(
-                request.url,
-                response.code,
-                response.message,
-                response.request.url.toString(),
-                body
+                url = request.url,
+                code = response.code,
+                message = response.message,
+                redirect = response.request.url.toString(),
+                body = body
             )
         }
     }

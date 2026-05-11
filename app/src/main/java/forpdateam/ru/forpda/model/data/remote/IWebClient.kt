@@ -10,14 +10,10 @@ import java.util.regex.Pattern
  * Created by radiationx on 26.03.17.
  */
 interface IWebClient {
-    @Throws(Exception::class)
+
     suspend fun get(url: String): NetworkResponse
 
-    @Throws(Exception::class)
     suspend fun request(request: NetworkRequest): NetworkResponse
-
-    @Throws(Exception::class)
-    suspend fun request(request: NetworkRequest, progressListener: ProgressListener): NetworkResponse
 
     fun createWebSocketConnection(webSocketListener: WebSocketListener): WebSocket
 
