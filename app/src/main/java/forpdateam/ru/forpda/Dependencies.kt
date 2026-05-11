@@ -206,7 +206,7 @@ class Dependencies internal constructor(
         AppImageDownloader(context, imagesOkHttpClient)
     }
 
-    val webClient: IWebClient by lazy { Client(webOkHttpClient, countersHolder) }
+    val webClient: IWebClient by lazy { Client(context, webOkHttpClient, countersHolder) }
 
     val patternProvider: IPatternProvider by lazy {
         PatternProvider(
@@ -253,7 +253,7 @@ class Dependencies internal constructor(
     val searchApi by lazy { SearchApi(webClient, searchParser) }
     val topicsApi by lazy { TopicsApi(webClient, topicsParser) }
     val checkerApi by lazy { CheckerApi(webClient, checkerParser) }
-    val attachmentsApi by lazy { AttachmentsApi(webClient, attachmentsParser) }
+    val attachmentsApi by lazy { AttachmentsApi(context, webClient, attachmentsParser) }
 
 
     private val realmConfig by lazy {
@@ -336,7 +336,7 @@ class Dependencies internal constructor(
             forumUsersCache
         )
     }
-    val notesRepository by lazy { NotesRepository(notesCache, externalStorage) }
+    val notesRepository by lazy { NotesRepository(context, notesCache, externalStorage) }
     val menuRepository by lazy { MenuRepository(flowPreferences, authHolder, countersHolder) }
     val checkerRepository by lazy { CheckerRepository(checkerApi, patternProvider) }
 

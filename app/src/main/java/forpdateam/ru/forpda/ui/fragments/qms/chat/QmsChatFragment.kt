@@ -1,22 +1,17 @@
 package forpdateam.ru.forpda.ui.fragments.qms.chat
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.FilePickHelper
+import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
@@ -89,6 +84,10 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
         App.get().Di().errorHandler
     )
 
+    private val filesPicker = registerFilesPicker {
+        uploadFiles(it)
+    }
+
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_chat)
     }
@@ -130,7 +129,7 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
         loadBaseWebContainer()
 
         attachmentsPopup.setEnabledTextControls(false)
-        attachmentsPopup.setAddOnClickListener { tryPickFile() }
+        attachmentsPopup.setAddOnClickListener { filesPicker.launch() }
         attachmentsPopup.setDeleteOnClickListener {
             attachmentsPopup.preDeleteFiles()
             val selectedFiles = attachmentsPopup.getSelected()
@@ -356,26 +355,6 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
 
     override fun onUploadFiles(items: List<AttachmentItem>) {
         attachmentsPopup.onUploadFiles(items)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                //Display an error
-                return
-            }
-            uploadFiles(FilePickHelper.onActivityResult(requireContext(), data))
-        }
-    }
-
-    private fun tryPickFile() {
-        App.get().checkStoragePermission({
-            startActivityForResult(
-                FilePickHelper.pickFile(false),
-                REQUEST_PICK_FILE
-            )
-        }, App.getActivity())
     }
 
     override fun onBackPressed(): Boolean {

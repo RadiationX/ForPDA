@@ -15,7 +15,6 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
-import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
@@ -262,11 +261,8 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
     fun preUploadFiles(files: List<RequestFile>): List<AttachmentItem> {
         Log.d(LOG_TAG, "preUploadFiles $files")
         val loadingItems = ArrayList<AttachmentItem>()
-        for (file in files) {
-            val item = AttachmentItem(file.fileName)
-            item.progressListener = IWebClient.ProgressListener{ percent ->
-
-            }
+        files.forEach {
+            val item = AttachmentItem()
             Log.d(LOG_TAG, "Add loading item $item")
             attachments.add(item)
             adapter.add(item)

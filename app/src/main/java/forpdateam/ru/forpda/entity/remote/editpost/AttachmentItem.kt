@@ -37,15 +37,10 @@ class AttachmentItem : Parcelable {
 
     val itemProgressListener: IWebClient.ProgressListener =
         IWebClient.ProgressListener { percent ->
-            this@AttachmentItem.progress =
-                progress
+            this@AttachmentItem.progress = percent
             if (progressListener != null) progressListener!!.onProgress(percent)
         }
     var progressListener: IWebClient.ProgressListener? = null
-
-    constructor(name: String?) {
-        this.name = name
-    }
 
     constructor()
 

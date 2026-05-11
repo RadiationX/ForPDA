@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.ui.fragments.editpost
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -9,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.FilePickHelper
+import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
@@ -45,6 +43,10 @@ class EditPostFragment : TabFragment(), EditPostView {
         App.get().Di().errorHandler
     )
 
+    private val filesPicker = registerFilesPicker {
+        uploadFiles(it)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -69,7 +71,7 @@ class EditPostFragment : TabFragment(), EditPostView {
         attachmentsPopup = messagePanel.attachmentsPopup!!
 
         messagePanel.addSendOnClickListener { presenter.onSendClick() }
-        attachmentsPopup.setAddOnClickListener { tryPickFile() }
+        attachmentsPopup.setAddOnClickListener { filesPicker.launch() }
         attachmentsPopup.setDeleteOnClickListener { removeFiles() }
         arguments?.apply {
             val title = getString(ARG_THEME_NAME, "")
@@ -121,26 +123,6 @@ class EditPostFragment : TabFragment(), EditPostView {
             return true
         }
         return false
-    }
-
-    private fun tryPickFile() {
-        App.get().checkStoragePermission({
-            startActivityForResult(
-                FilePickHelper.pickFile(false),
-                REQUEST_PICK_FILE
-            )
-        }, App.getActivity())
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                //Display an error
-                return
-            }
-            uploadFiles(FilePickHelper.onActivityResult(requireContext(), data))
-        }
     }
 
     override fun onNoPermission() {

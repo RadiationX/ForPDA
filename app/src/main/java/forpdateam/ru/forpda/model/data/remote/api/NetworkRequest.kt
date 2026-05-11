@@ -9,7 +9,7 @@ class NetworkRequest(builder: Builder) {
     val formHeaders: LinkedHashMap<String, String>?
     val encodedFormHeaders: Set<String>?
     var isMultipartForm: Boolean = false
-    var file: RequestFile? = null
+    var file: File? = null
 
     //true - get, false - post
     var method: Boolean = true
@@ -32,7 +32,7 @@ class NetworkRequest(builder: Builder) {
         var formHeaders: LinkedHashMap<String, String>? = null
         var encodedFormHeaders: MutableSet<String>? = null
         var isMultipartForm: Boolean = false
-        var file: RequestFile? = null
+        var file: File? = null
         var method: Boolean = true
         var withoutBody: Boolean = false
 
@@ -102,7 +102,7 @@ class NetworkRequest(builder: Builder) {
             return this
         }
 
-        fun file(file: RequestFile?): Builder {
+        fun file(file: File?): Builder {
             this.file = file
             isMultipartForm = true
             method = false
@@ -113,4 +113,9 @@ class NetworkRequest(builder: Builder) {
             return NetworkRequest(this)
         }
     }
+
+    data class File(
+        val requestName: String,
+        val file: RequestFile
+    )
 }

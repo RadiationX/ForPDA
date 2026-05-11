@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.model.repository.note
 
+import android.content.Context
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.model.data.cache.notes.NotesCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
@@ -13,6 +14,7 @@ import java.util.Date
 import java.util.Locale
 
 class NotesRepository(
+    private val context: Context,
     private val notesCache: NotesCache,
     private val externalStorage: ExternalStorageProvider
 ) {
@@ -34,8 +36,9 @@ class NotesRepository(
     }
 
     suspend fun importNotes(file: RequestFile): List<NoteItem> {
-        val jsonSource = if (file.fileName.matches("[\\s\\S]*?\\.json$".toRegex())) {
-            externalStorage.getText(file.fileStream)
+        val metaData = file.getMetaData(context)
+        val jsonSource = if (metaData.name.matches("[\\s\\S]*?\\.json$".toRegex())) {
+            externalStorage.getText(file.openInputStream(context))
         } else {
             throw Exception("Файл имеет неправильное расширение")
         }

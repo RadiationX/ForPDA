@@ -458,8 +458,6 @@ open class TabFragment(
         const val ARG_SUBTITLE = "TAB_SUBTITLE"
         const val ARG_TAB = "TAB_URL"
 
-        const val REQUEST_PICK_FILE = 1228
-        const val REQUEST_SAVE_FILE = 1117
         const val REQUEST_STORAGE = 1
     }
 }

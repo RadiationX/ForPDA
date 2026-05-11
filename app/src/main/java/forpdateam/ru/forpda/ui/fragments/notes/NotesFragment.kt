@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.ui.fragments.notes
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,7 +8,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.FilePickHelper
+import forpdateam.ru.forpda.common.filepicker.registerFilePicker
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.presentation.notes.NotesPresenter
@@ -45,6 +43,10 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         App.get().Di().linkHandler,
         App.get().Di().errorHandler
     )
+
+    private val filePicker = registerFilePicker {
+        presenter.importNotes(it)
+    }
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_notes)
@@ -85,12 +87,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         menu
             .add(R.string.import_s)
             .setOnMenuItemClickListener {
-                App.get().checkStoragePermission({
-                    startActivityForResult(
-                        FilePickHelper.pickFile(false),
-                        REQUEST_PICK_FILE
-                    )
-                }, App.getActivity())
+                filePicker.launch()
                 true
             }
         menu
@@ -131,23 +128,6 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
 
     override fun onExportNotes(path: String) {
         Toast.makeText(requireContext(), "Заметки успешно экспортированы в $path", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                //Display an error
-                return
-            }
-            if (requestCode == REQUEST_PICK_FILE) {
-                val files = FilePickHelper.onActivityResult(requireContext(), data)
-                val file = files[0]
-                presenter.importNotes(file)
-            } else if (requestCode == REQUEST_SAVE_FILE) {
-
-            }
-        }
     }
 
     override fun onItemClick(item: NoteItem) {

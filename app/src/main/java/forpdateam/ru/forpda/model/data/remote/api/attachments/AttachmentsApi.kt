@@ -1,14 +1,18 @@
 package forpdateam.ru.forpda.model.data.remote.api.attachments
 
+import android.content.Context
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
-import java.io.ByteArrayInputStream
-import java.security.MessageDigest
+import okio.HashingSource
+import okio.blackholeSink
+import okio.buffer
+import okio.source
 
 class AttachmentsApi(
+    private val context: Context,
     private val webClient: IWebClient,
     private val attachmentsParser: AttachmentsParser
 ) {
@@ -52,21 +56,19 @@ class AttachmentsApi(
             val file = files[i]
             val item = pending[i]
 
-            file.requestName = "FILE_UPLOAD[]"
-            val messageDigest = MessageDigest.getInstance("MD5")
-            file.fileStream = file.fileStream.use {
-                val targetArray = ByteArray(it.available()).apply {
-                    it.read(this)
+            val metaData = file.getMetaData(context)
+            val md5Hash = file.openInputStream(context).source().use { source ->
+                val hashingSource = HashingSource.md5(source)
+                hashingSource.buffer().use { bufferedSource ->
+                    bufferedSource.readAll(blackholeSink())
                 }
-                messageDigest.update(targetArray)
-                ByteArrayInputStream(targetArray)
+                hashingSource.hash.hex()
             }
-            val hash = messageDigest.digest()
-            val md5 = byteArrayToHexString(hash)
+
             builder
-                .formHeader("md5", md5)
-                .formHeader("size", file.fileStream.available().toString())
-                .formHeader("name", file.fileName)
+                .formHeader("md5", md5Hash)
+                .formHeader("size", metaData.size.toString())
+                .formHeader("name", metaData.name)
 
             var response = webClient.request(builder.build())
             if (response.body == "0") {
@@ -78,7 +80,7 @@ class AttachmentsApi(
                     .formHeader("allowExt", "")
                     .formHeader("forum-attach-files", "")
                     .formHeader("code", "upload")
-                    .file(file)
+                    .file(NetworkRequest.File("FILE_UPLOAD[]",file))
 
                 if (postId != -1) {
                     uploadRequest.formHeader("relId", postId.toString())
@@ -124,17 +126,5 @@ class AttachmentsApi(
             }
         }
         return items
-    }
-
-    private fun byteArrayToHexString(bytes: ByteArray): String {
-        val hexString = StringBuilder()
-        for (aByte in bytes) {
-            val hex = Integer.toHexString(aByte.toInt() and 0xFF)
-            if (hex.length == 1) {
-                hexString.append('0')
-            }
-            hexString.append(hex)
-        }
-        return hexString.toString()
     }
 }

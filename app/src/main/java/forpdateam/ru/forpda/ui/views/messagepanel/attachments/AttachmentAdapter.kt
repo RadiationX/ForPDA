@@ -271,6 +271,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
 
                 AttachmentItem.STATE_NOT_LOADED -> {
+                    item.progressListener = null
                     description.visibility = View.GONE
                     progressBar.visibility = View.GONE
                     progressValue.visibility = View.GONE
@@ -279,6 +280,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
 
                 AttachmentItem.STATE_LOADED -> {
+                    item.progressListener = null
                     description.visibility = View.VISIBLE
                     name.text = item.name
                     attributes.text = "${item.extension}, ${item.weight}"

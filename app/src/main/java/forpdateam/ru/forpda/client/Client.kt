@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.client
 
+import android.content.Context
 import android.util.Log
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.CountersHolder
@@ -17,6 +18,7 @@ import okhttp3.WebSocketListener
 import okhttp3.coroutines.executeAsync
 
 class Client(
+    private val context: Context,
     private val client: OkHttpClient,
     private val countersHolder: CountersHolder
 ) : IWebClient {
@@ -95,13 +97,13 @@ class Client(
                     }
                 }
                 request.file?.also { file ->
-                    val type = file.mimeType.toMediaTypeOrNull()
-                    val requestBody = RequestBodyUtil
-                        .create(type, file.fileStream)
+                    val metaData = file.file.getMetaData(context)
+                    val type = metaData.mimeType.toMediaTypeOrNull()
+                    val requestBody = InputStreamRequestBody(type, file.file.openInputStream(context))
                     multipartBuilder.addFormDataPart(
-                        file.requestName!!,
-                        file.fileName,
-                        requestBody
+                        name = file.requestName,
+                        filename = metaData.name,
+                        body = requestBody
                     )
                 }
                 val multipartBody = multipartBuilder.build()
@@ -173,8 +175,8 @@ class Client(
         }
     }
 
-    private fun getCounts(res: String) {
-        val countsMatcher = IWebClient.countsPattern.matcher(res)
+    private fun getCounts(response: String) {
+        val countsMatcher = IWebClient.countsPattern.matcher(response)
 
         if (countsMatcher.find()) {
             try {
@@ -185,7 +187,7 @@ class Client(
                 )
                 countersHolder.set(counters)
             } catch (exception: Exception) {
-                Log.d("WATAFUCK", res, exception)
+                Log.d("WATAFUCK", response, exception)
             }
         }
     }

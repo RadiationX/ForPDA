@@ -193,11 +193,10 @@ class QmsApi(
             val file = files[i]
             val item = pending[i]
 
-            file.requestName = "source"
             val builder = NetworkRequest.Builder()
                 .url(uploadUrl)
                 .formHeaders(headers)
-                .file(file)
+                .file(NetworkRequest.File("source", file))
             val response = webClient.request(builder.build(), item.itemProgressListener)
 
             val responseJson = JSONObject(response.body)

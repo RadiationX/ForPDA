@@ -1,9 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.theme
 
-import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
-import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
@@ -29,8 +27,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.FilePickHelper
 import forpdateam.ru.forpda.common.Utils
+import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.databinding.FragmentThemeBinding
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.remote.ForumPost
@@ -115,6 +113,10 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         App.get().Di().errorHandler
     )
 
+    private val filesPicker = registerFilesPicker {
+        uploadFiles(it)
+    }
+
     override fun onEventNew() {
         Log.d("SUKAT", "onEventNew")
         notificationView.visibility = View.VISIBLE
@@ -196,7 +198,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         messagePanel.hideButton!!.visibility = View.VISIBLE
         messagePanel.hideButton!!.setOnClickListener { hideMessagePanel() }
         attachmentsPopup = messagePanel.attachmentsPopup!!
-        attachmentsPopup.setAddOnClickListener { tryPickFile() }
+        attachmentsPopup.setAddOnClickListener { filesPicker.launch() }
         attachmentsPopup.setDeleteOnClickListener { removeFiles() }
 
 
@@ -596,26 +598,6 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
     override fun setMessageRefreshing(isRefreshing: Boolean) {
         messagePanel.setProgressState(isRefreshing)
-    }
-
-    private fun tryPickFile() {
-        App.get().checkStoragePermission({
-            startActivityForResult(
-                FilePickHelper.pickFile(false),
-                REQUEST_PICK_FILE
-            )
-        }, App.getActivity())
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_PICK_FILE && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                //Display an error
-                return
-            }
-            uploadFiles(FilePickHelper.onActivityResult(requireContext(), data))
-        }
     }
 
     fun uploadFiles(files: List<RequestFile>) {
