@@ -160,7 +160,6 @@ dependencies {
     implementation(libs.sectioned.recyclerview)
 
     implementation(libs.photoview)
-    implementation(libs.android.material.design.colors)
     implementation(libs.spectrum)
     implementation(libs.android.simple.tooltip)
     implementation(libs.pagerbullet)
