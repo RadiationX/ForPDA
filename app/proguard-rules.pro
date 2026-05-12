@@ -39,15 +39,7 @@
 
 # -keep сlass com.lapism.searchview.** { *; }
 
--keep class io.realm.annotations.RealmModule
--keep @io.realm.annotations.RealmModule class *
--keep class io.realm.internal.Keep
--keep @io.realm.internal.Keep class *
 -dontwarn javax.**
--dontwarn io.realm.**
-
--keep public class * extends io.realm.RealmObject { *; }
--keepnames public class * extends io.realm.RealmObject
 
 -keep class **.R
 -keep class **.R$* {

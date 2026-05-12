@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -6,7 +5,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kapt)
     alias(libs.plugins.ksp)
 }
@@ -20,20 +18,25 @@ val keystoreProperties = Properties().apply {
     load(rootProject.file("keystore.properties").inputStream())
 }
 
+val versionPropsFile = file("version.properties")
+val versionProps: Properties = Properties().apply {
+    load(versionPropsFile.inputStream())
+}
+val versionBuild = versionProps.getProperty("VERSION_BUILD", "-1").toInt() + 1
+val versionDate = getDateTime()
+versionProps.setProperty("VERSION_BUILD", versionBuild.toString())
+versionProps.setProperty("DATE_BUILD", versionDate)
+versionProps.store(versionPropsFile.writer(), null)
+
+val versionNumber = 223
+val fileVersionName = "1.0.1"
+val baseVersionName = "$fileVersionName ($versionBuild)"
+
+base {
+    archivesName = "ForPDA-${fileVersionName}"
+}
+
 android {
-    val versionPropsFile = file("version.properties")
-    val versionProps: Properties = Properties().apply {
-        load(versionPropsFile.inputStream())
-    }
-    val versionBuild = versionProps.getProperty("VERSION_BUILD", "-1").toInt() + 1
-    versionProps.setProperty("VERSION_BUILD", versionBuild.toString())
-    versionProps.setProperty("DATE_BUILD", getDateTime())
-    versionProps.store(versionPropsFile.writer(), null)
-
-    val versionNumber = 223
-    val fileVersionName = "1.0.1"
-    val baseVersionName = "$fileVersionName ($versionBuild)"
-
     namespace = "forpdateam.ru.forpda"
 
     compileSdk = 36
@@ -45,7 +48,7 @@ android {
         minSdk = 23
         targetSdk = 36
         vectorDrawables.useSupportLibrary = true
-        buildConfigField("String", "BUILD_DATE", "\"${getDateTime()}\"")
+        buildConfigField("String", "BUILD_DATE", "\"${versionDate}\"")
     }
 
     signingConfigs {
@@ -94,13 +97,6 @@ android {
             applicationIdSuffix = ".debug"
             versionCode = versionNumber
             versionName = "$baseVersionName dev"
-        }
-    }
-
-    applicationVariants.configureEach {
-        outputs.configureEach {
-            this as BaseVariantOutputImpl
-            outputFileName = "ForPDA-${fileVersionName}.apk"
         }
     }
 
@@ -173,8 +169,6 @@ dependencies {
     implementation(libs.moxy)
     implementation(libs.moxy.androidx)
     kapt(libs.moxy.compiler)
-
-    implementation(libs.kotlin.stdlib)
 
     implementation(libs.cicerone)
     implementation(libs.adapterdelegates3)

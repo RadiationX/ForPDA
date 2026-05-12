@@ -1,7 +1,7 @@
 [versions]
 adapterdelegates3 = "3.1.0"
 android-material-design-colors = "3.0.0"
-android-plugin = "8.13.2"
+android-plugin = "9.1.1"
 android-simple-tooltip = "0.2.0"
 appcompat = "1.7.1"
 androidx-activity = "1.13.0"
@@ -14,8 +14,6 @@ circleimageview = "3.1.0"
 circularprogressview = "2.5.0"
 constraintlayout = "2.2.1"
 easinginterpolator = "v1.3.2"
-kotlin-plugin = "2.3.21"
-kotlin-stdlib = "2.3.21"
 material = "1.13.0"
 minitemplator-repackaged = "1.4.1"
 appmetrica = "8.1.0"
@@ -33,7 +31,7 @@ spectrum = "0.7.1"
 tagsoup = "1.2.1"
 universal-image-loader = "1.9.5"
 viewbindingpropertydelegate = "1.5.9"
-kotlin-coroutines = "1.10.2"
+kotlin-coroutines = "1.11.0"
 work-runtime-ktx = "2.11.2"
 ksp-plugin = "2.3.5"
 androidx-room = "2.8.4"
@@ -61,7 +59,6 @@ cicerone = { module = "com.github.terrakok:cicerone", version.ref = "cicerone" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 circularprogressview = { module = "com.github.rahatarmanahmed:circularprogressview", version.ref = "circularprogressview" }
 easinginterpolator = { module = "com.github.MasayukiSuda:EasingInterpolator", version.ref = "easinginterpolator" }
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin-stdlib" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 minitemplator-repackaged = { module = "org.bsc.util:minitemplator-repackaged", version.ref = "minitemplator-repackaged" }
 appmetrica = { module = "io.appmetrica.analytics:analytics", version.ref = "appmetrica" }
@@ -90,7 +87,5 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-plugin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-plugin" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-plugin" }
 kapt = { id = "com.android.legacy-kapt", version.ref = "android-plugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin" }
