@@ -27,10 +27,6 @@ class OtherPreferencesHolder(
         preferences.getBoolean(Preferences.Other.SHOW_REPORT_WARNING, true)
     }
 
-    val tooltipSearchSettings by lazy {
-        preferences.getBoolean(Preferences.Other.TOOLTIP_SEARCH_SETTINGS, true)
-    }
-
     val tooltipMessagePanelSorting by lazy {
         preferences.getBoolean(Preferences.Other.TOOLTIP_MESSAGE_PANEL_SORTING, true)
     }

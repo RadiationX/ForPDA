@@ -1,9 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.search
 
-import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -20,8 +18,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.view.menu.ActionMenuItemView
-import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
@@ -60,7 +56,6 @@ import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
-import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -106,7 +101,6 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     private lateinit var searchView: SearchView
     private lateinit var searchItem: MenuItem
     private lateinit var dialog: BottomSheetDialog
-    private var tooltip: SimpleTooltip? = null
 
     private lateinit var settingsMenuItem: MenuItem
 
@@ -365,46 +359,6 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         refreshLayoutLongTrigger(refreshLayout)
         refreshLayout.setOnRefreshListener { presenter.refreshData() }
         adapter.setOnItemClickListener(this)
-
-        if (otherPreferencesHolder.tooltipSearchSettings.get()) {
-            for (toolbarChildIndex in 0 until toolbar.childCount) {
-                val childView = toolbar.getChildAt(toolbarChildIndex)
-                if (childView is ActionMenuView) {
-                    for (menuChildIndex in 0 until childView.childCount) {
-                        try {
-                            @SuppressLint("RestrictedApi")
-                            val itemView =
-                                childView.getChildAt(menuChildIndex) as ActionMenuItemView
-                            @SuppressLint("RestrictedApi")
-                            if (settingsMenuItem === itemView.itemData) {
-                                tooltip = SimpleTooltip.Builder(requireContext())
-                                    .anchorView(itemView)
-                                    .text(R.string.tooltip_search_settings)
-                                    .gravity(Gravity.BOTTOM)
-                                    .animated(false)
-                                    .modal(true)
-                                    .transparentOverlay(false)
-                                    .backgroundColor(Color.BLACK)
-                                    .textColor(Color.WHITE)
-                                    .padding(App.px16.toFloat())
-                                    .build()
-                                    .apply {
-                                        show()
-                                    }
-                                break
-                            }
-                        } catch (ignore: ClassCastException) {
-                        }
-
-                    }
-                    break
-                }
-            }
-
-            otherPreferencesHolder.tooltipSearchSettings.set(false)
-        }
-
-
     }
 
 
@@ -443,16 +397,6 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     override fun onPauseOrHide() {
         super.onPauseOrHide()
         searchItem.collapseActionView()
-    }
-
-    override fun onBackPressed(): Boolean {
-        tooltip?.also {
-            if (it.isShowing) {
-                it.dismiss()
-                return true
-            }
-        }
-        return super.onBackPressed()
     }
 
     override fun setStyleType(type: String) {

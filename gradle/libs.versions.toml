@@ -1,7 +1,6 @@
 [versions]
 adapterdelegates3 = "3.1.0"
 android-plugin = "9.1.1"
-android-simple-tooltip = "0.2.0"
 appcompat = "1.7.1"
 androidx-activity = "1.13.0"
 androidx-fragment = "1.8.9"
@@ -45,7 +44,6 @@ androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-lived
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 adapterdelegates3 = { module = "com.hannesdorfmann:adapterdelegates3", version.ref = "adapterdelegates3" }
-android-simple-tooltip = { module = "com.github.douglasjunior:android-simple-tooltip", version.ref = "android-simple-tooltip" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }

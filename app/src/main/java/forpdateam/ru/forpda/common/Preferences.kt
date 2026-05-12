@@ -14,8 +14,6 @@ class Preferences {
 
         const val SHOW_REPORT_WARNING: String = "show_report_warning"
 
-        const val TOOLTIP_SEARCH_SETTINGS: String = "search.tooltip.settings"
-        const val TOOLTIP_THEME_LONG_CLICK_SEND: String = "theme.tooltip.long_click_send"
         const val TOOLTIP_MESSAGE_PANEL_SORTING: String = "message_panel.tooltip.user_sorting"
     }
 

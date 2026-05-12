@@ -161,7 +161,6 @@ dependencies {
 
     implementation(libs.photoview)
     implementation(libs.spectrum)
-    implementation(libs.android.simple.tooltip)
     implementation(libs.pagerbullet)
     implementation(libs.androidx.work.runtime.ktx)
 
