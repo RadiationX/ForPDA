@@ -147,7 +147,7 @@ class MessagePanel(
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length > 0) {
                     if (sendButton!!.getColorFilter() == null) {
-                        sendButton!!.setColorFilter(getColorFromAttr(context, R.attr.colorAccent))
+                        sendButton!!.setColorFilter(getColorFromAttr(context, androidx.appcompat.R.attr.colorAccent))
                     }
                 } else {
                     if (sendButton!!.getColorFilter() != null) {

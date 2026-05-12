@@ -62,7 +62,7 @@ class BottomMenuDelegate(
 
                 val colorRes = if (selected) App.getColorFromAttr(
                     context,
-                    R.attr.colorAccent
+                    androidx.appcompat.R.attr.colorAccent
                 ) else App.getColorFromAttr(context, R.attr.icon_base)
                 binding.itemBottomMenuIcon.setColorFilter(
                     colorRes,

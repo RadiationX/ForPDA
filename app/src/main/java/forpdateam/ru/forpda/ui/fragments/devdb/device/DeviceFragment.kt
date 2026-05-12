@@ -140,13 +140,13 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
             App.px2.toFloat(),
             0f,
             0f,
-            App.getColorFromAttr(requireContext(), R.attr.colorPrimary)
+            App.getColorFromAttr(requireContext(), androidx.appcompat.R.attr.colorPrimary)
         )
         toolbarSubtitleView.setShadowLayer(
             App.px2.toFloat(),
             0f,
             0f,
-            App.getColorFromAttr(requireContext(), R.attr.colorPrimary)
+            App.getColorFromAttr(requireContext(), androidx.appcompat.R.attr.colorPrimary)
         )
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT)

@@ -35,11 +35,11 @@ internal class WarningsAdapter : BaseAdapter<ProfileModel.Warning, WarningHolder
             binding.itemContent.text = item.content
             val color = when (item.type) {
                 WarningType.Positive -> {
-                    ContextCompat.getColor(binding.itemTitle.context, R.color.md_green_400)
+                    ContextCompat.getColor(binding.itemTitle.context, com.wada811.android.material.design.colors.R.color.md_green_400)
                 }
 
                 WarningType.Negative -> {
-                    ContextCompat.getColor(binding.itemTitle.context, R.color.md_red_400)
+                    ContextCompat.getColor(binding.itemTitle.context, com.wada811.android.material.design.colors.R.color.md_red_400)
                 }
 
                 WarningType.Unknown -> {

@@ -44,7 +44,7 @@ class ArticleCommentsAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         likedColorFilter = PorterDuffColorFilter(
-            getColorFromAttr(recyclerView.context, R.attr.colorAccent),
+            getColorFromAttr(recyclerView.context, androidx.appcompat.R.attr.colorAccent),
             PorterDuff.Mode.SRC_ATOP
         )
         dislikedColorFilter = PorterDuffColorFilter(

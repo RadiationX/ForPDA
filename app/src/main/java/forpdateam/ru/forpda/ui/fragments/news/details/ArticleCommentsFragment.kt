@@ -80,13 +80,13 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
         refreshLayout.setProgressBackgroundColorSchemeColor(
             App.getColorFromAttr(
                 requireContext(),
-                R.attr.colorPrimary
+                androidx.appcompat.R.attr.colorPrimary
             )
         )
         refreshLayout.setColorSchemeColors(
             App.getColorFromAttr(
                 requireContext(),
-                R.attr.colorAccent
+                androidx.appcompat.R.attr.colorAccent
             )
         )
         refreshLayout.setOnRefreshListener { presenter.updateComments() }

@@ -323,13 +323,13 @@ open class TabFragment(
         refreshLayout.setProgressBackgroundColorSchemeColor(
             App.getColorFromAttr(
                 requireContext(),
-                R.attr.colorPrimary
+                androidx.appcompat.R.attr.colorPrimary
             )
         )
         refreshLayout.setColorSchemeColors(
             App.getColorFromAttr(
                 requireContext(),
-                R.attr.colorAccent
+                androidx.appcompat.R.attr.colorAccent
             )
         )
     }

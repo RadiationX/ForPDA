@@ -126,7 +126,7 @@ class App : Application() {
 
         @JvmStatic
         fun getToolBarHeight(context: Context): Int {
-            val attrs = intArrayOf(R.attr.actionBarSize)
+            val attrs = intArrayOf(androidx.appcompat.R.attr.actionBarSize)
             val ta = context.obtainStyledAttributes(attrs)
             val toolBarHeight = ta.getDimensionPixelSize(0, -1)
             ta.recycle()
