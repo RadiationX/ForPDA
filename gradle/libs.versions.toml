@@ -83,3 +83,4 @@ android-application = { id = "com.android.application", version.ref = "android-p
 android-library = { id = "com.android.library", version.ref = "android-plugin" }
 kapt = { id = "com.android.legacy-kapt", version.ref = "android-plugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin" }
+room = { id = "androidx.room", version.ref = "androidx-room" }
