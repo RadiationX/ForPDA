@@ -339,11 +339,11 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
 
         searchView.queryHint = getString(R.string.search_keywords)
 
-        val searchEditFrame = searchView.findViewById<View>(com.unnamed.b.atv.R.id.search_edit_frame) as LinearLayout
+        val searchEditFrame = searchView.findViewById<View>(androidx.appcompat.R.id.search_edit_frame) as LinearLayout
         val params = searchEditFrame.layoutParams as LinearLayout.LayoutParams
         params.leftMargin = 0
 
-        val searchSrcText = searchView.findViewById<View>(com.unnamed.b.atv.R.id.search_src_text)
+        val searchSrcText = searchView.findViewById<View>(androidx.appcompat.R.id.search_src_text)
         searchSrcText.setPadding(0, searchSrcText.paddingTop, 0, searchSrcText.paddingBottom)
 
 
