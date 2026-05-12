@@ -24,7 +24,6 @@ photoview = "2.3.0"
 preference-ktx = "1.2.1"
 recyclerview = "1.4.0"
 roundedimageview = "2.3.0"
-sectioned-recyclerview = "0.5.0"
 spectrum = "0.7.1"
 tagsoup = "1.2.1"
 universal-image-loader = "1.9.5"
@@ -71,7 +70,6 @@ permissionsdispatcher = { module = "com.github.permissions-dispatcher:permission
 permissionsdispatcher-processor = { module = "com.github.permissions-dispatcher:permissionsdispatcher-processor", version.ref = "permissionsdispatcher" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
-sectioned-recyclerview = { module = "com.afollestad:sectioned-recyclerview", version.ref = "sectioned-recyclerview" }
 spectrum = { module = "com.thebluealliance:spectrum", version.ref = "spectrum" }
 tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }
 universal-image-loader = { module = "com.nostra13.universalimageloader:universal-image-loader", version.ref = "universal-image-loader" }

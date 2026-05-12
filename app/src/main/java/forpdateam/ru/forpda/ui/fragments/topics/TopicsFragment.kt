@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.topics
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,7 +18,7 @@ import forpdateam.ru.forpda.presentation.topics.TopicsView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
-import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter
+import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -46,7 +45,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         }
     }
 
-    private val adapterListener = object : BaseSectionedAdapter.OnItemClickListener<TopicItem> {
+    private val adapterListener = object : OnItemClickListener<TopicItem> {
         override fun onItemClick(item: TopicItem) {
             presenter.onItemClick(item)
         }
@@ -112,9 +111,8 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         refreshLayout.setOnRefreshListener { presenter.loadTopics() }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = TopicsAdapter()
+        adapter = TopicsAdapter(adapterListener)
         recyclerView.adapter = adapter
-        adapter.setOnItemClickListener(adapterListener)
         paginationHelper.setListener(paginationListener)
     }
 
@@ -124,19 +122,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
 
     override fun showTopics(data: TopicsData) {
         setTitle(data.title)
-        adapter.clear()
-        if (data.forumItems.isNotEmpty())
-            adapter.addSection(getString(R.string.forum_section), data.forumItems)
-        if (data.announceItems.isNotEmpty())
-            adapter.addSection(getString(R.string.announce_section), data.announceItems)
-
-        val pinnedItems = data.topicItems.filter { it.flags.isPinned }
-        val notPinnedItems = data.topicItems.filter { !it.flags.isPinned }
-        if (pinnedItems.isNotEmpty())
-            adapter.addSection(getString(R.string.pinned_section), pinnedItems)
-        adapter.addSection(getString(R.string.themes_section), notPinnedItems)
-
-        adapter.notifyDataSetChanged()
+        adapter.bindItems(data)
         paginationHelper.updatePagination(data.pagination)
         setSubtitle(paginationHelper.title)
         listScrollTop()

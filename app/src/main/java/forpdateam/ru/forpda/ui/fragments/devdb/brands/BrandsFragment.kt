@@ -13,7 +13,7 @@ import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsPresenter
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
-import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter
+import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -22,7 +22,7 @@ import moxy.presenter.ProvidePresenter
  */
 
 class BrandsFragment : RecyclerFragment(), BrandsView,
-    BaseSectionedAdapter.OnItemClickListener<Brands.Item> {
+    OnItemClickListener<Brands.Item> {
 
     private lateinit var adapter: BrandsAdapter
 
@@ -57,7 +57,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
         toolbarSpinner.visibility = View.VISIBLE
         setScrollFlagsEnterAlways()
 
-        adapter = BrandsAdapter()
+        adapter = BrandsAdapter(this)
         recyclerView.adapter = adapter
 
 
@@ -75,8 +75,6 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
 
             override fun onNothingSelected(arg0: AdapterView<*>) {}
         }
-
-        adapter.setOnItemClickListener(this)
     }
 
     override fun isShadowVisible(): Boolean {
@@ -105,11 +103,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
 
     override fun showData(data: Brands) {
         setTitle(data.catTitle)
-        adapter.clear()
-        for ((key, value) in data.letterMap) {
-            adapter.addSection(key, value)
-        }
-        adapter.notifyDataSetChanged()
+        adapter.bindItems(data)
     }
 
     override fun onItemClick(item: Brands.Item) {

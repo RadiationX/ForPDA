@@ -1,200 +1,47 @@
-package forpdateam.ru.forpda.ui.fragments.topics;
+package forpdateam.ru.forpda.ui.fragments.topics
 
-import android.graphics.Typeface;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.entity.remote.topics.TopicItem
+import forpdateam.ru.forpda.entity.remote.topics.TopicsData
+import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
+import forpdateam.ru.forpda.ui.views.adapters.SectionItemDelegate
+import forpdateam.ru.forpda.ui.views.adapters.buildSections
+import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.TopicAnnounceListItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.TopicForumListItem
+import forpdateam.ru.forpda.ui.views.drawers.adapters.TopicListItem
 
-import androidx.recyclerview.widget.RecyclerView;
+class TopicsAdapter(
+    private val topicClickListener: OnItemClickListener<TopicItem>,
+) : ListDelegationAdapter<List<ListItem>>() {
 
-import forpdateam.ru.forpda.App;
-import forpdateam.ru.forpda.R;
-import forpdateam.ru.forpda.entity.remote.topics.TopicItem;
-import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter;
-import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedViewHolder;
-
-/**
- * Created by radiationx on 01.03.17.
- */
-
-public class TopicsAdapter extends BaseSectionedAdapter<TopicItem, BaseSectionedViewHolder> {
-    private final static int VIEW_TYPE_ANNOUNCE = 0;
-    private TopicsAdapter.OnItemClickListener<TopicItem> itemClickListener;
-    private int titleColorNew, titleColor;
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        titleColor = App.getColorFromAttr(recyclerView.getContext(), R.attr.second_text_color);
-        titleColorNew = App.getColorFromAttr(recyclerView.getContext(), R.attr.default_text_color);
-    }
-
-    public void setOnItemClickListener(TopicsAdapter.OnItemClickListener<TopicItem> mItemClickListener) {
-        this.itemClickListener = mItemClickListener;
-    }
-
-    @Override
-    public BaseSectionedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case VIEW_TYPE_HEADER:
-                return new HeaderHolder(inflateLayout(parent, R.layout.topic_item_section));
-            case VIEW_TYPE_ITEM:
-                return new ItemHolder(inflateLayout(parent, R.layout.topic_item));
-            case VIEW_TYPE_ANNOUNCE:
-                return new AnnounceHolder(inflateLayout(parent, R.layout.topic_item_announce));
-        }
-        return null;
-    }
-
-    @Override
-    public int getItemViewType(int section, int relativePosition, int absolutePosition) {
-        TopicItem item = getItem(section, relativePosition);
-        if (item instanceof TopicItem.Announce || item instanceof TopicItem.Forum)
-            return VIEW_TYPE_ANNOUNCE;
-        return super.getItemViewType(section, relativePosition, absolutePosition);
-    }
-
-    @Override
-    public void onBindHeaderViewHolder(BaseSectionedViewHolder holder, int section, boolean expanded) {
-        holder.bind(section);
-    }
-
-    @Override
-    public void onBindViewHolder(BaseSectionedViewHolder holder, int section, int relativePosition, int absolutePosition) {
-        TopicItem item = getItem(section, relativePosition);
-        int viewType = getItemViewType(section, relativePosition, absolutePosition);
-        if (viewType == VIEW_TYPE_ANNOUNCE) {
-            holder.bind(item);
-        } else {
-            holder.bind(item);
+    init {
+        delegatesManager.apply {
+            addDelegate(SectionItemDelegate())
+            addDelegate(TopicAnnounceDelegate(topicClickListener))
+            addDelegate(TopicForumDelegate(topicClickListener))
+            addDelegate(TopicDelegate(topicClickListener))
         }
     }
 
-    private class HeaderHolder extends BaseSectionedViewHolder<TopicItem> {
-        TextView title;
-        View topDivider;
-
-        HeaderHolder(View v) {
-            super(v);
-            topDivider = v.findViewById(R.id.topic_item_top_divider);
-            title = v.findViewById(R.id.topic_item_title);
-        }
-
-        @Override
-        public void bind(int section) {
-            if (topDivider != null) {
-                topDivider.setVisibility(section == 0 ? View.GONE : View.VISIBLE);
+    fun bindItems(data: TopicsData) {
+        this.items = buildSections {
+            val pinnedItems = data.topicItems.filter { it.flags.isPinned }
+            val notPinnedItems = data.topicItems.filter { !it.flags.isPinned }
+            addSection(R.string.forum_section, data.forumItems) {
+                TopicForumListItem(it)
             }
-            title.setText(sections.get(section).getFirst());
-        }
-    }
-
-    private class AnnounceHolder extends BaseSectionedViewHolder<TopicItem> implements View.OnClickListener, View.OnLongClickListener {
-        TextView title;
-
-        AnnounceHolder(View v) {
-            super(v);
-            title = v.findViewById(R.id.topic_item_title);
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
-        }
-
-        @Override
-        public void bind(TopicItem item) {
-            String itemTitle;
-            if (item instanceof TopicItem.Announce) {
-                itemTitle = ((TopicItem.Announce) item).getTitle();
-            } else if (item instanceof TopicItem.Forum) {
-                itemTitle = ((TopicItem.Forum) item).getTitle();
-            } else {
-                itemTitle = null;
+            addSection(R.string.announce_section, data.announceItems) {
+                TopicAnnounceListItem(it)
             }
-            title.setText(itemTitle);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (itemClickListener != null) {
-                TopicItem item = getItem(getLayoutPosition());
-                if (item != null) {
-                    itemClickListener.onItemClick(item);
-                }
+            addSection(R.string.pinned_section, pinnedItems) {
+                TopicListItem(it)
+            }
+            addSection(R.string.themes_section, notPinnedItems) {
+                TopicListItem(it)
             }
         }
-
-        @Override
-        public boolean onLongClick(View view) {
-            if (itemClickListener != null) {
-                TopicItem item = getItem(getLayoutPosition());
-                if (item != null) {
-                    itemClickListener.onItemLongClick(item);
-                }
-                return true;
-            }
-            return false;
-        }
-    }
-
-    private class ItemHolder extends BaseSectionedViewHolder<TopicItem> implements View.OnClickListener, View.OnLongClickListener {
-        TextView title, lastNick, date, desc;
-        ImageView forumIcon, lockIcon, pollIcon;
-        View topDivider;
-
-        ItemHolder(View v) {
-            super(v);
-            topDivider = v.findViewById(R.id.topic_item_top_divider);
-            title = v.findViewById(R.id.topic_item_title);
-            desc = v.findViewById(R.id.topic_item_desc);
-            lastNick = v.findViewById(R.id.topic_item_last_nick);
-            date = v.findViewById(R.id.topic_item_date);
-            forumIcon = v.findViewById(R.id.topic_item_forum_icon);
-            lockIcon = v.findViewById(R.id.topic_item_lock_icon);
-            pollIcon = v.findViewById(R.id.topic_item_poll_icon);
-
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
-        }
-
-        @Override
-        public void bind(TopicItem topicItem) {
-            TopicItem.Topic item = (TopicItem.Topic) topicItem;
-            title.setText(item.getTitle());
-            title.setTypeface(item.getFlags().isNew() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            title.setTextColor(item.getFlags().isNew() ? titleColorNew : titleColor);
-            if (false) {
-                desc.setVisibility(View.VISIBLE);
-                desc.setText(item.getDesc());
-            } else {
-                desc.setVisibility(View.GONE);
-            }
-            //forumIcon.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
-            lockIcon.setVisibility(item.getFlags().isClosed() ? View.VISIBLE : View.GONE);
-            pollIcon.setVisibility(item.getFlags().isPoll() ? View.VISIBLE : View.GONE);
-            lastNick.setText(item.getLastUser().getNick());
-            date.setText(item.getDate());
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (itemClickListener != null) {
-                TopicItem item = getItem(getLayoutPosition());
-                if (item != null) {
-                    itemClickListener.onItemClick(item);
-                }
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            if (itemClickListener != null) {
-                TopicItem item = getItem(getLayoutPosition());
-                if (item != null) {
-                    itemClickListener.onItemLongClick(item);
-                    return true;
-                }
-            }
-            return false;
-        }
+        notifyDataSetChanged()
     }
 }

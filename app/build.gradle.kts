@@ -157,7 +157,6 @@ dependencies {
     implementation(libs.minitemplator.repackaged)
     //implementation "com.lapism:searchview:4.0"
     implementation(libs.atv)
-    implementation(libs.sectioned.recyclerview)
 
     implementation(libs.photoview)
     implementation(libs.spectrum)

@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.ui.fragments.favorites
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -29,7 +28,7 @@ import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
-import forpdateam.ru.forpda.ui.views.adapters.BaseSectionedAdapter
+import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -63,7 +62,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         }
     }
 
-    private val adapterListener = object : BaseSectionedAdapter.OnItemClickListener<FavItem> {
+    private val adapterListener = object : OnItemClickListener<FavItem> {
         override fun onItemClick(item: FavItem) {
             presenter.onItemClick(item)
         }
@@ -150,8 +149,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         refreshLayout.setOnRefreshListener { presenter.refresh() }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = FavoritesAdapter()
-        adapter.setOnItemClickListener(adapterListener)
+        adapter = FavoritesAdapter(adapterListener)
         recyclerView.adapter = adapter
 
         paginationHelper.setListener(paginationListener)
