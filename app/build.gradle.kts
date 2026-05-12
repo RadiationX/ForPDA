@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kapt)
-    alias(libs.plugins.realm)
+    alias(libs.plugins.ksp)
 }
 
 fun getDateTime(): String {
@@ -68,18 +68,12 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             setProguardFiles(listOf(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"))
-            ndk {
-                abiFilters += listOf("x86_64", "arm64-v8a")
-            }
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
             setProguardFiles(listOf(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"))
-            ndk {
-                abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
-            }
         }
     }
 
@@ -186,7 +180,9 @@ dependencies {
     implementation(libs.adapterdelegates3)
     implementation(libs.easinginterpolator)
 
-    implementation(libs.realm.base)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     implementation(libs.permissionsdispatcher)
     kapt(libs.permissionsdispatcher.processor)

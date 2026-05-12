@@ -98,7 +98,6 @@ class QmsParser(
                     name = matcher.group(3).trim().fromHtml(),
                     countMessages = matcher.group(4).toInt(),
                     countNew = matcher.group(5).asCount(),
-                    user = User.required(argId, nick)
                 )
             }
 

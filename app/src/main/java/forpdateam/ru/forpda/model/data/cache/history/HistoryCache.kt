@@ -1,52 +1,42 @@
 package forpdateam.ru.forpda.model.data.cache.history
 
-import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
-import forpdateam.ru.forpda.common.realm.wrapper.query
-import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
 import forpdateam.ru.forpda.entity.db.history.HistoryItemBd
-import io.github.xilinjia.krdb.query.Sort
+import forpdateam.ru.forpda.extensions.mapInnerList
+import forpdateam.ru.forpda.model.data.db.HistoryDao
 import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class HistoryCache(
-    private val realm: RealmWrapper
+    private val historyDao: HistoryDao
 ) {
 
     private val dateFormat = SimpleDateFormat("dd.MM.yy, HH:mm", Locale.getDefault())
 
-    fun observeItems(): Flow<List<HistoryItem>> = realm
-        .query<HistoryItemBd>()
-        .sort("unixTime", Sort.DESCENDING)
-        .flowMapAll { it.toDomain() }
+    fun observeItems(): Flow<List<HistoryItem>> {
+        return historyDao.observeAll().mapInnerList { it.toDomain() }
+    }
 
     suspend fun add(id: Int, url: String, title: String) {
-        realm.write {
-            val unixTime = System.currentTimeMillis()
-            val newItem = HistoryItemBd(
-                id = id,
-                url = url,
-                date = dateFormat.format(Date(unixTime)),
-                title = title,
-                unixTime = unixTime,
-            )
-            upsert(newItem)
-        }
+        val unixTime = System.currentTimeMillis()
+        val newItem = HistoryItemBd(
+            id = id,
+            url = url,
+            date = dateFormat.format(Date(unixTime)),
+            title = title,
+            unixTime = unixTime,
+        )
+        historyDao.upsert(newItem)
     }
 
     suspend fun remove(id: Int) {
-        realm.write {
-            val toDelete = queryEquals<HistoryItemBd>("id", id).all()
-            delete(toDelete)
-        }
+        historyDao.deleteById(id)
     }
 
     suspend fun clear() {
-        realm.write {
-            delete(HistoryItemBd::class)
-        }
+        historyDao.deleteAll()
     }
 }
 

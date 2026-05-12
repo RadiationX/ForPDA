@@ -2,6 +2,8 @@ package forpdateam.ru.forpda
 
 import android.content.Context
 import android.preference.PreferenceManager
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader
@@ -13,18 +15,8 @@ import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.client.websocket.WebSocketController
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
-import forpdateam.ru.forpda.common.realm.DbMigration
-import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
 import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.app.profile.UserHolder
-import forpdateam.ru.forpda.entity.db.ForumUserBd
-import forpdateam.ru.forpda.entity.db.favorites.FavItemBd
-import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd
-import forpdateam.ru.forpda.entity.db.history.HistoryItemBd
-import forpdateam.ru.forpda.entity.db.notes.NoteItemBd
-import forpdateam.ru.forpda.entity.db.qms.QmsContactBd
-import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd
-import forpdateam.ru.forpda.entity.db.qms.QmsThemesBd
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.CountersHolder
@@ -34,6 +26,7 @@ import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.cache.history.HistoryCache
 import forpdateam.ru.forpda.model.data.cache.notes.NotesCache
 import forpdateam.ru.forpda.model.data.cache.qms.QmsCache
+import forpdateam.ru.forpda.model.data.db.AppDatabase
 import forpdateam.ru.forpda.model.data.providers.UserSourceProvider
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
@@ -121,8 +114,6 @@ import forpdateam.ru.forpda.presentation.search.SearchTemplate
 import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
 import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.TemplateManager
-import io.github.xilinjia.krdb.Realm
-import io.github.xilinjia.krdb.RealmConfiguration
 import kotlinx.coroutines.GlobalScope
 import okhttp3.OkHttpClient
 import kotlin.time.Duration.Companion.milliseconds
@@ -256,33 +247,24 @@ class Dependencies internal constructor(
     val attachmentsApi by lazy { AttachmentsApi(context, webClient, attachmentsParser) }
 
 
-    private val realmConfig by lazy {
-        val schemas = setOf(
-            FavItemBd::class,
-            ForumItemFlatBd::class,
-            HistoryItemBd::class,
-            NoteItemBd::class,
-            QmsContactBd::class,
-            QmsThemeBd::class,
-            QmsThemesBd::class,
-            ForumUserBd::class
-        )
-        RealmConfiguration.Builder(schemas)
-            .name("forpda.realm")
-            .schemaVersion(4)
-            .migration(DbMigration())
+    val database by lazy {
+        Room
+            .databaseBuilder(
+                context = context,
+                klass = AppDatabase::class.java,
+                name = "forpda-room"
+            )
+            .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
             .build()
     }
-    private val rawRealm by lazy { Realm.open(realmConfig) }
-    private val realm by lazy { RealmWrapper(rawRealm) }
 
     val userSource by lazy { UserSourceProvider(qmsApi) }
-    val forumUsersCache by lazy { ForumUsersCache(userSource, realm) }
-    val favoritesCache by lazy { FavoritesCache(realm) }
-    val forumCache by lazy { ForumCache(realm) }
-    val historyCache by lazy { HistoryCache(realm) }
-    val qmsCache by lazy { QmsCache(realm) }
-    val notesCache by lazy { NotesCache(realm) }
+    val forumUsersCache by lazy { ForumUsersCache(userSource, database.forumUsersDao()) }
+    val favoritesCache by lazy { FavoritesCache(database.favoritesDao(), database) }
+    val forumCache by lazy { ForumCache(database.forumsDao(), database) }
+    val historyCache by lazy { HistoryCache(database.historyDao()) }
+    val qmsCache by lazy { QmsCache(database.qmsContactsDao(), database.qmsThemesDao(), database) }
+    val notesCache by lazy { NotesCache(database.notesDao()) }
 
     val avatarRepository by lazy { AvatarRepository(forumUsersCache) }
     val favoritesRepository by lazy {

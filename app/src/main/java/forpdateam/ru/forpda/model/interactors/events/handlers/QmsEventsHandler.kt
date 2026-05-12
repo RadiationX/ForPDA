@@ -52,7 +52,7 @@ class QmsEventsHandler(
         )
         qmsCache.saveThemes(updatedTarget.themes)
 
-        updateContact(target.theme.user.id)
+        updateContact(target.themes.user.id)
     }
 
     private suspend fun findTarget(themeId: Int): Target? {

@@ -1,23 +1,15 @@
 package forpdateam.ru.forpda.entity.db
 
-import io.github.xilinjia.krdb.types.RealmObject
-import io.github.xilinjia.krdb.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * Created by radiationx on 08.07.17.
  */
-class ForumUserBd : RealmObject {
-
+@Entity("forum_users")
+data class ForumUserBd(
     @PrimaryKey
-    var id: Int = 0
-    var nick: String? = ""
-    var avatar: String? = ""
-
-    constructor()
-
-    constructor(id: Int, nick: String?, avatar: String?) {
-        this.id = id
-        this.nick = nick
-        this.avatar = avatar
-    }
-}
+    val id: Int,
+    val nick: String?,
+    val avatar: String?
+) 

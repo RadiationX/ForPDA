@@ -1,23 +1,17 @@
 package forpdateam.ru.forpda.entity.db.forum
 
-import io.github.xilinjia.krdb.types.RealmObject
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 
 /**
  * Created by radiationx on 25.03.17.
  */
-class ForumItemFlatBd : RealmObject {
-
-    var id: Int = -1
-    var parentId: Int = -1
-    var level: Int = -1
-    var title: String? = null
-
-    constructor()
-
-    constructor(id: Int, parentId: Int, level: Int, title: String?) {
-        this.id = id
-        this.parentId = parentId
-        this.level = level
-        this.title = title
-    }
-}
+@Entity(tableName = "forum_item_flat")
+class ForumItemFlatBd(
+    @PrimaryKey
+    val id: Int,
+    val parentId: Int,
+    val level: Int,
+    val title: String?,
+)

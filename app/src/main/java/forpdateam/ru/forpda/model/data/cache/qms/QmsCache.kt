@@ -1,69 +1,89 @@
 package forpdateam.ru.forpda.model.data.cache.qms
 
-import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
-import forpdateam.ru.forpda.common.realm.wrapper.query
-import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
+import androidx.room.RoomDatabase
+import androidx.room.withTransaction
 import forpdateam.ru.forpda.entity.db.qms.QmsContactBd
 import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd
-import forpdateam.ru.forpda.entity.db.qms.QmsThemesBd
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
-import io.github.xilinjia.krdb.ext.toRealmList
+import forpdateam.ru.forpda.extensions.mapInnerList
+import forpdateam.ru.forpda.model.data.db.QmsContactsDao
+import forpdateam.ru.forpda.model.data.db.QmsThemesDao
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
 
 class QmsCache(
-    private val realm: RealmWrapper
+    private val qmsContactsDao: QmsContactsDao,
+    private val qmsThemesDao: QmsThemesDao,
+    private val database: RoomDatabase
 ) {
 
-    fun observeContacts(): Flow<List<QmsContact>> = realm
-        .query<QmsContactBd>()
-        .flowMapAll { it.toDomain() }
-
-    fun observeThemes(userId: Int): Flow<QmsThemes?> = realm
-        .queryEquals<QmsThemesBd>("userId", userId)
-        .flowMapFirst { it.toDomain() }
+    fun observeContacts(): Flow<List<QmsContact>> {
+        return qmsContactsDao.observeAll().mapInnerList { it.toDomain() }
+    }
 
     suspend fun getContacts(): List<QmsContact> {
-        return observeContacts().first()
+        return qmsContactsDao.getAll().map { it.toDomain() }
     }
 
     suspend fun getContact(userId: Int): QmsContact? {
-        return realm
-            .queryEquals<QmsContactBd>("userId", userId)
-            .mapFirst { it.toDomain() }
+        return qmsContactsDao.getByUserId(userId)?.toDomain()
     }
 
     suspend fun saveContacts(items: List<QmsContact>) {
-        realm.write {
-            delete(QmsContactBd::class)
-            upsertAll(items.map { it.toDb() })
+        database.withTransaction {
+            qmsContactsDao.deleteAll()
+            qmsContactsDao.upsertAll(items.map { it.toDb() })
         }
     }
 
     suspend fun updateContact(item: QmsContact) {
-        realm.write {
-            upsert(item.toDb())
-        }
+        qmsContactsDao.upsert(item.toDb())
+    }
+
+    fun observeThemes(userId: Int): Flow<QmsThemes?> {
+        return combine(
+            flow = qmsContactsDao.observeByUserId(userId),
+            flow2 = qmsThemesDao.observeByUserId(userId),
+            transform = { contact, themes ->
+                contact?.let {
+                    themes.toDomain(it)
+                }
+            }
+        )
     }
 
     suspend fun getThemes(userId: Int): QmsThemes {
-        return observeThemes(userId).first() ?: throw Exception("Not found by userId=$userId")
+        val contact = qmsContactsDao.getByUserId(userId) ?: throw Exception("Not found by userId=$userId")
+        val themes = qmsThemesDao.getByUserId(userId)
+        return themes.toDomain(contact)
     }
 
     suspend fun getAllThemes(): List<QmsThemes> {
-        return realm
-            .query<QmsThemesBd>()
-            .mapAll { it.toDomain() }
+        return qmsContactsDao.getAll().map {
+            val themes = qmsThemesDao.getAll()
+            themes.toDomain(it)
+        }
     }
 
-    suspend fun saveThemes(data: QmsThemes) = realm.write {
-        val toDelete = queryEquals<QmsThemesBd>("userId", data.user.id).all()
-        delete(toDelete)
-        upsert(data.toDb())
+    suspend fun saveThemes(data: QmsThemes) {
+        database.withTransaction {
+            val contact = qmsContactsDao.getByUserId(data.user.id)
+            if (contact == null) {
+                val newContact = QmsContactBd(
+                    id = data.user.id,
+                    nick = data.user.nick,
+                    avatar = null,
+                    count = data.themes.sumOf { it.countNew }
+                )
+                qmsContactsDao.upsert(newContact)
+            }
+            qmsThemesDao.deleteByUserId(data.user.id)
+            qmsThemesDao.upsertAll(data.themes.map { it.toDb(data.user.id) })
+        }
     }
 }
 
@@ -78,21 +98,20 @@ fun QmsContactBd.toDomain(): QmsContact {
     )
 }
 
-fun QmsThemesBd.toDomain(): QmsThemes {
-    return QmsThemes(
-        user = User.required(userId, nick),
-        themes = themes.map { it.toDomain(userId, nick) }
-    )
-}
-
-fun QmsThemeBd.toDomain(userId: Int, nick: String?): QmsTheme {
+fun QmsThemeBd.toDomain(): QmsTheme {
     return QmsTheme(
         id = id,
         countMessages = countMessages,
         countNew = countNew,
         name = name,
         date = date,
-        user = User.required(userId, nick)
+    )
+}
+
+fun List<QmsThemeBd>.toDomain(contact: QmsContactBd): QmsThemes {
+    return QmsThemes(
+        user = User.required(contact.id, contact.nick),
+        themes = map { it.toDomain() }
     )
 }
 
@@ -105,17 +124,10 @@ fun QmsContact.toDb(): QmsContactBd {
     )
 }
 
-fun QmsThemes.toDb(): QmsThemesBd {
-    return QmsThemesBd(
-        userId = user.id,
-        nick = user.nick,
-        themes = themes.map { it.toDb() }.toRealmList()
-    )
-}
-
-fun QmsTheme.toDb(): QmsThemeBd {
+fun QmsTheme.toDb(userId: Int): QmsThemeBd {
     return QmsThemeBd(
         id = id,
+        userId = userId,
         countMessages = countMessages,
         countNew = countNew,
         name = name,

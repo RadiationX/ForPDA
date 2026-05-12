@@ -1,44 +1,33 @@
 package forpdateam.ru.forpda.model.data.cache.notes
 
-import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
-import forpdateam.ru.forpda.common.realm.wrapper.query
-import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.entity.db.notes.NoteItemBd
-import io.github.xilinjia.krdb.query.Sort
+import forpdateam.ru.forpda.extensions.mapInnerList
+import forpdateam.ru.forpda.model.data.db.NotesDao
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 
 class NotesCache(
-    private val realm: RealmWrapper
+    private val notesDao: NotesDao
 ) {
 
-    fun observeItems(): Flow<List<NoteItem>> = realm
-        .query<NoteItemBd>()
-        .sort("id", Sort.DESCENDING)
-        .flowMapAll { it.toDomain() }
+    fun observeItems(): Flow<List<NoteItem>> {
+        return notesDao.observeALl().mapInnerList { it.toDomain() }
+    }
 
     suspend fun getItems(): List<NoteItem> {
-        return observeItems().first()
+        return notesDao.getAll().map { it.toDomain() }
     }
 
     suspend fun delete(id: Long) {
-        realm.write {
-            val toDelete = queryEquals<NoteItemBd>("id", id).all()
-            delete(toDelete)
-        }
+        notesDao.deleteById(id)
     }
 
     suspend fun add(item: NoteItem) {
-        realm.write {
-            upsert(item.toDb())
-        }
+        notesDao.upsert(item.toDb())
     }
 
     suspend fun add(items: List<NoteItem>) {
-        realm.write {
-            upsertAll(items.map { it.toDb() })
-        }
+        notesDao.upsertAll(items.map { it.toDb() })
     }
 }
 

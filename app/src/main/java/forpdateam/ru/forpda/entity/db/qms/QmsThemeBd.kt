@@ -1,27 +1,18 @@
 package forpdateam.ru.forpda.entity.db.qms
 
-import io.github.xilinjia.krdb.types.RealmObject
-import io.github.xilinjia.krdb.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * Created by radiationx on 25.03.17.
  */
-class QmsThemeBd : RealmObject{
-
+@Entity(tableName = "qms_threads")
+data class QmsThemeBd(
     @PrimaryKey
-    var id: Int = 0
-    var countMessages: Int = 0
-    var countNew: Int = 0
-    var name: String? = null
-    var date: String? = null
-
-    constructor()
-
-    constructor(id: Int, countMessages: Int, countNew: Int, name: String?, date: String?) {
-        this.id = id
-        this.countMessages = countMessages
-        this.countNew = countNew
-        this.name = name
-        this.date = date
-    }
-}
+    val id: Int,
+    val userId: Int,
+    val countMessages: Int,
+    val countNew: Int,
+    val name: String?,
+    val date: String?,
+)

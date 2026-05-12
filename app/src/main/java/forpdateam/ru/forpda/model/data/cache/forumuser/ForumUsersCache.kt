@@ -1,9 +1,8 @@
 package forpdateam.ru.forpda.model.data.cache.forumuser
 
-import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
-import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
 import forpdateam.ru.forpda.entity.db.ForumUserBd
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.model.data.db.ForumUsersDao
 
 /**
  * Created by radiationx on 08.07.17.
@@ -11,31 +10,23 @@ import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 
 class ForumUsersCache(
     private val userSource: UserSource,
-    private val realm: RealmWrapper
+    private val forumUsersDao: ForumUsersDao
 ) {
 
     suspend fun saveUser(forumUser: ForumUser) {
-        realm.write {
-            upsert(forumUser.toDb())
-        }
+        forumUsersDao.upsert(forumUser.toDb())
     }
 
     suspend fun saveUsers(forumUsers: List<ForumUser>) {
-        realm.write {
-            upsertAll(forumUsers.map { it.toDb() })
-        }
+        forumUsersDao.upsertAll(forumUsers.map { it.toDb() })
     }
 
     suspend fun getUserById(id: Int): ForumUser? {
-        return realm
-            .queryEquals<ForumUserBd>("id", id)
-            .mapFirst { it.toDomain() }
+        return forumUsersDao.getById(id)?.toDomain()
     }
 
     suspend fun getUserByNick(nick: String): ForumUser? {
-        val user = realm
-            .queryEquals<ForumUserBd>("nick", nick)
-            .mapFirst { it.toDomain() }
+        val user = forumUsersDao.getByNick(nick)?.toDomain()
         userSource.findUsers(nick).getOrNull(0)?.also { foundUser ->
             saveUser(foundUser)
         }

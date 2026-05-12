@@ -1,41 +1,40 @@
 package forpdateam.ru.forpda.model.data.cache.favorites
 
-import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
-import forpdateam.ru.forpda.common.realm.wrapper.query
-import forpdateam.ru.forpda.common.realm.wrapper.queryEquals
+import androidx.room.RoomDatabase
+import androidx.room.withTransaction
 import forpdateam.ru.forpda.entity.db.favorites.FavItemBd
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
 import forpdateam.ru.forpda.entity.remote.others.user.User
+import forpdateam.ru.forpda.extensions.mapInnerList
+import forpdateam.ru.forpda.model.data.db.FavoritesDao
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 
 class FavoritesCache(
-    private val realm: RealmWrapper
+    private val favoritesDao: FavoritesDao,
+    private val database: RoomDatabase
 ) {
 
-    fun observeItems(): Flow<List<FavItem>> = realm
-        .query<FavItemBd>()
-        .flowMapAll { it.toDomain() }
+    fun observeItems(): Flow<List<FavItem>> {
+        return favoritesDao.observeAll().mapInnerList { it.toDomain() }
+    }
 
     suspend fun getItems(): List<FavItem> {
-        return observeItems().first()
+        return favoritesDao.getAll().map { it.toDomain() }
     }
 
     suspend fun saveFavorites(items: List<FavItem>) {
-        realm.write {
-            delete(FavItemBd::class)
-            upsertAll(items.map { it.toDb() })
+        database.withTransaction {
+            favoritesDao.deleteAll()
+            favoritesDao.upsertAll(items.map { it.toDb() })
         }
     }
 
     suspend fun getItemByTopicId(topicId: Int): FavItem? {
-        return realm
-            .queryEquals<FavItemBd>("topicId", topicId)
-            .mapFirst { it.toDomain() }
+        return favoritesDao.getByTopicId(topicId)?.toDomain()
     }
 
-    suspend fun updateItem(item: FavItem) = realm.write {
-        upsert(item.toDb())
+    suspend fun updateItem(item: FavItem) {
+        favoritesDao.upsert(item.toDb())
     }
 
 }

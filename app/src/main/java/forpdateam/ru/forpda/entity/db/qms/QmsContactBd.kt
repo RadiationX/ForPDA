@@ -1,25 +1,17 @@
 package forpdateam.ru.forpda.entity.db.qms
 
-import io.github.xilinjia.krdb.types.RealmObject
-import io.github.xilinjia.krdb.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 
 /**
  * Created by radiationx on 25.03.17.
  */
-class QmsContactBd : RealmObject {
-
+@Entity(tableName = "qms_contacts")
+class QmsContactBd(
     @PrimaryKey
-    var nick: String? = null
-    var avatar: String? = null
-    var id: Int = 0
-    var count: Int = 0
-
-    constructor()
-
-    constructor(nick: String?, avatar: String?, id: Int, count: Int) {
-        this.nick = nick
-        this.avatar = avatar
-        this.id = id
-        this.count = count
-    }
-}
+    val id: Int,
+    val nick: String?,
+    val avatar: String?,
+    val count: Int
+)

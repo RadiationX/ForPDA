@@ -1,24 +1,24 @@
 package forpdateam.ru.forpda.model.data.cache.forum
 
-import forpdateam.ru.forpda.common.realm.wrapper.RealmWrapper
-import forpdateam.ru.forpda.common.realm.wrapper.query
+import androidx.room.RoomDatabase
+import androidx.room.withTransaction
 import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
+import forpdateam.ru.forpda.model.data.db.ForumsDao
 
 class ForumCache(
-    private val realm: RealmWrapper
+    private val forumsDao: ForumsDao,
+    private val database: RoomDatabase
 ) {
 
     suspend fun getItems(): List<ForumItemFlat> {
-        return realm
-            .query<ForumItemFlatBd>()
-            .mapAll { it.toDomain() }
+        return forumsDao.getAll().map { it.toDomain() }
     }
 
     suspend fun saveItems(items: List<ForumItemFlat>) {
-        realm.write {
-            delete(ForumItemFlatBd::class)
-            upsertAll(items.map { it.toDb() })
+        database.withTransaction {
+            forumsDao.deleteAll()
+            forumsDao.upsertAll(items.map { it.toDb() })
         }
     }
 }
