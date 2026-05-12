@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemNoteBinding
@@ -17,8 +17,8 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.NoteListItem
 
 class NoteAdapterDelegate(
     private val clickListener: BaseAdapter.OnItemClickListener<NoteItem>
-) : AdapterDelegate<MutableList<ListItem>>() {
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
+) : AdapterDelegate<List<ListItem>>() {
+    override fun isForViewType(items: List<ListItem>, position: Int): Boolean =
         items[position] is NoteListItem
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
@@ -29,10 +29,10 @@ class NoteAdapterDelegate(
     }
 
     override fun onBindViewHolder(
-        items: MutableList<ListItem>,
+        items: List<ListItem>,
         position: Int,
         holder: RecyclerView.ViewHolder,
-        payloads: MutableList<Any>
+        payloads: List<Any>
     ) {
         val item = items[position] as NoteListItem
         (holder as NoteHolder).bind(item.item)

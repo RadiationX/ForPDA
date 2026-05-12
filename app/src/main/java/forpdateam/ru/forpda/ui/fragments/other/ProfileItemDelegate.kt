@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemOtherProfileBinding
@@ -17,16 +17,16 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.ProfileListItem
 class ProfileItemDelegate(
     private val clickListener: (ForumUser?) -> Unit,
     private val logoutClickListener: () -> Unit
-) : AdapterDelegate<MutableList<ListItem>>() {
+) : AdapterDelegate<List<ListItem>>() {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
+    override fun isForViewType(items: List<ListItem>, position: Int): Boolean =
         items[position] is ProfileListItem
 
     override fun onBindViewHolder(
-        items: MutableList<ListItem>,
+        items: List<ListItem>,
         position: Int,
         holder: RecyclerView.ViewHolder,
-        payloads: MutableList<Any>
+        payloads: List<Any>
     ) {
         val item = items[position] as ProfileListItem
         (holder as ViewHolder).bind(item.user)

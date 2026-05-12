@@ -169,7 +169,7 @@ dependencies {
     kapt(libs.moxy.compiler)
 
     implementation(libs.cicerone)
-    implementation(libs.adapterdelegates3)
+    implementation(libs.adapterdelegates4)
     implementation(libs.easinginterpolator)
 
     implementation(libs.androidx.room.runtime)

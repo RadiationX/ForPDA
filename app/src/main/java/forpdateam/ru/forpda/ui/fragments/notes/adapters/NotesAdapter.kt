@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.notes.adapters
 
-import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.ui.fragments.other.CloseableInfoDelegate
@@ -13,11 +13,10 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.NoteListItem
 class NotesAdapter(
     private val noteClickListener: BaseAdapter.OnItemClickListener<NoteItem>,
     private val infoClickListener: (CloseableInfo) -> Unit
-) : ListDelegationAdapter<MutableList<ListItem>>() {
+) : ListDelegationAdapter<List<ListItem>>() {
 
 
     init {
-        items = mutableListOf()
         delegatesManager.apply {
             addDelegate(DividerShadowItemDelegate())
             addDelegate(NoteAdapterDelegate(noteClickListener))
@@ -26,11 +25,13 @@ class NotesAdapter(
     }
 
     fun bindItems(notes: List<NoteItem>, infoList: List<CloseableInfo>) {
-        items.clear()
+        val items = mutableListOf<ListItem>()
 
         items.addAll(infoList.map { CloseableInfoListItem(it) })
 
         items.addAll(notes.map { NoteListItem(it) })
+
+        this.items = items
 
         notifyDataSetChanged()
     }

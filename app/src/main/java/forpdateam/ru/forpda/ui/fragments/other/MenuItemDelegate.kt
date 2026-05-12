@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemOtherMenuBinding
@@ -15,16 +15,16 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.MenuListItem
 
 class MenuItemDelegate(
     private val clickListener: (DrawerMenuItem) -> Unit
-) : AdapterDelegate<MutableList<ListItem>>() {
+) : AdapterDelegate<List<ListItem>>() {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
+    override fun isForViewType(items: List<ListItem>, position: Int): Boolean =
         items[position] is MenuListItem
 
     override fun onBindViewHolder(
-        items: MutableList<ListItem>,
+        items: List<ListItem>,
         position: Int,
         holder: RecyclerView.ViewHolder,
-        payloads: MutableList<Any>
+        payloads: List<Any>
     ) {
         val item = items[position] as MenuListItem
         (holder as ViewHolder).bind(item.menuItem)

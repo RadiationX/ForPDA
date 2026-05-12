@@ -10,7 +10,6 @@ import forpdateam.ru.forpda.model.interactors.other.MenuRepository
  */
 
 class OtherItemDragCallback(
-    private val otherAdapter: OtherAdapter,
     private val listener: ItemTouchHelperListener
 ) : ItemTouchHelper.Callback() {
 
@@ -38,7 +37,7 @@ class OtherItemDragCallback(
         target: RecyclerView.ViewHolder
     ): Boolean {
         if (checkViewHolder(viewHolder) && checkViewHolder(target)) {
-            listener.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
+            listener.onItemMove(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
             return true
         }
         return false

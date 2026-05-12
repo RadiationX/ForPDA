@@ -72,7 +72,7 @@ class OtherFragment : TabFragment(R.layout.fragment_other), OtherView {
             layoutManager = LinearLayoutManager(this.context)
             adapter = otherAdapter
 
-            val touchHelper = ItemTouchHelper(OtherItemDragCallback(otherAdapter, itemDragListener))
+            val touchHelper = ItemTouchHelper(OtherItemDragCallback(itemDragListener))
             touchHelper.attachToRecyclerView(this)
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {

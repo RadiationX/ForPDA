@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemCloseableInfoBinding
@@ -17,16 +17,16 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 
 class CloseableInfoDelegate(
     private val clickListener: (CloseableInfo) -> Unit
-) : AdapterDelegate<MutableList<ListItem>>() {
+) : AdapterDelegate<List<ListItem>>() {
 
-    override fun isForViewType(items: MutableList<ListItem>, position: Int): Boolean =
+    override fun isForViewType(items: List<ListItem>, position: Int): Boolean =
         items[position] is CloseableInfoListItem
 
     override fun onBindViewHolder(
-        items: MutableList<ListItem>,
+        items: List<ListItem>,
         position: Int,
         holder: RecyclerView.ViewHolder,
-        payloads: MutableList<Any>
+        payloads: List<Any>
     ) {
         val item = items[position] as CloseableInfoListItem
         (holder as ViewHolder).bind(item.item)
