@@ -1,6 +1,6 @@
 [versions]
 adapterdelegates4 = "4.3.2"
-android-plugin = "9.1.1"
+android-plugin = "9.2.1"
 appcompat = "1.7.1"
 androidx-activity = "1.13.0"
 androidx-fragment = "1.8.9"
