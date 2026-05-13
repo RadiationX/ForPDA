@@ -1,3 +1,4 @@
+import java.io.FileInputStream
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.appmetrica)
 }
 
 fun getDateTime(): String {
@@ -114,6 +116,14 @@ kotlin {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+appmetrica {
+    val localProperties = Properties().apply {
+        load(FileInputStream(rootProject.file("local.properties")))
+    }
+    val propApiKey = localProperties.getProperty("appmetrica_post_api_key", "")
+    postApiKey.set(propApiKey)
 }
 
 dependencies {
