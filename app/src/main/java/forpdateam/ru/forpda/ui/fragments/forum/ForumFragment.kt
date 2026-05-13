@@ -1,26 +1,21 @@
 package forpdateam.ru.forpda.ui.fragments.forum
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.widget.NestedScrollView
-import com.google.android.material.appbar.AppBarLayout
-import com.unnamed.b.atv.model.TreeNode
-import com.unnamed.b.atv.view.AndroidTreeView
+import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.databinding.FragmentForumBinding
-import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.forum.ForumPresenter
 import forpdateam.ru.forpda.presentation.forum.ForumView
-import forpdateam.ru.forpda.ui.fragments.TabFragment
+import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
-import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
+import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 
@@ -28,45 +23,35 @@ import moxy.presenter.ProvidePresenter
  * Created by radiationx on 15.02.17.
  */
 
-class ForumFragment : TabFragment(R.layout.fragment_forum), ForumView {
+class ForumFragment : RecyclerFragment(), ForumView {
 
-    private val binding by tabBinding(FragmentForumBinding::bind)
-    private val treeContainer: NestedScrollView
-        get() = binding.nestedScrollView
-
-    private lateinit var root: TreeNode
-    private lateinit var treeView: AndroidTreeView
-
-    private lateinit var dialogMenu: DynamicDialogMenu<ForumFragment, ForumItemTree>
+    private lateinit var dialogMenu: DynamicDialogMenu<ForumFragment, ForumItemFlat>
     private val authHolder = App.get().Di().authHolder
 
-    private var listScrollY = 0
-    private var appBarOffset = 0
+    private lateinit var adapter: ForumsAdapter
 
-    private val nodeClickListener = TreeNode.TreeNodeClickListener { _, value ->
-        val item = value as ForumItemTree
-        if (item.forums.isEmpty()) {
+    private val clickListener = object : OnItemClickListener<ForumItemFlat> {
+
+        override fun onItemClick(item: ForumItemFlat) {
             presenter.navigateToForum(item)
         }
-    }
 
-    private val nodeLongClickListener = TreeNode.TreeNodeLongClickListener { _, value ->
-        val item = value as ForumItemTree
-        dialogMenu.apply {
-            disallowAll()
-            if (item.item.level > 0)
-                allow(0)
-            allow(1)
-            if (authHolder.get().isAuth()) {
-                allow(2)
-                allow(3)
+        override fun onItemLongClick(item: ForumItemFlat): Boolean {
+            dialogMenu.apply {
+                disallowAll()
+                if (item.level > 0)
+                    allow(0)
+                allow(1)
+                if (authHolder.get().isAuth()) {
+                    allow(2)
+                    allow(3)
+                }
+                allow(4)
+
+                show(requireContext(), this@ForumFragment, item)
             }
-            allow(4)
-
-            show(requireContext(), this@ForumFragment, item)
+            return false
         }
-
-        false
     }
 
     @InjectPresenter
@@ -93,20 +78,13 @@ class ForumFragment : TabFragment(R.layout.fragment_forum), ForumView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setListsBackground()
+
         setScrollFlagsEnterAlways()
 
-        treeContainer.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { nestedScrollView, _, _, _, _ ->
-            @SuppressLint("RestrictedApi")
-            listScrollY = nestedScrollView.computeVerticalScrollOffset()
-            updateToolbarShadow()
-        })
+        adapter = ForumsAdapter(clickListener)
 
-        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, i ->
-            appBarOffset = i
-            updateToolbarShadow()
-        })
-
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
         dialogMenu = DynamicDialogMenu()
         dialogMenu.apply {
             addItem(getString(R.string.open_forum)) { _, data ->
@@ -119,17 +97,13 @@ class ForumFragment : TabFragment(R.layout.fragment_forum), ForumView {
                 openMarkReadDialog(data)
             }
             addItem(getString(R.string.add_to_favorites)) { _, data ->
-                openAddToFavoriteDialog(data.item.id)
+                openAddToFavoriteDialog(data.id)
             }
             addItem(getString(R.string.fragment_title_search)) { _, data ->
                 presenter.navigateToSearch(data)
             }
         }
 
-    }
-
-    override fun isShadowVisible(): Boolean {
-        return appBarOffset != 0 || listScrollY > 0
     }
 
     override fun addBaseToolbarMenu(menu: Menu) {
@@ -146,18 +120,8 @@ class ForumFragment : TabFragment(R.layout.fragment_forum), ForumView {
             }
     }
 
-    override fun showForums(forumRoot: ForumItemTree) {
-        treeView = AndroidTreeView(requireContext())
-        root = TreeNode.root()
-        recourse(forumRoot, root)
-        treeView.setRoot(root)
-
-        treeView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom)
-        treeView.setDefaultViewHolder(DefaultForumHolder::class.java)
-        treeView.setDefaultNodeClickListener(nodeClickListener)
-        treeView.setDefaultNodeLongClickListener(nodeLongClickListener)
-        treeContainer.removeAllViews()
-        treeContainer.addView(treeView.view)
+    override fun showForums(forums: List<ForumItemFlat>) {
+        adapter.bindItems(forums)
     }
 
     private fun openAddToFavoriteDialog(forumId: Int) {
@@ -169,11 +133,11 @@ class ForumFragment : TabFragment(R.layout.fragment_forum), ForumView {
             .show()
     }
 
-    private fun openMarkReadDialog(item: ForumItemTree) {
+    private fun openMarkReadDialog(item: ForumItemFlat) {
         AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.mark_read) + "?")
             .setPositiveButton(R.string.ok) { _, _ ->
-                presenter.markRead(item.item.id)
+                presenter.markRead(item.id)
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
@@ -206,35 +170,8 @@ class ForumFragment : TabFragment(R.layout.fragment_forum), ForumView {
     }
 
     override fun scrollToForum(id: Int) {
-        val targetNode = findNodeById(id, root)
-
-        if (targetNode != null) {
-            var upToParent: TreeNode = targetNode
-            while (upToParent.parent != null) {
-                treeView.expandNode(upToParent)
-                upToParent = upToParent.parent
-            }
-        }
-    }
-
-    private fun findNodeById(id: Int, root: TreeNode): TreeNode? {
-        if (root.value != null && (root.value as ForumItemTree).item.id == id) return root
-        if (root.children == null && root.children.isEmpty()) return null
-        for (item in root.children) {
-            val node = findNodeById(id, item)
-            if (node != null) return node
-        }
-        return null
-    }
-
-    private fun recourse(rootForum: ForumItemTree, rootNode: TreeNode) {
-        rootForum.forums?.also {
-            for (item in it) {
-                val child = TreeNode(item)
-                recourse(item, child)
-                rootNode.addChild(child)
-            }
-        } ?: return
+        adapter.expand(id)
+        recyclerView.scrollToPosition(adapter.getItemPosition(id))
     }
 
     companion object {

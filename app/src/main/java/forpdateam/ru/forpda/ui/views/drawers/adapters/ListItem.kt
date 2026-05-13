@@ -6,6 +6,7 @@ import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 
@@ -34,4 +35,5 @@ class TopicForumListItem(val item: TopicItem.Forum) : ListItem()
 class FavoriteListItem(val item: FavItem, val showDot: Boolean) : ListItem()
 class BrandListItem(val item: Brands.Item) : ListItem()
 
+class ForumListItem(val item: ForumItemFlat, val level: Int, val isLeaf: Boolean, val expanded: Boolean) : ListItem()
 

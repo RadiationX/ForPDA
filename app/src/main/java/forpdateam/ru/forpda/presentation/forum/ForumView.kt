@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.presentation.forum
 
 import forpdateam.ru.forpda.common.mvp.IBaseView
-import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -12,7 +12,8 @@ import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ForumView : IBaseView {
-    fun showForums(forumRoot: ForumItemTree)
+    fun showForums(forums: List<ForumItemFlat>)
+
     fun scrollToForum(id: Int)
 
     @StateStrategyType(SkipStrategy::class)

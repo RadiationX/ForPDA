@@ -160,8 +160,6 @@ dependencies {
     implementation(libs.circleimageview)
     implementation(libs.tagsoup)
     implementation(libs.minitemplator.repackaged)
-    //implementation "com.lapism:searchview:4.0"
-    implementation(libs.atv)
 
     implementation(libs.photoview)
     implementation(libs.spectrum)

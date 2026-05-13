@@ -5,7 +5,6 @@ appcompat = "1.7.1"
 androidx-activity = "1.13.0"
 androidx-fragment = "1.8.9"
 androidx-lifecycle = "2.10.0"
-atv = "1.2.9"
 cardview = "1.0.0"
 cicerone = "7.1"
 circleimageview = "3.1.0"
@@ -49,7 +48,6 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "palette-ktx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preference-ktx" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
-atv = { module = "com.github.bmelnychuk:atv", version.ref = "atv" }
 cicerone = { module = "com.github.terrakok:cicerone", version.ref = "cicerone" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 circularprogressview = { module = "com.github.rahatarmanahmed:circularprogressview", version.ref = "circularprogressview" }

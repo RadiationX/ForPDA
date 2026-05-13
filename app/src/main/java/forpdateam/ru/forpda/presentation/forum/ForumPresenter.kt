@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.presentation.forum
 
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.remote.forum.ForumItemTree
+import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
@@ -30,7 +30,6 @@ class ForumPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         getCacheForums()
-        loadForums()
     }
 
     fun loadForums() {
@@ -41,7 +40,6 @@ class ForumPresenter(
             }.onSuccess {
                 viewState.showForums(it)
                 scrollToTarget()
-                saveCacheForums(it)
             }.onFailure {
                 errorHandler.handle(it)
             }
@@ -51,18 +49,19 @@ class ForumPresenter(
 
     private fun getCacheForums() {
         viewModelScope.launch {
+            viewState.setRefreshing(true)
             coRunCatching {
                 forumRepository.getCache()
             }.onSuccess {
-                if (it.forums.isEmpty()) {
-                    loadForums()
-                } else {
+                if (it.isNotEmpty()) {
                     viewState.showForums(it)
                     scrollToTarget()
                 }
             }.onFailure {
                 errorHandler.handle(it)
             }
+            viewState.setRefreshing(false)
+            loadForums()
         }
     }
 
@@ -70,16 +69,6 @@ class ForumPresenter(
         if (targetForumId != -1) {
             viewState.scrollToForum(targetForumId)
             targetForumId = -1
-        }
-    }
-
-    private fun saveCacheForums(rootForum: ForumItemTree) {
-        viewModelScope.launch {
-            coRunCatching {
-                forumRepository.saveCache(rootForum)
-            }.onFailure {
-                errorHandler.handle(it)
-            }
         }
     }
 
@@ -124,20 +113,20 @@ class ForumPresenter(
         }
     }
 
-    fun copyLink(item: ForumItemTree) {
-        Utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.item.id}")
+    fun copyLink(item: ForumItemFlat) {
+        Utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.id}")
     }
 
-    fun navigateToForum(item: ForumItemTree) {
+    fun navigateToForum(item: ForumItemFlat) {
         router.navigateTo(Screen.Topics().apply {
-            forumId = item.item.id
+            forumId = item.id
         })
     }
 
-    fun navigateToSearch(item: ForumItemTree) {
+    fun navigateToSearch(item: ForumItemFlat) {
         router.navigateTo(Screen.Search().apply {
             searchUrl =
-                "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.item.id}"
+                "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.id}"
         })
     }
 }

@@ -1,9 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="TreeNodeStyleCustom">
-        <item name="android:paddingLeft">16dp</item>
-    </style>
-
     <style name="SplashTheme" parent="DayNightAppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash_light</item>
     </style>
