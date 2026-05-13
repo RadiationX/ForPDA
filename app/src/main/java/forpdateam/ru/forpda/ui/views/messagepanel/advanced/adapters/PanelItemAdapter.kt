@@ -1,19 +1,17 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters
 
-import android.graphics.Bitmap
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.MessagePanelAdvancedItemBinding
-import forpdateam.ru.forpda.ui.views.messagepanel.advanced.ButtonData
+import forpdateam.ru.forpda.ui.views.messagepanel.advanced.PanelListItem
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback.ItemTouchHelperAdapter
 import java.util.Collections
 
@@ -21,75 +19,89 @@ import java.util.Collections
  * Created by radiationx on 08.01.17.
  */
 class PanelItemAdapter(
-    private val items: MutableList<ButtonData>,
-    private val urlsToAssets: List<String>?,
-    private val type: Int
-) : RecyclerView.Adapter<PanelItemAdapter.ViewHolder>(), ItemTouchHelperAdapter {
+    private val items: MutableList<PanelListItem>,
+    private val clickListener: (PanelListItem) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemTouchHelperAdapter {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun getItemViewType(position: Int): Int {
+        return items[position]::class.hashCode()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.message_panel_advanced_item, parent, false)
-        return ViewHolder(view)
+        return when (viewType) {
+            PanelListItem.Smile::class.hashCode() -> SmileViewHolder(clickListener, view)
+            PanelListItem.BBCode::class.hashCode() -> BBCodeViewHolder(clickListener, view)
+            PanelListItem.Color::class.hashCode() -> ColorViewHolder(clickListener, view)
+            else -> error("Unknown viewtype")
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position], urlsToAssets?.getOrNull(position), type)
-    }
-
-    private var itemClickListener: OnItemClickListener? = null
-
-    fun interface OnItemClickListener {
-        fun onItemClick(item: ButtonData)
-    }
-
-    fun setOnItemClickListener(mItemClickListener: OnItemClickListener?) {
-        this.itemClickListener = mItemClickListener
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val item = items[position]) {
+            is PanelListItem.Smile -> (holder as SmileViewHolder).bind(item)
+            is PanelListItem.BBCode -> (holder as BBCodeViewHolder).bind(item)
+            is PanelListItem.Color -> (holder as ColorViewHolder).bind(item)
+        }
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    class SmileViewHolder(
+        private val clickListener: (PanelListItem.Smile) -> Unit,
+        view: View
+    ) : RecyclerView.ViewHolder(view) {
 
         private val binding by viewBinding<MessagePanelAdvancedItemBinding>()
 
-        init {
-            view.setOnClickListener(this)
-        }
-
-        fun bind(item: ButtonData, urlToAsset: String?, type: Int){
-            if (type == TYPE_ASSET) {
-                ImageLoader.getInstance()
-                    .loadImage(urlToAsset!!, object : SimpleImageLoadingListener() {
-                        override fun onLoadingComplete(
-                            imageUri: String,
-                            view: View,
-                            loadedImage: Bitmap
-                        ) {
-                            binding.itemIcon.setImageBitmap(loadedImage)
-                        }
-                    })
-            } else if (type == TYPE_DRAWABLE) {
-                binding.itemIcon.setImageDrawable(getVecDrawable(binding.root.context, item.iconRes))
-                //holder.button.setColorFilter(colorFilter);
-            }
-            if (item.title == null) {
-                binding.itemTitle.visibility = View.GONE
-                binding.root.contentDescription = item.text
-            } else {
-                binding.root.contentDescription = item.title
-                binding.itemTitle.text = item.title
-                binding.itemTitle.visibility = View.VISIBLE
+        fun bind(item: PanelListItem.Smile) {
+            val assetUrl = "assets://smiles/${item.assetFileName}"
+            ImageLoader.getInstance().cancelDisplayTask(binding.itemIcon)
+            ImageLoader.getInstance().displayImage(assetUrl, binding.itemIcon)
+            binding.itemTitle.visibility = View.GONE
+            binding.root.contentDescription = item.text
+            binding.root.setOnClickListener {
+                clickListener.invoke(item)
             }
         }
+    }
 
-        override fun onClick(v: View) {
-            val item = items[layoutPosition]
-            if (item.listener != null) {
-                item.listener!!.onClick(item)
-            } else if (itemClickListener != null) {
-                itemClickListener!!.onItemClick(item)
+    class BBCodeViewHolder(
+        private val clickListener: (PanelListItem.BBCode) -> Unit,
+        view: View
+    ) : RecyclerView.ViewHolder(view) {
+
+        private val binding by viewBinding<MessagePanelAdvancedItemBinding>()
+
+        fun bind(item: PanelListItem.BBCode) {
+            binding.itemIcon.setImageDrawable(getVecDrawable(binding.root.context, item.iconRes))
+            val title = binding.itemTitle.context.getString(item.titleRes)
+            binding.itemTitle.isVisible = true
+            binding.itemTitle.text = title
+            binding.root.contentDescription = title
+            binding.root.setOnClickListener {
+                clickListener.invoke(item)
+            }
+        }
+    }
+
+    class ColorViewHolder(
+        private val clickListener: (PanelListItem.Color) -> Unit,
+        view: View
+    ) : RecyclerView.ViewHolder(view) {
+
+        private val binding by viewBinding<MessagePanelAdvancedItemBinding>()
+
+        fun bind(item: PanelListItem.Color) {
+            binding.itemIcon.setImageResource(R.drawable.bg_circle_black)
+            binding.itemIcon.imageTintList = ColorStateList.valueOf(item.color)
+            binding.root.contentDescription = item.hexColor
+            binding.itemTitle.isVisible = false
+            binding.root.setOnClickListener {
+                clickListener.invoke(item)
             }
         }
     }
@@ -111,10 +123,5 @@ class PanelItemAdapter(
         }
         notifyItemMoved(fromPosition, toPosition)
         //Log.d("FORPDA_LOG", "onItemMove");
-    }
-
-    companion object {
-        const val TYPE_ASSET: Int = 0
-        const val TYPE_DRAWABLE: Int = 1
     }
 }

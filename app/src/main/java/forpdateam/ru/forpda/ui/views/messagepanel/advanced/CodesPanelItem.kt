@@ -27,59 +27,30 @@ import java.util.Locale
  */
 @SuppressLint("ViewConstructor")
 class CodesPanelItem(context: Context, panel: MessagePanel) :
-    BasePanelItem(context, panel, get().getString(R.string.codes_title)) {
+    BasePanelItem(context, panel, context.getString(R.string.codes_title)) {
     private val openedCodes: List<String> = ArrayList()
     private val otherPreferencesHolder = get().Di().otherPreferencesHolder
-    private val clickListener =
-        PanelItemAdapter.OnItemClickListener { item: ButtonData ->
-            when (item.text) {
-                "URL" -> {
-                    urlInsert(item)
-                }
-
-                "QUOTE" -> {
-                    quoteInsert(item)
-                }
-
-                "CODE" -> {
-                    codeInsert(item)
-                }
-
-                "SPOILER" -> {
-                    spoilerInsert(item)
-                }
-
-                "LIST" -> {
-                    listInsert(item, false)
-                }
-
-                "NUMLIST" -> {
-                    listInsert(item, true)
-                }
-
-                "COLOR" -> {
-                    colorInsert(item)
-                }
-
-                "BACKGROUND" -> {
-                    colorInsert(item)
-                }
-
-                "SIZE" -> {
-                    sizeInsert(item)
-                }
-
-                "FONT" -> {
-                    fontInsert(item)
-                }
-
-                else -> simpleInsertText(item)
-            }
+    private val clickListener = listener@{ item: PanelListItem ->
+        if (item !is PanelListItem.BBCode) {
+            return@listener
         }
+        when (item.text) {
+            "URL" -> urlInsert(item)
+            "QUOTE" -> quoteInsert(item)
+            "CODE" -> codeInsert(item)
+            "SPOILER" -> spoilerInsert(item)
+            "LIST" -> listInsert(item, false)
+            "NUMLIST" -> listInsert(item, true)
+            "COLOR" -> colorInsert(item)
+            "BACKGROUND" -> colorInsert(item)
+            "SIZE" -> sizeInsert(item)
+            "FONT" -> fontInsert(item)
+            else -> simpleInsertText(item)
+        }
+    }
 
     init {
-        val adapter = PanelItemAdapter(codes, null, PanelItemAdapter.TYPE_DRAWABLE)
-        adapter.setOnItemClickListener(clickListener)
+        val adapter = PanelItemAdapter(codes.toMutableList(), clickListener)
 
         recyclerView.setColumnWidth(get().dpToPx(96, recyclerView.context))
         val touchHelper = ItemTouchHelper(ItemDragCallback(adapter))
@@ -88,7 +59,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
 
         if (otherPreferencesHolder.tooltipMessagePanelSorting.get()) {
             val instruction = SimpleInstruction(getContext())
-            instruction.setText(get().getString(R.string.code_panel_instruction))
+            instruction.setText(context.getString(R.string.code_panel_instruction))
             instruction.setOnCloseClick { v: View? ->
                 otherPreferencesHolder.tooltipMessagePanelSorting.set(false)
             }
@@ -96,7 +67,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         }
     }
 
-    private fun listInsert(item: ButtonData, num: Boolean) {
+    private fun listInsert(item: PanelListItem.BBCode, num: Boolean) {
         val selected = messagePanel.selectedText
         val listLines: MutableList<String> = ArrayList()
         val tag = "LIST"
@@ -129,7 +100,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         val inputLayout = layout.findViewById<TextInputLayout>(R.id.report_input_layout)
         val i = intArrayOf(listLines.size + 1)
         inputLayout.hint = String.format(
-            get().getString(R.string.codes_list_item_Pos),
+            context.getString(R.string.codes_list_item_Pos),
             i[0]
         )
         val alertDialog = AlertDialog.Builder(
@@ -158,7 +129,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             listLines.add(messageField.text.toString())
             messageField.setText("")
             inputLayout.hint = String.format(
-                get().getString(R.string.codes_list_item_Pos), i[0]
+                context.getString(R.string.codes_list_item_Pos), i[0]
             )
         }
         messageField.addTextChangedListener(object : SimpleTextWatcher() {
@@ -168,25 +139,17 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         })
     }
 
-    private fun colorInsert(item: ButtonData) {
-        ColorPicker(context) { i: Int ->
-            var color =
-                Integer.toHexString(i).uppercase(Locale.getDefault())
-            if (color.length > 6) {
-                color = color.substring(2)
-            }
-            color = "#$color"
-            color = getHtmlColor(color)
-
-            val resultHeaders: MutableList<Pair<String?, String?>> =
-                ArrayList()
+    private fun colorInsert(item: PanelListItem.BBCode) {
+        ColorPicker(context,messagePanel) {
+            val color = getHtmlColor(it.hexColor)
+            val resultHeaders: MutableList<Pair<String?, String?>> = ArrayList()
             resultHeaders.add(Pair(null, color))
             val bbcodes = createBbCode(item.text, resultHeaders, null)
             messagePanel.insertText(bbcodes[0], bbcodes[1])
         }
     }
 
-    private fun sizeInsert(item: ButtonData) {
+    private fun sizeInsert(item: PanelListItem.BBCode) {
         val items = arrayOf<CharSequence>(
             "1 (8pt)",
             "2 (10pt)",
@@ -198,7 +161,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         )
         for (i in items.indices) {
             items[i] = String.format(
-                get().getString(R.string.codes_text_size_item_Size),
+                context.getString(R.string.codes_text_size_item_Size),
                 items[i]
             )
         }
@@ -221,15 +184,15 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             .show()
     }
 
-    private fun fontInsert(item: ButtonData) {
+    private fun fontInsert(item: PanelListItem.BBCode) {
         val selected = messagePanel.selectedText
         val range = messagePanel.selectionRange
         val insertHelper = InsertHelper(
             context
         )
-        insertHelper.addHeader(get().getString(R.string.codes_font), null)
-        if (selected.length == 0) insertHelper.setBody(
-            get().getString(R.string.codes_font_text),
+        insertHelper.addHeader(R.string.codes_font, null)
+        if (selected.isEmpty()) insertHelper.setBody(
+            R.string.codes_font_text,
             null
         )
         insertHelper.setInsertListener { resultHeaders, bodyResult ->
@@ -239,15 +202,15 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         insertHelper.show()
     }
 
-    private fun urlInsert(item: ButtonData) {
+    private fun urlInsert(item: PanelListItem.BBCode) {
         val selected = messagePanel.selectedText
         val range = messagePanel.selectionRange
         val insertHelper = InsertHelper(
             context
         )
-        insertHelper.addHeader(get().getString(R.string.codes_link), null)
+        insertHelper.addHeader(R.string.codes_link, null)
         if (selected.length == 0) insertHelper.setBody(
-            get().getString(R.string.codes_link_text),
+            R.string.codes_link_text,
             null
         )
         insertHelper.setInsertListener { resultHeaders, bodyResult ->
@@ -257,15 +220,15 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         insertHelper.show()
     }
 
-    private fun spoilerInsert(item: ButtonData) {
+    private fun spoilerInsert(item: PanelListItem.BBCode) {
         val selected = messagePanel.selectedText
         val range = messagePanel.selectionRange
         val insertHelper = InsertHelper(
             context
         )
-        insertHelper.addHeader(get().getString(R.string.codes_block_title), null)
+        insertHelper.addHeader(R.string.codes_block_title, null)
         if (selected.length == 0) insertHelper.setBody(
-            get().getString(R.string.codes_spoiler_text),
+            R.string.codes_spoiler_text,
             null
         )
         insertHelper.setInsertListener { resultHeaders, bodyResult ->
@@ -275,15 +238,15 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         insertHelper.show()
     }
 
-    private fun codeInsert(item: ButtonData) {
+    private fun codeInsert(item: PanelListItem.BBCode) {
         val selected = messagePanel.selectedText
         val range = messagePanel.selectionRange
         val insertHelper = InsertHelper(
             context
         )
-        insertHelper.addHeader(get().getString(R.string.codes_block_title), null)
+        insertHelper.addHeader(R.string.codes_block_title, null)
         if (selected.length == 0) insertHelper.setBody(
-            get().getString(R.string.codes_code_text),
+            R.string.codes_code_text,
             null
         )
         insertHelper.setInsertListener { resultHeaders, bodyResult ->
@@ -293,17 +256,17 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         insertHelper.show()
     }
 
-    private fun quoteInsert(item: ButtonData) {
+    private fun quoteInsert(item: PanelListItem.BBCode) {
         val selected = messagePanel.selectedText
         val range = messagePanel.selectionRange
         val insertHelper = InsertHelper(
             context
         )
-        insertHelper.addHeader(get().getString(R.string.codes_block_title), "name")
+        insertHelper.addHeader(R.string.codes_block_title, "name")
         /*insertHelper.addHeader("Дата", "date");
         insertHelper.addHeader("ID поста", "post");*/
         if (selected.length == 0) insertHelper.setBody(
-            get().getString(R.string.codes_quote_text),
+            R.string.codes_quote_text,
             null
         )
         insertHelper.setInsertListener { resultHeaders, bodyResult ->
@@ -346,7 +309,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         return arrayOf(start.toString(), end)
     }
 
-    private fun simpleInsertText(item: ButtonData) {
+    private fun simpleInsertText(item: PanelListItem.BBCode) {
         val bbcodes = createBbCode(item.text, null, null)
         messagePanel.insertText(bbcodes[0], bbcodes[1])
     }
@@ -381,166 +344,122 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         super.onDetachedFromWindow()
     }
 
-    private val codes: MutableList<ButtonData>
+    private val codes: MutableList<PanelListItem.BBCode>
         get() {
             if (Companion.codes != null) return Companion.codes!!
-            val codes = ArrayList<ButtonData>()
+            val codes = ArrayList<PanelListItem.BBCode>()
             Companion.codes = codes
-            val tempCodes = ArrayList<ButtonData>()
-            tempCodes.add(
-                ButtonData(
+            val tempCodes = mutableListOf(
+                PanelListItem.BBCode(
                     "B",
                     R.drawable.ic_code_bold,
-                    get().getString(R.string.codes_name_bold)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_bold
+                ),
+                PanelListItem.BBCode(
                     "I",
                     R.drawable.ic_code_italic,
-                    get().getString(R.string.codes_name_italic)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_italic
+                ),
+                PanelListItem.BBCode(
                     "U",
                     R.drawable.ic_code_underline,
-                    get().getString(R.string.codes_name_underline)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_underline
+                ),
+                PanelListItem.BBCode(
                     "S",
                     R.drawable.ic_code_s,
-                    get().getString(R.string.codes_name_s)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_s
+                ),
+                PanelListItem.BBCode(
                     "URL",
                     R.drawable.ic_code_url,
-                    get().getString(R.string.codes_name_link)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_link
+                ),
+                PanelListItem.BBCode(
                     "SPOILER",
                     R.drawable.ic_code_spoiler,
-                    get().getString(R.string.codes_name_spoiler)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_spoiler
+                ),
+                PanelListItem.BBCode(
                     "OFFTOP",
                     R.drawable.ic_code_offtop,
-                    get().getString(R.string.codes_name_offtop)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_offtop
+                ),
+                PanelListItem.BBCode(
                     "QUOTE",
                     R.drawable.ic_code_quote,
-                    get().getString(R.string.codes_name_quote)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_quote
+                ),
+                PanelListItem.BBCode(
                     "CODE",
                     R.drawable.ic_code_code,
-                    get().getString(R.string.codes_name_code)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_code
+                ),
+                PanelListItem.BBCode(
                     "COLOR",
                     R.drawable.ic_code_color,
-                    get().getString(R.string.codes_name_text_color)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_text_color
+                ),
+                PanelListItem.BBCode(
                     "SIZE",
                     R.drawable.ic_code_size,
-                    get().getString(R.string.codes_name_text_size)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_text_size
+                ),
+                PanelListItem.BBCode(
                     "FONT",
                     R.drawable.ic_code_font,
-                    get().getString(R.string.codes_name_font)
-                )
-            )
+                    R.string.codes_name_font
+                ),
 
-            tempCodes.add(
-                ButtonData(
+                PanelListItem.BBCode(
                     "HIDE",
                     R.drawable.ic_code_hide,
-                    get().getString(R.string.codes_name_hide)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_hide
+                ),
+                PanelListItem.BBCode(
                     "BACKGROUND",
                     R.drawable.ic_code_background,
-                    get().getString(R.string.codes_name_bg_color)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_bg_color
+                ),
+                PanelListItem.BBCode(
                     "LIST",
                     R.drawable.ic_code_list,
-                    get().getString(R.string.codes_name_list)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_list
+                ),
+                PanelListItem.BBCode(
                     "NUMLIST",
                     R.drawable.ic_code_numlist,
-                    get().getString(R.string.codes_name_numlist)
-                )
-            )
-
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_numlist
+                ),
+                PanelListItem.BBCode(
                     "LEFT",
                     R.drawable.ic_code_left,
-                    get().getString(R.string.codes_name_left)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_left
+                ),
+                PanelListItem.BBCode(
                     "CENTER",
                     R.drawable.ic_code_center,
-                    get().getString(R.string.codes_name_center)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_center
+                ),
+                PanelListItem.BBCode(
                     "RIGHT",
                     R.drawable.ic_code_right,
-                    get().getString(R.string.codes_name_right)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_right
+                ),
+                PanelListItem.BBCode(
                     "SUB",
                     R.drawable.ic_code_sub,
-                    get().getString(R.string.codes_name_sub)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_sub
+                ),
+                PanelListItem.BBCode(
                     "SUP",
                     R.drawable.ic_code_sup,
-                    get().getString(R.string.codes_name_sup)
-                )
-            )
-            tempCodes.add(
-                ButtonData(
+                    R.string.codes_name_sup
+                ),
+                PanelListItem.BBCode(
                     "CUR",
                     R.drawable.ic_code_cur,
-                    get().getString(R.string.codes_name_curator)
+                    R.string.codes_name_curator
                 )
             )
 
@@ -607,7 +526,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
     }
 
     companion object {
-        private var codes: MutableList<ButtonData>? = null
+        private var codes: MutableList<PanelListItem.BBCode>? = null
         private var colors: MutableMap<String, String>? = null
     }
 }

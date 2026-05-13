@@ -147,6 +147,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.preference.ktx)
 
     implementation(platform(libs.okhttp.bom))
@@ -162,7 +163,6 @@ dependencies {
     implementation(libs.minitemplator.repackaged)
 
     implementation(libs.photoview)
-    implementation(libs.spectrum)
     implementation(libs.pagerbullet)
     implementation(libs.androidx.work.runtime.ktx)
 

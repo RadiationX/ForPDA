@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.textfield.TextInputLayout
 import forpdateam.ru.forpda.R
@@ -29,6 +30,10 @@ class InsertHelper(private val context: Context) {
         layoutContainer.findViewById(R.id.insert_helper_items_container)
     private var insertListener: InsertListener? = null
 
+    fun addHeader(@StringRes titleRes: Int, code: String?) {
+        addHeader(context.getString(titleRes), code)
+    }
+
     fun addHeader(title: String, code: String?) {
         headers.add(Pair(title, code))
         val inputLayout = inflater.inflate(R.layout.insert_helper_item, null) as TextInputLayout
@@ -37,16 +42,18 @@ class InsertHelper(private val context: Context) {
         itemsContainer.addView(inputLayout)
     }
 
+    fun setBody(@StringRes titleRes: Int, value: String?) {
+        setBody(context.getString(titleRes), value)
+    }
+
     fun setBody(title: String, value: String?) {
-        if (true) {
-            this.body = Pair(title, value)
-            val inputLayout = inflater.inflate(R.layout.insert_helper_item, null) as TextInputLayout
-            inputLayout.hint = title
-            val textView = inputLayout.findViewById<TextView>(R.id.insert_helper_item_text)
-            textView.text = value
-            bodyLayout = inputLayout.editText
-            itemsContainer.addView(inputLayout)
-        }
+        this.body = Pair(title, value)
+        val inputLayout = inflater.inflate(R.layout.insert_helper_item, null) as TextInputLayout
+        inputLayout.hint = title
+        val textView = inputLayout.findViewById<TextView>(R.id.insert_helper_item_text)
+        textView.text = value
+        bodyLayout = inputLayout.editText
+        itemsContainer.addView(inputLayout)
     }
 
     fun setInsertListener(insertListener: InsertListener?) {

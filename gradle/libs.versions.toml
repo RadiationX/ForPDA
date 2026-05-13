@@ -22,8 +22,8 @@ permissionsdispatcher = "4.9.2"
 photoview = "2.3.0"
 preference-ktx = "1.2.1"
 recyclerview = "1.4.0"
+androidx-swiperefreshlayout = "1.2.0"
 roundedimageview = "2.3.0"
-spectrum = "0.7.1"
 tagsoup = "1.2.1"
 universal-image-loader = "1.9.5"
 viewbindingpropertydelegate = "1.5.9"
@@ -48,6 +48,7 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "palette-ktx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preference-ktx" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "androidx-swiperefreshlayout" }
 cicerone = { module = "com.github.terrakok:cicerone", version.ref = "cicerone" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 circularprogressview = { module = "com.github.rahatarmanahmed:circularprogressview", version.ref = "circularprogressview" }
@@ -68,7 +69,6 @@ permissionsdispatcher = { module = "com.github.permissions-dispatcher:permission
 permissionsdispatcher-processor = { module = "com.github.permissions-dispatcher:permissionsdispatcher-processor", version.ref = "permissionsdispatcher" }
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
-spectrum = { module = "com.thebluealliance:spectrum", version.ref = "spectrum" }
 tagsoup = { module = "org.ccil.cowan.tagsoup:tagsoup", version.ref = "tagsoup" }
 universal-image-loader = { module = "com.nostra13.universalimageloader:universal-image-loader", version.ref = "universal-image-loader" }
 viewbindingpropertydelegate = { module = "com.github.kirich1409:viewbindingpropertydelegate", version.ref = "viewbindingpropertydelegate" }
