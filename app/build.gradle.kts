@@ -40,14 +40,14 @@ base {
 android {
     namespace = "forpdateam.ru.forpda"
 
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "ru.forpdateam.forpda"
         versionCode = versionNumber
         versionName = baseVersionName
         minSdk = 23
-        targetSdk = 36
+        targetSdk = 37
         vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "BUILD_DATE", "\"${versionDate}\"")
     }
