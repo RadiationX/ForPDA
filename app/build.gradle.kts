@@ -15,55 +15,48 @@ fun getDateTime(): String {
     return df.format(Date()) + " г."
 }
 
-val keystoreProperties = Properties().apply {
-    load(rootProject.file("keystore.properties").inputStream())
+fun getKeystoreProperties(buildType: String): Properties {
+    var file = rootProject.file("signing/${buildType}.properties")
+    if (!file.exists()) {
+        logger.error("Signing properties for build type '$buildType' not exists. Fallback to debug properties.")
+        file = rootProject.file("signing/debug.properties")
+    }
+    return Properties().apply { load(file.inputStream()) }
 }
-
-val versionPropsFile = file("version.properties")
-val versionProps: Properties = Properties().apply {
-    load(versionPropsFile.inputStream())
-}
-val versionBuild = versionProps.getProperty("VERSION_BUILD", "-1").toInt() + 1
-val versionDate = getDateTime()
-versionProps.setProperty("VERSION_BUILD", versionBuild.toString())
-versionProps.setProperty("DATE_BUILD", versionDate)
-versionProps.store(versionPropsFile.writer(), null)
-
-val versionNumber = 223
-val fileVersionName = "1.0.1"
-val baseVersionName = "$fileVersionName ($versionBuild)"
 
 base {
-    archivesName = "ForPDA-${fileVersionName}"
+    archivesName = "ForPDA-${libs.versions.app.version.name.get()}"
 }
 
 android {
     namespace = "forpdateam.ru.forpda"
 
-    compileSdk = 37
+    compileSdk = libs.versions.app.compile.sdk.version.get().toInt()
 
     defaultConfig {
         applicationId = "ru.forpdateam.forpda"
-        versionCode = versionNumber
-        versionName = baseVersionName
-        minSdk = 23
-        targetSdk = 37
+        minSdk = libs.versions.app.min.sdk.version.get().toInt()
+        targetSdk = libs.versions.app.target.sdk.version.get().toInt()
+        versionCode = libs.versions.app.version.code.get().toInt()
+        versionName = libs.versions.app.version.name.get()
         vectorDrawables.useSupportLibrary = true
-        buildConfigField("String", "BUILD_DATE", "\"${versionDate}\"")
+        buildConfigField("String", "BUILD_DATE", "\"${getDateTime()}\"")
     }
 
     signingConfigs {
         getByName("debug") {
-            storeFile = rootProject.file(keystoreProperties.getProperty("DEBUG_STORE_FILE"))
-            storePassword = keystoreProperties.getProperty("DEBUG_STORE_PASSWORD")
-            keyAlias = keystoreProperties.getProperty("DEBUG_KEY_ALIAS")
-            keyPassword = keystoreProperties.getProperty("DEBUG_KEY_PASSWORD")
+            val keystoreProperties = getKeystoreProperties(name)
+            storeFile = rootProject.file(keystoreProperties.getProperty("STORE_FILE"))
+            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
+            keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
+            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
         }
         create("release") {
-            storeFile = rootProject.file(keystoreProperties.getProperty("DEBUG_STORE_FILE"))
-            storePassword = keystoreProperties.getProperty("DEBUG_STORE_PASSWORD")
-            keyAlias = keystoreProperties.getProperty("DEBUG_KEY_ALIAS")
-            keyPassword = keystoreProperties.getProperty("DEBUG_KEY_PASSWORD")
+            val keystoreProperties = getKeystoreProperties(name)
+            storeFile = rootProject.file(keystoreProperties.getProperty("STORE_FILE"))
+            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
+            keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
+            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
         }
     }
 
@@ -89,15 +82,6 @@ android {
         create("beta") {
             dimension = "type"
             applicationIdSuffix = ".beta"
-            versionCode = versionNumber
-            versionName = "$baseVersionName beta"
-        }
-
-        create("dev") {
-            dimension = "type"
-            applicationIdSuffix = ".debug"
-            versionCode = versionNumber
-            versionName = "$baseVersionName dev"
         }
     }
 

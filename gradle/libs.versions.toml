@@ -1,4 +1,12 @@
 [versions]
+#project-versions
+app-compile-sdk-version = "37"
+app-target-sdk-version = "37"
+app-min-sdk-version = "23"
+app-version-code = "223"
+app-version-name = "1.0.1"
+
+#dependencies
 adapterdelegates4 = "4.3.2"
 android-plugin = "9.2.1"
 appcompat = "1.7.1"

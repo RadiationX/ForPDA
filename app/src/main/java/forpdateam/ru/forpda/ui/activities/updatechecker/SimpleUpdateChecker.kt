@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.entity.remote.checker.UpdateData
 import forpdateam.ru.forpda.extensions.coRunCatching
+import forpdateam.ru.forpda.extensions.immutableFlag
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -85,7 +86,7 @@ class SimpleUpdateChecker(
 
             val notifyIntent = Intent(context, UpdateCheckerActivity::class.java)
             notifyIntent.action = Intent.ACTION_VIEW
-            val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0)
+            val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, immutableFlag())
             mBuilder.setContentIntent(notifyPendingIntent)
 
             mBuilder.setAutoCancel(true)

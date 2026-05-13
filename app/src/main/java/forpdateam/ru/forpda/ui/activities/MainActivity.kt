@@ -24,6 +24,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.databinding.ActivityMainBinding
+import forpdateam.ru.forpda.extensions.asImmutableFlag
 import forpdateam.ru.forpda.presentation.main.MainPresenter
 import forpdateam.ru.forpda.presentation.main.MainView
 import forpdateam.ru.forpda.ui.DimensionHelper
@@ -348,7 +349,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
             val mPendingIntentId = 123456
             val mPendingIntent = PendingIntent.getActivity(
                 activity, mPendingIntentId, mStartActivity,
-                PendingIntent.FLAG_CANCEL_CURRENT
+                PendingIntent.FLAG_CANCEL_CURRENT.asImmutableFlag()
             )
             val mgr = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)

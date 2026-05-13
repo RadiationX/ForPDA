@@ -1,8 +1,7 @@
 
 # Created by https://www.gitignore.io/api/android,osx,gradle,java,intellij
-keystore.jks
-passses.rtf
-app/stable
+signing/release.jks
+signing/release.properties
 
 ### Android ###
 # Built application files

@@ -134,7 +134,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         StatsHolder(View itemView) {
             super(itemView);
             list = itemView.findViewById(R.id.profile_stats_list);
-            list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
             adapter = new StatsAdapter(item -> clickListener.onStatClick(item));
             list.setAdapter(adapter);
@@ -178,7 +177,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             super(itemView);
             title = itemView.findViewById(R.id.profile_sub_title);
             list = itemView.findViewById(R.id.profile_sub_list);
-            list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
             list.addItemDecoration(new DevicesFragment.SpacingItemDecoration(App.px16, true));
@@ -205,7 +203,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             super(itemView);
             title = itemView.findViewById(R.id.profile_sub_title);
             list = itemView.findViewById(R.id.profile_sub_list);
-            list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
             adapter = new DevicesAdapter(item -> clickListener.onDeviceClick(item));
@@ -228,7 +225,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             super(itemView);
             title = itemView.findViewById(R.id.profile_sub_title);
             list = itemView.findViewById(R.id.profile_sub_list);
-            list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext(), LinearLayoutManager.HORIZONTAL, false));
             adapter = new ContactsAdapter(item -> clickListener.onContactClick(item));
             list.setAdapter(adapter);
@@ -255,7 +251,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             super(itemView);
             title = itemView.findViewById(R.id.profile_sub_title);
             list = itemView.findViewById(R.id.profile_sub_list);
-            list.setHasFixedSize(true);
             list.setLayoutManager(new LinearLayoutManager(list.getContext()));
             list.setNestedScrollingEnabled(false);
             list.addItemDecoration(new DividerItemDecoration(list.getContext()));
