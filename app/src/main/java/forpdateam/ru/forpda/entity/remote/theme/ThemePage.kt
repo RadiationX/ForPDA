@@ -11,8 +11,10 @@ data class ThemePage(
     val title: String,
     val desc: String,
     val forumId: Int,
-    val favId: Int,
+    // todo use only favid
+    @Deprecated("use favid after refactoring")
     val isInFavorite: Boolean,
+    val favId: Int?,
     val canQuote: Boolean,
     val posts: List<ThemePost>,
     val pagination: Pagination,
@@ -29,4 +31,5 @@ data class ThemePage(
 
     val st: Int
         get() = pagination.currentPage()
+
 }

@@ -10,8 +10,8 @@ data class ForumRules(
 ) {
 
     data class Item(
-        val number: String?,
-        val text: String?,
+        val number: String,
+        val text: String,
         val isHeader: Boolean
     )
 }

@@ -11,6 +11,7 @@ import forpdateam.ru.forpda.model.data.storage.IPatternProvider
 import java.util.Locale
 import java.util.regex.Matcher
 
+@Deprecated("", level = DeprecationLevel.ERROR)
 class FavoritesParser(
     private val patternProvider: IPatternProvider
 ) : BaseParser() {

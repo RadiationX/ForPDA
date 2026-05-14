@@ -7,6 +7,6 @@ data class QmsTheme(
     val id: Int,
     val countMessages: Int,
     val countNew: Int,
-    val name: String?,
-    val date: String?,
+    val name: String,
+    val date: String,
 )

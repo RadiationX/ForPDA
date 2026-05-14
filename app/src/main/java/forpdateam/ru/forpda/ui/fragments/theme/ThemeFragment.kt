@@ -536,12 +536,13 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     }
 
     override fun showDeleteInFavDialog(page: ThemePage) {
-        if (page.favId == 0) {
+        if (page.favId == null) {
             Toast.makeText(
                 App.getContext(),
                 R.string.fav_delete_error_id_not_found,
                 Toast.LENGTH_SHORT
             ).show()
+            return
         }
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.fav_ask_delete)

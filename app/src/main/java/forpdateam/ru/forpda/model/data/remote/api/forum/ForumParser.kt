@@ -3,9 +3,6 @@ package forpdateam.ru.forpda.model.data.remote.api.forum
 import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
-import forpdateam.ru.forpda.extensions.findAll
-import forpdateam.ru.forpda.extensions.map
-import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -23,17 +20,15 @@ class ForumParser(
 
     fun parseForums(response: String): List<ForumItemFlat> {
         return patternProvider
-            .getPattern(scope.scope, scope.forums_from_search)
-            .matcher(response)
-            .mapOnce { rootMatcher ->
+            .getParserPattern(scope.scope, scope.forums_from_search)
+            .mapOnce(response) { rootMatcher ->
                 val parentsList = ArrayList<Parent>()
                 var lastParent = Parent(-1, -1)
                 parentsList.add(lastParent)
                 patternProvider
-                    .getPattern(scope.scope, scope.forum_item_from_search)
-                    .matcher(rootMatcher.group(1))
-                    .map { matcher ->
-                        val level = matcher.group(2).length / 2
+                    .getParserPattern(scope.scope, scope.forum_item_from_search)
+                    .map(rootMatcher.require(1)) { matcher ->
+                        val level = matcher.require(2).length / 2
                         if (level <= lastParent.level) {
                             //Удаление элементов, учитывая случай с резким скачком уровня вложенности
                             for (i in 0 until lastParent.level - level + 1)
@@ -41,10 +36,10 @@ class ForumParser(
                             lastParent = parentsList[parentsList.size - 1]
                         }
                         val item = ForumItemFlat(
-                            id = matcher.group(1).toInt(),
+                            id = matcher.require(1).toInt(),
                             parentId = lastParent.id,
                             level = level,
-                            title = matcher.group(3).fromHtml(),
+                            title = matcher.require(3).fromHtml(),
                         )
                         if (level > lastParent.level) {
                             lastParent = Parent(item.id, level)
@@ -58,26 +53,24 @@ class ForumParser(
     fun parseRules(response: String): ForumRules {
         val items = mutableListOf<ForumRules.Item>()
         patternProvider
-            .getPattern(scope.scope, scope.rules_headers)
-            .matcher(response)
-            .findAll { headerMatcher ->
+            .getParserPattern(scope.scope, scope.rules_headers)
+            .findAll(response) { headerMatcher ->
                 items.add(
                     ForumRules.Item(
-                        number = headerMatcher.group(1),
-                        text = headerMatcher.group(2),
+                        number = headerMatcher.require(1),
+                        text = headerMatcher.require(2),
                         isHeader = true,
                     )
                 )
 
-                val itemContent = headerMatcher.group(3)
+                val itemContent = headerMatcher.require(3)
                 patternProvider
-                    .getPattern(scope.scope, scope.rules_items)
-                    .matcher(itemContent)
-                    .findAll { itemMatcher ->
+                    .getParserPattern(scope.scope, scope.rules_items)
+                    .findAll(itemContent) { itemMatcher ->
                         items.add(
                             ForumRules.Item(
-                                number = itemMatcher.group(1),
-                                text = itemMatcher.group(2),
+                                number = itemMatcher.require(1),
+                                text = itemMatcher.require(2),
                                 isHeader = false
                             )
                         )
@@ -91,12 +84,11 @@ class ForumParser(
 
     fun parseAnnounce(response: String): Announce {
         val announce = patternProvider
-            .getPattern(scope.scope, scope.announce)
-            .matcher(response)
-            .mapOnce {
+            .getParserPattern(scope.scope, scope.announce)
+            .mapOnce(response) {
                 Announce(
-                    title = it.group(1),
-                    html = it.group(2)
+                    title = it.require(1),
+                    html = it.require(2)
                 )
             }
         return requireNotNull(announce) {

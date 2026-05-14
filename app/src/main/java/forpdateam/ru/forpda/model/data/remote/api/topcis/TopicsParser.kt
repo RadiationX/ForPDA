@@ -5,9 +5,6 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.topics.TopicFlags
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
-import forpdateam.ru.forpda.extensions.map
-import forpdateam.ru.forpda.extensions.mapOnce
-import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -20,60 +17,56 @@ class TopicsParser(
 
     fun parse(response: String, argId: Int): TopicsData {
         var id = argId
-        var title: String
+        var title: String? = null
         patternProvider
-            .getPattern(scope.scope, scope.title)
-            .matcher(response)
-            .requireOnce {
-                id = it.group(1).toInt()
-                title = it.group(2).fromHtml()!!
+            .getParserPattern(scope.scope, scope.title)
+            .requireOnce(response) {
+                id = it.require(1).toInt()
+                title = it.require(2).fromHtml()
             }
 
         val canCreateTopic = patternProvider
-            .getPattern(scope.scope, scope.can_new_topic)
-            .matcher(response)
-            .mapOnce { true }
+            .getParserPattern(scope.scope, scope.can_new_topic)
+            .mapOnce(response) { true }
             ?: false
 
         val announces = patternProvider
-            .getPattern(scope.scope, scope.announce)
-            .matcher(response)
-            .map { matcher ->
+            .getParserPattern(scope.scope, scope.announce)
+            .map(response) { matcher ->
                 TopicItem.Announce(
-                    title = matcher.group(2).fromHtml()!!,
-                    url = "https://4pda.to" + matcher.group(1).replace("&amp;", "&", false)
+                    title = matcher.require(2).fromHtml(),
+                    url = "https://4pda.to" + matcher.require(1).fromHtml()
                 )
             }
 
         val topicItems = patternProvider
-            .getPattern(scope.scope, scope.topics)
-            .matcher(response)
-            .map { matcher ->
-                val flagsGroup = matcher.group(2)
+            .getParserPattern(scope.scope, scope.topics)
+            .map(response) { matcher ->
+                val flagsGroup = matcher.get(2)
                 val flags = TopicFlags(
-                    isPinned = matcher.group(3) != null,
+                    isPinned = matcher.get(3) != null,
                     isNew = flagsGroup?.contains("+") == true,
                     isPoll = flagsGroup?.contains("^") == true,
                     isClosed = flagsGroup?.contains("Х") == true,
                 )
                 TopicItem.Topic(
-                    id = matcher.group(1).toInt(),
+                    id = matcher.require(1).toInt(),
                     flags = flags,
-                    title = matcher.group(4).fromHtml()!!,
-                    desc = matcher.group(5)?.fromHtml(),
+                    title = matcher.require(4).fromHtml(),
+                    desc = matcher.get(5)?.fromHtml(),
                     author = User.required(
-                        id = matcher.group(6).toInt(),
-                        nick = matcher.group(7).fromHtml()!!
+                        id = matcher.require(6).toInt(),
+                        nick = matcher.require(7).fromHtml()
                     ),
                     lastUser = User.required(
-                        id = matcher.group(8).toInt(),
-                        nick = matcher.group(9).fromHtml()!!
+                        id = matcher.require(8).toInt(),
+                        nick = matcher.require(9).fromHtml()
                     ),
-                    date = matcher.group(10),
-                    curator = matcher.group(11)?.let {
+                    date = matcher.require(10),
+                    curator = matcher.get(11)?.let {
                         User.required(
                             id = it.toInt(),
-                            nick = matcher.group(12).fromHtml()
+                            nick = matcher.require(12).fromHtml()
                         )
                     }
                 )
@@ -81,19 +74,18 @@ class TopicsParser(
 
 
         val forums = patternProvider
-            .getPattern(scope.scope, scope.forum)
-            .matcher(response)
-            .map { matcher ->
+            .getParserPattern(scope.scope, scope.forum)
+            .map(response) { matcher ->
                 TopicItem.Forum(
-                    id = matcher.group(1).toInt(),
-                    title = matcher.group(2).fromHtml()!!
+                    id = matcher.require(1).toInt(),
+                    title = matcher.require(2).fromHtml()
                 )
             }
 
         val pagination = Pagination.parseForum(response)
         return TopicsData(
             id = id,
-            title = title,
+            title = requireNotNull(title) { "title" },
             canCreateTopic = canCreateTopic,
             topicItems = topicItems,
             announceItems = announces,

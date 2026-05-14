@@ -11,7 +11,7 @@ data class ForumPost(
     val groupColor: String,
     val group: String,
     val reputation: String,
-    val body: String?,
+    val body: String,
     val isCurator: Boolean,
     val isOnline: Boolean,
     val canMinusRep: Boolean,

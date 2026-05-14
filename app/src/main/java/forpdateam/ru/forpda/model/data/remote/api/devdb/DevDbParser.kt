@@ -5,10 +5,6 @@ import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.entity.remote.others.user.User
-import forpdateam.ru.forpda.extensions.findAll
-import forpdateam.ru.forpda.extensions.findOnce
-import forpdateam.ru.forpda.extensions.map
-import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -19,46 +15,43 @@ class DevDbParser(
 
     private val scope = ParserPatterns.DevDb
 
+    // todo refactor
     fun parseBrands(response: String): Brands {
         val letterMap = linkedMapOf<String, List<Brands.Item>>()
         patternProvider
-            .getPattern(scope.scope, scope.brands_letters)
-            .matcher(response)
-            .findAll { matcher ->
-                val letter = matcher.group(1)
+            .getParserPattern(scope.scope, scope.brands_letters)
+            .findAll(response) { matcher ->
+                val letter = matcher.require(1)
                 val items = patternProvider
-                    .getPattern(scope.scope, scope.brands_items_in_letter)
-                    .matcher(matcher.group(2))
-                    .map { itemsMatcher ->
+                    .getParserPattern(scope.scope, scope.brands_items_in_letter)
+                    .map(matcher.require(2)) { itemsMatcher ->
                         Brands.Item(
-                            id = itemsMatcher.group(1),
-                            title = itemsMatcher.group(2).fromHtml().orEmpty(),
-                            count = itemsMatcher.group(3).toInt()
+                            id = itemsMatcher.require(1),
+                            title = itemsMatcher.require(2).fromHtml(),
+                            count = itemsMatcher.require(3).toInt()
                         )
                     }
                 letterMap[letter] = items
             }
 
         val brands = patternProvider
-            .getPattern(scope.scope, scope.main_root)
-            .matcher(response)
-            .mapOnce { matcher ->
+            .getParserPattern(scope.scope, scope.main_root)
+            .mapOnce(response) { matcher ->
                 var catId: String? = null
                 var catTitle: String? = null
                 patternProvider
-                    .getPattern(scope.scope, scope.main_breadcrumb)
-                    .matcher(matcher.group(1))
-                    .findAll { bcMatcher ->
-                        if (bcMatcher.group(2) == null) {
-                            catId = bcMatcher.group(1)
-                            catTitle = bcMatcher.group(3)
+                    .getParserPattern(scope.scope, scope.main_breadcrumb)
+                    .findAll(matcher.require(1)) { bcMatcher ->
+                        if (bcMatcher.get(2) == null) {
+                            catId = bcMatcher.require(1)
+                            catTitle = bcMatcher.require(3)
                         }
                     }
                 Brands(
                     catId = requireNotNull(catId) { "brands.catId" },
                     catTitle = requireNotNull(catTitle) { "brands.catTitle" },
-                    actual = matcher.group(5).toInt(),
-                    all = matcher.group(6).toInt(),
+                    actual = matcher.require(5).toInt(),
+                    all = matcher.require(6).toInt(),
                     letterMap = letterMap
                 )
             }
@@ -69,51 +62,49 @@ class DevDbParser(
 
     fun parseBrand(response: String): Brand {
         val devices = patternProvider
-            .getPattern(scope.scope, scope.brand_devices)
-            .matcher(response)
-            .map { matcher ->
+            .getParserPattern(scope.scope, scope.brand_devices)
+            .map(response) { matcher ->
                 val specs = patternProvider
-                    .getPattern(scope.scope, scope.main_specs)
-                    .matcher(matcher.group(4))
-                    .map { Pair(it.group(1), it.group(2)) }
+                    .getParserPattern(scope.scope, scope.main_specs)
+                    .map(matcher.require(4)) {
+                        Pair(it.require(1), it.require(2))
+                    }
                 Brand.DeviceItem(
-                    imageSrc = matcher.group(1),
-                    id = matcher.group(2),
-                    title = matcher.group(3).fromHtml().orEmpty(),
-                    price = matcher.group(5),
-                    rating = matcher.group(7)?.toInt() ?: 0,
+                    imageSrc = matcher.get(1),
+                    id = matcher.require(2),
+                    title = matcher.require(3).fromHtml(),
+                    price = matcher.get(5),
+                    rating = matcher.get(7)?.toInt() ?: 0,
                     specs = specs
                 )
             }
 
         val brand = patternProvider
-            .getPattern(scope.scope, scope.main_root)
-            .matcher(response)
-            .mapOnce { matcher ->
+            .getParserPattern(scope.scope, scope.main_root)
+            .mapOnce(response) { matcher ->
                 var catId: String? = null
                 var catTitle: String? = null
                 var id: String? = null
                 var title: String? = null
                 patternProvider
-                    .getPattern(scope.scope, scope.main_breadcrumb)
-                    .matcher(matcher.group(1))
-                    .findAll { bcMatcher ->
-                        if (bcMatcher.group(2) == null) {
-                            catId = bcMatcher.group(1)
-                            catTitle = bcMatcher.group(3)
+                    .getParserPattern(scope.scope, scope.main_breadcrumb)
+                    .findAll(matcher.require(1)) { bcMatcher ->
+                        if (bcMatcher.get(2) == null) {
+                            catId = bcMatcher.require(1)
+                            catTitle = bcMatcher.require(3)
                         } else {
-                            id = bcMatcher.group(2)
-                            title = bcMatcher.group(3)
+                            id = bcMatcher.require(2)
+                            title = bcMatcher.require(3)
                         }
                     }
-                title = matcher.group(4)
+                title = matcher.require(4)
                 Brand(
                     id = requireNotNull(id) { "brand.id" },
                     title = requireNotNull(title) { "brand.title" },
                     catId = requireNotNull(catId) { "brand.catId" },
                     catTitle = requireNotNull(catTitle) { "brand.catTitle" },
-                    actual = matcher.group(5).toInt(),
-                    all = matcher.group(6).toInt(),
+                    actual = matcher.get(5)?.toInt() ?: 0,
+                    all = matcher.get(6)?.toInt() ?: 0,
                     devices = devices
                 )
             }
@@ -123,8 +114,9 @@ class DevDbParser(
         }
     }
 
+    // todo refactor
     fun parseDevice(response: String, argDevId: String): Device {
-        var id: String? = null
+        val id: String = argDevId
         var title: String? = null
         var brandId: String? = null
         var brandTitle: String? = null
@@ -134,119 +126,105 @@ class DevDbParser(
         val images = mutableListOf<Pair<String, String>>()
         val specsGroups = mutableListOf<Pair<String, List<Pair<String, String>>>>()
         patternProvider
-            .getPattern(scope.scope, scope.device_head)
-            .matcher(response)
-            .findOnce { matcher ->
-                title = matcher.group(1)
+            .getParserPattern(scope.scope, scope.device_head)
+            .findOnce(response) { matcher ->
+                title = matcher.require(1)
 
                 patternProvider
-                    .getPattern(scope.scope, scope.device_images)
-                    .matcher(matcher.group(2))
-                    .findAll {
-                        images.add(Pair(it.group(2), it.group(1)))
+                    .getParserPattern(scope.scope, scope.device_images)
+                    .findAll(matcher.require(2)) {
+                        images.add(Pair(it.require(2), it.require(1)))
                     }
 
                 patternProvider
-                    .getPattern(scope.scope, scope.device_specs_titled)
-                    .matcher(matcher.group(3))
-                    .findAll {
-                        val specTitle = it.group(1).fromHtml()
+                    .getParserPattern(scope.scope, scope.device_specs_titled)
+                    .findAll(matcher.require(3)) {
+                        val specTitle = it.require(1).fromHtml()
                         val specs = patternProvider
-                            .getPattern(scope.scope, scope.main_specs)
-                            .matcher(it.group(2))
-                            .map {
-                                Pair(it.group(1), it.group(2))
+                            .getParserPattern(scope.scope, scope.main_specs)
+                            .map(it.require(2)) {
+                                Pair(it.require(1), it.require(2))
                             }
-                        specsGroups.add(Pair(specTitle.orEmpty(), specs))
+                        specsGroups.add(Pair(specTitle, specs))
                     }
             }
 
         patternProvider
-            .getPattern(scope.scope, scope.main_root)
-            .matcher(response)
-            .findOnce { matcher ->
+            .getParserPattern(scope.scope, scope.main_root)
+            .findOnce(response) { matcher ->
                 patternProvider
-                    .getPattern(scope.scope, scope.main_breadcrumb)
-                    .matcher(matcher.group(1))
-                    .findAll {
-                        if (it.group(2) == null) {
-                            catId = it.group(1)
-                            catTitle = it.group(3)
+                    .getParserPattern(scope.scope, scope.main_breadcrumb)
+                    .findAll(matcher.require(1)) {
+                        if (it.get(2) == null) {
+                            catId = it.require(1)
+                            catTitle = it.require(3)
                         } else {
-                            brandId = it.group(2)
-                            brandTitle = it.group(3)
+                            brandId = it.require(2)
+                            brandTitle = it.require(3)
                         }
                     }
 
-                rating = matcher.group(2)?.toInt() ?: 0
-
-                title = matcher.group(4)
-                id = argDevId
+                rating = matcher.get(2)?.toInt() ?: 0
+                title = matcher.require(4)
             }
 
         val comments = patternProvider
-            .getPattern(scope.scope, scope.device_comments)
-            .matcher(response)
-            .map { matcher ->
+            .getParserPattern(scope.scope, scope.device_comments)
+            .map(response) { matcher ->
                 Device.Comment(
-                    id = matcher.group(1).toInt(),
-                    rating = matcher.group(3).toInt(),
+                    id = matcher.require(1).toInt(),
+                    rating = matcher.require(3).toInt(),
                     user = User.required(
-                        id = matcher.group(4).toInt(),
-                        nick = matcher.group(5).fromHtml()
+                        id = matcher.require(4).toInt(),
+                        nick = matcher.require(5).fromHtml()
                     ),
-                    date = matcher.group(6),
-                    text = (matcher.group(9) ?: matcher.group(7))?.trim().orEmpty(),
-                    likes = matcher.group(10).toInt(),
-                    dislikes = matcher.group(11).toInt()
+                    date = matcher.require(6),
+                    text = (matcher.get(9) ?: matcher.get(7))?.trim().orEmpty(),
+                    likes = matcher.require(10).toInt(),
+                    dislikes = matcher.require(11).toInt()
                 )
             }
 
         val news = patternProvider
-            .getPattern(scope.scope, scope.device_reviews)
-            .matcher(response)
-            .map { matcher ->
+            .getParserPattern(scope.scope, scope.device_reviews)
+            .map(response) { matcher ->
                 Device.PostItem(
-                    id = matcher.group(1).toInt(),
-                    image = matcher.group(2),
-                    title = matcher.group(3).fromHtml().orEmpty(),
-                    date = matcher.group(4),
-                    desc = matcher.group(5).fromHtml()
+                    id = matcher.require(1).toInt(),
+                    image = matcher.require(2),
+                    title = matcher.require(3).fromHtml(),
+                    date = matcher.require(4),
+                    desc = matcher.get(5)?.fromHtml()
                 )
             }
 
         val discussions = patternProvider
-            .getPattern(scope.scope, scope.device_discussions)
-            .matcher(response)
-            .mapOnce {
+            .getParserPattern(scope.scope, scope.device_discussions)
+            .mapOnce(response) {
                 patternProvider
-                    .getPattern(scope.scope, scope.device_discuss_and_firm)
-                    .matcher(it.group(1))
-                    .map { matcher ->
+                    .getParserPattern(scope.scope, scope.device_discuss_and_firm)
+                    .map(it.require(1)) { matcher ->
                         Device.PostItem(
-                            id = matcher.group(1).toInt(),
+                            id = matcher.require(1).toInt(),
                             image = null,
-                            title = matcher.group(2).fromHtml().orEmpty(),
-                            date = matcher.group(3),
-                            desc = matcher.group(4).fromHtml()
+                            title = matcher.require(2).fromHtml(),
+                            date = matcher.require(3),
+                            desc = matcher.get(4)?.fromHtml()
                         )
                     }
             } ?: emptyList()
 
         val firmwares = patternProvider
-            .getPattern(scope.scope, scope.device_firmwares)
-            .matcher(response)
-            .mapOnce {
+            .getParserPattern(scope.scope, scope.device_firmwares)
+            .mapOnce(response) {
                 patternProvider
-                    .getPattern(scope.scope, scope.device_discuss_and_firm)
-                    .matcher(it.group(1))
-                    .map { matcher ->
+                    .getParserPattern(scope.scope, scope.device_discuss_and_firm)
+                    .map(it.require(1)) { matcher ->
                         Device.PostItem(
-                            id = matcher.group(1).toInt(),
+                            id = matcher.require(1).toInt(),
                             image = null,
-                            title = matcher.group(2).fromHtml().orEmpty(),
-                            date = matcher.group(3),
-                            desc = matcher.group(4).fromHtml()
+                            title = matcher.require(2).fromHtml(),
+                            date = matcher.require(3),
+                            desc = matcher.get(4)?.fromHtml()
                         )
                     }
             } ?: emptyList()
@@ -269,13 +247,12 @@ class DevDbParser(
 
     fun parseSearch(response: String): BrandSearch {
         val devices = patternProvider
-            .getPattern(scope.scope, scope.main_search)
-            .matcher(response)
-            .map { matcher ->
+            .getParserPattern(scope.scope, scope.main_search)
+            .map(response) { matcher ->
                 Brand.DeviceItem(
-                    id = matcher.group(2),
-                    imageSrc = matcher.group(1),
-                    title = matcher.group(3).fromHtml().orEmpty(),
+                    id = matcher.require(2),
+                    imageSrc = matcher.require(1),
+                    title = matcher.require(3).fromHtml(),
                     price = null,
                     rating = 0,
                     specs = emptyList()

@@ -207,9 +207,9 @@ object Parser {
         return resultHtml.toString()
     }
 
-    fun getHtml(node: Node, onlyInner: Boolean): String? {
+    fun getHtml(node: Node, onlyInner: Boolean): String {
         if (isNotElement(node)) {
-            return node.text
+            return node.text.orEmpty()
         }
         val resultHtml = StringBuilder()
 

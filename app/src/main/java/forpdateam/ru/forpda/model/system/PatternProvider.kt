@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.parser.ParserContext
+import forpdateam.ru.forpda.model.data.storage.parser.ParserPattern
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Collections
@@ -47,6 +49,10 @@ class PatternProvider(
             }
         }
         ?: throw Exception("Not found pattern by: s=$scope, k=$key")
+
+    override fun getParserPattern(scope: String, key: String): ParserPattern {
+        return ParserPattern(ParserContext(scope, key), getPattern(scope, key))
+    }
 
     @Synchronized
     override fun update(jsonString: String) {

@@ -1,14 +1,11 @@
 package forpdateam.ru.forpda.model.data.remote.api.editpost
 
 import forpdateam.ru.forpda.entity.remote.editpost.EditPost
-import forpdateam.ru.forpda.extensions.map
-import forpdateam.ru.forpda.extensions.mapOnce
-import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
-import java.util.regex.Pattern
+import forpdateam.ru.forpda.model.data.storage.parser.ParserPattern
 
 class EditPostParser(
     private val patternProvider: IPatternProvider
@@ -18,26 +15,24 @@ class EditPostParser(
 
     fun parseForm(response: String): EditPost.Form {
         return patternProvider
-            .getPattern(scope.scope, scope.form)
-            .matcher(response)
-            .requireOnce {
+            .getParserPattern(scope.scope, scope.form)
+            .requireOnce(response) {
                 EditPost.Form(
-                    message = ApiUtils.escapeNewLine(it.group(1)).fromHtml().orEmpty(),
-                    editReason = it.group(2)
+                    message = ApiUtils.escapeNewLine(it.require(1)).fromHtml(),
+                    editReason = it.get(2)
                 )
             }
     }
 
     fun parsePoll(response: String): EditPost.Poll? = patternProvider
-        .getPattern(scope.scope, scope.poll_info)
-        .matcher(response)
-        .mapOnce { matcher ->
+        .getParserPattern(scope.scope, scope.poll_info)
+        .mapOnce(response) { matcher ->
             val jsonPattern =
-                patternProvider.getPattern(scope.scope, scope.poll_fucking_invalid_json)
-            val tmpQuestions = parseTmpQuestions(jsonPattern, matcher.group(2))
-            val tmpChoices = parseTmpChoices(jsonPattern, matcher.group(3))
-            val tmpChoicesVotes = parseTmpChoicesVotes(jsonPattern, matcher.group(4))
-            val tmpQuestionsMulti = parseTmpQuestionsMulti(jsonPattern, matcher.group(5))
+                patternProvider.getParserPattern(scope.scope, scope.poll_fucking_invalid_json)
+            val tmpQuestions = parseTmpQuestions(jsonPattern, matcher.require(2))
+            val tmpChoices = parseTmpChoices(jsonPattern, matcher.require(3))
+            val tmpChoicesVotes = parseTmpChoicesVotes(jsonPattern, matcher.require(4))
+            val tmpQuestionsMulti = parseTmpQuestionsMulti(jsonPattern, matcher.require(5))
 
             val questions = tmpQuestions.map { question ->
                 val choice = tmpChoices.map { choice ->
@@ -58,57 +53,57 @@ class EditPostParser(
             }
 
             EditPost.Poll(
-                title = requireNotNull(matcher.group(8).fromHtml()),
-                maxQuestions = matcher.group(6).toInt(),
-                maxChoices = matcher.group(7).toInt(),
+                title = matcher.require(8).fromHtml(),
+                maxQuestions = matcher.require(6).toInt(),
+                maxChoices = matcher.require(7).toInt(),
                 questions = questions
             )
         }
 
     private fun parseTmpQuestions(
-        jsonPattern: Pattern,
+        jsonPattern: ParserPattern,
         input: String
     ): List<TmpQuestion> =
-        jsonPattern.matcher(input).map { jsonMatcher ->
+        jsonPattern.map(input) {
             TmpQuestion(
-                id = EditPost.Poll.QuestionId(jsonMatcher.group(1).toInt()),
-                title = requireNotNull(jsonMatcher.group(3).fromHtml())
+                id = EditPost.Poll.QuestionId(it.require(1).toInt()),
+                title = it.require(3).fromHtml()
             )
         }
 
     private fun parseTmpQuestionsMulti(
-        jsonPattern: Pattern,
+        jsonPattern: ParserPattern,
         input: String
-    ): List<TmpQuestionMulti> = jsonPattern.matcher(input).map { jsonMatcher ->
+    ): List<TmpQuestionMulti> = jsonPattern.map(input) {
         TmpQuestionMulti(
-            id = EditPost.Poll.QuestionId(jsonMatcher.group(1).toInt()),
-            isMulti = jsonMatcher.group(3) == "1"
+            id = EditPost.Poll.QuestionId(it.require(1).toInt()),
+            isMulti = it.require(3) == "1"
         )
     }
 
     private fun parseTmpChoices(
-        jsonPattern: Pattern,
+        jsonPattern: ParserPattern,
         input: String
-    ): List<TmpChoice> = jsonPattern.matcher(input).map { jsonMatcher ->
+    ): List<TmpChoice> = jsonPattern.map(input) {
         TmpChoice(
             id = EditPost.Poll.ChoiceId(
-                questionId = EditPost.Poll.QuestionId(jsonMatcher.group(1).toInt()),
-                index = jsonMatcher.group(2).toInt()
+                questionId = EditPost.Poll.QuestionId(it.require(1).toInt()),
+                index = it.require(2).toInt()
             ),
-            title = requireNotNull(jsonMatcher.group(3).fromHtml())
+            title = it.require(3).fromHtml()
         )
     }
 
     private fun parseTmpChoicesVotes(
-        jsonPattern: Pattern,
+        jsonPattern: ParserPattern,
         input: String
-    ): List<TmpChoiceVotes> = jsonPattern.matcher(input).map { jsonMatcher ->
+    ): List<TmpChoiceVotes> = jsonPattern.map(input) { jsonMatcher ->
         TmpChoiceVotes(
             id = EditPost.Poll.ChoiceId(
-                questionId = EditPost.Poll.QuestionId(jsonMatcher.group(1).toInt()),
-                index = jsonMatcher.group(2).toInt()
+                questionId = EditPost.Poll.QuestionId(jsonMatcher.require(1).toInt()),
+                index = jsonMatcher.require(2).toInt()
             ),
-            votes = jsonMatcher.group(3).toInt()
+            votes = jsonMatcher.require(3).toInt()
         )
     }
 

@@ -10,7 +10,7 @@ data class RepData(
     val id: Int,
     val positive: Int,
     val negative: Int,
-    val nick: String?,
+    val nick: String,
     val pagination: Pagination,
     val items: List<RepItem>
 )

@@ -8,11 +8,6 @@ import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
-import forpdateam.ru.forpda.extensions.findAll
-import forpdateam.ru.forpda.extensions.findOnce
-import forpdateam.ru.forpda.extensions.map
-import forpdateam.ru.forpda.extensions.mapOnce
-import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
@@ -33,40 +28,29 @@ class ThemeParser(
         var id = 0
         var title = ""
         var desc = ""
-        var isInFavorite = false
-        var favId = 0
+        var favId: Int? = null
         val anchors = patternProvider
-            .getPattern(scope.scope, scope.scroll_anchor)
-            .matcher(argUrl)
-            .map { it.group(1)!! }
+            .getParserPattern(scope.scope, scope.scroll_anchor)
+            .map(argUrl) { it.require(1) }
 
         patternProvider
-            .getPattern(scope.scope, scope.topic_id)
-            .matcher(response)
-            .requireOnce {
-                forumId = it.group(1).toInt()
-                id = it.group(2).toInt()
+            .getParserPattern(scope.scope, scope.topic_id)
+            .requireOnce(response) {
+                forumId = it.require(1).toInt()
+                id = it.require(2).toInt()
             }
 
         patternProvider
-            .getPattern(scope.scope, scope.title)
-            .matcher(response)
-            .requireOnce {
-                title = it.group(1).fromHtml()!!
-                desc = it.group(2).fromHtml()!!
+            .getParserPattern(scope.scope, scope.title)
+            .requireOnce(response) {
+                title = it.require(1).fromHtml()
+                desc = it.require(2).fromHtml()
             }
 
         patternProvider
-            .getPattern(scope.scope, scope.already_in_fav)
-            .matcher(response)
-            .findOnce {
-                isInFavorite = true
-                patternProvider
-                    .getPattern(scope.scope, scope.fav_id)
-                    .matcher(response)
-                    .findOnce {
-                        favId = it.group(1).toInt()
-                    }
+            .getParserPattern(scope.scope, scope.fav_id)
+            .findOnce(response) {
+                favId = it.require(1).toInt()
             }
 
         val posts = parsePosts(response, id, forumId)
@@ -81,8 +65,8 @@ class ThemeParser(
             title = title,
             desc = desc,
             forumId = forumId,
+            isInFavorite = favId != null,
             favId = favId,
-            isInFavorite = isInFavorite,
             canQuote = canQuote,
             posts = posts,
             pagination = pagination,
@@ -101,37 +85,37 @@ class ThemeParser(
         id: Int,
         forumId: Int
     ) = patternProvider
-        .getPattern(scope.scope, scope.posts)
-        .matcher(response)
-        .map { matcher ->
-            val number = matcher.group(6).toInt()
-            val body = matcher.group(21)
+        .getParserPattern(scope.scope, scope.posts)
+        .map(response) { matcher ->
+            val number = matcher.require(6).toInt()
+            val body = matcher.require(21)
             val attachImages = patternProvider
-                .getPattern(scope.scope, scope.attached_images)
-                .matcher(body)
-                .map { Pair("https://${it.group(1)}", it.group(2)) }
+                .getParserPattern(scope.scope, scope.attached_images)
+                .map(body) {
+                    Pair("https://${it.require(1)}", it.require(2))
+                }
             val forumPost = ForumPost(
                 topicId = id,
-                id = matcher.group(1).toInt(),
-                date = matcher.group(5),
-                isOnline = matcher.group(7).contains("green"),
+                id = matcher.require(1).toInt(),
+                date = matcher.require(5),
+                isOnline = matcher.require(7).contains("green"),
                 user = ForumUser.required(
-                    id = matcher.group(10).toInt(),
-                    nick = matcher.group(9).fromHtml(),
-                    avatar = matcher.group(8)!!.let {
+                    id = matcher.require(10).toInt(),
+                    nick = matcher.require(9).fromHtml(),
+                    avatar = matcher.require(8).let {
                         if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null
                     },
                 ),
-                isCurator = matcher.group(11) != null,
-                groupColor = matcher.group(12) ?: "black",
-                group = matcher.group(13),
-                canMinusRep = matcher.group(14).isNotEmpty(),
-                reputation = matcher.group(15),
-                canPlusRep = matcher.group(16).isNotEmpty(),
-                canReport = matcher.group(17).isNotEmpty(),
-                canEdit = matcher.group(18).isNotEmpty(),
-                canDelete = matcher.group(19).isNotEmpty(),
-                canQuote = matcher.group(20).isNotEmpty(),
+                isCurator = matcher.get(11) != null,
+                groupColor = matcher.require(12),
+                group = matcher.require(13),
+                canMinusRep = matcher.require(14).isNotEmpty(),
+                reputation = matcher.require(15),
+                canPlusRep = matcher.require(16).isNotEmpty(),
+                canReport = matcher.require(17).isNotEmpty(),
+                canEdit = matcher.require(18).isNotEmpty(),
+                canDelete = matcher.require(19).isNotEmpty(),
+                canQuote = matcher.require(20).isNotEmpty(),
                 body = body
             )
             ThemePost(
@@ -143,36 +127,33 @@ class ThemeParser(
         }
 
     private fun parsePoll(response: String) = patternProvider
-        .getPattern(scope.scope, scope.poll_main)
-        .matcher(response)
-        .mapOnce { matcher ->
-            val isResult = matcher.group().contains("<img")
+        .getParserPattern(scope.scope, scope.poll_main)
+        .mapOnce(response) { pollMatcher ->
+            val isResult = pollMatcher.require(0).contains("<img")
 
             val questions = patternProvider
-                .getPattern(scope.scope, scope.poll_questions)
-                .matcher(matcher.group(2))
-                .map {
+                .getParserPattern(scope.scope, scope.poll_questions)
+                .map(pollMatcher.require(2)) { questionMatcher ->
                     val items = patternProvider
-                        .getPattern(scope.scope, scope.poll_question_item)
-                        .matcher(it.group(2))
-                        .map {
+                        .getParserPattern(scope.scope, scope.poll_question_item)
+                        .map(questionMatcher.require(2)) {
                             if (isResult) {
                                 PollQuestionItem.Result(
-                                    title = it.group(5).fromHtml()!!,
-                                    votes = it.group(6).toInt(),
-                                    percent = it.group(7).replace(",", ".").toFloat()
+                                    title = it.require(5).fromHtml(),
+                                    votes = it.require(6).toInt(),
+                                    percent = it.require(7).replace(",", ".").toFloat()
                                 )
                             } else {
                                 PollQuestionItem.Regular(
-                                    type = it.group(1),
-                                    name = it.group(2).fromHtml()!!,
-                                    value = it.group(3).toInt(),
-                                    title = it.group(4).fromHtml()!!,
+                                    type = it.require(1),
+                                    name = it.require(2).fromHtml(),
+                                    value = it.require(3).toInt(),
+                                    title = it.require(4).fromHtml(),
                                 )
                             }
                         }
                     PollQuestion(
-                        title = it.group(1).fromHtml()!!,
+                        title = questionMatcher.require(1).fromHtml(),
                         questionItems = items
                     )
                 }
@@ -181,10 +162,9 @@ class ThemeParser(
             var showResultsButton = false
             var showPollButton = false
             patternProvider
-                .getPattern(scope.scope, scope.poll_buttons)
-                .matcher(matcher.group(4))
-                .findAll {
-                    val value = it.group(1)
+                .getParserPattern(scope.scope, scope.poll_buttons)
+                .findAll(pollMatcher.require(4)) {
+                    val value = it.require(1)
                     when {
                         value.contains("Голосовать") -> voteButton = true
                         value.contains("результаты") -> showResultsButton = true
@@ -193,9 +173,9 @@ class ThemeParser(
                 }
 
             Poll(
-                title = matcher.group(1).fromHtml(),
+                title = pollMatcher.require(1).fromHtml(),
                 isResult = isResult,
-                votesCount = matcher.group(3).toInt(),
+                votesCount = pollMatcher.require(3).toInt(),
                 voteButton = voteButton,
                 showResultsButton = showResultsButton,
                 showPollButton = showPollButton,

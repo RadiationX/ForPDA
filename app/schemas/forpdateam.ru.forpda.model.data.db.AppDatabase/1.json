@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3dc9d8210a28b4c00d9c64814f7147a6",
+    "identityHash": "7a8c7e436fbbc5aa4052a1dc69cc0b43",
     "entities": [
       {
         "tableName": "favorites",
@@ -315,7 +315,7 @@
       },
       {
         "tableName": "qms_threads",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userId` INTEGER NOT NULL, `countMessages` INTEGER NOT NULL, `countNew` INTEGER NOT NULL, `name` TEXT, `date` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userId` INTEGER NOT NULL, `countMessages` INTEGER NOT NULL, `countNew` INTEGER NOT NULL, `name` TEXT NOT NULL, `date` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -344,12 +344,14 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "date",
             "columnName": "date",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -362,7 +364,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3dc9d8210a28b4c00d9c64814f7147a6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7a8c7e436fbbc5aa4052a1dc69cc0b43')"
     ]
   }
 }

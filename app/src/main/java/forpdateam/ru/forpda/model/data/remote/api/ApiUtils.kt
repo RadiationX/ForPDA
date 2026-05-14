@@ -10,20 +10,17 @@ import org.json.JSONObject
  */
 object ApiUtils {
     @JvmStatic
-    fun coloredFromHtml(s: String?): Spanned? {
-        if (s == null) return null
+    fun coloredFromHtml(s: String): Spanned {
         return Html.fromHtml(s, Html.FROM_HTML_OPTION_USE_CSS_COLORS)
     }
 
     @JvmStatic
-    fun spannedFromHtml(s: String?): Spanned? {
-        if (s == null) return null
+    fun spannedFromHtml(s: String): Spanned {
         return Html.fromHtml(s)
     }
 
     @JvmStatic
-    fun fromHtml(s: String?): String? {
-        if (s == null) return null
+    fun fromHtml(s: String): String {
         return spannedFromHtml(s).toString()
     }
 
