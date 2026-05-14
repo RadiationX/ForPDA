@@ -48,5 +48,10 @@ abstract class BaseAdapter<E, VH : BaseViewHolder<*>> : RecyclerView.Adapter<VH>
         fun onItemClick(item: T)
 
         fun onItemLongClick(item: T): Boolean
+
+        fun attachTo(view: View, item: T) {
+            view.setOnClickListener { onItemClick(item) }
+            view.setOnLongClickListener { onItemLongClick(item) }
+        }
     }
 }

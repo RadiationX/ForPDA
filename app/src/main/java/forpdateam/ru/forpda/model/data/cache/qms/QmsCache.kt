@@ -2,8 +2,8 @@ package forpdateam.ru.forpda.model.data.cache.qms
 
 import androidx.room.RoomDatabase
 import androidx.room.withTransaction
-import forpdateam.ru.forpda.entity.db.qms.QmsContactBd
-import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd
+import forpdateam.ru.forpda.entity.db.qms.QmsContactDb
+import forpdateam.ru.forpda.entity.db.qms.QmsThemeDb
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.model.data.db.QmsContactsDao
 import forpdateam.ru.forpda.model.data.db.QmsThemesDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 class QmsCache(
     private val qmsContactsDao: QmsContactsDao,
@@ -23,6 +24,10 @@ class QmsCache(
 
     fun observeContacts(): Flow<List<QmsContact>> {
         return qmsContactsDao.observeAll().mapInnerList { it.toDomain() }
+    }
+
+    fun observeContact(userId: Int): Flow<QmsContact?> {
+        return qmsContactsDao.observeByUserId(userId).map { it?.toDomain() }
     }
 
     suspend fun getContacts(): List<QmsContact> {
@@ -71,23 +76,13 @@ class QmsCache(
 
     suspend fun saveThemes(data: QmsThemes) {
         database.withTransaction {
-            val contact = qmsContactsDao.getByUserId(data.user.id)
-            if (contact == null) {
-                val newContact = QmsContactBd(
-                    id = data.user.id,
-                    nick = data.user.nick,
-                    avatar = null,
-                    count = data.themes.sumOf { it.countNew }
-                )
-                qmsContactsDao.upsert(newContact)
-            }
             qmsThemesDao.deleteByUserId(data.user.id)
             qmsThemesDao.upsertAll(data.themes.map { it.toDb(data.user.id) })
         }
     }
 }
 
-fun QmsContactBd.toDomain(): QmsContact {
+fun QmsContactDb.toDomain(): QmsContact {
     return QmsContact(
         user = ForumUser.required(
             id = id,
@@ -98,7 +93,7 @@ fun QmsContactBd.toDomain(): QmsContact {
     )
 }
 
-fun QmsThemeBd.toDomain(): QmsTheme {
+fun QmsThemeDb.toDomain(): QmsTheme {
     return QmsTheme(
         id = id,
         countMessages = countMessages,
@@ -108,15 +103,15 @@ fun QmsThemeBd.toDomain(): QmsTheme {
     )
 }
 
-fun List<QmsThemeBd>.toDomain(contact: QmsContactBd): QmsThemes {
+fun List<QmsThemeDb>.toDomain(contact: QmsContactDb): QmsThemes {
     return QmsThemes(
         user = User.required(contact.id, contact.nick),
         themes = map { it.toDomain() }
     )
 }
 
-fun QmsContact.toDb(): QmsContactBd {
-    return QmsContactBd(
+fun QmsContact.toDb(): QmsContactDb {
+    return QmsContactDb(
         nick = user.nick,
         avatar = user.avatar,
         id = user.id,
@@ -124,8 +119,8 @@ fun QmsContact.toDb(): QmsContactBd {
     )
 }
 
-fun QmsTheme.toDb(userId: Int): QmsThemeBd {
-    return QmsThemeBd(
+fun QmsTheme.toDb(userId: Int): QmsThemeDb {
+    return QmsThemeDb(
         id = id,
         userId = userId,
         countMessages = countMessages,

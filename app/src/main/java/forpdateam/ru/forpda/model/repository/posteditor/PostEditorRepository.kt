@@ -45,7 +45,7 @@ class PostEditorRepository(
         val forumUsers = page.posts.map { post ->
             post.post.user
         }
-        forumUsersCache.saveUsers(forumUsers)
+        forumUsersCache.savePostUsers(forumUsers)
     }
 
 }

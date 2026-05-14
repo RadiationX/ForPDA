@@ -18,6 +18,10 @@ class QmsInteractor(
         return qmsRepository.observeContacts()
     }
 
+    fun observeContact(userId: Int): Flow<QmsContact?> {
+        return qmsRepository.observeContact(userId)
+    }
+
     fun observeThemes(userId: Int): Flow<QmsThemes?> {
         return qmsRepository.observeThemes(userId)
     }

@@ -1,31 +1,27 @@
 package forpdateam.ru.forpda.model.data.remote.api.favorites
 
-import forpdateam.ru.forpda.entity.remote.favorites.FavData
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.User
-import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
-import java.util.Locale
-import java.util.regex.Matcher
+import forpdateam.ru.forpda.model.data.storage.parser.ParserPattern
 
-@Deprecated("", level = DeprecationLevel.ERROR)
 class FavoritesParser(
     private val patternProvider: IPatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Favorites
 
-    fun parseFavorites(response: String): FavData {
+    fun parseFavorites(response: String): FavoritesData {
         val list = patternProvider
-            .getPattern(scope.scope, scope.main)
-            .matcher(response)
-            .map { matcher ->
-                parseFavItem(matcher)
+            .getParserPattern(scope.scope, scope.main)
+            .map(response) { matcher ->
+                parseFavorite(matcher)
             }
-        return FavData(
+        return FavoritesData(
             items = list,
             pagination = Pagination.parseForum(response),
             sorting = Sorting.parse(response)
@@ -34,117 +30,66 @@ class FavoritesParser(
 
     fun checkIsComplete(result: String): Boolean {
         return patternProvider
-            .getPattern(scope.scope, scope.check_action)
-            .matcher(result)
-            .find()
+            .getParserPattern(scope.scope, scope.check_action)
+            .mapOnce(result) { true }
+            ?: false
     }
 
-    private fun parseFavItem(matcher: Matcher): FavItem = FavItemBuilder().apply {
-        isForum = matcher.group(19) != null
-
-        favId = matcher.group(1).toInt()
-        trackType = matcher.group(2)
-        isPin = matcher.group(3) == "1"
-
-        matcher.group(4)?.also {
-            infoColor = it
-        }
-
-        matcher.group(5)?.also {
-            isNew = it.contains("+")
-            isPoll = it.contains("^")
-            isClosed = it.contains("Х")
-        }
-
-        matcher.group(6).toInt().also {
-            if (isForum) {
-                forumId = it
-            } else {
-                topicId = it
-            }
-        }
-
-        isNew = matcher.group(7) != null
-        topicTitle = matcher.group(8).fromHtml()
-
-        if (isForum) {
-            date = matcher.group(19)
-            lastUserId = matcher.group(20).toInt()
-            lastUserNick = matcher.group(21).fromHtml()
+    private fun parseFavorite(matcher: ParserPattern.Matcher): Favorite {
+        val isTopic = matcher.get(19) == null
+        return if (isTopic) {
+            parseFavoriteTopic(matcher)
         } else {
-            matcher.group(9)?.also {
-                stParam = it.toInt()
-                pages = stParam / 20 + 1
-            }
-            matcher.group(10)?.also {
-                desc = it.fromHtml()
-            }
-
-            forumId = matcher.group(12).toInt()
-            forumTitle = matcher.group(13).fromHtml()
-            authorId = matcher.group(14).toInt()
-            authorUserNick = matcher.group(15).fromHtml()
-            lastUserId = matcher.group(16).toInt()
-            lastUserNick = matcher.group(17).fromHtml()
-            date = matcher.group(18)
-
-            matcher.group(22)?.also {
-                curatorId = it.toInt()
-                curatorNick = matcher.group(23).fromHtml()
-            }
-
-            subType = matcher.group(24).trim().lowercase(Locale.getDefault())
+            parseFavoriteForum(matcher)
         }
-    }.build()
+    }
 
-    private class FavItemBuilder {
-        var favId: Int = 0
-        var topicId: Int = 0
-        var forumId: Int = 0
-        var authorId: Int = 0
-        var lastUserId: Int = 0
-        var stParam: Int = 0
-        var pages: Int = 0
-        var curatorId: Int = 0
-        var trackType: String? = null
-        var infoColor: String? = null
-        var topicTitle: String? = null
-        var forumTitle: String? = null
-        var authorUserNick: String? = null
-        var lastUserNick: String? = null
-        var date: String? = null
-        var desc: String? = null
-        var curatorNick: String? = null
-        var subType: String? = null
-        var isPin = false
-        var isForum = false
-        var isNew: Boolean = false
-        var isPoll: Boolean = false
-        var isClosed: Boolean = false
+    private fun parseFavoriteTopic(matcher: ParserPattern.Matcher): Favorite.Topic {
+        val flagsGroup = matcher.get(5)
+        return Favorite.Topic(
+            favId = matcher.require(1).toInt(),
+            topicId = matcher.require(6).toInt(),
+            trackType = matcher.require(2),
+            isPin = matcher.require(3) == "1",
+            isNew = flagsGroup?.contains("+") == true,
+            isPoll = flagsGroup?.contains("^") == true,
+            isClosed = flagsGroup?.contains("Х") == true,
+            title = matcher.require(8).fromHtml(),
+            stParam = matcher.get(9)?.toInt(),
+            desc = matcher.get(10)?.fromHtml(),
+            forumId = matcher.require(12).toInt(),
+            forumTitle = matcher.require(13).fromHtml(),
+            author = User.required(
+                matcher.require(14).toInt(),
+                matcher.require(15).fromHtml()
+            ),
+            lastUser = User.required(
+                matcher.require(16).toInt(),
+                matcher.require(17).fromHtml()
+            ),
+            date = matcher.require(18),
+            curator = matcher.get(22)?.let {
+                User.required(
+                    it.toInt(),
+                    matcher.require(23).fromHtml()
+                )
+            }
+        )
+    }
 
-        fun build(): FavItem {
-            return FavItem(
-                favId = favId,
-                topicId = topicId,
-                forumId = forumId,
-                author = User.required(authorId, authorUserNick),
-                lastUser = User.required(lastUserId, lastUserNick),
-                curator = User.optional(curatorId, curatorNick),
-                stParam = stParam,
-                pages = pages,
-                trackType = trackType,
-                infoColor = infoColor,
-                topicTitle = topicTitle,
-                forumTitle = forumTitle,
-                date = date,
-                desc = desc,
-                subType = subType,
-                isPin = isPin,
-                isForum = isForum,
-                isNew = isNew,
-                isPoll = isPoll,
-                isClosed = isClosed
+    private fun parseFavoriteForum(matcher: ParserPattern.Matcher): Favorite.Forum {
+        return Favorite.Forum(
+            favId = matcher.require(1).toInt(),
+            forumId = matcher.require(6).toInt(),
+            trackType = matcher.require(2),
+            isPin = matcher.require(3) == "1",
+            isNew = matcher.get(5)?.contains("+") == true,
+            title = matcher.require(8).fromHtml(),
+            date = matcher.require(19),
+            lastUser = User.optional(
+                matcher.require(20).toInt(),
+                matcher.require(21).fromHtml()
             )
-        }
+        )
     }
 }

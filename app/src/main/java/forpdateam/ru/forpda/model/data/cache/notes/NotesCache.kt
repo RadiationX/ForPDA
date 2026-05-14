@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.data.cache.notes
 
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
-import forpdateam.ru.forpda.entity.db.notes.NoteItemBd
+import forpdateam.ru.forpda.entity.db.notes.NoteItemDb
 import forpdateam.ru.forpda.extensions.mapInnerList
 import forpdateam.ru.forpda.model.data.db.NotesDao
 import kotlinx.coroutines.flow.Flow
@@ -31,10 +31,10 @@ class NotesCache(
     }
 }
 
-fun NoteItemBd.toDomain(): NoteItem {
+fun NoteItemDb.toDomain(): NoteItem {
     return NoteItem(id, title, link, content)
 }
 
-fun NoteItem.toDb(): NoteItemBd {
-    return NoteItemBd(id, title, link, content)
+fun NoteItem.toDb(): NoteItemDb {
+    return NoteItemDb(id, title, link, content)
 }

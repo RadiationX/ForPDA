@@ -2,137 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7a8c7e436fbbc5aa4052a1dc69cc0b43",
+    "identityHash": "41cea2198d3ac4479cdaacc51ddccb16",
     "entities": [
       {
-        "tableName": "favorites",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`favId` INTEGER NOT NULL, `topicId` INTEGER NOT NULL, `forumId` INTEGER NOT NULL, `authorId` INTEGER NOT NULL, `lastUserId` INTEGER NOT NULL, `stParam` INTEGER NOT NULL, `pages` INTEGER NOT NULL, `curatorId` INTEGER NOT NULL, `trackType` TEXT, `infoColor` TEXT, `topicTitle` TEXT, `forumTitle` TEXT, `authorUserNick` TEXT, `lastUserNick` TEXT, `date` TEXT, `desc` TEXT, `curatorNick` TEXT, `subType` TEXT, `isPin` INTEGER NOT NULL, `isForum` INTEGER NOT NULL, `isNew` INTEGER NOT NULL, `isPoll` INTEGER NOT NULL, `isClosed` INTEGER NOT NULL, PRIMARY KEY(`favId`))",
+        "tableName": "favorite_ids",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "favId",
-            "columnName": "favId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "topicId",
-            "columnName": "topicId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "forumId",
-            "columnName": "forumId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "authorId",
-            "columnName": "authorId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "lastUserId",
-            "columnName": "lastUserId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "stParam",
-            "columnName": "stParam",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "pages",
-            "columnName": "pages",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "curatorId",
-            "columnName": "curatorId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "trackType",
-            "columnName": "trackType",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "infoColor",
-            "columnName": "infoColor",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "topicTitle",
-            "columnName": "topicTitle",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "forumTitle",
-            "columnName": "forumTitle",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "authorUserNick",
-            "columnName": "authorUserNick",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "lastUserNick",
-            "columnName": "lastUserNick",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "date",
-            "columnName": "date",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "desc",
-            "columnName": "desc",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "curatorNick",
-            "columnName": "curatorNick",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "subType",
-            "columnName": "subType",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "isPin",
-            "columnName": "isPin",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isForum",
-            "columnName": "isForum",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isNew",
-            "columnName": "isNew",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isPoll",
-            "columnName": "isPoll",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isClosed",
-            "columnName": "isClosed",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -140,13 +18,199 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "favId"
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "favorite_topics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fav_id` INTEGER NOT NULL, `topic_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `track_type` TEXT NOT NULL, `is_pin` INTEGER NOT NULL, `is_new` INTEGER NOT NULL, `is_poll` INTEGER NOT NULL, `is_closed` INTEGER NOT NULL, `st_param` INTEGER, `desc` TEXT, `forum_id` INTEGER NOT NULL, `forum_title` TEXT NOT NULL, `last_date` TEXT NOT NULL, `author_id` INTEGER NOT NULL, `author_nick` TEXT NOT NULL, `last_user_id` INTEGER NOT NULL, `last_user_nick` TEXT NOT NULL, `curator_id` INTEGER, `curator_nick` TEXT, PRIMARY KEY(`fav_id`))",
+        "fields": [
+          {
+            "fieldPath": "favId",
+            "columnName": "fav_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topicId",
+            "columnName": "topic_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trackType",
+            "columnName": "track_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPin",
+            "columnName": "is_pin",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isNew",
+            "columnName": "is_new",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPoll",
+            "columnName": "is_poll",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isClosed",
+            "columnName": "is_closed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stParam",
+            "columnName": "st_param",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "desc",
+            "columnName": "desc",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "forumId",
+            "columnName": "forum_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forumTitle",
+            "columnName": "forum_title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "last_date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author.id",
+            "columnName": "author_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author.nick",
+            "columnName": "author_nick",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUser.id",
+            "columnName": "last_user_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUser.nick",
+            "columnName": "last_user_nick",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "curator.id",
+            "columnName": "curator_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "curator.nick",
+            "columnName": "curator_nick",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "fav_id"
+          ]
+        }
+      },
+      {
+        "tableName": "favorite_forums",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fav_id` INTEGER NOT NULL, `forum_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `track_type` TEXT NOT NULL, `is_pin` INTEGER NOT NULL, `is_new` INTEGER NOT NULL, `last_date` TEXT NOT NULL, `last_user_id` INTEGER, `last_user_nick` TEXT, PRIMARY KEY(`fav_id`))",
+        "fields": [
+          {
+            "fieldPath": "favId",
+            "columnName": "fav_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forumId",
+            "columnName": "forum_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trackType",
+            "columnName": "track_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPin",
+            "columnName": "is_pin",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isNew",
+            "columnName": "is_new",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "last_date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUser.id",
+            "columnName": "last_user_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastUser.nick",
+            "columnName": "last_user_nick",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "fav_id"
           ]
         }
       },
       {
         "tableName": "forum_item_flat",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `parentId` INTEGER NOT NULL, `level` INTEGER NOT NULL, `title` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `parent_id` INTEGER NOT NULL, `level` INTEGER NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -156,7 +220,7 @@
           },
           {
             "fieldPath": "parentId",
-            "columnName": "parentId",
+            "columnName": "parent_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -169,7 +233,8 @@
           {
             "fieldPath": "title",
             "columnName": "title",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -181,7 +246,7 @@
       },
       {
         "tableName": "forum_users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nick` TEXT, `avatar` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nick` TEXT NOT NULL, `avatar_url` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -192,12 +257,14 @@
           {
             "fieldPath": "nick",
             "columnName": "nick",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "avatar",
-            "columnName": "avatar",
-            "affinity": "TEXT"
+            "columnName": "avatar_url",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -209,7 +276,7 @@
       },
       {
         "tableName": "history",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `url` TEXT, `date` TEXT, `title` TEXT, `unixTime` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `url` TEXT NOT NULL, `title` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -220,21 +287,18 @@
           {
             "fieldPath": "url",
             "columnName": "url",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "date",
-            "columnName": "date",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "title",
             "columnName": "title",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
-            "fieldPath": "unixTime",
-            "columnName": "unixTime",
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -248,7 +312,7 @@
       },
       {
         "tableName": "notes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT, `link` TEXT, `content` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `link` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -259,17 +323,20 @@
           {
             "fieldPath": "title",
             "columnName": "title",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "link",
             "columnName": "link",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "content",
             "columnName": "content",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -281,7 +348,7 @@
       },
       {
         "tableName": "qms_contacts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nick` TEXT, `avatar` TEXT, `count` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nick` TEXT NOT NULL, `avatar_url` TEXT NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -292,12 +359,14 @@
           {
             "fieldPath": "nick",
             "columnName": "nick",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "avatar",
-            "columnName": "avatar",
-            "affinity": "TEXT"
+            "columnName": "avatar_url",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "count",
@@ -315,7 +384,7 @@
       },
       {
         "tableName": "qms_threads",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userId` INTEGER NOT NULL, `countMessages` INTEGER NOT NULL, `countNew` INTEGER NOT NULL, `name` TEXT NOT NULL, `date` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `count_all` INTEGER NOT NULL, `count_new` INTEGER NOT NULL, `name` TEXT NOT NULL, `date` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -325,19 +394,19 @@
           },
           {
             "fieldPath": "userId",
-            "columnName": "userId",
+            "columnName": "user_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "countMessages",
-            "columnName": "countMessages",
+            "columnName": "count_all",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "countNew",
-            "columnName": "countNew",
+            "columnName": "count_new",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -364,7 +433,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7a8c7e436fbbc5aa4052a1dc69cc0b43')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '41cea2198d3ac4479cdaacc51ddccb16')"
     ]
   }
 }

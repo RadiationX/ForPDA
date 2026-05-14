@@ -9,13 +9,13 @@ import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.TopicItemBinding
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.drawers.adapters.FavoriteListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 
 class FavoriteDelegate(
-    private val clickListener: OnItemClickListener<FavItem>,
+    private val clickListener: OnItemClickListener<Favorite>,
 ) : AbsListItemAdapterDelegate<FavoriteListItem, ListItem, FavoriteDelegate.ViewHolder>() {
 
     override fun isForViewType(item: ListItem, items: MutableList<ListItem>, position: Int): Boolean {
@@ -33,7 +33,7 @@ class FavoriteDelegate(
 
     class ViewHolder(
         private val binding: TopicItemBinding,
-        private val clickListener: OnItemClickListener<FavItem>
+        private val clickListener: OnItemClickListener<Favorite>
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val titleColor = App.getColorFromAttr(binding.root.context, R.attr.second_text_color)
@@ -41,14 +41,26 @@ class FavoriteDelegate(
 
         fun bind(listItem: FavoriteListItem) {
             val item = listItem.item
-            binding.topicItemTitle.text = item.topicTitle
+            binding.topicItemTitle.text = item.title
             binding.topicItemTitle.setTypeface(if (item.isNew) Typeface.DEFAULT_BOLD else Typeface.DEFAULT)
             binding.topicItemTitle.setTextColor(if (item.isNew) titleColorNew else titleColor)
             binding.topicItemDot.isVisible = listItem.showDot && item.isNew
-            binding.topicItemForumIcon.isVisible = item.isForum
-            binding.topicItemLockIcon.isVisible = !item.isForum && item.isClosed
-            binding.topicItemPollIcon.isVisible = !item.isForum && item.isPoll
-            binding.topicItemLastNick.text = item.lastUser.nick
+            binding.topicItemForumIcon.isVisible = when (item) {
+                is Favorite.Topic -> false
+                is Favorite.Forum -> true
+            }
+            binding.topicItemLockIcon.isVisible = when (item) {
+                is Favorite.Topic -> item.isClosed
+                is Favorite.Forum -> false
+            }
+            binding.topicItemPollIcon.isVisible = when (item) {
+                is Favorite.Topic -> item.isPoll
+                is Favorite.Forum -> false
+            }
+            binding.topicItemLastNick.text = when (item) {
+                is Favorite.Topic -> item.lastUser.nick
+                is Favorite.Forum -> item.lastUser?.nick
+            }
             binding.topicItemDate.text = item.date
             binding.topicItemDesc.isVisible = false
             clickListener.attachTo(binding.root, listItem.item)

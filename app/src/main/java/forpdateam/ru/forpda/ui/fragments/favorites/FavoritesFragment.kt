@@ -18,8 +18,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.entity.remote.favorites.FavData
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import forpdateam.ru.forpda.presentation.favorites.FavoritesPresenter
@@ -32,7 +32,6 @@ import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import java.util.Arrays
 
 /**
  * Created by radiationx on 22.09.16.
@@ -40,7 +39,7 @@ import java.util.Arrays
 
 class FavoritesFragment : RecyclerFragment(), FavoritesView {
 
-    private lateinit var dialogMenu: DynamicDialogMenu<FavoritesFragment, FavItem>
+    private lateinit var dialogMenu: DynamicDialogMenu<FavoritesFragment, Favorite>
     private lateinit var adapter: FavoritesAdapter
 
     private lateinit var paginationHelper: PaginationHelper
@@ -62,12 +61,12 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         }
     }
 
-    private val adapterListener = object : OnItemClickListener<FavItem> {
-        override fun onItemClick(item: FavItem) {
+    private val adapterListener = object : OnItemClickListener<Favorite> {
+        override fun onItemClick(item: Favorite) {
             presenter.onItemClick(item)
         }
 
-        override fun onItemLongClick(item: FavItem): Boolean {
+        override fun onItemLongClick(item: Favorite): Boolean {
             presenter.onItemLongClick(item)
             return false
         }
@@ -208,7 +207,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         Toast.makeText(requireContext(), R.string.action_complete, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onLoadFavorites(data: FavData) {
+    override fun onLoadFavorites(data: FavoritesData) {
         Log.e("kjkjkj", "onLoadFavorites")
         selectSpinners(data.sorting)
         paginationHelper.updatePagination(data.pagination)
@@ -223,7 +222,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         adapter.setUnreadTop(unreadTop)
     }
 
-    override fun onShowFavorite(items: List<FavItem>) {
+    override fun onShowFavorite(items: List<Favorite>) {
         Log.e("kjkjkj", "onShowFavorite")
         if (items.isEmpty()) {
             if (!contentController.contains(ContentController.TAG_NO_DATA)) {
@@ -271,8 +270,8 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         Toast.makeText(requireContext(), R.string.action_complete, Toast.LENGTH_SHORT).show()
     }
 
-    override fun showSubscribeDialog(item: FavItem) {
-        val subTypeIndex = Arrays.asList(*FavoritesApi.SUB_TYPES).indexOf(item.subType)
+    override fun showSubscribeDialog(item: Favorite) {
+        val subTypeIndex = FavoritesApi.SUB_TYPES.indexOf(item.trackType)
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setSingleChoiceItems(SUB_NAMES, subTypeIndex) { dialog, which ->
@@ -286,11 +285,11 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
             .show()
     }
 
-    override fun showItemDialogMenu(item: FavItem) {
+    override fun showItemDialogMenu(item: Favorite) {
         dialogMenu.apply {
             disallowAll()
             allow(0)
-            if (!item.isForum) {
+            if (item is Favorite.Topic) {
                 allow(1)
                 allow(2)
             }
@@ -302,7 +301,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
             if (index != -1)
                 changeTitle(index, getPinText(item.isPin))
 
-            val subTypeIndex = Arrays.asList(*FavoritesApi.SUB_TYPES).indexOf(item.subType)
+            val subTypeIndex = FavoritesApi.SUB_TYPES.indexOf(item.trackType)
             changeTitle(3, getSubText(subTypeIndex))
 
             show(requireContext(), this@FavoritesFragment, item)

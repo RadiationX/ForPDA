@@ -2,92 +2,140 @@ package forpdateam.ru.forpda.model.data.cache.favorites
 
 import androidx.room.RoomDatabase
 import androidx.room.withTransaction
-import forpdateam.ru.forpda.entity.db.favorites.FavItemBd
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
-import forpdateam.ru.forpda.entity.remote.others.user.User
-import forpdateam.ru.forpda.extensions.mapInnerList
+import forpdateam.ru.forpda.entity.db.favorites.FavoriteDb
+import forpdateam.ru.forpda.entity.db.favorites.FavoriteForumDb
+import forpdateam.ru.forpda.entity.db.favorites.FavoriteIdDb
+import forpdateam.ru.forpda.entity.db.favorites.FavoriteTopicDb
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.model.data.db.FavoriteForumsDao
+import forpdateam.ru.forpda.model.data.db.FavoriteIdsDao
+import forpdateam.ru.forpda.model.data.db.FavoriteTopicsDao
 import forpdateam.ru.forpda.model.data.db.FavoritesDao
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class FavoritesCache(
     private val favoritesDao: FavoritesDao,
+    private val favoriteIdsDao: FavoriteIdsDao,
+    private val favoriteTopicsDao: FavoriteTopicsDao,
+    private val favoriteForumsDao: FavoriteForumsDao,
     private val database: RoomDatabase
 ) {
 
-    fun observeItems(): Flow<List<FavItem>> {
-        return favoritesDao.observeAll().mapInnerList { it.toDomain() }
-    }
-
-    suspend fun getItems(): List<FavItem> {
-        return favoritesDao.getAll().map { it.toDomain() }
-    }
-
-    suspend fun saveFavorites(items: List<FavItem>) {
-        database.withTransaction {
-            favoritesDao.deleteAll()
-            favoritesDao.upsertAll(items.map { it.toDb() })
+    fun observeItems(): Flow<List<Favorite>> {
+        return favoritesDao.observeAll().map { items ->
+            items.mapNotNull { it.toDomain() }
         }
     }
 
-    suspend fun getItemByTopicId(topicId: Int): FavItem? {
-        return favoritesDao.getByTopicId(topicId)?.toDomain()
+    suspend fun getItems(): List<Favorite> {
+        return favoritesDao.getAll().mapNotNull { it.toDomain() }
     }
 
-    suspend fun updateItem(item: FavItem) {
-        favoritesDao.upsert(item.toDb())
+    suspend fun saveFavorites(items: List<Favorite>) {
+        database.withTransaction {
+            favoriteIdsDao.deleteAll()
+            favoriteTopicsDao.deleteAll()
+            favoriteForumsDao.deleteAll()
+
+            favoriteTopicsDao.upsertAll(items.filterIsInstance<Favorite.Topic>().map { it.toTopicDb() })
+            favoriteForumsDao.upsertAll(items.filterIsInstance<Favorite.Forum>().map { it.toForumDb() })
+            favoriteIdsDao.upsertAll(items.map { it.toIdDb() })
+        }
+    }
+
+    suspend fun getItemByTopicId(topicId: Int): Favorite.Topic? {
+        return favoriteTopicsDao.getByTopicId(topicId)?.toDomain()
+    }
+
+    suspend fun updateItem(item: Favorite) {
+        database.withTransaction {
+            when (item) {
+                is Favorite.Topic -> favoriteTopicsDao.upsert(item.toTopicDb())
+                is Favorite.Forum -> favoriteForumsDao.upsert(item.toForumDb())
+            }
+            favoriteIdsDao.upsert(item.toIdDb())
+        }
     }
 
 }
 
-fun FavItemBd.toDomain(): FavItem {
-    return FavItem(
+fun FavoriteDb.toDomain(): Favorite? {
+    return when {
+        topic != null -> topic.toDomain()
+        forum != null -> forum.toDomain()
+        else -> null
+    }
+}
+
+fun FavoriteTopicDb.toDomain(): Favorite.Topic {
+    return Favorite.Topic(
         favId = favId,
         topicId = topicId,
-        forumId = forumId,
-        author = User.required(authorId, authorUserNick),
-        lastUser = User.required(lastUserId, lastUserNick),
-        curator = User.optional(curatorId, curatorNick),
-        stParam = stParam,
-        pages = pages,
+        title = title,
         trackType = trackType,
-        infoColor = infoColor,
-        topicTitle = topicTitle,
-        forumTitle = forumTitle,
-        date = date,
-        desc = desc,
-        subType = subType,
         isPin = isPin,
-        isForum = isForum,
         isNew = isNew,
         isPoll = isPoll,
-        isClosed = isClosed
+        isClosed = isClosed,
+        stParam = stParam,
+        desc = desc,
+        forumId = forumId,
+        forumTitle = forumTitle,
+        author = author,
+        lastUser = lastUser,
+        date = date,
+        curator = curator
     )
 }
 
-fun FavItem.toDb(): FavItemBd {
-    return FavItemBd(
+fun FavoriteForumDb.toDomain(): Favorite.Forum {
+    return Favorite.Forum(
+        favId = favId,
+        forumId = forumId,
+        title = title,
+        trackType = trackType,
+        isPin = isPin,
+        isNew = isNew,
+        date = date,
+        lastUser = lastUser
+    )
+}
+
+fun Favorite.toIdDb(): FavoriteIdDb {
+    return FavoriteIdDb(favId)
+}
+
+fun Favorite.Topic.toTopicDb(): FavoriteTopicDb {
+    return FavoriteTopicDb(
         favId = favId,
         topicId = topicId,
-        forumId = forumId,
-        authorId = author.id,
-        authorUserNick = author.nick,
-        lastUserId = lastUser.id,
-        lastUserNick = lastUser.nick,
-        curatorId = curator?.id ?: 0,
-        curatorNick = curator?.nick,
-        stParam = stParam,
-        pages = pages,
+        title = title,
         trackType = trackType,
-        infoColor = infoColor,
-        topicTitle = topicTitle,
-        forumTitle = forumTitle,
-        date = date,
-        desc = desc,
-        subType = subType,
         isPin = isPin,
-        isForum = isForum,
         isNew = isNew,
         isPoll = isPoll,
-        isClosed = isClosed
+        isClosed = isClosed,
+        stParam = stParam,
+        desc = desc,
+        forumId = forumId,
+        forumTitle = forumTitle,
+        author = author,
+        lastUser = lastUser,
+        date = date,
+        curator = curator
+    )
+}
+
+fun Favorite.Forum.toForumDb(): FavoriteForumDb {
+    return FavoriteForumDb(
+        favId = favId,
+        forumId = forumId,
+        title = title,
+        trackType = trackType,
+        isPin = isPin,
+        isNew = isNew,
+        date = date,
+        lastUser = lastUser
     )
 }

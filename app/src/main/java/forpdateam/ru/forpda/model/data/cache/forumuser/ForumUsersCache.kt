@@ -1,8 +1,11 @@
 package forpdateam.ru.forpda.model.data.cache.forumuser
 
-import forpdateam.ru.forpda.entity.db.ForumUserBd
+import forpdateam.ru.forpda.entity.db.ForumUserDb
+import forpdateam.ru.forpda.entity.remote.others.user.ForumPostUser
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.model.data.db.ForumUsersDao
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Created by radiationx on 08.07.17.
@@ -21,6 +24,14 @@ class ForumUsersCache(
         forumUsersDao.upsertAll(forumUsers.map { it.toDb() })
     }
 
+    suspend fun savePostUsers(forumUsers: List<ForumPostUser>) {
+        forumUsersDao.upsertAll(forumUsers.mapNotNull { it.toDb() })
+    }
+
+    fun observeUserById(id: Int): Flow<ForumUser?> {
+        return forumUsersDao.observeById(id).map { it?.toDomain() }
+    }
+
     suspend fun getUserById(id: Int): ForumUser? {
         return forumUsersDao.getById(id)?.toDomain()
     }
@@ -35,10 +46,14 @@ class ForumUsersCache(
 
 }
 
-fun ForumUserBd.toDomain(): ForumUser {
+fun ForumUserDb.toDomain(): ForumUser {
     return ForumUser.required(id, nick, avatar)
 }
 
-fun ForumUser.toDb(): ForumUserBd {
-    return ForumUserBd(id, nick, avatar)
+fun ForumUser.toDb(): ForumUserDb {
+    return ForumUserDb(id, nick, avatar)
+}
+
+fun ForumPostUser.toDb(): ForumUserDb? {
+    return avatar?.let { ForumUserDb(id, nick, it) }
 }

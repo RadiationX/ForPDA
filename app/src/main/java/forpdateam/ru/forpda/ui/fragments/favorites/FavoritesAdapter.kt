@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.ui.fragments.favorites
 
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.adapters.SectionItemDelegate
 import forpdateam.ru.forpda.ui.views.adapters.buildSections
@@ -10,10 +10,10 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.FavoriteListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 
 class FavoritesAdapter(
-    private val favoriteClickListener: OnItemClickListener<FavItem>,
+    private val favoriteClickListener: OnItemClickListener<Favorite>,
 ) : ListDelegationAdapter<List<ListItem>>() {
 
-    private var rawItems = emptyList<FavItem>()
+    private var rawItems = emptyList<Favorite>()
     private var showDot = false
     private var unreadTop = false
 
@@ -34,13 +34,13 @@ class FavoritesAdapter(
         bindItems(rawItems)
     }
 
-    fun bindItems(items: List<FavItem>) {
+    fun bindItems(items: List<Favorite>) {
         rawItems = items
         this.items = buildSections {
-            val pinnedUnread = mutableListOf<FavItem>()
-            val itemsUnread = mutableListOf<FavItem>()
-            val pinned = mutableListOf<FavItem>()
-            val otherItems = mutableListOf<FavItem>()
+            val pinnedUnread = mutableListOf<Favorite>()
+            val itemsUnread = mutableListOf<Favorite>()
+            val pinned = mutableListOf<Favorite>()
+            val otherItems = mutableListOf<Favorite>()
             for (item in items) {
                 if (item.isPin) {
                     if (unreadTop && item.isNew) {

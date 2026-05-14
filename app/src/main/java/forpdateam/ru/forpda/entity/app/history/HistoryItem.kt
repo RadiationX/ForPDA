@@ -5,8 +5,7 @@ package forpdateam.ru.forpda.entity.app.history
  */
 data class HistoryItem(
     val id: Int,
-    val url: String?,
-    val title: String?,
-    val unixTime: Long,
-    val date: String?,
+    val url: String,
+    val title: String,
+    val timestamp: Long,
 )

@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.model.repository.auth
 
-import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
@@ -14,7 +13,6 @@ import forpdateam.ru.forpda.model.data.remote.api.auth.AuthApi
 class AuthRepository(
     private val authApi: AuthApi,
     private val countersHolder: CountersHolder,
-    private val userHolder: IUserHolder
 ) {
 
     suspend fun loadCaptcha(): AuthCaptcha {
@@ -34,7 +32,6 @@ class AuthRepository(
                 qms = 0
             )
         )
-        userHolder.user = null
     }
 
 }

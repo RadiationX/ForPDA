@@ -15,8 +15,6 @@ import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.client.websocket.WebSocketController
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
-import forpdateam.ru.forpda.entity.app.profile.IUserHolder
-import forpdateam.ru.forpda.entity.app.profile.UserHolder
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.CountersHolder
@@ -159,7 +157,6 @@ class Dependencies internal constructor(
     val cookieJar by lazy { AppCookieJar(cookieStorage) }
     val authHolder: AuthHolder by lazy { AuthHolder(flowPreferences, cookieStorage) }
     val countersHolder: CountersHolder by lazy { CountersHolder(preferences) }
-    val userHolder: IUserHolder by lazy { UserHolder(dataStoragePreferences) }
     val closeableInfoHolder: CloseableInfoHolder by lazy { CloseableInfoHolder(preferences) }
 
     val templateManager by lazy { TemplateManager(context, dayNightHelper) }
@@ -260,7 +257,15 @@ class Dependencies internal constructor(
 
     val userSource by lazy { UserSourceProvider(qmsApi) }
     val forumUsersCache by lazy { ForumUsersCache(userSource, database.forumUsersDao()) }
-    val favoritesCache by lazy { FavoritesCache(database.favoritesDao(), database) }
+    val favoritesCache by lazy {
+        FavoritesCache(
+            database.favoritesDao(),
+            database.favoritesIdsDao(),
+            database.favoriteTopicsDao(),
+            database.favoriteForumsDao(),
+            database
+        )
+    }
     val forumCache by lazy { ForumCache(database.forumsDao(), database) }
     val historyCache by lazy { HistoryCache(database.historyDao()) }
     val qmsCache by lazy { QmsCache(database.qmsContactsDao(), database.qmsThemesDao(), database) }
@@ -279,13 +284,11 @@ class Dependencies internal constructor(
         AuthRepository(
             authApi,
             countersHolder,
-            userHolder
         )
     }
     val profileRepository by lazy {
         ProfileRepository(
             profileApi,
-            userHolder,
             authHolder,
             forumUsersCache
         )

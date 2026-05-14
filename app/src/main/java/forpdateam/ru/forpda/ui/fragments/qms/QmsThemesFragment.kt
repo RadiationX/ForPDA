@@ -1,11 +1,9 @@
 package forpdateam.ru.forpda.ui.fragments.qms
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -52,7 +50,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            presenter.themesId = getInt(USER_ID_ARG)
+            presenter.userId = getInt(USER_ID_ARG)
             presenter.avatarUrl = getString(USER_AVATAR_ARG)
         }
     }
@@ -133,7 +131,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     override fun showAvatar(avatarUrl: String) {
         ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView)
         toolbarImageView.visibility = View.VISIBLE
-        toolbarImageView.setOnClickListener { presenter.openProfile(presenter.themesId) }
+        toolbarImageView.setOnClickListener { presenter.openProfile(presenter.userId) }
         toolbarImageView.contentDescription = App.get().getString(R.string.user_avatar)
     }
 

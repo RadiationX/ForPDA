@@ -7,15 +7,20 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
  */
 
 sealed interface Favorite {
-
+    val favId: Int
+    val title: String
+    val trackType: String
+    val isPin: Boolean
+    val isNew: Boolean
+    val date: String
 
     data class Topic(
-        val favId: Int,
+        override val favId: Int,
         val topicId: Int,
-        val title: String,
-        val trackType: String,
-        val isPin: Boolean,
-        val isNew: Boolean,
+        override val title: String,
+        override val trackType: String,
+        override val isPin: Boolean,
+        override val isNew: Boolean,
         val isPoll: Boolean,
         val isClosed: Boolean,
         val stParam: Int?,
@@ -24,18 +29,18 @@ sealed interface Favorite {
         val forumTitle: String,
         val author: User,
         val lastUser: User,
-        val date: String,
+        override val date: String,
         val curator: User?,
     ) : Favorite
 
     data class Forum(
-        val favId: Int,
+        override val favId: Int,
         val forumId: Int,
-        val title: String,
-        val trackType: String,
-        val isPin: Boolean,
-        val isNew: Boolean,
-        val date: String,
+        override val title: String,
+        override val trackType: String,
+        override val isPin: Boolean,
+        override val isNew: Boolean,
+        override val date: String,
         val lastUser: User?,
     ) : Favorite
 }

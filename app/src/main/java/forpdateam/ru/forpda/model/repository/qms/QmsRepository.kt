@@ -32,6 +32,10 @@ class QmsRepository(
         return qmsCache.observeThemes(userId)
     }
 
+    fun observeContact(userId: Int): Flow<QmsContact?> {
+        return qmsCache.observeContact(userId)
+    }
+
     //Common
     suspend fun findUser(nick: String): List<ForumUser> {
         return qmsApi.findUser(nick)
@@ -65,6 +69,9 @@ class QmsRepository(
 
     //Themes
     suspend fun getThemesList(id: Int): QmsThemes {
+        if (qmsCache.getContact(id) == null) {
+            getContactList()
+        }
         return qmsApi.getThemesList(id).let {
             qmsCache.saveThemes(it)
             qmsCache.getThemes(it.user.id)
@@ -120,4 +127,5 @@ class QmsRepository(
     ): List<AttachmentItem> {
         return attachmentsApi.uploadQmsFiles(files, pending)
     }
+
 }

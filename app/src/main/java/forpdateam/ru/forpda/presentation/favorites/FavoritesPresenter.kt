@@ -1,9 +1,8 @@
 package forpdateam.ru.forpda.presentation.favorites
 
-import android.util.Log
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
@@ -67,10 +66,6 @@ class FavoritesPresenter(
         favoritesRepository
             .observeItems()
             .onEach {
-                Log.d(
-                    "kokos",
-                    "observeContacts ${it.size} ${it.joinToString("; ") { "${it.topicId}:${it.isNew}" }}"
-                )
                 viewState.onShowFavorite(it)
             }
             .launchIn(viewModelScope)
@@ -122,53 +117,43 @@ class FavoritesPresenter(
         }
     }
 
-    fun onItemClick(item: FavItem) {
+    fun onItemClick(item: Favorite) {
         val args = mapOf<String, String>(
-            Screen.ARG_TITLE to item.topicTitle.orEmpty()
+            Screen.ARG_TITLE to item.title
         )
-        if (item.isForum) {
-            linkHandler.handle(
-                "https://4pda.to/forum/index.php?showforum=" + item.forumId,
-                router,
-                args
-            )
-        } else {
-            linkHandler.handle(
-                "https://4pda.to/forum/index.php?showtopic=" + item.topicId + "&view=getnewpost",
-                router,
-                args
-            )
+        val url = when (item) {
+            is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId + "&view=getnewpost"
+            is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId
         }
+        linkHandler.handle(url, router, args)
     }
 
-    fun onItemLongClick(item: FavItem) {
+    fun onItemLongClick(item: Favorite) {
         viewState.showItemDialogMenu(item)
     }
 
-    fun copyLink(item: FavItem) {
-        if (item.isForum) {
-            Utils.copyToClipBoard(
-                "https://4pda.to/forum/index.php?showforum=" + Integer.toString(
-                    item.forumId
-                )
-            )
-        } else {
-            Utils.copyToClipBoard(
-                "https://4pda.to/forum/index.php?showtopic=" + Integer.toString(
-                    item.topicId
-                )
-            )
+    fun copyLink(item: Favorite) {
+        val url = when (item) {
+            is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId
+            is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId
         }
+        Utils.copyToClipBoard(url)
     }
 
-    fun openAttachments(item: FavItem) {
+    fun openAttachments(item: Favorite) {
+        if (item !is Favorite.Topic) {
+            return
+        }
         linkHandler.handle(
             "https://4pda.to/forum/index.php?act=attach&code=showtopic&tid=" + item.topicId,
             router
         )
     }
 
-    fun openForum(item: FavItem) {
+    fun openForum(item: Favorite) {
+        if (item !is Favorite.Topic) {
+            return
+        }
         linkHandler.handle("https://4pda.to/forum/index.php?showforum=" + item.forumId, router)
     }
 
@@ -185,7 +170,7 @@ class FavoritesPresenter(
         }
     }
 
-    fun showSubscribeDialog(item: FavItem) {
+    fun showSubscribeDialog(item: Favorite) {
         viewState.showSubscribeDialog(item)
     }
 }

@@ -8,5 +8,5 @@ data class ForumItemFlat(
     val id: Int,
     val parentId: Int,
     val level: Int,
-    val title: String?
+    val title: String
 )

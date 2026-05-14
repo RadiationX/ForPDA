@@ -12,6 +12,7 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
@@ -28,28 +29,33 @@ class QmsThemesPresenter(
     private val errorHandler: IErrorHandler
 ) : BasePresenter<QmsThemesView>() {
 
-    var themesId: Int = 0
+    var userId: Int = 0
     var avatarUrl: String? = null
     var currentData: QmsThemes? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         qmsInteractor
-            .observeThemes(themesId)
+            .observeThemes(userId)
             .filterNotNull()
             .onEach {
                 currentData = it
                 viewState.showThemes(it)
             }
             .launchIn(viewModelScope)
-        avatarUrl?.let { viewState.showAvatar(it) }
+
+        qmsInteractor
+            .observeContact(userId)
+            .mapNotNull { it?.user?.avatar ?: avatarUrl }
+            .onEach { viewState.showAvatar(it) }
+            .launchIn(viewModelScope)
     }
 
     fun loadThemes() {
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                qmsInteractor.getThemesList(themesId)
+                qmsInteractor.getThemesList(userId)
             }.onSuccess {
                 currentData = it
                 if (it.themes.isEmpty()) {

@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.presentation.favorites
 
 import forpdateam.ru.forpda.common.mvp.IBaseView
-import forpdateam.ru.forpda.entity.remote.favorites.FavData
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
@@ -15,14 +15,14 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface FavoritesView : IBaseView {
     fun initSorting(sorting: Sorting)
-    fun onLoadFavorites(data: FavData)
-    fun onShowFavorite(items: List<FavItem>)
+    fun onLoadFavorites(data: FavoritesData)
+    fun onShowFavorite(items: List<Favorite>)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showItemDialogMenu(item: FavItem)
+    fun showItemDialogMenu(item: Favorite)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showSubscribeDialog(item: FavItem)
+    fun showSubscribeDialog(item: Favorite)
 
     @StateStrategyType(SkipStrategy::class)
     fun onChangeFav(result: Boolean)

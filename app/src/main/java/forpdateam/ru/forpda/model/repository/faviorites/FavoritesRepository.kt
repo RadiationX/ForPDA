@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.repository.faviorites
 
-import forpdateam.ru.forpda.entity.remote.favorites.FavData
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
@@ -16,11 +16,11 @@ class FavoritesRepository(
     private val favoritesCache: FavoritesCache
 ) {
 
-    fun observeItems(): Flow<List<FavItem>> {
+    fun observeItems(): Flow<List<Favorite>> {
         return favoritesCache.observeItems()
     }
 
-    suspend fun loadFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
+    suspend fun loadFavorites(st: Int, all: Boolean, sorting: Sorting): FavoritesData {
         return favoritesApi.getFavorites(st, all, sorting).also {
             favoritesCache.saveFavorites(it.items)
         }

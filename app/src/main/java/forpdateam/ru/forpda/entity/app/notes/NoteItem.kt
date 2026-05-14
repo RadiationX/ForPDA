@@ -5,7 +5,7 @@ package forpdateam.ru.forpda.entity.app.notes
  */
 class NoteItem(
     val id: Long,
-    val title: String?,
-    val link: String?,
-    val content: String?,
+    val title: String,
+    val link: String,
+    val content: String,
 )

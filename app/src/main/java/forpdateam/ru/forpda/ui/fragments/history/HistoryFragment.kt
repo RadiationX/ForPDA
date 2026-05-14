@@ -66,12 +66,10 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
             }
         }
 
-        adapter = HistoryAdapter()
+        adapter = HistoryAdapter(adapterListener)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
-
-        adapter.setItemClickListener(adapterListener)
     }
 
     override fun addBaseToolbarMenu(menu: Menu) {

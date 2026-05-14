@@ -7,7 +7,6 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.app.EditPostSyncData
-import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
@@ -27,6 +26,7 @@ import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
 import forpdateam.ru.forpda.model.repository.events.WebSocketEventsRepository
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
+import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
 import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
 import forpdateam.ru.forpda.presentation.IErrorHandler
@@ -58,7 +58,7 @@ class ThemePresenter(
     private val editorRepository: PostEditorRepository,
     private val favoritesRepository: FavoritesRepository,
     private val webSocketEventsRepository: WebSocketEventsRepository,
-    private val userHolder: IUserHolder,
+    private val profileRepository: ProfileRepository,
     private val topicPreferencesHolder: TopicPreferencesHolder,
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val crossScreenInteractor: CrossScreenInteractor,
@@ -426,16 +426,17 @@ class ThemePresenter(
 
     fun openSearchMyPosts() {
         currentPage?.let {
-            var url =
-                ("https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username=")
+            viewModelScope.launch {
+                var url = "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username="
 
-            try {
-                url += URLEncoder.encode(userHolder.user?.nick.orEmpty(), "windows-1251")
-            } catch (e: UnsupportedEncodingException) {
-                e.printStackTrace()
+                try {
+                    url += URLEncoder.encode(profileRepository.getCurrentUser()?.nick.orEmpty(), "windows-1251")
+                } catch (e: UnsupportedEncodingException) {
+                    e.printStackTrace()
+                }
+
+                linkHandler.handle(url, router)
             }
-
-            linkHandler.handle(url, router)
         }
     }
 

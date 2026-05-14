@@ -20,7 +20,7 @@ class SearchRepository(
             val forumUsers = it.items.filterIsInstance<SearchItem.Post>().map { post ->
                 post.post.user
             }
-            forumUsersCache.saveUsers(forumUsers)
+            forumUsersCache.savePostUsers(forumUsers)
         }
     }
 

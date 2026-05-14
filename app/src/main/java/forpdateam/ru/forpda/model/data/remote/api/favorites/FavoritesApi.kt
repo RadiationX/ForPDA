@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.model.data.remote.api.favorites
 
 import android.net.Uri
-import forpdateam.ru.forpda.entity.remote.favorites.FavData
-import forpdateam.ru.forpda.entity.remote.favorites.FavItem
+import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 
@@ -15,7 +15,7 @@ class FavoritesApi(
     private val favoritesParser: FavoritesParser
 ) {
 
-    suspend fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavData {
+    suspend fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavoritesData {
         var data = getFavorites(st, sorting)
         if (all) {
             while (data.pagination.hasNext()) {
@@ -52,7 +52,7 @@ class FavoritesApi(
         return data
     }
 
-    private suspend fun getFavorites(st: Int, sorting: Sorting): FavData {
+    private suspend fun getFavorites(st: Int, sorting: Sorting): FavoritesData {
         val uriBuilder = Uri.Builder()
             .scheme("https")
             .authority("4pda.to")
@@ -116,11 +116,11 @@ class FavoritesApi(
         const val ACTION_ADD_FORUM = 4
         val SUB_TYPES = arrayOf("none", "delayed", "immediate", "daily", "weekly", "pinned")
 
-        private val DESC_ORDER = Comparator<FavItem> { item1, item2 ->
-            item1.topicTitle.orEmpty().compareTo(item2.topicTitle.orEmpty(), ignoreCase = true)
+        private val DESC_ORDER = Comparator<Favorite> { item1, item2 ->
+            item1.title.compareTo(item2.title, ignoreCase = true)
         }
-        private val ASC_ORDER = Comparator<FavItem> { item1, item2 ->
-            item2.topicTitle.orEmpty().compareTo(item1.topicTitle.orEmpty(), ignoreCase = true)
+        private val ASC_ORDER = Comparator<Favorite> { item1, item2 ->
+            item2.title.compareTo(item1.title, ignoreCase = true)
         }
     }
 }

@@ -2,28 +2,35 @@ package forpdateam.ru.forpda.model.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import forpdateam.ru.forpda.entity.db.ForumUserBd
-import forpdateam.ru.forpda.entity.db.favorites.FavItemBd
-import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd
-import forpdateam.ru.forpda.entity.db.history.HistoryItemBd
-import forpdateam.ru.forpda.entity.db.notes.NoteItemBd
-import forpdateam.ru.forpda.entity.db.qms.QmsContactBd
-import forpdateam.ru.forpda.entity.db.qms.QmsThemeBd
+import forpdateam.ru.forpda.entity.db.ForumUserDb
+import forpdateam.ru.forpda.entity.db.favorites.FavoriteForumDb
+import forpdateam.ru.forpda.entity.db.favorites.FavoriteIdDb
+import forpdateam.ru.forpda.entity.db.favorites.FavoriteTopicDb
+import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatDb
+import forpdateam.ru.forpda.entity.db.history.HistoryItemDb
+import forpdateam.ru.forpda.entity.db.notes.NoteItemDb
+import forpdateam.ru.forpda.entity.db.qms.QmsContactDb
+import forpdateam.ru.forpda.entity.db.qms.QmsThemeDb
 
 @Database(
     entities = [
-        FavItemBd::class,
-        ForumItemFlatBd::class,
-        ForumUserBd::class,
-        HistoryItemBd::class,
-        NoteItemBd::class,
-        QmsContactBd::class,
-        QmsThemeBd::class
+        FavoriteIdDb::class,
+        FavoriteTopicDb::class,
+        FavoriteForumDb::class,
+        ForumItemFlatDb::class,
+        ForumUserDb::class,
+        HistoryItemDb::class,
+        NoteItemDb::class,
+        QmsContactDb::class,
+        QmsThemeDb::class
     ],
     version = 1,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoritesDao(): FavoritesDao
+    abstract fun favoritesIdsDao(): FavoriteIdsDao
+    abstract fun favoriteTopicsDao(): FavoriteTopicsDao
+    abstract fun favoriteForumsDao(): FavoriteForumsDao
     abstract fun forumsDao(): ForumsDao
     abstract fun forumUsersDao(): ForumUsersDao
     abstract fun historyDao(): HistoryDao

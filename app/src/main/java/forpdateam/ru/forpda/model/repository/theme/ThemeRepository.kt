@@ -22,7 +22,7 @@ class ThemeRepository(
     ): ThemePage {
         return themeApi.getTheme(url, hatOpen, pollOpen).also {
             val forumUsers = it.posts.map { it.post.user }
-            forumUsersCache.saveUsers(forumUsers)
+            forumUsersCache.savePostUsers(forumUsers)
             historyCache.add(it.id, it.url, it.title)
         }
     }

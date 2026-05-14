@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.model.data.remote.api.theme
 
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
-import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.entity.remote.others.user.ForumPostUser
 import forpdateam.ru.forpda.entity.remote.theme.Poll
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
@@ -99,7 +99,7 @@ class ThemeParser(
                 id = matcher.require(1).toInt(),
                 date = matcher.require(5),
                 isOnline = matcher.require(7).contains("green"),
-                user = ForumUser.required(
+                user = ForumPostUser.required(
                     id = matcher.require(10).toInt(),
                     nick = matcher.require(9).fromHtml(),
                     avatar = matcher.require(8).let {

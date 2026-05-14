@@ -1,12 +1,13 @@
 package forpdateam.ru.forpda.model.repository.profile
 
-import forpdateam.ru.forpda.entity.app.profile.IUserHolder
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.profile.ProfileApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * Created by radiationx on 02.01.18.
@@ -14,13 +15,29 @@ import kotlinx.coroutines.flow.Flow
 
 class ProfileRepository(
     private val profileApi: ProfileApi,
-    private val userHolder: IUserHolder,
     private val authHolder: AuthHolder,
     private val forumUsersCache: ForumUsersCache
 ) {
 
     fun observeCurrentUser(): Flow<ForumUser?> {
-        return userHolder.observeCurrentUser()
+        return authHolder.observe().flatMapLatest {
+            if (it.isAuth()) {
+                forumUsersCache.observeUserById(it.userId)
+            } else {
+                flowOf(null)
+            }
+        }
+    }
+
+    suspend fun getCurrentUser(): ForumUser? {
+        if (!authHolder.get().isAuth()) {
+            return null
+        }
+        val cachedUser = forumUsersCache.getUserById(authHolder.get().userId)
+        if (cachedUser != null) {
+            return cachedUser
+        }
+        return loadSelf().user
     }
 
     suspend fun loadSelf(): ProfileModel {
@@ -29,9 +46,6 @@ class ProfileRepository(
 
     suspend fun loadProfile(url: String): ProfileModel {
         return profileApi.getProfile(url).also {
-            if (it.user.id == authHolder.get().userId) {
-                userHolder.user = it.user
-            }
             forumUsersCache.saveUser(it.user)
         }
     }

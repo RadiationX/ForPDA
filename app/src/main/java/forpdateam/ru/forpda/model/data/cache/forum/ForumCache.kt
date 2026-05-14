@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.model.data.cache.forum
 
 import androidx.room.RoomDatabase
 import androidx.room.withTransaction
-import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatBd
+import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatDb
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.model.data.db.ForumsDao
 
@@ -23,10 +23,10 @@ class ForumCache(
     }
 }
 
-fun ForumItemFlatBd.toDomain(): ForumItemFlat {
+fun ForumItemFlatDb.toDomain(): ForumItemFlat {
     return ForumItemFlat(id, parentId, level, title)
 }
 
-fun ForumItemFlat.toDb(): ForumItemFlatBd {
-    return ForumItemFlatBd(id, parentId, level, title)
+fun ForumItemFlat.toDb(): ForumItemFlatDb {
+    return ForumItemFlatDb(id, parentId, level, title)
 }

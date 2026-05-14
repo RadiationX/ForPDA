@@ -102,7 +102,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         App.get().Di().editPostRepository,
         App.get().Di().favoritesRepository,
         App.get().Di().webSocketEventsRepository,
-        App.get().Di().userHolder,
+        App.get().Di().profileRepository,
         App.get().Di().topicPreferencesHolder,
         App.get().Di().mainPreferencesHolder,
         App.get().Di().crossScreenInteractor,
