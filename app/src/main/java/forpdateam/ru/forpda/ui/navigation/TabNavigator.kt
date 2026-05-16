@@ -292,9 +292,7 @@ class TabNavigator(
     private fun createActivityIntent(context: Context, screen: Screen): Intent? {
         when (screen) {
             is Screen.Main -> {
-                return Intent(context, MainActivity::class.java).apply {
-                    putExtra(MainActivity.ARG_CHECK_WEBVIEW, screen.checkWebView)
-                }
+                return Intent(context, MainActivity::class.java)
             }
 
             is Screen.UpdateChecker -> {

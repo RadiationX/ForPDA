@@ -79,12 +79,6 @@
             android:theme="@style/DayNightPreferenceTheme" />
 
         <activity
-            android:name=".ui.activities.WebVewNotFoundActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/DayNightAppTheme.NoActionBar" />
-
-        <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
             android:exported="false"
             android:launchMode="singleTop"

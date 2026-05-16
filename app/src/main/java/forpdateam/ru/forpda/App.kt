@@ -6,6 +6,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -19,7 +20,6 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
-import android.webkit.WebSettings
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -195,25 +195,6 @@ class App : Application() {
 
             return null
         }
-    }
-
-    val preferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(this)
-    }
-
-    private var webViewFound: Boolean? = null
-
-
-    fun isWebViewFound(context: Context?): Boolean {
-        if (webViewFound == null) {
-            try {
-                WebSettings.getDefaultUserAgent(context)
-                webViewFound = true
-            } catch (e: Exception) {
-                webViewFound = false
-            }
-        }
-        return requireNotNull(webViewFound)
     }
 
     override fun attachBaseContext(base: Context) {

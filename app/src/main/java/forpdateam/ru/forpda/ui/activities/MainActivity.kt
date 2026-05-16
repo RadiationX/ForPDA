@@ -31,11 +31,8 @@ import forpdateam.ru.forpda.ui.DimensionHelper
 import forpdateam.ru.forpda.ui.activities.updatechecker.SimpleUpdateChecker
 import forpdateam.ru.forpda.ui.navigation.TabNavigator
 import forpdateam.ru.forpda.ui.views.drawers.BottomDrawer
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -44,8 +41,6 @@ import kotlin.math.max
 class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     val removeTabListener = { view: View -> backHandler(true) }
 
-
-    private var checkWebView = true
 
     private val binding by viewBinding<ActivityMainBinding>()
 
@@ -85,29 +80,11 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         super.onCreate(savedInstanceState)
-        if (intent != null) {
-            checkWebView = intent.getBooleanExtra(ARG_CHECK_WEBVIEW, checkWebView)
-        }
-        if (checkWebView) {
-            lifecycleScope.launch {
-                val webviewFound = withContext(Dispatchers.Default) {
-                    App.get().isWebViewFound(this@MainActivity)
-                }
-                if (webviewFound) {
-                    return@launch
-                }
-                val intent = Intent(App.getContext(), WebVewNotFoundActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
-
 
         Log.d(
             "kekeke",
             "oncreate UiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}"
         )
-
 
         presenter.setIsRestored(savedInstanceState != null)
         intent?.data?.also {
