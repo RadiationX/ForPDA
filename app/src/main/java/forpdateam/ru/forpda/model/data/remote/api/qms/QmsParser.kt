@@ -18,7 +18,7 @@ class QmsParser(
     private val scope = ParserPatterns.Qms
 
     fun parseSearch(response: String): List<ForumUser> = patternProvider
-        .getParserPattern(scope.scope, scope.finduser)
+        .getRegexParser(scope.scope, scope.finduser)
         .map(response) { matcher ->
             ForumUser.required(
                 id = matcher.require(1).toInt(),
@@ -36,7 +36,7 @@ class QmsParser(
     fun parseBlackList(response: String): List<QmsContact> {
         checkOperation(response)
         return patternProvider
-            .getParserPattern(scope.scope, scope.blacklist_main)
+            .getRegexParser(scope.scope, scope.blacklist_main)
             .map(response) { matcher ->
                 QmsContact(
                     user = ForumUser.required(
@@ -50,7 +50,7 @@ class QmsParser(
     }
 
     private fun checkOperation(response: String) = patternProvider
-        .getParserPattern(scope.scope, scope.blacklist_msg)
+        .getRegexParser(scope.scope, scope.blacklist_msg)
         .findAll(response) { matcher ->
             if (!matcher.require(1).contains("success")) {
                 throw Exception(matcher.require(2).trim().fromHtml())
@@ -58,7 +58,7 @@ class QmsParser(
         }
 
     fun parseContacts(response: String): List<QmsContact> = patternProvider
-        .getParserPattern(scope.scope, scope.contacts_main)
+        .getRegexParser(scope.scope, scope.contacts_main)
         .map(response) { matcher ->
             QmsContact(
                 user = ForumUser.required(
@@ -72,13 +72,13 @@ class QmsParser(
 
     fun parseThemes(response: String, argId: Int): QmsThemes {
         val nick = patternProvider
-            .getParserPattern(scope.scope, scope.thread_nick)
+            .getRegexParser(scope.scope, scope.thread_nick)
             .requireOnce(response) { matcher ->
                 matcher.require(1).fromHtml()
             }
 
         val themes = patternProvider
-            .getParserPattern(scope.scope, scope.thread_main)
+            .getRegexParser(scope.scope, scope.thread_main)
             .map(response) { matcher ->
                 QmsTheme(
                     id = matcher.require(1).toInt(),
@@ -94,7 +94,7 @@ class QmsParser(
 
     fun parseChat(response: String): QmsChatModel {
         val chat = patternProvider
-            .getParserPattern(scope.scope, scope.chat_info)
+            .getRegexParser(scope.scope, scope.chat_info)
             .mapOnce(response) { matcher ->
                 QmsChatModel(
                     title = matcher.require(2).trim().fromHtml(),
@@ -116,7 +116,7 @@ class QmsParser(
 
     fun sendMessage(response: String): List<QmsMessage> {
         patternProvider
-            .getParserPattern(scope.scope, scope.send_message_error)
+            .getRegexParser(scope.scope, scope.send_message_error)
             .findOnce(response) {
                 throw Exception(it.require(1).trim())
             }
@@ -126,14 +126,14 @@ class QmsParser(
     fun parseMoreMessages(response: String): List<QmsMessage> = localParseMessages(response)
 
     fun parseUserFromWebSocket(response: String): Int = patternProvider
-        .getParserPattern(scope.scope, scope.message_info)
+        .getRegexParser(scope.scope, scope.message_info)
         .mapOnce(response) {
             it.require(1).toInt()
         }
         ?: 0
 
     private fun localParseMessages(response: String): List<QmsMessage> = patternProvider
-        .getParserPattern(scope.scope, scope.chat_pattern)
+        .getRegexParser(scope.scope, scope.chat_pattern)
         .map(response) { matcher ->
             if (matcher.get(1) == null && matcher.get(7) != null) {
                 QmsMessage.Date(date = matcher.require(7).trim())

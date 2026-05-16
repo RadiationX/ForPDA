@@ -19,19 +19,19 @@ class TopicsParser(
         var id = argId
         var title: String? = null
         patternProvider
-            .getParserPattern(scope.scope, scope.title)
+            .getRegexParser(scope.scope, scope.title)
             .requireOnce(response) {
                 id = it.require(1).toInt()
                 title = it.require(2).fromHtml()
             }
 
         val canCreateTopic = patternProvider
-            .getParserPattern(scope.scope, scope.can_new_topic)
+            .getRegexParser(scope.scope, scope.can_new_topic)
             .mapOnce(response) { true }
             ?: false
 
         val announces = patternProvider
-            .getParserPattern(scope.scope, scope.announce)
+            .getRegexParser(scope.scope, scope.announce)
             .map(response) { matcher ->
                 TopicItem.Announce(
                     title = matcher.require(2).fromHtml(),
@@ -40,7 +40,7 @@ class TopicsParser(
             }
 
         val topicItems = patternProvider
-            .getParserPattern(scope.scope, scope.topics)
+            .getRegexParser(scope.scope, scope.topics)
             .map(response) { matcher ->
                 val flagsGroup = matcher.get(2)
                 val flags = TopicFlags(
@@ -74,7 +74,7 @@ class TopicsParser(
 
 
         val forums = patternProvider
-            .getParserPattern(scope.scope, scope.forum)
+            .getRegexParser(scope.scope, scope.forum)
             .map(response) { matcher ->
                 TopicItem.Forum(
                     id = matcher.require(1).toInt(),

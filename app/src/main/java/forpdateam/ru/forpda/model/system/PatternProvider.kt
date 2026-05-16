@@ -4,10 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
-import forpdateam.ru.forpda.model.data.storage.parser.ParserContext
-import forpdateam.ru.forpda.model.data.storage.parser.ParserPattern
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.radiationx.regexparser.RegexParser
+import ru.radiationx.regexparser.core.RegexContext
+import ru.radiationx.regexparser.extensions.toRegexParser
 import java.util.Collections
 import java.util.regex.Pattern
 
@@ -50,8 +51,8 @@ class PatternProvider(
         }
         ?: throw Exception("Not found pattern by: s=$scope, k=$key")
 
-    override fun getParserPattern(scope: String, key: String): ParserPattern {
-        return ParserPattern(ParserContext(scope, key), getPattern(scope, key))
+    override fun getRegexParser(scope: String, key: String): RegexParser {
+        return getPattern(scope, key).toRegexParser(ScopedRegexContext(scope, key))
     }
 
     @Synchronized
@@ -165,6 +166,14 @@ class PatternProvider(
         //Log.e("PatternProvider", "saved length : ${jsonString.length}")
         sharedPreferences.edit().putString(KEY_PATTERNS, jsonString).apply()
         currentVersion = version
+    }
+
+    private class ScopedRegexContext(
+        val scope: String,
+        val key: String,
+    ) : RegexContext {
+        override val message: String
+            get() = "$scope:$key"
     }
 
 }

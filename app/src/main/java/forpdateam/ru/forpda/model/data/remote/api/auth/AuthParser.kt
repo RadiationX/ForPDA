@@ -12,7 +12,7 @@ class AuthParser(
     private val scope = ParserPatterns.Auth
 
     fun parseCaptcha(response: String): AuthCaptcha = patternProvider
-        .getParserPattern(scope.scope, scope.captcha)
+        .getRegexParser(scope.scope, scope.captcha)
         .mapOnce(response) {
             AuthCaptcha(
                 captchaTime = it.require(1),

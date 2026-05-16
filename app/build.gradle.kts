@@ -127,6 +127,8 @@ appmetrica {
 }
 
 dependencies {
+    implementation(project(":lib:regexparser"))
+
     implementation(libs.kotlin.coroutines.core)
 
     implementation(libs.androidx.core.ktx)

@@ -22,7 +22,7 @@ class ArticleParser(
     private val scope = ParserPatterns.Articles
 
     fun parseArticles(response: String): List<NewsItem> = patternProvider
-        .getParserPattern(scope.scope, scope.list)
+        .getRegexParser(scope.scope, scope.list)
         .map(response) { matcher ->
             NewsItem(
                 url = matcher.require(1),
@@ -40,7 +40,7 @@ class ArticleParser(
         }
 
     fun parseArticle(response: String): DetailsPage = patternProvider
-        .getParserPattern(scope.scope, ParserPatterns.Articles.detail_detector)
+        .getRegexParser(scope.scope, ParserPatterns.Articles.detail_detector)
         .mapOnce(response) {
             val hasV1 = !it.get(1).isNullOrEmpty()
             val hasV2 = !it.get(2).isNullOrEmpty()
@@ -52,7 +52,7 @@ class ArticleParser(
         } ?: throw Exception("Not found article type")
 
     private fun parseArticleV1(response: String): DetailsPage = patternProvider
-        .getParserPattern(scope.scope, scope.detail)
+        .getRegexParser(scope.scope, scope.detail)
         .mapOnce(response) { matcher ->
             DetailsPage(
                 id = matcher.require(1).toInt(),
@@ -71,11 +71,11 @@ class ArticleParser(
         } ?: throw Exception("Not found article by pattern v1")
 
     private fun parseArticleV2(response: String): DetailsPage = patternProvider
-        .getParserPattern(scope.scope, scope.detail_v2)
+        .getRegexParser(scope.scope, scope.detail_v2)
         .mapOnce(response) { matcher ->
             var imgUrl: String? = null
             patternProvider
-                .getParserPattern(ParserPatterns.Global.scope, ParserPatterns.Global.meta_tags)
+                .getRegexParser(ParserPatterns.Global.scope, ParserPatterns.Global.meta_tags)
                 .findAll(response) {
                     val metaTarget = it.require(1)
                     val metaType = it.require(2)
@@ -109,7 +109,7 @@ class ArticleParser(
     }
 
     private fun parseMaterials(source: String): List<Material> = patternProvider
-        .getParserPattern(scope.scope, scope.materials)
+        .getRegexParser(scope.scope, scope.materials)
         .map(source) {
             Material(
                 imageUrl = it.require(1),
@@ -119,7 +119,7 @@ class ArticleParser(
         }
 
     private fun parseTags(source: String): List<Tag> = patternProvider
-        .getParserPattern(scope.scope, scope.tags)
+        .getRegexParser(scope.scope, scope.tags)
         .map(source) {
             Tag(
                 tag = it.require(1),
@@ -130,10 +130,10 @@ class ArticleParser(
     private fun parseKarma(source: String): SparseArray<Comment.Karma> {
         val result = SparseArray<Comment.Karma>()
         patternProvider
-            .getParserPattern(scope.scope, scope.karmaSource)
+            .getRegexParser(scope.scope, scope.karmaSource)
             .findOnce(source) { sourceMatcher ->
                 patternProvider
-                    .getParserPattern(scope.scope, scope.karma)
+                    .getRegexParser(scope.scope, scope.karma)
                     .findAll(sourceMatcher.require(1)) {
                         try {
                             val commentId = it.require(1).toInt()
@@ -199,7 +199,7 @@ class ArticleParser(
             val anchorNode = Parser.findNode(commentNode, "div", "id", "comment-") ?: continue
 
             comment.id = patternProvider
-                .getParserPattern(scope.scope, scope.comment_id)
+                .getRegexParser(scope.scope, scope.comment_id)
                 .requireOnce(anchorNode.getAttribute("id")!!) {
                     it.require(1).toInt()
                 }
@@ -218,7 +218,7 @@ class ArticleParser(
                 requireNotNull(dateNode)
 
                 comment.userId = patternProvider
-                    .getParserPattern(scope.scope, scope.comment_user_id)
+                    .getRegexParser(scope.scope, scope.comment_user_id)
                     .requireOnce(avatarNode.getAttribute("href")!!) {
                         it.require(1).toInt()
                     }

@@ -15,7 +15,7 @@ class MentionsParser(
 
     fun parse(response: String): MentionsData {
         val items = patternProvider
-            .getParserPattern(scope.scope, scope.main)
+            .getRegexParser(scope.scope, scope.main)
             .map(response) { matcher ->
                 val state = if (matcher.require(1) == "read") {
                     MentionItem.STATE_READ

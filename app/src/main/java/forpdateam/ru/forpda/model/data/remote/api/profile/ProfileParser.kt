@@ -17,7 +17,7 @@ class ProfileParser(
 
     fun parse(response: String, argUrl: String): ProfileModel {
         val profile = patternProvider
-            .getParserPattern(scope.scope, scope.main)
+            .getRegexParser(scope.scope, scope.main)
             .mapOnce(response) { mainMatcher ->
                 val id = Pattern.compile("showuser=(\\d+)").matcher(argUrl).requireOnce { matcher ->
                     matcher.group(1)!!.toInt()
@@ -55,7 +55,7 @@ class ProfileParser(
     }
 
     private fun parseMainInfo(source: String): List<ProfileModel.Info> = patternProvider
-        .getParserPattern(scope.scope, scope.info)
+        .getRegexParser(scope.scope, scope.info)
         .map(source) { matcher ->
             val field = matcher.require(1).trimEnd(':')
             val value = matcher.require(2).trim().fromHtml()
@@ -69,7 +69,7 @@ class ProfileParser(
         }
 
     private fun parsePersonalInfo(source: String): List<ProfileModel.Info> = patternProvider
-        .getParserPattern(scope.scope, scope.personal)
+        .getRegexParser(scope.scope, scope.personal)
         .map(source) { matcher ->
             val field = matcher.require(1).trim().trimEnd(':')
             val value = matcher.get(2)?.trim()
@@ -88,7 +88,7 @@ class ProfileParser(
         }
 
     private fun parseContacts(source: String): List<ProfileModel.Contact> = patternProvider
-        .getParserPattern(scope.scope, scope.contacts)
+        .getRegexParser(scope.scope, scope.contacts)
         .map(source) { matcher ->
             val title = matcher.require(2).trim()
             ProfileModel.Contact(
@@ -113,7 +113,7 @@ class ProfileParser(
         }
 
     private fun parseDevices(source: String): List<ProfileModel.Device> = patternProvider
-        .getParserPattern(scope.scope, scope.devices)
+        .getRegexParser(scope.scope, scope.devices)
         .map(source) { matcher ->
             ProfileModel.Device(
                 url = matcher.require(1).trim(),
@@ -123,7 +123,7 @@ class ProfileParser(
         }
 
     private fun parseSiteStats(source: String): List<ProfileModel.Stat> = patternProvider
-        .getParserPattern(scope.scope, scope.site_stats)
+        .getRegexParser(scope.scope, scope.site_stats)
         .map(source) { matcher ->
             val field = matcher.require(1)
             ProfileModel.Stat(
@@ -139,7 +139,7 @@ class ProfileParser(
         }
 
     private fun parseForumStats(source: String): List<ProfileModel.Stat> = patternProvider
-        .getParserPattern(scope.scope, scope.forum_stats)
+        .getRegexParser(scope.scope, scope.forum_stats)
         .map(source) { matcher ->
             val field = matcher.require(1)
 
@@ -156,19 +156,19 @@ class ProfileParser(
         }
 
     private fun parseNote(source: String): String? = patternProvider
-        .getParserPattern(scope.scope, scope.note)
+        .getRegexParser(scope.scope, scope.note)
         .mapOnce(source) { matcher ->
             matcher.require(1).replace("\n".toRegex(), "<br></br>").fromHtml()
         }
 
     private fun parseAbout(source: String): Spanned? = patternProvider
-        .getParserPattern(scope.scope, scope.about)
+        .getRegexParser(scope.scope, scope.about)
         .mapOnce(source) { matcher ->
             matcher.get(1)?.trim()?.fromHtmlToSpanned()
         }
 
     private fun parseWarnings(source: String): List<ProfileModel.Warning> = patternProvider
-        .getParserPattern(scope.scope, scope.warnings)
+        .getRegexParser(scope.scope, scope.warnings)
         .map(source) { matcher ->
             ProfileModel.Warning(
                 type = when (matcher.require(1)) {

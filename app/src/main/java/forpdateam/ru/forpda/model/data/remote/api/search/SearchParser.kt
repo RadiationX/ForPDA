@@ -43,7 +43,7 @@ class SearchParser(
     }
 
     private fun parseNews(response: String) = patternProvider
-        .getParserPattern(scope.scope, scope.articles)
+        .getRegexParser(scope.scope, scope.articles)
         .map(response) { matcher ->
             SearchItem.News(
                 id = matcher.require(1).toInt(),
@@ -59,7 +59,7 @@ class SearchParser(
         }
 
     private fun parseTopics(response: String) = patternProvider
-        .getParserPattern(scope.scope, scope.forum_topics)
+        .getRegexParser(scope.scope, scope.forum_topics)
         .map(response) { matcher ->
             SearchItem.Topic(
                 topicId = matcher.require(1).toInt(),
@@ -76,7 +76,7 @@ class SearchParser(
 
 
     private fun parseForumPosts(response: String) = patternProvider
-        .getParserPattern(scope.scope, scope.forum_posts)
+        .getRegexParser(scope.scope, scope.forum_posts)
         .map(response) { matcher ->
             val title = matcher.require(4).fromHtml()
             val post = ForumPost(

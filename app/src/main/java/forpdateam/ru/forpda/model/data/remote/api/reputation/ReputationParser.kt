@@ -16,7 +16,7 @@ class ReputationParser(
 
     fun parse(response: String): RepData {
         val items = patternProvider
-            .getParserPattern(scope.scope, scope.main)
+            .getRegexParser(scope.scope, scope.main)
             .map(response) { matcher ->
                 RepItem(
                     user = User.required(
@@ -33,7 +33,7 @@ class ReputationParser(
         val pagination = Pagination.parseForum(response)
 
         return patternProvider
-            .getParserPattern(scope.scope, scope.info)
+            .getRegexParser(scope.scope, scope.info)
             .requireOnce(response) { matcher ->
                 RepData(
                     id = matcher.require(1).toInt(),

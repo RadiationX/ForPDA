@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
-import forpdateam.ru.forpda.model.data.storage.parser.ParserPattern
+import ru.radiationx.regexparser.RegexParser
 
 class EditPostParser(
     private val patternProvider: IPatternProvider
@@ -15,7 +15,7 @@ class EditPostParser(
 
     fun parseForm(response: String): EditPost.Form {
         return patternProvider
-            .getParserPattern(scope.scope, scope.form)
+            .getRegexParser(scope.scope, scope.form)
             .requireOnce(response) {
                 EditPost.Form(
                     message = ApiUtils.escapeNewLine(it.require(1)).fromHtml(),
@@ -25,14 +25,14 @@ class EditPostParser(
     }
 
     fun parsePoll(response: String): EditPost.Poll? = patternProvider
-        .getParserPattern(scope.scope, scope.poll_info)
+        .getRegexParser(scope.scope, scope.poll_info)
         .mapOnce(response) { matcher ->
-            val jsonPattern =
-                patternProvider.getParserPattern(scope.scope, scope.poll_fucking_invalid_json)
-            val tmpQuestions = parseTmpQuestions(jsonPattern, matcher.require(2))
-            val tmpChoices = parseTmpChoices(jsonPattern, matcher.require(3))
-            val tmpChoicesVotes = parseTmpChoicesVotes(jsonPattern, matcher.require(4))
-            val tmpQuestionsMulti = parseTmpQuestionsMulti(jsonPattern, matcher.require(5))
+            val jsonParser =
+                patternProvider.getRegexParser(scope.scope, scope.poll_fucking_invalid_json)
+            val tmpQuestions = parseTmpQuestions(jsonParser, matcher.require(2))
+            val tmpChoices = parseTmpChoices(jsonParser, matcher.require(3))
+            val tmpChoicesVotes = parseTmpChoicesVotes(jsonParser, matcher.require(4))
+            val tmpQuestionsMulti = parseTmpQuestionsMulti(jsonParser, matcher.require(5))
 
             val questions = tmpQuestions.map { question ->
                 val choice = tmpChoices.map { choice ->
@@ -61,20 +61,19 @@ class EditPostParser(
         }
 
     private fun parseTmpQuestions(
-        jsonPattern: ParserPattern,
+        regexParser: RegexParser,
         input: String
-    ): List<TmpQuestion> =
-        jsonPattern.map(input) {
-            TmpQuestion(
-                id = EditPost.Poll.QuestionId(it.require(1).toInt()),
-                title = it.require(3).fromHtml()
-            )
-        }
+    ): List<TmpQuestion> = regexParser.map(input) {
+        TmpQuestion(
+            id = EditPost.Poll.QuestionId(it.require(1).toInt()),
+            title = it.require(3).fromHtml()
+        )
+    }
 
     private fun parseTmpQuestionsMulti(
-        jsonPattern: ParserPattern,
+        regexParser: RegexParser,
         input: String
-    ): List<TmpQuestionMulti> = jsonPattern.map(input) {
+    ): List<TmpQuestionMulti> = regexParser.map(input) {
         TmpQuestionMulti(
             id = EditPost.Poll.QuestionId(it.require(1).toInt()),
             isMulti = it.require(3) == "1"
@@ -82,9 +81,9 @@ class EditPostParser(
     }
 
     private fun parseTmpChoices(
-        jsonPattern: ParserPattern,
+        regexParser: RegexParser,
         input: String
-    ): List<TmpChoice> = jsonPattern.map(input) {
+    ): List<TmpChoice> = regexParser.map(input) {
         TmpChoice(
             id = EditPost.Poll.ChoiceId(
                 questionId = EditPost.Poll.QuestionId(it.require(1).toInt()),
@@ -95,9 +94,9 @@ class EditPostParser(
     }
 
     private fun parseTmpChoicesVotes(
-        jsonPattern: ParserPattern,
+        regexParser: RegexParser,
         input: String
-    ): List<TmpChoiceVotes> = jsonPattern.map(input) { jsonMatcher ->
+    ): List<TmpChoiceVotes> = regexParser.map(input) { jsonMatcher ->
         TmpChoiceVotes(
             id = EditPost.Poll.ChoiceId(
                 questionId = EditPost.Poll.QuestionId(jsonMatcher.require(1).toInt()),

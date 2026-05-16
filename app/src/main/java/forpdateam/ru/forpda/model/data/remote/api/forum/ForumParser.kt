@@ -20,13 +20,13 @@ class ForumParser(
 
     fun parseForums(response: String): List<ForumItemFlat> {
         return patternProvider
-            .getParserPattern(scope.scope, scope.forums_from_search)
+            .getRegexParser(scope.scope, scope.forums_from_search)
             .mapOnce(response) { rootMatcher ->
                 val parentsList = ArrayList<Parent>()
                 var lastParent = Parent(-1, -1)
                 parentsList.add(lastParent)
                 patternProvider
-                    .getParserPattern(scope.scope, scope.forum_item_from_search)
+                    .getRegexParser(scope.scope, scope.forum_item_from_search)
                     .map(rootMatcher.require(1)) { matcher ->
                         val level = matcher.require(2).length / 2
                         if (level <= lastParent.level) {
@@ -53,7 +53,7 @@ class ForumParser(
     fun parseRules(response: String): ForumRules {
         val items = mutableListOf<ForumRules.Item>()
         patternProvider
-            .getParserPattern(scope.scope, scope.rules_headers)
+            .getRegexParser(scope.scope, scope.rules_headers)
             .findAll(response) { headerMatcher ->
                 items.add(
                     ForumRules.Item(
@@ -65,7 +65,7 @@ class ForumParser(
 
                 val itemContent = headerMatcher.require(3)
                 patternProvider
-                    .getParserPattern(scope.scope, scope.rules_items)
+                    .getRegexParser(scope.scope, scope.rules_items)
                     .findAll(itemContent) { itemMatcher ->
                         items.add(
                             ForumRules.Item(
@@ -84,7 +84,7 @@ class ForumParser(
 
     fun parseAnnounce(response: String): Announce {
         val announce = patternProvider
-            .getParserPattern(scope.scope, scope.announce)
+            .getRegexParser(scope.scope, scope.announce)
             .mapOnce(response) {
                 Announce(
                     title = it.require(1),

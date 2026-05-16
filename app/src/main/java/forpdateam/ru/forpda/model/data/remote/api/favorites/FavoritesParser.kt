@@ -7,7 +7,7 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.IPatternProvider
-import forpdateam.ru.forpda.model.data.storage.parser.ParserPattern
+import ru.radiationx.regexparser.core.RegexMatch
 
 class FavoritesParser(
     private val patternProvider: IPatternProvider
@@ -17,7 +17,7 @@ class FavoritesParser(
 
     fun parseFavorites(response: String): FavoritesData {
         val list = patternProvider
-            .getParserPattern(scope.scope, scope.main)
+            .getRegexParser(scope.scope, scope.main)
             .map(response) { matcher ->
                 parseFavorite(matcher)
             }
@@ -30,65 +30,65 @@ class FavoritesParser(
 
     fun checkIsComplete(result: String): Boolean {
         return patternProvider
-            .getParserPattern(scope.scope, scope.check_action)
+            .getRegexParser(scope.scope, scope.check_action)
             .mapOnce(result) { true }
             ?: false
     }
 
-    private fun parseFavorite(matcher: ParserPattern.Matcher): Favorite {
-        val isTopic = matcher.get(19) == null
+    private fun parseFavorite(match: RegexMatch): Favorite {
+        val isTopic = match.get(19) == null
         return if (isTopic) {
-            parseFavoriteTopic(matcher)
+            parseFavoriteTopic(match)
         } else {
-            parseFavoriteForum(matcher)
+            parseFavoriteForum(match)
         }
     }
 
-    private fun parseFavoriteTopic(matcher: ParserPattern.Matcher): Favorite.Topic {
-        val flagsGroup = matcher.get(5)
+    private fun parseFavoriteTopic(match: RegexMatch): Favorite.Topic {
+        val flagsGroup = match.get(5)
         return Favorite.Topic(
-            favId = matcher.require(1).toInt(),
-            topicId = matcher.require(6).toInt(),
-            trackType = matcher.require(2),
-            isPin = matcher.require(3) == "1",
+            favId = match.require(1).toInt(),
+            topicId = match.require(6).toInt(),
+            trackType = match.require(2),
+            isPin = match.require(3) == "1",
             isNew = flagsGroup?.contains("+") == true,
             isPoll = flagsGroup?.contains("^") == true,
             isClosed = flagsGroup?.contains("Х") == true,
-            title = matcher.require(8).fromHtml(),
-            stParam = matcher.get(9)?.toInt(),
-            desc = matcher.get(10)?.fromHtml(),
-            forumId = matcher.require(12).toInt(),
-            forumTitle = matcher.require(13).fromHtml(),
+            title = match.require(8).fromHtml(),
+            stParam = match.get(9)?.toInt(),
+            desc = match.get(10)?.fromHtml(),
+            forumId = match.require(12).toInt(),
+            forumTitle = match.require(13).fromHtml(),
             author = User.required(
-                matcher.require(14).toInt(),
-                matcher.require(15).fromHtml()
+                match.require(14).toInt(),
+                match.require(15).fromHtml()
             ),
             lastUser = User.required(
-                matcher.require(16).toInt(),
-                matcher.require(17).fromHtml()
+                match.require(16).toInt(),
+                match.require(17).fromHtml()
             ),
-            date = matcher.require(18),
-            curator = matcher.get(22)?.let {
+            date = match.require(18),
+            curator = match.get(22)?.let {
                 User.required(
                     it.toInt(),
-                    matcher.require(23).fromHtml()
+                    match.require(23).fromHtml()
                 )
             }
         )
     }
 
-    private fun parseFavoriteForum(matcher: ParserPattern.Matcher): Favorite.Forum {
+    private fun parseFavoriteForum(match: RegexMatch): Favorite.Forum {
         return Favorite.Forum(
-            favId = matcher.require(1).toInt(),
-            forumId = matcher.require(6).toInt(),
-            trackType = matcher.require(2),
-            isPin = matcher.require(3) == "1",
-            isNew = matcher.get(5)?.contains("+") == true,
-            title = matcher.require(8).fromHtml(),
-            date = matcher.require(19),
+            favId = match.require(1).toInt(),
+            forumId = match.require(6).toInt(),
+            trackType = match.require(2),
+            isPin = match.require(3) == "1",
+            isNew = match.get(5)?.contains("+") == true,
+            title = match.require(8).fromHtml(),
+            date = match.require(19),
             lastUser = User.optional(
-                matcher.require(20).toInt(),
-                matcher.require(21).fromHtml()
+                match.require(20).toInt(),
+                match.require(21).fromHtml()
             )
         )
     }

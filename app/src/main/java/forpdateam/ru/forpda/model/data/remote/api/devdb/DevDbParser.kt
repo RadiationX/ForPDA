@@ -19,11 +19,11 @@ class DevDbParser(
     fun parseBrands(response: String): Brands {
         val letterMap = linkedMapOf<String, List<Brands.Item>>()
         patternProvider
-            .getParserPattern(scope.scope, scope.brands_letters)
+            .getRegexParser(scope.scope, scope.brands_letters)
             .findAll(response) { matcher ->
                 val letter = matcher.require(1)
                 val items = patternProvider
-                    .getParserPattern(scope.scope, scope.brands_items_in_letter)
+                    .getRegexParser(scope.scope, scope.brands_items_in_letter)
                     .map(matcher.require(2)) { itemsMatcher ->
                         Brands.Item(
                             id = itemsMatcher.require(1),
@@ -35,12 +35,12 @@ class DevDbParser(
             }
 
         val brands = patternProvider
-            .getParserPattern(scope.scope, scope.main_root)
+            .getRegexParser(scope.scope, scope.main_root)
             .mapOnce(response) { matcher ->
                 var catId: String? = null
                 var catTitle: String? = null
                 patternProvider
-                    .getParserPattern(scope.scope, scope.main_breadcrumb)
+                    .getRegexParser(scope.scope, scope.main_breadcrumb)
                     .findAll(matcher.require(1)) { bcMatcher ->
                         if (bcMatcher.get(2) == null) {
                             catId = bcMatcher.require(1)
@@ -62,10 +62,10 @@ class DevDbParser(
 
     fun parseBrand(response: String): Brand {
         val devices = patternProvider
-            .getParserPattern(scope.scope, scope.brand_devices)
+            .getRegexParser(scope.scope, scope.brand_devices)
             .map(response) { matcher ->
                 val specs = patternProvider
-                    .getParserPattern(scope.scope, scope.main_specs)
+                    .getRegexParser(scope.scope, scope.main_specs)
                     .map(matcher.require(4)) {
                         Pair(it.require(1), it.require(2))
                     }
@@ -80,14 +80,14 @@ class DevDbParser(
             }
 
         val brand = patternProvider
-            .getParserPattern(scope.scope, scope.main_root)
+            .getRegexParser(scope.scope, scope.main_root)
             .mapOnce(response) { matcher ->
                 var catId: String? = null
                 var catTitle: String? = null
                 var id: String? = null
                 var title: String? = null
                 patternProvider
-                    .getParserPattern(scope.scope, scope.main_breadcrumb)
+                    .getRegexParser(scope.scope, scope.main_breadcrumb)
                     .findAll(matcher.require(1)) { bcMatcher ->
                         if (bcMatcher.get(2) == null) {
                             catId = bcMatcher.require(1)
@@ -126,22 +126,22 @@ class DevDbParser(
         val images = mutableListOf<Pair<String, String>>()
         val specsGroups = mutableListOf<Pair<String, List<Pair<String, String>>>>()
         patternProvider
-            .getParserPattern(scope.scope, scope.device_head)
+            .getRegexParser(scope.scope, scope.device_head)
             .findOnce(response) { matcher ->
                 title = matcher.require(1)
 
                 patternProvider
-                    .getParserPattern(scope.scope, scope.device_images)
+                    .getRegexParser(scope.scope, scope.device_images)
                     .findAll(matcher.require(2)) {
                         images.add(Pair(it.require(2), it.require(1)))
                     }
 
                 patternProvider
-                    .getParserPattern(scope.scope, scope.device_specs_titled)
+                    .getRegexParser(scope.scope, scope.device_specs_titled)
                     .findAll(matcher.require(3)) {
                         val specTitle = it.require(1).fromHtml()
                         val specs = patternProvider
-                            .getParserPattern(scope.scope, scope.main_specs)
+                            .getRegexParser(scope.scope, scope.main_specs)
                             .map(it.require(2)) {
                                 Pair(it.require(1), it.require(2))
                             }
@@ -150,10 +150,10 @@ class DevDbParser(
             }
 
         patternProvider
-            .getParserPattern(scope.scope, scope.main_root)
+            .getRegexParser(scope.scope, scope.main_root)
             .findOnce(response) { matcher ->
                 patternProvider
-                    .getParserPattern(scope.scope, scope.main_breadcrumb)
+                    .getRegexParser(scope.scope, scope.main_breadcrumb)
                     .findAll(matcher.require(1)) {
                         if (it.get(2) == null) {
                             catId = it.require(1)
@@ -169,7 +169,7 @@ class DevDbParser(
             }
 
         val comments = patternProvider
-            .getParserPattern(scope.scope, scope.device_comments)
+            .getRegexParser(scope.scope, scope.device_comments)
             .map(response) { matcher ->
                 Device.Comment(
                     id = matcher.require(1).toInt(),
@@ -186,7 +186,7 @@ class DevDbParser(
             }
 
         val news = patternProvider
-            .getParserPattern(scope.scope, scope.device_reviews)
+            .getRegexParser(scope.scope, scope.device_reviews)
             .map(response) { matcher ->
                 Device.PostItem(
                     id = matcher.require(1).toInt(),
@@ -198,10 +198,10 @@ class DevDbParser(
             }
 
         val discussions = patternProvider
-            .getParserPattern(scope.scope, scope.device_discussions)
+            .getRegexParser(scope.scope, scope.device_discussions)
             .mapOnce(response) {
                 patternProvider
-                    .getParserPattern(scope.scope, scope.device_discuss_and_firm)
+                    .getRegexParser(scope.scope, scope.device_discuss_and_firm)
                     .map(it.require(1)) { matcher ->
                         Device.PostItem(
                             id = matcher.require(1).toInt(),
@@ -214,10 +214,10 @@ class DevDbParser(
             } ?: emptyList()
 
         val firmwares = patternProvider
-            .getParserPattern(scope.scope, scope.device_firmwares)
+            .getRegexParser(scope.scope, scope.device_firmwares)
             .mapOnce(response) {
                 patternProvider
-                    .getParserPattern(scope.scope, scope.device_discuss_and_firm)
+                    .getRegexParser(scope.scope, scope.device_discuss_and_firm)
                     .map(it.require(1)) { matcher ->
                         Device.PostItem(
                             id = matcher.require(1).toInt(),
@@ -247,7 +247,7 @@ class DevDbParser(
 
     fun parseSearch(response: String): BrandSearch {
         val devices = patternProvider
-            .getParserPattern(scope.scope, scope.main_search)
+            .getRegexParser(scope.scope, scope.main_search)
             .map(response) { matcher ->
                 Brand.DeviceItem(
                     id = matcher.require(2),

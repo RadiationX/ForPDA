@@ -30,25 +30,25 @@ class ThemeParser(
         var desc = ""
         var favId: Int? = null
         val anchors = patternProvider
-            .getParserPattern(scope.scope, scope.scroll_anchor)
+            .getRegexParser(scope.scope, scope.scroll_anchor)
             .map(argUrl) { it.require(1) }
 
         patternProvider
-            .getParserPattern(scope.scope, scope.topic_id)
+            .getRegexParser(scope.scope, scope.topic_id)
             .requireOnce(response) {
                 forumId = it.require(1).toInt()
                 id = it.require(2).toInt()
             }
 
         patternProvider
-            .getParserPattern(scope.scope, scope.title)
+            .getRegexParser(scope.scope, scope.title)
             .requireOnce(response) {
                 title = it.require(1).fromHtml()
                 desc = it.require(2).fromHtml()
             }
 
         patternProvider
-            .getParserPattern(scope.scope, scope.fav_id)
+            .getRegexParser(scope.scope, scope.fav_id)
             .findOnce(response) {
                 favId = it.require(1).toInt()
             }
@@ -85,12 +85,12 @@ class ThemeParser(
         id: Int,
         forumId: Int
     ) = patternProvider
-        .getParserPattern(scope.scope, scope.posts)
+        .getRegexParser(scope.scope, scope.posts)
         .map(response) { matcher ->
             val number = matcher.require(6).toInt()
             val body = matcher.require(21)
             val attachImages = patternProvider
-                .getParserPattern(scope.scope, scope.attached_images)
+                .getRegexParser(scope.scope, scope.attached_images)
                 .map(body) {
                     Pair("https://${it.require(1)}", it.require(2))
                 }
@@ -127,15 +127,15 @@ class ThemeParser(
         }
 
     private fun parsePoll(response: String) = patternProvider
-        .getParserPattern(scope.scope, scope.poll_main)
+        .getRegexParser(scope.scope, scope.poll_main)
         .mapOnce(response) { pollMatcher ->
             val isResult = pollMatcher.require(0).contains("<img")
 
             val questions = patternProvider
-                .getParserPattern(scope.scope, scope.poll_questions)
+                .getRegexParser(scope.scope, scope.poll_questions)
                 .map(pollMatcher.require(2)) { questionMatcher ->
                     val items = patternProvider
-                        .getParserPattern(scope.scope, scope.poll_question_item)
+                        .getRegexParser(scope.scope, scope.poll_question_item)
                         .map(questionMatcher.require(2)) {
                             if (isResult) {
                                 PollQuestionItem.Result(
@@ -162,7 +162,7 @@ class ThemeParser(
             var showResultsButton = false
             var showPollButton = false
             patternProvider
-                .getParserPattern(scope.scope, scope.poll_buttons)
+                .getRegexParser(scope.scope, scope.poll_buttons)
                 .findAll(pollMatcher.require(4)) {
                     val value = it.require(1)
                     when {
