@@ -61,7 +61,7 @@ import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 import forpdateam.ru.forpda.model.data.remote.api.topcis.TopicsApi
 import forpdateam.ru.forpda.model.data.remote.api.topcis.TopicsParser
 import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.interactors.events.EventsController
 import forpdateam.ru.forpda.model.interactors.events.NotificationEventSender
@@ -96,7 +96,7 @@ import forpdateam.ru.forpda.model.repository.search.SearchRepository
 import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
 import forpdateam.ru.forpda.model.repository.topics.TopicsRepository
 import forpdateam.ru.forpda.model.system.ExternalStorage
-import forpdateam.ru.forpda.model.system.PatternProvider
+import forpdateam.ru.forpda.model.system.PatternProviderImpl
 import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.IErrorHandler
 import forpdateam.ru.forpda.presentation.ILinkHandler
@@ -196,8 +196,8 @@ class Dependencies internal constructor(
 
     val webClient: IWebClient by lazy { Client(context, webOkHttpClient, countersHolder) }
 
-    val patternProvider: IPatternProvider by lazy {
-        PatternProvider(
+    val patternProvider: PatternProvider by lazy {
+        PatternProviderImpl(
             context,
             dataStoragePreferences
         )

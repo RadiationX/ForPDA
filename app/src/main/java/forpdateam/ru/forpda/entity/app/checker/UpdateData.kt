@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.entity.remote.checker
+package forpdateam.ru.forpda.entity.app.checker
 
 /**
  * Created by radiationx on 28.01.18.

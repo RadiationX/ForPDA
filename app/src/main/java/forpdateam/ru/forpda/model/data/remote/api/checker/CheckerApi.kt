@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.checker
 
-import forpdateam.ru.forpda.entity.remote.checker.UpdateData
+import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 
 /**
@@ -8,7 +8,7 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
  */
 class CheckerApi(
     private val client: IWebClient,
-    private val checkerParser: CheckerParser
+    private val checkerParser: CheckerParser,
 ) {
 
     suspend fun checkUpdate(): UpdateData = client

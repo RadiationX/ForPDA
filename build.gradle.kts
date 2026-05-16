@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kapt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.appmetrica) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }
 
 tasks.register<Delete>("clean") {

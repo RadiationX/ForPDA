@@ -6,11 +6,11 @@ import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import ru.radiationx.regexparser.core.RegexMatch
 
 class FavoritesParser(
-    private val patternProvider: IPatternProvider
+    private val patternProvider: PatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Favorites

@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.model.data.remote.api
 import android.text.Spanned
 import android.text.TextUtils
 import forpdateam.ru.forpda.common.Html
-import org.json.JSONObject
 
 /**
  * Created by radiationx on 26.03.17.
@@ -42,11 +41,5 @@ object ApiUtils {
             }
         }
         return sb.toString()
-    }
-
-    fun escapeQuotes(s: String?): String {
-        var escaped = JSONObject.quote(s)
-        escaped = escaped.substring(1, escaped.length - 1)
-        return escaped
     }
 }

@@ -11,12 +11,12 @@ import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.regex.parser.Node
 import forpdateam.ru.forpda.model.data.remote.api.regex.parser.Parser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ArticleParser(
-    private val patternProvider: IPatternProvider
+    private val patternProvider: PatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Articles

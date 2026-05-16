@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.appmetrica)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 fun getDateTime(): String {
@@ -130,6 +131,7 @@ dependencies {
     implementation(project(":lib:regexparser"))
 
     implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity)

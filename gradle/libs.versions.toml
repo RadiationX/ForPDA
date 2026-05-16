@@ -42,6 +42,9 @@ androidx-room = "2.8.4"
 appmetrica-plugin = "2.0.1"
 core-ktx = "1.18.0"
 junit = "4.13.2"
+kotlinx-serialization-json = "1.10.0"
+kotlin = "2.3.21"
+
 
 [libraries]
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
@@ -87,6 +90,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-plugin" }
@@ -95,3 +99,4 @@ kapt = { id = "com.android.legacy-kapt", version.ref = "android-plugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin" }
 room = { id = "androidx.room", version.ref = "androidx-room" }
 appmetrica = { id = "io.appmetrica.analytics", version.ref = "appmetrica-plugin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

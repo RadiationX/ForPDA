@@ -4,12 +4,12 @@ import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import ru.radiationx.regexparser.core.RegexMatch
 import java.text.DecimalFormat
 
 class AttachmentsParser(
-    private val patternProvider: IPatternProvider
+    private val patternProvider: PatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.EditPost

@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.model.system
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.radiationx.regexparser.RegexParser
@@ -12,10 +12,10 @@ import ru.radiationx.regexparser.extensions.toRegexParser
 import java.util.Collections
 import java.util.regex.Pattern
 
-class PatternProvider(
+class PatternProviderImpl(
     private val context: Context,
     private val sharedPreferences: SharedPreferences
-) : IPatternProvider {
+) : PatternProvider {
 
     companion object {
         private const val KEY_PATTERNS = "regex_patterns"

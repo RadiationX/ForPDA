@@ -12,7 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.AppBuildConfig
-import forpdateam.ru.forpda.entity.remote.checker.UpdateData
+import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.immutableFlag
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository

@@ -4,11 +4,11 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import ru.radiationx.regexparser.RegexParser
 
 class EditPostParser(
-    private val patternProvider: IPatternProvider
+    private val patternProvider: PatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.EditPost

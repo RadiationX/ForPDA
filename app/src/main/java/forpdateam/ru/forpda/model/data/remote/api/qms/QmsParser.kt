@@ -9,10 +9,10 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 
 class QmsParser(
-    private val patternProvider: IPatternProvider
+    private val patternProvider: PatternProvider
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Qms

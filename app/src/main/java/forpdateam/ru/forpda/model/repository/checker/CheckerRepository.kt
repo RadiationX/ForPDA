@@ -1,9 +1,9 @@
 package forpdateam.ru.forpda.model.repository.checker
 
 import android.util.Log
-import forpdateam.ru.forpda.entity.remote.checker.UpdateData
+import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerApi
-import forpdateam.ru.forpda.model.data.storage.IPatternProvider
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  */
 class CheckerRepository(
     private val checkerApi: CheckerApi,
-    private val patternProvider: IPatternProvider
+    private val patternProvider: PatternProvider
 ) {
 
     private val currentDataState = MutableStateFlow<UpdateData?>(null)

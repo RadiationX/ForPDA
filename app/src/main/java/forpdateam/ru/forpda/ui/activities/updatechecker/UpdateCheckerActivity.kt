@@ -14,7 +14,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.databinding.ActivityUpdaterBinding
-import forpdateam.ru.forpda.entity.remote.checker.UpdateData
+import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.checker.CheckerPresenter
 import forpdateam.ru.forpda.presentation.checker.CheckerView
