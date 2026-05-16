@@ -7,7 +7,6 @@ class Preferences {
 
     object Other {
         const val APP_FIRST_START: String = "main.is_first_start"
-        const val APP_VERSIONS_HISTORY: String = "app.versions.history"
         const val SEARCH_SETTINGS: String = "search_settings_v2"
         const val MESSAGE_PANEL_BBCODES_SORT: String = "message_panel.bb_codes.sorted"
 

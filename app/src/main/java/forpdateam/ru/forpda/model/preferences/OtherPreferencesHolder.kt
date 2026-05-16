@@ -11,10 +11,6 @@ class OtherPreferencesHolder(
         preferences.getBoolean(Preferences.Other.APP_FIRST_START, true)
     }
 
-    val appVersionsHistory by lazy {
-        preferences.getString(Preferences.Other.APP_VERSIONS_HISTORY)
-    }
-
     val searchSettings by lazy {
         preferences.getString(Preferences.Other.SEARCH_SETTINGS)
     }

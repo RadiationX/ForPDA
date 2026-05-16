@@ -6,7 +6,6 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -15,8 +14,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.os.Handler
 import android.os.Looper
-import android.preference.PreferenceManager
-import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
@@ -33,7 +30,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import forpdateam.ru.forpda.R.string
-import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
@@ -47,7 +43,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import java.util.Arrays
 
 /**
  * Created by radiationx on 28.07.16.
@@ -216,41 +211,6 @@ class App : Application() {
                 DayNightHelper.applyTheme(it)
             }
             .launchIn(GlobalScope + Dispatchers.Main)
-
-        try {
-            val inputHistory = dependencies.otherPreferencesHolder.appVersionsHistory.get().orEmpty()
-            val history = TextUtils.split(inputHistory, ";")
-
-            var lastVNum = 0
-            var disorder = false
-            for (version in history) {
-                val vNum = version.toInt()
-                if (vNum < lastVNum) {
-                    disorder = true
-                }
-                lastVNum = vNum
-            }
-            val vCode: Int = AppBuildConfig.versionCode
-            val sVCode = "" + vCode
-            val nVCode = sVCode.toInt()
-
-            if (lastVNum < nVCode) {
-                val list: MutableList<String?> = ArrayList(Arrays.asList(*history))
-                list.add(nVCode.toString())
-                dependencies.otherPreferencesHolder.appVersionsHistory.set(
-                    TextUtils.join(
-                        ";",
-                        list
-                    )
-                )
-            }
-            if (disorder) {
-                throw Exception("Нарушение порядка версий!")
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            AppMetrica.reportError("VERSIONS_HISTORY", ex)
-        }
 
         initImageLoader(this, dependencies)
 
