@@ -67,7 +67,7 @@ class NotesRepository(
         return noteItems
     }
 
-    suspend fun exportNotes(): String {
+    suspend fun exportNotes() {
         val jsonBody = JSONArray()
         notesCache.getItems().forEach {
             try {

@@ -49,7 +49,8 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     private val dimensionsProvider = App.get().Di().dimensionsProvider
     private val notificationPreferencesRepository = App.get().Di().notificationPreferencesHolder
     private val checkerRepository = App.get().Di().checkerRepository
-    private val updateChecker by lazy { SimpleUpdateChecker(checkerRepository) }
+    private val permissionsController = App.get().Di().permissionsController
+    private val updateChecker by lazy { SimpleUpdateChecker(checkerRepository, permissionsController) }
 
 
     @InjectPresenter
@@ -234,15 +235,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         updateChecker.cancel()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        App.get().onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
     private fun checkIntent(intent: Intent?) {
         if (intent == null || intent.data == null) {
             return
@@ -292,7 +284,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     companion object {
         val LOG_TAG = MainActivity::class.java.simpleName
         val DEF_TITLE = "ForPDA"
-        val ARG_CHECK_WEBVIEW = "CHECK_WEBVIEW"
 
         fun restartApplication(activity: Activity) {
             val mStartActivity = Intent(activity, MainActivity::class.java)

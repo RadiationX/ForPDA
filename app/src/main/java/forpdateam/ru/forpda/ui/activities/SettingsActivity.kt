@@ -1,11 +1,9 @@
 package forpdateam.ru.forpda.ui.activities
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.fragments.settings.NotificationsSettingsFragment
 import forpdateam.ru.forpda.ui.fragments.settings.SettingsFragment
@@ -54,15 +52,6 @@ class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
         if (item.itemId == android.R.id.home)
             finish()
         return true
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        App.get().onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     companion object {

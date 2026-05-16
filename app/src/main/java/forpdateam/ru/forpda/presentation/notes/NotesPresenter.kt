@@ -100,7 +100,7 @@ class NotesPresenter(
             coRunCatching {
                 notesRepository.exportNotes()
             }.onSuccess {
-                viewState.onExportNotes(it)
+                viewState.onExportNotes()
             }.onFailure {
                 errorHandler.handle(it)
             }

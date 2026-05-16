@@ -94,7 +94,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         menu
             .add(R.string.export_s)
             .setOnMenuItemClickListener {
-                App.get().checkStoragePermission({ presenter.exportNotes() }, App.getActivity())
+                presenter.exportNotes()
                 true
             }
 
@@ -124,11 +124,11 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
     }
 
     override fun onImportNotes() {
-        Toast.makeText(requireContext(), "Заметки успешно импортированы", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Заметки импортированы", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onExportNotes(path: String) {
-        Toast.makeText(requireContext(), "Заметки успешно экспортированы в $path", Toast.LENGTH_SHORT).show()
+    override fun onExportNotes() {
+        Toast.makeText(requireContext(), "Заметки экспортированы в загрузки", Toast.LENGTH_SHORT).show()
     }
 
     override fun onItemClick(item: NoteItem) {

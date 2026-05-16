@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.presentation
 
+import android.Manifest
 import android.app.DownloadManager
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -15,18 +16,22 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.MimeTypeUtil
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.AuthHolder
+import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import io.appmetrica.analytics.AppMetrica
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import ru.mintrocket.lib.mintpermissions.MintPermissionsController
+import ru.mintrocket.lib.mintpermissions.ext.isGranted
 
 class SystemLinkHandler(
     private val context: Context,
     private val mainPreferencesHolder: MainPreferencesHolder,
-    private val authHolder: AuthHolder
+    private val webClient: IWebClient,
+    private val permissionsController: MintPermissionsController,
+    private val errorHandler: IErrorHandler
 ) : ISystemLinkHandler {
     override fun handle(url: String) {
         try {
@@ -49,10 +54,7 @@ class SystemLinkHandler(
             AlertDialog.Builder(activity)
                 .setMessage(String.format(activity.getString(R.string.load_file), fileName))
                 .setPositiveButton(activity.getString(R.string.ok)) { dialog, which ->
-                    redirectDownload(
-                        fileName,
-                        url
-                    )
+                    redirectDownload(fileName, url)
                 }
                 .setNegativeButton(activity.getString(R.string.cancel), null)
                 .show()
@@ -62,12 +64,6 @@ class SystemLinkHandler(
     }
 
     private fun redirectDownload(fileName: String, url: String) {
-        if (!authHolder.get().isAuth()) {
-            App.getActivity()?.also { activity ->
-                Utils.showNeedAuthDialog(activity)
-            }
-            return
-        }
         Toast.makeText(
             context,
             String.format(context.getString(R.string.perform_request_link), fileName),
@@ -77,11 +73,11 @@ class SystemLinkHandler(
         GlobalScope.launch(Dispatchers.Main) {
             val response = coRunCatching {
                 val request = NetworkRequest.Builder().url(url).withoutBody().build()
-                App.get().Di().webClient.request(request)
+                webClient.request(request)
             }.onFailure {
-                it.printStackTrace()
-                Toast.makeText(context, R.string.error_occurred, Toast.LENGTH_SHORT).show()
+                errorHandler.handle(it)
             }.getOrNull()
+
             if (response == null) {
                 return@launch
             }
@@ -92,19 +88,7 @@ class SystemLinkHandler(
                 if (!mainPreferencesHolder.systemDownloader.get() || activity == null) {
                     externalDownloader(downloadUrl)
                 } else {
-                    val checkAction = {
-                        try {
-                            systemDownloader(fileName, downloadUrl)
-                        } catch (exception: Exception) {
-                            Toast.makeText(
-                                context,
-                                R.string.perform_loading_error,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            externalDownloader(downloadUrl)
-                        }
-                    }
-                    App.get().checkStoragePermission(checkAction, activity)
+                    systemDownloader(fileName, downloadUrl)
                 }
             }.onFailure {
                 AppMetrica.reportError(it.message.orEmpty(), it)
@@ -112,14 +96,26 @@ class SystemLinkHandler(
         }
     }
 
-    private fun systemDownloader(fileName: String, url: String) {
-        val dm = App.getContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val request = DownloadManager.Request(Uri.parse(url))
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-        request.setMimeType(MimeTypeUtil.getType(fileName))
+    private suspend fun systemDownloader(fileName: String, url: String) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            val permissionResult = permissionsController.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (!permissionResult.isGranted()) {
+                externalDownloader(url)
+                return
+            }
+        }
 
-        dm.enqueue(request)
+        try {
+            val dm = App.getContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val request = DownloadManager.Request(Uri.parse(url))
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            request.setMimeType(MimeTypeUtil.getType(fileName))
+            dm.enqueue(request)
+        } catch (_: Exception) {
+            Toast.makeText(context, R.string.perform_loading_error, Toast.LENGTH_SHORT).show()
+            externalDownloader(url)
+        }
     }
 
     private fun externalDownloader(url: String) {

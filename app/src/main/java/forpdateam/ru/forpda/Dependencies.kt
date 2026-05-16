@@ -119,6 +119,7 @@ import forpdateam.ru.forpda.ui.TemplateManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import ru.mintrocket.lib.mintpermissions.MintPermissions
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -129,6 +130,8 @@ import kotlin.time.Duration.Companion.seconds
 class Dependencies internal constructor(
     context: Application
 ) {
+
+    val permissionsController by lazy { MintPermissions.controller }
 
     val dimensionsProvider = DimensionsProvider()
 
@@ -144,7 +147,9 @@ class Dependencies internal constructor(
         SystemLinkHandler(
             context,
             mainPreferencesHolder,
-            authHolder
+            webClient,
+            permissionsController,
+            errorHandler
         )
     }
     val linkHandler: ILinkHandler by lazy { LinkHandler(systemLinkHandler) }
@@ -163,7 +168,7 @@ class Dependencies internal constructor(
 
     val errorHandler: IErrorHandler by lazy { ErrorHandler(router) }
 
-    val externalStorage: ExternalStorageProvider by lazy { ExternalStorage() }
+    val externalStorage: ExternalStorageProvider by lazy { ExternalStorage(context, permissionsController) }
 
     val cookieStorage by lazy { CookieStorage(flowPreferences) }
     val cookieJar by lazy { AppCookieJar(cookieStorage) }
@@ -394,7 +399,8 @@ class Dependencies internal constructor(
         NotificationEventSender(
             context,
             notificationPreferencesHolder,
-            avatarRepository
+            avatarRepository,
+            permissionsController
         )
     }
     val eventsController by lazy {

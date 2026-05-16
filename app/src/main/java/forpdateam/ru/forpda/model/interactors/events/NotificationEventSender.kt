@@ -1,20 +1,18 @@
 package forpdateam.ru.forpda.model.interactors.events
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App.Companion.getContext
@@ -31,11 +29,14 @@ import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import ru.mintrocket.lib.mintpermissions.MintPermissionsController
+import ru.mintrocket.lib.mintpermissions.ext.isGranted
 
 class NotificationEventSender(
     private val context: Context,
     private val preferences: NotificationPreferencesHolder,
-    private val avatarRepository: AvatarRepository
+    private val avatarRepository: AvatarRepository,
+    private val permissionsController: MintPermissionsController
 ) {
 
     companion object {
@@ -66,8 +67,7 @@ class NotificationEventSender(
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val result = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-            if (result == PackageManager.PERMISSION_GRANTED) {
+            if (permissionsController.get(Manifest.permission.POST_NOTIFICATIONS).isGranted()) {
                 sendNotification(context, event.toParams(context))
             }
         } else {
@@ -81,7 +81,7 @@ class NotificationEventSender(
             .cancel(id::class.qualifiedName, id.hashCode())
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    @SuppressLint("MissingPermission")
     private fun sendNotification(context: Context, params: NotificationParams) {
         val manager = NotificationManagerCompat.from(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

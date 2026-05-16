@@ -1,7 +1,5 @@
 package forpdateam.ru.forpda.ui.activities.updatechecker
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
@@ -22,14 +20,10 @@ import forpdateam.ru.forpda.ui.activities.MainActivity
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import permissions.dispatcher.NeedsPermission
-import permissions.dispatcher.RuntimePermissions
 
 /**
  * Created by radiationx on 24.07.17.
  */
-
-@RuntimePermissions
 class UpdateCheckerActivity : MvpAppCompatActivity(R.layout.activity_updater), CheckerView {
 
     companion object {
@@ -111,25 +105,10 @@ class UpdateCheckerActivity : MvpAppCompatActivity(R.layout.activity_updater), C
 
     private fun decideDownload(link: UpdateData.UpdateLink) {
         when (link.type) {
-            "file" -> systemDownloadWithPermissionCheck(link.url)
+            "file" -> systemLinkHandler.handleDownload(link.url)
             "site" -> systemLinkHandler.handle(link.url)
             else -> systemLinkHandler.handle(link.url)
         }
-    }
-
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun systemDownload(url: String) {
-        systemLinkHandler.handleDownload(url)
-    }
-
-    @SuppressLint("NeedOnRequestPermissionsResult")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
     }
 
     override fun setRefreshing(isRefreshing: Boolean) {

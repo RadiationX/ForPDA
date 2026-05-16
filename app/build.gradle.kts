@@ -181,8 +181,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
-    implementation(libs.permissionsdispatcher)
-    kapt(libs.permissionsdispatcher.processor)
+    implementation(libs.mintpermissions)
+    //implementation(libs.mintpermissions.flows)
 
     implementation(libs.appmetrica)
 

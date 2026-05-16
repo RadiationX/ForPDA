@@ -25,5 +25,5 @@ interface NotesView : IBaseView {
     fun onImportNotes()
 
     @StateStrategyType(SkipStrategy::class)
-    fun onExportNotes(path: String)
+    fun onExportNotes()
 }

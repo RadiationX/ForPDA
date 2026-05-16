@@ -38,6 +38,10 @@ class NetworkRequestMapper(
             .header("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4")
             .header("User-Agent", USER_AGENT)
 
+        if (request.isWithoutBody) {
+            requestBuilder.head()
+        }
+
         request.headers.onEach { (key, value) ->
             requestBuilder.header(key, value)
         }

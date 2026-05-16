@@ -449,7 +449,5 @@ open class TabFragment(
         const val ARG_TITLE = "TAB_TITLE"
         const val ARG_SUBTITLE = "TAB_SUBTITLE"
         const val ARG_TAB = "TAB_URL"
-
-        const val REQUEST_STORAGE = 1
     }
 }

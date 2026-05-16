@@ -1,18 +1,15 @@
 package forpdateam.ru.forpda
 
-import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
 import com.nostra13.universalimageloader.core.DisplayImageOptions
@@ -21,13 +18,13 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
-import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.work.WorkUtils
 import io.appmetrica.analytics.AppMetrica
 import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
 
 /**
  * Created by radiationx on 28.07.16.
@@ -114,9 +111,8 @@ class App : Application() {
         AppMetrica.enableActivityAutoTracking(this)
 
         dependencies.appThemeController.init()
-
+        initMintPermissions()
         initImageLoader(this, dependencies)
-
         updateStaticRes()
 
 
@@ -160,45 +156,7 @@ class App : Application() {
         return dependencies
     }
 
-    private val permissionCallbacks: MutableList<Runnable> = ArrayList()
-
     init {
         instance = this
     }
-
-    fun checkStoragePermission(runnable: Runnable?, activity: Activity?) {
-        if (runnable == null || activity == null) return
-
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                TabFragment.REQUEST_STORAGE
-            )
-            permissionCallbacks.add(runnable)
-            return
-        }
-        runnable.run()
-    }
-
-    //PLS CALL THIS IN ALL ACTIVITIES
-    fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        for (i in permissions.indices) {
-            if (permissions[i] == Manifest.permission.WRITE_EXTERNAL_STORAGE && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                for (runnable in permissionCallbacks) {
-                    try {
-                        runnable.run()
-                    } catch (ignore: Exception) {
-                    }
-                }
-                break
-            }
-        }
-        permissionCallbacks.clear()
-    }
-
 }
