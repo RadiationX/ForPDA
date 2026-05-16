@@ -129,6 +129,7 @@ appmetrica {
 dependencies {
     implementation(libs.kotlin.coroutines.core)
 
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.lifecycle.runtime.ktx)

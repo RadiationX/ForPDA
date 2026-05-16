@@ -40,6 +40,8 @@ work-runtime-ktx = "2.11.2"
 ksp-plugin = "2.3.5"
 androidx-room = "2.8.4"
 appmetrica-plugin = "2.0.1"
+core-ktx = "1.18.0"
+junit = "4.13.2"
 
 [libraries]
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
@@ -83,6 +85,8 @@ viewbindingpropertydelegate = { module = "com.github.kirich1409:viewbindingprope
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-plugin" }
