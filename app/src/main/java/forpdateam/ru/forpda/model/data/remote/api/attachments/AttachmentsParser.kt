@@ -14,7 +14,7 @@ class AttachmentsParser(
 
     private val scope = ParserPatterns.EditPost
 
-    fun parseAttachments(response: String): List<EditPost.Attachment> = patternProvider
+    suspend fun parseAttachments(response: String): List<EditPost.Attachment> = patternProvider
         .getRegexParser(scope.scope, scope.attachments)
         .map(response) { matcher ->
             val type = matcher.get(7)?.let { imageUrl ->
@@ -36,7 +36,7 @@ class AttachmentsParser(
             )
         }
 
-    fun parseAttachment(response: String, item: AttachmentItem?): AttachmentItem {
+    suspend fun parseAttachment(response: String, item: AttachmentItem?): AttachmentItem {
         val result = item ?: AttachmentItem()
         patternProvider
             .getRegexParser(scope.scope, scope.attachments)

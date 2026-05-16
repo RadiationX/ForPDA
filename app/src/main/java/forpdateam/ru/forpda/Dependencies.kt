@@ -18,6 +18,7 @@ import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.CountersHolder
+import forpdateam.ru.forpda.model.PatternsStorage
 import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import forpdateam.ru.forpda.model.data.cache.forum.ForumCache
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
@@ -48,6 +49,7 @@ import forpdateam.ru.forpda.model.data.remote.api.mentions.MentionsApi
 import forpdateam.ru.forpda.model.data.remote.api.mentions.MentionsParser
 import forpdateam.ru.forpda.model.data.remote.api.news.ArticleParser
 import forpdateam.ru.forpda.model.data.remote.api.news.NewsApi
+import forpdateam.ru.forpda.model.data.remote.api.patterns.PatternsApi
 import forpdateam.ru.forpda.model.data.remote.api.profile.ProfileApi
 import forpdateam.ru.forpda.model.data.remote.api.profile.ProfileParser
 import forpdateam.ru.forpda.model.data.remote.api.qms.QmsApi
@@ -113,6 +115,7 @@ import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
 import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.TemplateManager
 import kotlinx.coroutines.GlobalScope
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -196,10 +199,21 @@ class Dependencies internal constructor(
 
     val webClient: IWebClient by lazy { Client(context, webOkHttpClient, countersHolder) }
 
+    val json by lazy {
+        Json {
+            isLenient = true
+            ignoreUnknownKeys = true
+        }
+    }
+
+    val patternsStorage by lazy {
+        PatternsStorage(context, flowPreferences, json)
+    }
+
     val patternProvider: PatternProvider by lazy {
         PatternProviderImpl(
-            context,
-            dataStoragePreferences
+            patternsApi,
+            patternsStorage
         )
     }
 
@@ -216,7 +230,7 @@ class Dependencies internal constructor(
     val reputationParser by lazy { ReputationParser(patternProvider) }
     val searchParser by lazy { SearchParser(patternProvider) }
     val topicsParser by lazy { TopicsParser(patternProvider) }
-    val checkerParser by lazy { CheckerParser() }
+    val checkerParser by lazy { CheckerParser(json) }
     val attachmentsParser by lazy { AttachmentsParser(patternProvider) }
 
     val authApi by lazy { AuthApi(webClient, authParser, authHolder) }
@@ -242,6 +256,7 @@ class Dependencies internal constructor(
     val topicsApi by lazy { TopicsApi(webClient, topicsParser) }
     val checkerApi by lazy { CheckerApi(webClient, checkerParser) }
     val attachmentsApi by lazy { AttachmentsApi(context, webClient, attachmentsParser) }
+    val patternsApi by lazy { PatternsApi(webClient, json) }
 
 
     val database by lazy {

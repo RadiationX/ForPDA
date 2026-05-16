@@ -4,8 +4,8 @@ import ru.radiationx.regexparser.RegexParser
 import java.util.regex.Pattern
 
 interface PatternProvider {
-    fun getCurrentVersion(): Int
+    fun getVersion(): Int
+    fun setNeedsUpdate()
     fun getPattern(scope: String, key: String): Pattern
     fun getRegexParser(scope: String, key: String): RegexParser
-    fun update(jsonString: String)
 }

@@ -11,7 +11,7 @@ class AuthParser(
 
     private val scope = ParserPatterns.Auth
 
-    fun parseCaptcha(response: String): AuthCaptcha = patternProvider
+    suspend fun parseCaptcha(response: String): AuthCaptcha = patternProvider
         .getRegexParser(scope.scope, scope.captcha)
         .mapOnce(response) {
             AuthCaptcha(

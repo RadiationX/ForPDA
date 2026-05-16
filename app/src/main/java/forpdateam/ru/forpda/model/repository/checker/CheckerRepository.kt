@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.model.repository.checker
 
-import android.util.Log
 import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerApi
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
@@ -17,19 +16,15 @@ class CheckerRepository(
     private val currentDataState = MutableStateFlow<UpdateData?>(null)
 
     suspend fun checkUpdate(force: Boolean = false): UpdateData {
-        val updateData = if (!force && currentDataState.value != null)
+        val updateData = if (!force && currentDataState.value != null) {
             currentDataState.value!!
-        else
+        } else {
             checkerApi.checkUpdate()
-        Log.e(
-            "kokos",
-            "check version on updater ${updateData.patternsVersion} > ${patternProvider.getCurrentVersion()}"
-        )
-        if (updateData.patternsVersion > patternProvider.getCurrentVersion()) {
-            val patterns = checkerApi.loadPatterns()
-            patternProvider.update(patterns)
         }
         currentDataState.value = updateData
+        if (updateData.patternsVersion > (patternProvider.getVersion() ?: 0)) {
+            patternProvider.setNeedsUpdate()
+        }
         return updateData
     }
 

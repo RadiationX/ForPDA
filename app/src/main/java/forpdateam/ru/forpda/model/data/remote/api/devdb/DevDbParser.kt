@@ -16,7 +16,7 @@ class DevDbParser(
     private val scope = ParserPatterns.DevDb
 
     // todo refactor
-    fun parseBrands(response: String): Brands {
+    suspend fun parseBrands(response: String): Brands {
         val letterMap = linkedMapOf<String, List<Brands.Item>>()
         patternProvider
             .getRegexParser(scope.scope, scope.brands_letters)
@@ -60,7 +60,7 @@ class DevDbParser(
         }
     }
 
-    fun parseBrand(response: String): Brand {
+    suspend fun parseBrand(response: String): Brand {
         val devices = patternProvider
             .getRegexParser(scope.scope, scope.brand_devices)
             .map(response) { matcher ->

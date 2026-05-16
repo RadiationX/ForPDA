@@ -17,6 +17,7 @@ allprojects {
             freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
             freeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
             freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi")
+            freeCompilerArgs.add("-opt-in=kotlin.concurrent.atomics.ExperimentalAtomicApi")
         }
     }
 }

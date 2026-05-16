@@ -15,8 +15,4 @@ class CheckerApi(
         .get("https://bitbucket.org/RadiationX/apps-updates/raw/master/forpda/check.json")
         .let { checkerParser.parse(it.body) }
 
-    suspend fun loadPatterns(): String = client
-        .get("https://bitbucket.org/RadiationX/apps-updates/raw/master/forpda/patterns.json")
-        .body
-
 }
