@@ -205,7 +205,7 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
             //dialog.setPeekHeight(App.getKeyboardHeight());
         } else {
             noAttachments.setText(R.string.no_attachments)
-            //dialog.setPeekHeight(App.px48);
+            //dialog.setPeekHeight(context.getDimenPx(R.dimen.dp48));
         }
     }
 

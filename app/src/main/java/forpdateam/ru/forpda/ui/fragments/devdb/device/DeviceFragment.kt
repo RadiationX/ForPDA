@@ -33,6 +33,7 @@ import forpdateam.ru.forpda.databinding.FragmentDeviceBinding
 import forpdateam.ru.forpda.databinding.ToolbarDeviceBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.presentation.devdb.device.DevicePresenter
 import forpdateam.ru.forpda.presentation.devdb.device.DeviceView
 import forpdateam.ru.forpda.ui.DimensionHelper
@@ -132,22 +133,22 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
         val newParams = toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams
         newParams.collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
-        newParams.bottomMargin = App.px48
+        newParams.bottomMargin = toolbar.context.getDimenPx(R.dimen.dp48)
         toolbar.layoutParams = newParams
         toolbar.requestLayout()
 
         setCardsBackground()
         toolbarTitleView.setShadowLayer(
-            App.px2.toFloat(),
+            toolbarTitleView.context.getDimenPx(R.dimen.dp2).toFloat(),
             0f,
             0f,
             toolbarTitleView.context.getColorFromAttr(androidx.appcompat.R.attr.colorPrimary)
         )
         toolbarSubtitleView.setShadowLayer(
-            App.px2.toFloat(),
+            toolbarSubtitleView.context.getDimenPx(R.dimen.dp2).toFloat(),
             0f,
             0f,
-            toolbarTitleView.context.getColorFromAttr(androidx.appcompat.R.attr.colorPrimary)
+            toolbarSubtitleView.context.getColorFromAttr(androidx.appcompat.R.attr.colorPrimary)
         )
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT)

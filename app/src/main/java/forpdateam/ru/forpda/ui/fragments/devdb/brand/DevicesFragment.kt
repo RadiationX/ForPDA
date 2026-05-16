@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerTopScroller
@@ -88,13 +89,9 @@ class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
         adapter.setItemClickListener(this)
         recyclerView.setColumnWidth(App.get().dpToPx(144, recyclerView.context))
         recyclerView.adapter = adapter
-        try {
-            val gridLayoutManager =
-                recyclerView.layoutManager as GridLayoutManager
-            recyclerView.addItemDecoration(SpacingItemDecoration(gridLayoutManager, App.px8))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+        val gridLayoutManager =
+            recyclerView.layoutManager as GridLayoutManager
+        recyclerView.addItemDecoration(SpacingItemDecoration(gridLayoutManager, recyclerView.context.getDimenPx(R.dimen.dp8)))
 
         dialogMenu.apply {
             addItem(getString(R.string.copy_link)) { _, data ->

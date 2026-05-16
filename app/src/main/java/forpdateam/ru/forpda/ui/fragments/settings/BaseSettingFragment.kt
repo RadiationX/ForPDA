@@ -1,10 +1,11 @@
 package forpdateam.ru.forpda.ui.fragments.settings
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.RecyclerView
-import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.ui.activities.SettingsActivity
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.extensions.getDimenPx
 
 /**
  * Created by radiationx on 24.09.17.
@@ -43,8 +44,15 @@ open class BaseSettingFragment : PreferenceFragmentCompat() {
     private fun updateToolbarShadow() {
         val isVisible = listScrollY > 0
         if (lastIsVisible != isVisible) {
-            (activity as? SettingsActivity)?.supportActionBar?.elevation =
-                if (isVisible) App.px2.toFloat() else 0f
+            (activity as? AppCompatActivity)?.apply {
+                supportActionBar?.apply {
+                    elevation = if (isVisible) {
+                        getDimenPx(R.dimen.dp2).toFloat()
+                    } else {
+                        0f
+                    }
+                }
+            }
             lastIsVisible = isVisible
         }
     }

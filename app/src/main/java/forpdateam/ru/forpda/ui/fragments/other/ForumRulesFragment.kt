@@ -21,6 +21,7 @@ import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
 import forpdateam.ru.forpda.presentation.forumrules.ForumRulesPresenter
 import forpdateam.ru.forpda.presentation.forumrules.ForumRulesView
@@ -143,7 +144,10 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 
-                val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
+                val navButtonsParams = ViewGroup.LayoutParams(
+                    searchView.context.getDimenPx(R.dimen.dp48),
+                    searchView.context.getDimenPx(R.dimen.dp48)
+                )
 
                 val backgroundRes = requireContext().getDrawableResAttr(android.R.attr.actionBarItemBackground)
 

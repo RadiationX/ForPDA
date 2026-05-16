@@ -4,7 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import forpdateam.ru.forpda.App
+import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.extensions.getDimenPx
 import kotlin.math.max
 
 /**
@@ -13,7 +14,7 @@ import kotlin.math.max
 class AutoFitRecyclerView : RecyclerView {
     var manager: GridLayoutManager? = null
         private set
-    private var columnWidth = App.px48 //default value
+    private var columnWidth = context.getDimenPx(R.dimen.dp48) //default value
     private var isLinear = false
 
     constructor(context: Context) : super(context) {

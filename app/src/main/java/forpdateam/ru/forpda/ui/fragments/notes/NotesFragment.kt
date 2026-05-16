@@ -11,6 +11,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.filepicker.registerFilePicker
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.presentation.notes.NotesPresenter
 import forpdateam.ru.forpda.presentation.notes.NotesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -59,7 +60,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         adapter = NotesAdapter(this, presenter::onInfoClick)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, false))
+        recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(recyclerView.context.getDimenPx(R.dimen.dp8), false))
 
         dialogMenu.apply {
             addItem(getString(R.string.copy_link)) { _, data ->

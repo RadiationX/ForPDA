@@ -10,6 +10,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DeviceFragmentSpecsBinding
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.device.SubDeviceFragment
 
@@ -27,6 +28,6 @@ class SpecsFragment : SubDeviceFragment(R.layout.device_fragment_specs) {
         val adapter = SpecsAdapter()
         adapter.addAll(device.specs)
         binding.baseList.adapter = adapter
-        binding.baseList.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, true))
+        binding.baseList.addItemDecoration(DevicesFragment.SpacingItemDecoration(binding.baseList.context.getDimenPx(R.dimen.dp8), true))
     }
 }

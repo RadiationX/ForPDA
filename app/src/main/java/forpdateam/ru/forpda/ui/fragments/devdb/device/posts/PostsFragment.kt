@@ -1,16 +1,13 @@
 package forpdateam.ru.forpda.ui.fragments.devdb.device.posts
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DeviceFragmentSpecsBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.device.SubDeviceFragment
 
@@ -30,7 +27,7 @@ class PostsFragment : SubDeviceFragment(R.layout.device_fragment_specs) {
         val adapter = PostsAdapter(source) { item -> presenter.onPostClick(item, source) }
         adapter.addAll(getList())
         binding.baseList.adapter = adapter
-        binding.baseList.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, true))
+        binding.baseList.addItemDecoration(DevicesFragment.SpacingItemDecoration(binding.baseList.context.getDimenPx(R.dimen.dp8), true))
     }
 
     private fun getList(): List<Device.PostItem> = when (source) {

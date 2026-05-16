@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.ui.views.CodeEditor
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.AdvancedPopup
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
@@ -106,19 +107,19 @@ class MessagePanel(
         messageField!!.attachToScrollView(messageWrapper)
         messageWrapper!!.setEnabled(true)
         messageWrapper!!.setVerticalFadingEdgeEnabled(true)
-        messageWrapper!!.setFadingEdgeLength(App.px8)
+        messageWrapper!!.setFadingEdgeLength(context.getDimenPx(R.dimen.dp8))
 
-        panelBehavior = MessagePanelBehavior()
+        panelBehavior = MessagePanelBehavior(context)
         params = CoordinatorLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             if (fullForm) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
         )
         //params.setBehavior(panelBehavior);
         params!!.gravity = Gravity.BOTTOM
-        if (!fullForm) params!!.setMargins(App.px8, App.px8, App.px8, App.px8)
+        if (!fullForm) params!!.setMargins(context.getDimenPx(R.dimen.dp8), context.getDimenPx(R.dimen.dp8), context.getDimenPx(R.dimen.dp8), context.getDimenPx(R.dimen.dp8))
         layoutParams = params
         clipToPadding = true
-        radius = (if (fullForm) 0 else App.px8).toFloat()
+        radius = (if (fullForm) 0 else context.getDimenPx(R.dimen.dp8)).toFloat()
         preventCornerOverlap = false
         setCardBackgroundColor(context.getColorFromAttr(R.attr.cards_background))
         //На случай, когда добавляются несколько слушателей
@@ -133,10 +134,10 @@ class MessagePanel(
         })
 
 
-        lastHeight = height + App.px16
+        lastHeight = height + context.getDimenPx(R.dimen.dp16)
         addOnLayoutChangeListener { v: View?, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int ->
             if (heightChangeListener == null) return@addOnLayoutChangeListener
-            val newHeight = height + App.px16
+            val newHeight = height + context.getDimenPx(R.dimen.dp16)
             if (newHeight != lastHeight) {
                 lastHeight = newHeight
                 heightChangeListener!!.onChangedHeight(newHeight)

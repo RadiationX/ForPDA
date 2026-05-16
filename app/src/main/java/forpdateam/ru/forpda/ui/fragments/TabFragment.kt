@@ -33,6 +33,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBaseBinding
 import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.ui.DimensionHelper
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.views.ContentController
@@ -231,7 +232,7 @@ open class TabFragment(
             marqueeRepeatLimit = 3
             isSelected = true
             isHorizontalFadingEdgeEnabled = true
-            setFadingEdgeLength(App.px16)
+            setFadingEdgeLength(context.getDimenPx(R.dimen.dp16))
         }
 
 
@@ -326,8 +327,8 @@ open class TabFragment(
     }
 
     protected fun refreshLayoutLongTrigger(refreshLayout: SwipeRefreshLayout) {
-        refreshLayout.setDistanceToTriggerSync(App.px48 * 3)
-        refreshLayout.setProgressViewEndTarget(false, App.px48 * 3)
+        refreshLayout.setDistanceToTriggerSync(refreshLayout.context.getDimenPx(R.dimen.dp48) * 3)
+        refreshLayout.setProgressViewEndTarget(false, refreshLayout.context.getDimenPx(R.dimen.dp48) * 3)
     }
 
     protected fun setScrollFlagsExitUntilCollapsed() {

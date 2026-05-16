@@ -41,33 +41,7 @@ import kotlinx.coroutines.plus
 class App : Application() {
 
     companion object {
-        var px2: Int = 0
-        var px4: Int = 0
-        var px6: Int = 0
 
-        @JvmField
-        var px8: Int = 0
-
-        @JvmField
-        var px12: Int = 0
-        var px14: Int = 0
-
-        @JvmField
-        var px16: Int = 0
-        var px20: Int = 0
-
-        @JvmField
-        var px24: Int = 0
-        var px32: Int = 0
-        var px36: Int = 0
-        var px40: Int = 0
-
-        @JvmField
-        var px48: Int = 0
-
-        @JvmField
-        var px56: Int = 0
-        var px64: Int = 0
         private var instance: App? = null
 
         @JvmStatic
@@ -177,21 +151,6 @@ class App : Application() {
 
     private fun updateStaticRes() {
         Log.e("kekosina", "updateStaticRes")
-        px2 = getContext().resources.getDimensionPixelSize(R.dimen.dp2)
-        px4 = getContext().resources.getDimensionPixelSize(R.dimen.dp4)
-        px6 = getContext().resources.getDimensionPixelSize(R.dimen.dp6)
-        px8 = getContext().resources.getDimensionPixelSize(R.dimen.dp8)
-        px12 = getContext().resources.getDimensionPixelSize(R.dimen.dp12)
-        px14 = getContext().resources.getDimensionPixelSize(R.dimen.dp14)
-        px16 = getContext().resources.getDimensionPixelSize(R.dimen.dp16)
-        px20 = getContext().resources.getDimensionPixelSize(R.dimen.dp20)
-        px24 = getContext().resources.getDimensionPixelSize(R.dimen.dp24)
-        px32 = getContext().resources.getDimensionPixelSize(R.dimen.dp32)
-        px36 = getContext().resources.getDimensionPixelSize(R.dimen.dp36)
-        px40 = getContext().resources.getDimensionPixelSize(R.dimen.dp40)
-        px48 = getContext().resources.getDimensionPixelSize(R.dimen.dp48)
-        px56 = getContext().resources.getDimensionPixelSize(R.dimen.dp56)
-        px64 = getContext().resources.getDimensionPixelSize(R.dimen.dp64)
 
         val templateStringCache = HashMap<String, String>()
         for (f in string::class.java.fields) {

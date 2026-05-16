@@ -22,6 +22,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDimensionPixelSizeAttr
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
 import kotlinx.coroutines.CoroutineScope
@@ -107,7 +108,7 @@ class PaginationHelper(context: Activity) {
         params.scrollFlags =
             AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
         target.layoutParams = params
-        target.scrimVisibleHeightTrigger = App.px56 + App.px24
+        target.scrimVisibleHeightTrigger = context.getDimenPx(R.dimen.dp56) + context.getDimenPx(R.dimen.dp24)
         setupTabLayout(tabLayout, true)
         tabLayouts.add(tabLayout)
         target.requestLayout()

@@ -20,6 +20,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentArticleBinding
 import forpdateam.ru.forpda.databinding.ToolbarNewsDetailsBinding
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailView
@@ -112,7 +113,7 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
         super.onViewCreated(view, savedInstanceState)
 
         baseInflateToolbar(R.layout.toolbar_news_details)
-        detailsImage.maxHeight = App.px24 * 10
+        detailsImage.maxHeight = detailsImage.context.getDimenPx(R.dimen.dp24) * 10
         setScrollFlagsExitUntilCollapsed()
 
         val scrimHelper = ScrimHelper(appBarLayout, toolbarLayout)

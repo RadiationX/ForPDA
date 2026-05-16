@@ -2,9 +2,10 @@ package forpdateam.ru.forpda.extensions
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.DimenRes
+import androidx.annotation.Dimension
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.getColorOrThrow
 import androidx.core.content.res.getDimensionPixelSizeOrThrow
@@ -30,10 +31,17 @@ fun Context.getDimensionPixelSizeAttr(@AttrRes attr: Int): Int {
 
 @ColorInt
 fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
-    val typedValue = TypedValue()
     return obtainStyledAttributes(intArrayOf(attr)).use {
         it.getColorOrThrow(0)
     }
 }
 
-fun Context.dpToPx(dp: Int): Int = (this.resources.displayMetrics.density * dp).toInt()
+@Dimension(unit = Dimension.PX)
+fun Context.getDimenPx(@DimenRes dimenRes: Int): Int {
+    return resources.getDimensionPixelSize(dimenRes)
+}
+
+@Dimension(unit = Dimension.PX)
+fun Context.dpToPx(@Dimension(unit = Dimension.DP) dp: Int): Int {
+    return (this.resources.displayMetrics.density * dp).toInt()
+}

@@ -3,11 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.devdb.search
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,6 +16,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -79,18 +78,14 @@ class DevDbSearchFragment : TabFragment(R.layout.fragment_brand), SearchDevicesV
         adapter = DevicesAdapter()
         recyclerView.setColumnWidth(App.get().dpToPx(144, recyclerView.context))
         recyclerView.adapter = adapter
-        try {
-            val gridLayoutManager =
-                recyclerView.layoutManager as GridLayoutManager
-            recyclerView.addItemDecoration(
-                DevicesFragment.SpacingItemDecoration(
-                    gridLayoutManager,
-                    App.px8
-                )
+        val gridLayoutManager =
+            recyclerView.layoutManager as GridLayoutManager
+        recyclerView.addItemDecoration(
+            DevicesFragment.SpacingItemDecoration(
+                gridLayoutManager,
+                recyclerView.context.getDimenPx(R.dimen.dp8)
             )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+        )
 
         adapter.setItemClickListener(this)
 

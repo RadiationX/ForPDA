@@ -34,6 +34,7 @@ import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -142,7 +143,12 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         val behavior = FabOnScroll(fab.context, null)
         params.behavior = behavior
         params.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-        params.setMargins(App.px16, App.px16, App.px16, App.px16)
+        params.setMargins(
+            fab.context.getDimenPx(R.dimen.dp16),
+            fab.context.getDimenPx(R.dimen.dp16),
+            fab.context.getDimenPx(R.dimen.dp16),
+            fab.context.getDimenPx(R.dimen.dp16)
+        )
         fab.requestLayout()
     }
 
@@ -474,7 +480,10 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
                 if (searchClose != null)
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 
-                val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
+                val navButtonsParams = ViewGroup.LayoutParams(
+                    searchView.context.getDimenPx(R.dimen.dp48),
+                    searchView.context.getDimenPx(R.dimen.dp48)
+                )
 
                 val backgroundRes = requireContext().getDrawableResAttr(android.R.attr.actionBarItemBackground)
 

@@ -49,7 +49,7 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
         setListsBackground()
         refreshLayout.setOnRefreshListener { presenter.refreshArticles() }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        //recyclerView.addItemDecoration(new DevicesFragment.SpacingItemDecoration(App.px8, true));
+        //recyclerView.addItemDecoration(new DevicesFragment.SpacingItemDecoration(context.getDimenPx(R.dimen.dp8), true));
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
         adapter = NewsListAdapter()

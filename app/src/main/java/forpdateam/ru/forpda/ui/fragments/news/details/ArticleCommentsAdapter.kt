@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ArticleCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.Comment.Karma
 import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.model.AuthHolder
 
 /**
@@ -139,7 +139,7 @@ class ArticleCommentsAdapter(
             }
 
 
-            binding.root.setPadding(App.px12 * item.level, 0, 0, 0)
+            binding.root.setPadding(binding.root.context.getDimenPx(R.dimen.dp12) * item.level, 0, 0, 0)
         }
     }
 

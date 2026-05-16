@@ -37,6 +37,7 @@ import forpdateam.ru.forpda.databinding.FragmentSearchBinding
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.search.SearchPresenter
 import forpdateam.ru.forpda.presentation.search.SearchSiteView
@@ -191,7 +192,12 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         val behavior = FabOnScroll(fab.context)
         params.behavior = behavior
         params.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-        params.setMargins(App.px16, App.px16, App.px16, App.px16)
+        params.setMargins(
+            fab.context.getDimenPx(R.dimen.dp16),
+            fab.context.getDimenPx(R.dimen.dp16),
+            fab.context.getDimenPx(R.dimen.dp16),
+            fab.context.getDimenPx(R.dimen.dp16)
+        )
         fab.requestLayout()
     }
 
@@ -351,7 +357,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         saveSettingsButton.setOnClickListener { presenter.saveSettings() }
         //recyclerView.setHasFixedSize(true);
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px8, true))
+        recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(recyclerView.context.getDimenPx(R.dimen.dp8), true))
         val pauseOnScrollListener = PauseOnScrollListener(ImageLoader.getInstance(), true, true)
         recyclerView.addOnScrollListener(pauseOnScrollListener)
         recyclerView.adapter = adapter

@@ -8,8 +8,8 @@ import android.view.animation.Interpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.extensions.getDimenPx
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -26,9 +26,15 @@ class FabOnScroll : FloatingActionButton.Behavior {
 
     private val interpolator: Interpolator = AccelerateDecelerateInterpolator()
 
-    constructor(context: Context) : super(context, null)
+    private val threshold: Int
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context) : super(context, null) {
+        threshold = context.getDimenPx(R.dimen.dp24)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        threshold = context.getDimenPx(R.dimen.dp24)
+    }
 
     override fun onStartNestedScroll(
         coordinatorLayout: CoordinatorLayout,
@@ -51,7 +57,8 @@ class FabOnScroll : FloatingActionButton.Behavior {
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed)
         //Log.d("SUKA", "FabOnScroll onNestedPreScroll" + consumed[1] + " : " + dy);
-        if (child.alpha == 0.0f && abs(dy.toDouble()) > App.px24) {
+
+        if (child.alpha == 0.0f && abs(dy.toDouble()) > threshold) {
             child.setImageResource(if (dy > 0) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up)
             child.clearAnimation()
             child.animate()
@@ -94,8 +101,8 @@ class FabOnScroll : FloatingActionButton.Behavior {
             dxUnconsumed,
             dyUnconsumed
         )
-        //Log.d("SUKA", "FabOnScroll onNestedScroll " + dyConsumed + " : " + dyUnconsumed + " : " + App.px24);
-        if (child.alpha == 0.0f && abs(dyUnconsumed.toDouble()) > App.px24) {
+        //Log.d("SUKA", "FabOnScroll onNestedScroll " + dyConsumed + " : " + dyUnconsumed + " : " + context.getDimenPx(R.dimen.dp24));
+        if (child.alpha == 0.0f && abs(dyUnconsumed.toDouble()) > threshold) {
             child.clearAnimation()
             child.animate()
                 .scaleX(1.0f)
