@@ -15,6 +15,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
@@ -73,7 +74,7 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
         addToSpoiler = bottomSheet.findViewById<View>(R.id.add_to_spoiler) as Button
         addToText = bottomSheet.findViewById<View>(R.id.add_to_text) as Button
 
-        recyclerView.setColumnWidth(App.get().dpToPx(112, recyclerView.context))
+        recyclerView.setColumnWidth(recyclerView.context.getDimenPx(R.dimen.dp96))
         adapter.updateIsLinear(isLinear)
         adapter.updateReverse(isReverse)
         recyclerView.setFakeLinear(isLinear)

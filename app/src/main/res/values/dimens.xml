@@ -19,6 +19,8 @@
     <dimen name="dp48">48dp</dimen>
     <dimen name="dp56">56dp</dimen>
     <dimen name="dp64">64dp</dimen>
+    <dimen name="dp96">96dp</dimen>
+    <dimen name="dp144">144dp</dimen>
     <dimen name="default_statusbar_height">24dp</dimen>
     <dimen name="default_keyboard_height">250dp</dimen>
 

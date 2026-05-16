@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:layout="@layout/preference_category_custom_top"
         android:title="@string/pref_title_notifications">
@@ -14,15 +13,6 @@
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_main">
-        <ListPreference
-            android:dialogTitle="@string/pref_lang_title"
-            android:entries="@array/entries_lang"
-            android:entryValues="@array/entry_values_lang"
-            android:key="Locale.Helper.Selected.Language"
-            android:layout="@layout/preference_custom"
-            android:summary="%s"
-            android:title="@string/pref_lang_title"
-            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="clear_menu_sequence"
@@ -45,13 +35,13 @@
         android:layout="@layout/preference_category_custom"
         android:title="@string/pref_title_appereance">
         <ListPreference
+            android:defaultValue="SYSTEM"
             android:dialogTitle="@string/pref_title_theme_mode"
             android:entries="@array/entries_theme_mode"
             android:entryValues="@array/entry_values_theme_mode"
             android:key="main.theme.mode"
             android:layout="@layout/preference_custom"
             android:summary="%s"
-            android:defaultValue="SYSTEM"
             android:title="@string/pref_title_theme_mode"
             app:iconSpaceReserved="false" />
 

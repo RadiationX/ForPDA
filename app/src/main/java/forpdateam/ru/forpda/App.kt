@@ -11,7 +11,6 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
@@ -22,7 +21,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.DayNightHelper
-import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.work.WorkUtils
@@ -111,10 +109,6 @@ class App : Application() {
         }
     }
 
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(LocaleHelper.onAttach(base))
-    }
-
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -174,11 +168,6 @@ class App : Application() {
 
     fun Di(): Dependencies {
         return dependencies
-    }
-
-    fun dpToPx(dp: Int, context: Context): Int {
-        val displayMetrics = context.resources.displayMetrics
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
     }
 
     private val permissionCallbacks: MutableList<Runnable> = ArrayList()

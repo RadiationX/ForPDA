@@ -24,7 +24,6 @@
     <!-- Base -->
     <string name="undefined" translatable="false">Undefined</string>
     <string name="default_s">По умолчанию</string>
-    <string name="pref_lang_title">Язык</string>
     <string name="ok">Ок</string>
     <string name="yes">Да</string>
     <string name="cancel">Отмена</string>
@@ -135,7 +134,6 @@
     <string name="report_text">Текст жалобы</string>
     <string name="load_from">Загрузить с</string>
     <string name="devices">Устройства</string>
-    <string name="lang_changed">Язык приложения был изменен, перезапустить приложение?</string>
     <string name="search_in_page">Найти на странице</string>
 
 

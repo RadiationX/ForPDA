@@ -76,7 +76,7 @@ class DevDbSearchFragment : TabFragment(R.layout.fragment_brand), SearchDevicesV
         recyclerView.addOnScrollListener(pauseOnScrollListener)
 
         adapter = DevicesAdapter()
-        recyclerView.setColumnWidth(App.get().dpToPx(144, recyclerView.context))
+        recyclerView.setColumnWidth(recyclerView.context.getDimenPx(R.dimen.dp144))
         recyclerView.adapter = adapter
         val gridLayoutManager =
             recyclerView.layoutManager as GridLayoutManager

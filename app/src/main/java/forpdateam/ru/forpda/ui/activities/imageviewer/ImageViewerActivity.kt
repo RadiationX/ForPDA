@@ -14,7 +14,6 @@ import androidx.viewpager.widget.ViewPager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.chrisbanes.photoview.OnPhotoTapListener
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.databinding.ActivityImgViewerBinding
 
@@ -30,10 +29,6 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
     private val names = mutableListOf<String>()
     private var currentIndex = 0
     private val adapter: ImageViewerAdapter = ImageViewerAdapter()
-
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(LocaleHelper.onAttach(base))
-    }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.ImageViewTheme)

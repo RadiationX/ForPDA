@@ -13,6 +13,7 @@ import com.google.android.material.textfield.TextInputLayout
 import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.SimpleInstruction
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback
@@ -52,7 +53,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
     init {
         val adapter = PanelItemAdapter(codes.toMutableList(), clickListener)
 
-        recyclerView.setColumnWidth(get().dpToPx(96, recyclerView.context))
+        recyclerView.setColumnWidth(recyclerView.context.getDimenPx(R.dimen.dp96))
         val touchHelper = ItemTouchHelper(ItemDragCallback(adapter))
         touchHelper.attachToRecyclerView(recyclerView)
         recyclerView.adapter = adapter

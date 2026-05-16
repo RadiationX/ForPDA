@@ -87,7 +87,7 @@ class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
 
         adapter = DevicesAdapter()
         adapter.setItemClickListener(this)
-        recyclerView.setColumnWidth(App.get().dpToPx(144, recyclerView.context))
+        recyclerView.setColumnWidth(recyclerView.context.getDimenPx(R.dimen.dp144))
         recyclerView.adapter = adapter
         val gridLayoutManager =
             recyclerView.layoutManager as GridLayoutManager

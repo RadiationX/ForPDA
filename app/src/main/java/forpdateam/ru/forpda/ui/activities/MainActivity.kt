@@ -13,7 +13,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -22,7 +21,6 @@ import com.daasuu.ei.EasingInterpolator
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.DayNightHelper
-import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.databinding.ActivityMainBinding
 import forpdateam.ru.forpda.extensions.asImmutableFlag
 import forpdateam.ru.forpda.extensions.getColorFromAttr
@@ -51,11 +49,9 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     val tabNavigator = TabNavigator(this, R.id.fragments_container)
     private val dimensionsProvider = App.get().Di().dimensionsProvider
     private val notificationPreferencesRepository = App.get().Di().notificationPreferencesHolder
-    private val mainPreferencesRepository = App.get().Di().mainPreferencesHolder
     private val checkerRepository = App.get().Di().checkerRepository
     private val updateChecker by lazy { SimpleUpdateChecker(checkerRepository) }
 
-    private var lang: String? = null
 
     @InjectPresenter
     lateinit var presenter: MainPresenter
@@ -73,7 +69,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     )
 
     override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(LocaleHelper.onAttach(base))
+        super.attachBaseContext(base)
         App.get()
             .Di().dayNightHelper.setIsNight(DayNightHelper.isUiModeNight(resources.configuration))
     }
@@ -225,22 +221,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     override fun onResume() {
         super.onResume()
         Log.d(LOG_TAG, "onResume")
-        if (lang == null) {
-            lang = LocaleHelper.getLanguage(this)
-        }
-        // неработающий helper
-        if (false && LocaleHelper.getLanguage(this) != lang) {
-            val newContext = LocaleHelper.onAttach(this)
-            AlertDialog.Builder(this)
-                .setMessage(newContext.getString(R.string.lang_changed))
-                .setPositiveButton(newContext.getString(R.string.ok)) { dialog, which ->
-                    restartApplication(
-                        this@MainActivity
-                    )
-                }
-                .setNegativeButton(newContext.getString(R.string.cancel), null)
-                .show()
-        }
     }
 
     override fun onPause() {

@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.ui.fragments.settings.NotificationsSettingsFragment
 import forpdateam.ru.forpda.ui.fragments.settings.SettingsFragment
 
@@ -16,10 +15,6 @@ import forpdateam.ru.forpda.ui.fragments.settings.SettingsFragment
  */
 
 class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
-
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(LocaleHelper.onAttach(base))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightPreferenceTheme)
