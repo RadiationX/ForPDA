@@ -20,7 +20,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import forpdateam.ru.forpda.R.string
-import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.work.WorkUtils
@@ -28,10 +27,7 @@ import io.appmetrica.analytics.AppMetrica
 import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 
 /**
  * Created by radiationx on 28.07.16.
@@ -117,13 +113,7 @@ class App : Application() {
         AppMetrica.activate(applicationContext, config)
         AppMetrica.enableActivityAutoTracking(this)
 
-        dependencies
-            .mainPreferencesHolder
-            .themeMode
-            .onEach {
-                DayNightHelper.applyTheme(it)
-            }
-            .launchIn(GlobalScope + Dispatchers.Main)
+        dependencies.appThemeController.init()
 
         initImageLoader(this, dependencies)
 

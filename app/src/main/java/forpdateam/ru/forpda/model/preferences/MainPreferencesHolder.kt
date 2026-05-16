@@ -34,14 +34,6 @@ class MainPreferencesHolder(
         preferences.getBoolean(Preferences.Main.SCROLL_BUTTON_ENABLE, false)
     }
 
-    val themeMode by lazy {
-        preferences.getEnum(
-            Preferences.Main.Theme.MODE,
-            Preferences.Main.ThemeMode.SYSTEM,
-            Preferences.Main.ThemeMode::class.java
-        )
-    }
-
     val showBottomArrow by lazy {
         preferences.getBoolean(Preferences.Main.SHOW_BOTTOM_ARROW, false)
     }

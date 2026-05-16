@@ -16,7 +16,6 @@ import com.github.terrakok.cicerone.Replace
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.activities.SettingsActivity
-import forpdateam.ru.forpda.ui.activities.WebVewNotFoundActivity
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.activities.updatechecker.UpdateCheckerActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -297,10 +296,6 @@ class TabNavigator(
 
             is Screen.UpdateChecker -> {
                 return Intent(context, UpdateCheckerActivity::class.java)
-            }
-
-            is Screen.WebViewNotFound -> {
-                return Intent(context, WebVewNotFoundActivity::class.java)
             }
 
             is Screen.ImageViewer -> {

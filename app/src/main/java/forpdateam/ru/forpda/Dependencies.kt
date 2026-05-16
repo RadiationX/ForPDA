@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda
 
+import android.app.Application
 import android.content.Context
 import android.preference.PreferenceManager
 import androidx.room.Room
@@ -13,7 +14,8 @@ import forpdateam.ru.forpda.client.Client
 import forpdateam.ru.forpda.client.CookieStorage
 import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.client.websocket.WebSocketController
-import forpdateam.ru.forpda.common.DayNightHelper
+import forpdateam.ru.forpda.common.apptheme.AppThemeController
+import forpdateam.ru.forpda.common.apptheme.AppThemeControllerImpl
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
@@ -125,13 +127,14 @@ import kotlin.time.Duration.Companion.seconds
  */
 
 class Dependencies internal constructor(
-    context: Context
+    context: Application
 ) {
 
     val dimensionsProvider = DimensionsProvider()
 
-    val defaultIsNight = DayNightHelper.isUiModeNight(context.resources.configuration)
-    val dayNightHelper = DayNightHelper(defaultIsNight)
+    val appThemeController: AppThemeController by lazy {
+        AppThemeControllerImpl(context, flowPreferences)
+    }
 
     private val cicerone: Cicerone<TabRouter> by lazy { Cicerone.create(TabRouter()) }
     val router: TabRouter by lazy { cicerone.router }
@@ -146,11 +149,17 @@ class Dependencies internal constructor(
     }
     val linkHandler: ILinkHandler by lazy { LinkHandler(systemLinkHandler) }
 
-    val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-    val dataStoragePreferences =
+    val preferences by lazy {
+        @Suppress("DEPRECATION")
+        PreferenceManager.getDefaultSharedPreferences(context)
+    }
+
+    val dataStoragePreferences by lazy {
         context.getSharedPreferences("${context.packageName}_data_storage", Context.MODE_PRIVATE)
+    }
 
     val flowPreferences = FlowPreferences(GlobalScope, preferences)
+    val flowDataStoragePreferences = FlowPreferences(GlobalScope, dataStoragePreferences)
 
     val errorHandler: IErrorHandler by lazy { ErrorHandler(router) }
 
@@ -162,7 +171,7 @@ class Dependencies internal constructor(
     val countersHolder: CountersHolder by lazy { CountersHolder(preferences) }
     val closeableInfoHolder: CloseableInfoHolder by lazy { CloseableInfoHolder(preferences) }
 
-    val templateManager by lazy { TemplateManager(context, dayNightHelper) }
+    val templateManager by lazy { TemplateManager(context, appThemeController) }
     val themeTemplate by lazy { ThemeTemplate(templateManager, authHolder, topicPreferencesHolder) }
     val articleTemplate by lazy { ArticleTemplate(templateManager) }
     val searchTemplate by lazy {
@@ -207,7 +216,7 @@ class Dependencies internal constructor(
     }
 
     val patternsStorage by lazy {
-        PatternsStorage(context, flowPreferences, json)
+        PatternsStorage(context, flowDataStoragePreferences, json)
     }
 
     val patternProvider: PatternProvider by lazy {

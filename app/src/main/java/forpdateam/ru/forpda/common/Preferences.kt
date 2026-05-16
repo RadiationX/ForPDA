@@ -30,10 +30,6 @@ class Preferences {
             private const val PREFIX = Main.PREFIX + "theme."
             const val MODE: String = PREFIX + "mode"
         }
-
-        enum class ThemeMode {
-            LIGHT, DARK, SYSTEM
-        }
     }
 
     object Lists {

@@ -20,7 +20,6 @@ import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.databinding.ActivityMainBinding
 import forpdateam.ru.forpda.extensions.asImmutableFlag
 import forpdateam.ru.forpda.extensions.getColorFromAttr
@@ -67,12 +66,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         App.get().Di().mainPreferencesHolder,
         App.get().Di().errorHandler
     )
-
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        App.get()
-            .Di().dayNightHelper.setIsNight(DayNightHelper.isUiModeNight(resources.configuration))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)

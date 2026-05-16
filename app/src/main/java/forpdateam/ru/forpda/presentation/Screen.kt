@@ -22,7 +22,6 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         var checkWebView = true
     }
 
-    class WebViewNotFound : Screen()
     class UpdateChecker : Screen() {
         var jsonSource: String? = null
     }

@@ -2,7 +2,8 @@ package forpdateam.ru.forpda.ui
 
 import android.content.Context
 import biz.source_code.miniTemplator.MiniTemplator
-import forpdateam.ru.forpda.common.DayNightHelper
+import forpdateam.ru.forpda.common.apptheme.AppTheme
+import forpdateam.ru.forpda.common.apptheme.AppThemeController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.ByteArrayInputStream
@@ -10,7 +11,7 @@ import java.nio.charset.Charset
 
 class TemplateManager(
     private val context: Context,
-    private val dayNightHelper: DayNightHelper
+    private val appThemeController: AppThemeController
 ) {
 
     companion object {
@@ -31,12 +32,20 @@ class TemplateManager(
         staticStrings.putAll(strings)
     }
 
-    fun observeThemeType(): Flow<String> = dayNightHelper
-        .observeIsNight()
-        .map { if (it) "dark" else "light" }
+    fun observeThemeType(): Flow<String> = appThemeController
+        .observeTheme()
+        .map {
+            when (it) {
+                AppTheme.LIGHT -> "light"
+                AppTheme.DARK -> "dark"
+            }
+        }
 
     fun getThemeType(): String {
-        return if (dayNightHelper.isNight()) "dark" else "light"
+        return when (appThemeController.getTheme()) {
+            AppTheme.LIGHT -> "light"
+            AppTheme.DARK -> "dark"
+        }
     }
 
     fun fillStaticStrings(template: MiniTemplator): MiniTemplator = template.apply {
