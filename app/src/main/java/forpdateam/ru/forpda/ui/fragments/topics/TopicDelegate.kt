@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.TopicItemBinding
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.TopicListItem
@@ -37,8 +37,8 @@ class TopicDelegate(
         private val clickListener: OnItemClickListener<TopicItem.Topic>
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private val titleColor = App.getColorFromAttr(binding.root.context, R.attr.second_text_color)
-        private val titleColorNew = App.getColorFromAttr(binding.root.context, R.attr.default_text_color)
+        private val titleColor = binding.root.context.getColorFromAttr(R.attr.second_text_color)
+        private val titleColorNew = binding.root.context.getColorFromAttr(R.attr.default_text_color)
 
         fun bind(listItem: TopicListItem) {
             val item = listItem.item

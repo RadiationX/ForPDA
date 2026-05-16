@@ -25,6 +25,7 @@ import forpdateam.ru.forpda.common.DayNightHelper
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.databinding.ActivityMainBinding
 import forpdateam.ru.forpda.extensions.asImmutableFlag
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.presentation.main.MainPresenter
 import forpdateam.ru.forpda.presentation.main.MainView
 import forpdateam.ru.forpda.ui.DimensionHelper
@@ -114,8 +115,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
 
             override fun onSlide(slideOffset: Float) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && window.navigationBarDividerColor == 0) {
-                    window.navigationBarDividerColor =
-                        App.getColorFromAttr(this@MainActivity, R.attr.divider_line_bottom_nav)
+                    window.navigationBarDividerColor = getColorFromAttr(R.attr.divider_line_bottom_nav)
                 }
                 val container = binding.fragmentsContainer
                 val translate = -slideOffset * 0.1f * container.height

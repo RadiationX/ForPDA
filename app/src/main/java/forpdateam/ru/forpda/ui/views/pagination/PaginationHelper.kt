@@ -20,9 +20,9 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.App.Companion.getToolBarHeight
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
+import forpdateam.ru.forpda.extensions.getDimensionPixelSizeAttr
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,7 +70,7 @@ class PaginationHelper(context: Activity) {
     private fun updateDimens(dimensions: Dimensions) {
         if (tabLayoutInToolbar != null) {
             val params = tabLayoutInToolbar!!.layoutParams as CollapsingToolbarLayout.LayoutParams
-            params.topMargin = getToolBarHeight(tabLayoutInToolbar!!.context) + dimensions.statusBar
+            params.topMargin = tabLayoutInToolbar!!.context.getDimensionPixelSizeAttr(androidx.appcompat.R.attr.actionBarSize) + dimensions.statusBar
             tabLayoutInToolbar!!.layoutParams = params
         }
     }

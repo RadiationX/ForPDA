@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.media.AudioManager
-import android.os.Build
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
@@ -18,10 +17,10 @@ import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
-import forpdateam.ru.forpda.App.Companion.getColorFromAttr
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.common.webview.jsinterfaces.IBase
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -121,7 +120,7 @@ class ExtendedWebView : NestedWebView, IBase {
         settings.allowUniversalAccessFromFileURLs = true
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         setRelativeFontSize(16)
-        setBackgroundColor(getColorFromAttr(context, R.attr.background_base))
+        setBackgroundColor(context.getColorFromAttr(R.attr.background_base))
         settings.textZoom = (resources.configuration.fontScale * 100).toInt()
 
         Log.e(

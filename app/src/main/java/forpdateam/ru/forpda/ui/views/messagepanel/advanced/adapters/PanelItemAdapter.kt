@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +7,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.MessagePanelAdvancedItemBinding
+import forpdateam.ru.forpda.extensions.setTintColor
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.PanelListItem
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback.ItemTouchHelperAdapter
 import java.util.Collections
@@ -77,7 +76,7 @@ class PanelItemAdapter(
         private val binding by viewBinding<MessagePanelAdvancedItemBinding>()
 
         fun bind(item: PanelListItem.BBCode) {
-            binding.itemIcon.setImageDrawable(getVecDrawable(binding.root.context, item.iconRes))
+            binding.itemIcon.setImageResource(item.iconRes)
             val title = binding.itemTitle.context.getString(item.titleRes)
             binding.itemTitle.isVisible = true
             binding.itemTitle.text = title
@@ -97,7 +96,7 @@ class PanelItemAdapter(
 
         fun bind(item: PanelListItem.Color) {
             binding.itemIcon.setImageResource(R.drawable.bg_circle_black)
-            binding.itemIcon.imageTintList = ColorStateList.valueOf(item.color)
+            binding.itemIcon.setTintColor(item.color)
             binding.root.contentDescription = item.hexColor
             binding.itemTitle.isVisible = false
             binding.root.setOnClickListener {

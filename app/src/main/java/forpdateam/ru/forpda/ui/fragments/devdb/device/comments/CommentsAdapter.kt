@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App.Companion.getDrawableAttr
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DeviceCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
@@ -39,16 +37,10 @@ class CommentsAdapter(
 
         init {
             binding.itemLikeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                getVecDrawable(
-                    v.context,
-                    R.drawable.ic_thumb_up
-                ), null, null, null
+                binding.itemLikeBtn.context.getDrawable(R.drawable.ic_thumb_up), null, null, null
             )
             binding.itemDislikeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                getVecDrawable(
-                    v.context,
-                    R.drawable.ic_thumb_down
-                ), null, null, null
+                binding.itemLikeBtn.context.getDrawable(R.drawable.ic_thumb_down), null, null, null
             )
             binding.itemTitle.setOnClickListener { view: View? ->
                 listener.onClick(
@@ -57,8 +49,7 @@ class CommentsAdapter(
                     )
                 )
             }
-            binding.itemRating.background =
-                getDrawableAttr(binding.itemRating.context, R.attr.count_background)
+            binding.itemRating.setBackgroundResource(R.attr.count_background)
         }
 
         override fun bind(item: Device.Comment, position: Int) {

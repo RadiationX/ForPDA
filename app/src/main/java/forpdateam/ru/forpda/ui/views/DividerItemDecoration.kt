@@ -1,12 +1,11 @@
 package forpdateam.ru.forpda.ui.views
 
-import android.R
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import forpdateam.ru.forpda.extensions.getDrawableAttr
 
 /**
  * Created by radiationx on 22.09.16.
@@ -18,16 +17,14 @@ class DividerItemDecoration : ItemDecoration {
      * Default divider will be used
      */
     constructor(context: Context) {
-        val styledAttributes = context.obtainStyledAttributes(ATTRS)
-        mDivider = styledAttributes.getDrawable(0)
-        styledAttributes.recycle()
+        mDivider = context.getDrawableAttr(android.R.attr.listDivider)
     }
 
     /**
      * Custom divider will be used
      */
     constructor(context: Context, resId: Int) {
-        mDivider = ContextCompat.getDrawable(context, resId)
+        mDivider = context.getDrawable(resId)
     }
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -46,9 +43,5 @@ class DividerItemDecoration : ItemDecoration {
             mDivider.setBounds(left, top, right, bottom)
             mDivider.draw(c)
         }
-    }
-
-    companion object {
-        private val ATTRS = intArrayOf(R.attr.listDivider)
     }
 }

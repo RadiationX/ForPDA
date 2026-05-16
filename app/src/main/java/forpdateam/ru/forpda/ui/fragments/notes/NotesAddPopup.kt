@@ -10,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +50,7 @@ class NotesAddPopup(context: Context, item: NoteItem?) {
             titleField.setText(item!!.title)
             linkField.setText(item.link)
             contentField.setText(item.content)
-            addButton.setImageDrawable(getVecDrawable(context, R.drawable.ic_toolbar_done))
+            addButton.setImageResource(R.drawable.ic_toolbar_done)
         } else {
             title.setText(R.string.note_create)
         }

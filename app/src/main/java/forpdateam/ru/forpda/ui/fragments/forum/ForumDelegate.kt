@@ -4,10 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
-import forpdateam.ru.forpda.App.Companion.getDrawableResAttr
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ForumItemDefaultBinding
+import forpdateam.ru.forpda.extensions.getDrawableResAttr
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ForumListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
@@ -47,9 +46,9 @@ class ForumDelegate(
                     R.drawable.ic_expand_more_black_24dp
                 }
             }
-            binding.forumItemIcon.setImageDrawable(getVecDrawable(binding.forumItemIcon.context, iconRes))
+            binding.forumItemIcon.setImageResource(iconRes)
             if (listItem.isLeaf) {
-                val bg = getDrawableResAttr(binding.forumItemIcon.context, R.attr.count_background)
+                val bg = binding.forumItemIcon.context.getDrawableResAttr(R.attr.count_background)
                 binding.forumItemIcon.setBackgroundResource(bg)
             } else {
                 binding.forumItemIcon.background = null

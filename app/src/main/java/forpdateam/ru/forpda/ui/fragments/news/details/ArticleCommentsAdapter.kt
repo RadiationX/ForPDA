@@ -3,20 +3,17 @@ package forpdateam.ru.forpda.ui.fragments.news.details
 import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.App.Companion.getColorFromAttr
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ArticleCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.Comment.Karma
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.model.AuthHolder
 
 /**
@@ -44,14 +41,12 @@ class ArticleCommentsAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         likedColorFilter = PorterDuffColorFilter(
-            getColorFromAttr(recyclerView.context, androidx.appcompat.R.attr.colorAccent),
+            recyclerView.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent),
             PorterDuff.Mode.SRC_ATOP
         )
         dislikedColorFilter = PorterDuffColorFilter(
-            ContextCompat.getColor(
-                recyclerView.context,
-                R.color.dislike_color
-            ), PorterDuff.Mode.SRC_ATOP
+            recyclerView.context.getColor(R.color.dislike_color),
+            PorterDuff.Mode.SRC_ATOP
         )
     }
 
@@ -76,10 +71,6 @@ class ArticleCommentsAdapter(
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
         private val binding by viewBinding<ArticleCommentItemBinding>()
-        private val heart: Drawable =
-            getVecDrawable(v.context, R.drawable.ic_heart)
-        private val heart_outline: Drawable =
-            getVecDrawable(v.context, R.drawable.ic_heart_outline)
 
         init {
             binding.commentNick.setOnClickListener { v1: View? ->
@@ -128,19 +119,19 @@ class ArticleCommentsAdapter(
 
                 when (karma.status) {
                     Karma.LIKED -> {
-                        binding.commentLikeImage.setImageDrawable(heart)
+                        binding.commentLikeImage.setImageResource(R.drawable.ic_heart)
                         binding.commentLikeImage.colorFilter = likedColorFilter
                         binding.commentLikeImage.isClickable = false
                     }
 
                     Karma.DISLIKED -> {
-                        binding.commentLikeImage.setImageDrawable(heart_outline)
+                        binding.commentLikeImage.setImageResource(R.drawable.ic_heart_outline)
                         binding.commentLikeImage.colorFilter = dislikedColorFilter
                         binding.commentLikeImage.isClickable = false
                     }
 
                     Karma.NOT_LIKED -> {
-                        binding.commentLikeImage.setImageDrawable(heart_outline)
+                        binding.commentLikeImage.setImageResource(R.drawable.ic_heart_outline)
                         binding.commentLikeImage.clearColorFilter()
                         binding.commentLikeImage.isClickable = authData.userId != item.user.id
                     }

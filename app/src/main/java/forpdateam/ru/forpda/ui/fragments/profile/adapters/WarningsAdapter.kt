@@ -2,13 +2,12 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ProfileSubItemWarningBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.WarningType
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.ui.fragments.profile.adapters.WarningsAdapter.WarningHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -35,15 +34,15 @@ internal class WarningsAdapter : BaseAdapter<ProfileModel.Warning, WarningHolder
             binding.itemContent.text = item.content
             val color = when (item.type) {
                 WarningType.Positive -> {
-                    ContextCompat.getColor(binding.itemTitle.context, R.color.md_green_400)
+                    binding.itemTitle.context.getColor(R.color.md_green_400)
                 }
 
                 WarningType.Negative -> {
-                    ContextCompat.getColor(binding.itemTitle.context, R.color.md_red_400)
+                    binding.itemTitle.context.getColor(R.color.md_red_400)
                 }
 
                 WarningType.Unknown -> {
-                    App.getColorFromAttr(binding.itemTitle.context, R.attr.default_text_color)
+                    binding.itemTitle.context.getColorFromAttr(R.attr.default_text_color)
                 }
             }
             binding.itemTitle.setTextColor(color)

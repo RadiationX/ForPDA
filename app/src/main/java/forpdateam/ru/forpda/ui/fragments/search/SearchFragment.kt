@@ -283,9 +283,9 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         }
         webView.setOnDirectionListener { direction ->
             if (direction == ExtendedWebView.DIRECTION_DOWN) {
-                fab.setImageDrawable(App.getVecDrawable(fab.context, R.drawable.ic_arrow_down))
+                fab.setImageResource(R.drawable.ic_arrow_down)
             } else if (direction == ExtendedWebView.DIRECTION_UP) {
-                fab.setImageDrawable(App.getVecDrawable(fab.context, R.drawable.ic_arrow_up))
+                fab.setImageResource(R.drawable.ic_arrow_up)
             }
         }
 

@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -34,6 +33,8 @@ import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.getDrawableResAttr
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
@@ -169,7 +170,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         setFontSize(mainPreferencesHolder.webViewFontSize.get())
 
         notificationButton.setColorFilter(
-            App.getColorFromAttr(requireContext(), R.attr.contrast_text_color),
+            notificationButton.context.getColorFromAttr(R.attr.contrast_text_color),
             PorterDuff.Mode.SRC_ATOP
         )
         notificationTitle.text = "Новое сообщение"
@@ -323,8 +324,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
                 messagePanel.show()
             }
             messagePanel.heightChangeListener!!.onChangedHeight(messagePanel.lastHeight)
-            toggleMessagePanelItem.icon =
-                App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_transcribe_close)
+            toggleMessagePanelItem.setIcon(R.drawable.ic_toolbar_transcribe_close)
         }
         if (showKeyboard) {
             //messagePanel.getMessageField().setSelection(messagePanel.getMessageField().length());
@@ -338,15 +338,14 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         messagePanel.hidePopupWindows()
         hideKeyboard()
         messagePanel.heightChangeListener!!.onChangedHeight(0)
-        toggleMessagePanelItem.icon =
-            App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_create)
+        toggleMessagePanelItem.setIcon(R.drawable.ic_toolbar_create)
     }
 
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         toggleMessagePanelItem = menu
             .add(R.string.reply)
-            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_create))
+            .setIcon(R.drawable.ic_toolbar_create)
             .setOnMenuItemClickListener {
                 if (!authHolder.get().isAuth()) {
                     Utils.showNeedAuthDialog(requireContext())
@@ -359,7 +358,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
         refreshMenuItem = menu
             .add(R.string.refresh)
-            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_refresh))
+            .setIcon(R.drawable.ic_toolbar_refresh)
             .setOnMenuItemClickListener {
                 presenter.reload()
                 false
@@ -476,30 +475,16 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 
                 val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
-                val outValue = TypedValue()
-                requireContext().theme?.resolveAttribute(
-                    android.R.attr.actionBarItemBackground,
-                    outValue,
-                    true
-                )
+
+                val backgroundRes = requireContext().getDrawableResAttr(android.R.attr.actionBarItemBackground)
 
                 val btnNext = AppCompatImageButton(searchView.context)
-                btnNext.setImageDrawable(
-                    App.getVecDrawable(
-                        requireContext(),
-                        R.drawable.ic_toolbar_search_next
-                    )
-                )
-                btnNext.setBackgroundResource(outValue.resourceId)
+                btnNext.setImageResource(R.drawable.ic_toolbar_search_next)
+                btnNext.setBackgroundResource(backgroundRes)
 
                 val btnPrev = AppCompatImageButton(searchView.context)
-                btnPrev.setImageDrawable(
-                    App.getVecDrawable(
-                        requireContext(),
-                        R.drawable.ic_toolbar_search_prev
-                    )
-                )
-                btnPrev.setBackgroundResource(outValue.resourceId)
+                btnPrev.setImageResource(R.drawable.ic_toolbar_search_prev)
+                btnPrev.setBackgroundResource(backgroundRes)
 
                 (searchView.getChildAt(0) as LinearLayout).addView(btnPrev, navButtonsParams)
                 (searchView.getChildAt(0) as LinearLayout).addView(btnNext, navButtonsParams)

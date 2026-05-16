@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App.Companion.getColorFromAttr
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DeviceSpecItemBinding
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.coloredFromHtml
 
 /**
@@ -61,7 +61,7 @@ class SpecsAdapter : RecyclerView.Adapter<SpecsAdapter.ViewHolder>() {
                 val pair = item.second[i]
                 val strColor = String.format(
                     "#%06X",
-                    0xFFFFFF and getColorFromAttr(binding.root.context, R.attr.second_text_color)
+                    0xFFFFFF and binding.root.context.getColorFromAttr(R.attr.second_text_color)
                 )
                 builder.append("<small style=\"font-size:10px\"><span style=\"color: ")
                     .append(strColor)

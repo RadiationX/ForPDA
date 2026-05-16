@@ -5,7 +5,6 @@ import android.widget.RelativeLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.databinding.FunnyContentBinding
 
 /**
@@ -16,7 +15,7 @@ class FunnyContent(context: Context?) : RelativeLayout(context) {
     private val binding by viewBinding<FunnyContentBinding>(attachToRoot = true)
 
     fun setImage(@DrawableRes resId: Int): FunnyContent {
-        binding.funnyImage.setImageDrawable(getVecDrawable(context, resId))
+        binding.funnyImage.setImageResource(resId)
         return this
     }
 

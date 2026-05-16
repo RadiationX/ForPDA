@@ -9,12 +9,10 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
 import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.model.data.remote.IWebClient
@@ -192,14 +190,13 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         init {
             gridTab = tabLayout.newTab()
-                .setIcon(ContextCompat.getDrawable(tabLayout.context, R.drawable.ic_grid)).also {
-                    tabLayout.addTab(it)
-                }
+                .setIcon(R.drawable.ic_grid)
+                .also { tabLayout.addTab(it) }
+
             listTab = tabLayout.newTab()
-                .setIcon(ContextCompat.getDrawable(tabLayout.context, R.drawable.ic_view_list))
-                .also {
-                    tabLayout.addTab(it)
-                }
+                .setIcon(R.drawable.ic_view_list)
+                .also { tabLayout.addTab(it) }
+
             listener = object : TabLayout.OnTabSelectedListener {
                 override fun onTabReselected(p0: TabLayout.Tab?) {}
                 override fun onTabUnselected(p0: TabLayout.Tab?) {}
@@ -291,12 +288,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     if (item.typeFile == AttachmentItem.TYPE_IMAGE) {
                         ImageLoader.getInstance().displayImage(item.imageUrl, imageView)
                     } else {
-                        imageView.setImageDrawable(
-                            App.getVecDrawable(
-                                itemView.context,
-                                R.drawable.ic_insert_drive_file_gray_24dp
-                            )
-                        )
+                        imageView.setImageResource(R.drawable.ic_insert_drive_file_gray_24dp)
                     }
                 }
             }

@@ -3,10 +3,9 @@ package forpdateam.ru.forpda.ui.fragments.other
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
-import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemOtherMenuBinding
 import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
@@ -55,12 +54,7 @@ class MenuItemDelegate(
             this.currentItem = item
             view.apply {
                 binding.otherMenuTitle.setText(item.title)
-                binding.otherMenuIcon.setImageDrawable(
-                    AppCompatResources.getDrawable(
-                        view.context,
-                        item.icon
-                    )
-                )
+                binding.otherMenuIcon.setImageResource(item.icon)
                 binding.otherMenuCounter.text = item.appItem.count.toString()
                 binding.otherMenuCounter.visibility =
                     if (item.appItem.count > 0) View.VISIBLE else View.GONE

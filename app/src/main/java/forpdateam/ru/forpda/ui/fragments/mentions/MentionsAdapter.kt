@@ -6,11 +6,11 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App.Companion.getColorFromAttr
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.TopicItemBinding
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem.Companion.STATE_UNREAD
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.ui.fragments.mentions.MentionsAdapter.MentionHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -29,8 +29,8 @@ internal class MentionsAdapter : BaseAdapter<MentionItem, MentionHolder>() {
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        titleColor = getColorFromAttr(recyclerView.context, R.attr.second_text_color)
-        titleColorNew = getColorFromAttr(recyclerView.context, R.attr.default_text_color)
+        titleColor = recyclerView.context.getColorFromAttr(R.attr.second_text_color)
+        titleColorNew = recyclerView.context.getColorFromAttr(R.attr.default_text_color)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionHolder {

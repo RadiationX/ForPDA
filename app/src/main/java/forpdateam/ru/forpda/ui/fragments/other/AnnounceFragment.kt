@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,6 +18,7 @@ import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.forum.Announce
+import forpdateam.ru.forpda.extensions.getDrawableResAttr
 import forpdateam.ru.forpda.presentation.announce.AnnouncePresenter
 import forpdateam.ru.forpda.presentation.announce.AnnounceView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -126,30 +125,16 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
                     (searchClose.parent as ViewGroup).removeView(searchClose)
 
                 val navButtonsParams = ViewGroup.LayoutParams(App.px48, App.px48)
-                val outValue = TypedValue()
-                requireContext().theme?.resolveAttribute(
-                    android.R.attr.actionBarItemBackground,
-                    outValue,
-                    true
-                )
+
+                val backgroundRes = requireContext().getDrawableResAttr(android.R.attr.actionBarItemBackground)
 
                 val btnNext = AppCompatImageButton(searchView.context)
-                btnNext.setImageDrawable(
-                    App.getVecDrawable(
-                        requireContext(),
-                        R.drawable.ic_toolbar_search_next
-                    )
-                )
-                btnNext.setBackgroundResource(outValue.resourceId)
+                btnNext.setImageResource(R.drawable.ic_toolbar_search_next)
+                btnNext.setBackgroundResource(backgroundRes)
 
                 val btnPrev = AppCompatImageButton(searchView.context)
-                btnPrev.setImageDrawable(
-                    App.getVecDrawable(
-                        requireContext(),
-                        R.drawable.ic_toolbar_search_prev
-                    )
-                )
-                btnPrev.setBackgroundResource(outValue.resourceId)
+                btnPrev.setImageResource(R.drawable.ic_toolbar_search_prev)
+                btnPrev.setBackgroundResource(backgroundRes)
 
                 (searchView.getChildAt(0) as LinearLayout).addView(btnPrev, navButtonsParams)
                 (searchView.getChildAt(0) as LinearLayout).addView(btnNext, navButtonsParams)

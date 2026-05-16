@@ -9,7 +9,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -53,12 +52,7 @@ class FabOnScroll : FloatingActionButton.Behavior {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed)
         //Log.d("SUKA", "FabOnScroll onNestedPreScroll" + consumed[1] + " : " + dy);
         if (child.alpha == 0.0f && abs(dy.toDouble()) > App.px24) {
-            child.setImageDrawable(
-                getVecDrawable(
-                    child.context,
-                    if (dy > 0) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up
-                )
-            )
+            child.setImageResource(if (dy > 0) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up)
             child.clearAnimation()
             child.animate()
                 .scaleX(1.0f)

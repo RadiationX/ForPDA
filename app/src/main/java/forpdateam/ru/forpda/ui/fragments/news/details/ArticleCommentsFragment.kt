@@ -21,6 +21,7 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.databinding.ArticleCommentsBinding
 import forpdateam.ru.forpda.entity.remote.news.Comment
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentView
 import forpdateam.ru.forpda.ui.fragments.RecyclerTopScroller
@@ -78,25 +79,14 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
         contentController = ContentController(null, binding.additionalContent, refreshLayout)
 
         refreshLayout.setProgressBackgroundColorSchemeColor(
-            App.getColorFromAttr(
-                requireContext(),
-                androidx.appcompat.R.attr.colorPrimary
-            )
+            refreshLayout.context.getColorFromAttr(androidx.appcompat.R.attr.colorPrimary)
         )
         refreshLayout.setColorSchemeColors(
-            App.getColorFromAttr(
-                requireContext(),
-                androidx.appcompat.R.attr.colorAccent
-            )
+            refreshLayout.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
         )
         refreshLayout.setOnRefreshListener { presenter.updateComments() }
 
-        recyclerView.setBackgroundColor(
-            App.getColorFromAttr(
-                requireContext(),
-                R.attr.background_for_lists
-            )
-        )
+        recyclerView.setBackgroundColor(recyclerView.context.getColorFromAttr(R.attr.background_for_lists))
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(DevicesFragment.SpacingItemDecoration(App.px12, false))

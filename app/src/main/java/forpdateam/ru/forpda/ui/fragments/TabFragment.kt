@@ -32,6 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBaseBinding
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.ui.DimensionHelper
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.views.ContentController
@@ -288,12 +289,12 @@ open class TabFragment(
 
     @JvmOverloads
     protected fun setListsBackground(view: View = coordinatorLayout) {
-        view.setBackgroundColor(App.getColorFromAttr(requireContext(), R.attr.background_for_lists))
+        view.setBackgroundColor(view.context.getColorFromAttr(R.attr.background_for_lists))
     }
 
     @JvmOverloads
     protected fun setCardsBackground(view: View = coordinatorLayout) {
-        view.setBackgroundColor(App.getColorFromAttr(requireContext(), R.attr.background_for_cards))
+        view.setBackgroundColor(view.context.getColorFromAttr(R.attr.background_for_cards))
     }
 
     protected fun updateToolbarShadow() {
@@ -320,18 +321,8 @@ open class TabFragment(
     }
 
     protected fun refreshLayoutStyle(refreshLayout: SwipeRefreshLayout) {
-        refreshLayout.setProgressBackgroundColorSchemeColor(
-            App.getColorFromAttr(
-                requireContext(),
-                androidx.appcompat.R.attr.colorPrimary
-            )
-        )
-        refreshLayout.setColorSchemeColors(
-            App.getColorFromAttr(
-                requireContext(),
-                androidx.appcompat.R.attr.colorAccent
-            )
-        )
+        refreshLayout.setProgressBackgroundColorSchemeColor(refreshLayout.context.getColorFromAttr(androidx.appcompat.R.attr.colorPrimary))
+        refreshLayout.setColorSchemeColors(refreshLayout.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent))
     }
 
     protected fun refreshLayoutLongTrigger(refreshLayout: SwipeRefreshLayout) {

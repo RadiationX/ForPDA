@@ -15,10 +15,10 @@ import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.App.Companion.getColorFromAttr
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.ui.views.CodeEditor
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.AdvancedPopup
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
@@ -120,7 +120,7 @@ class MessagePanel(
         clipToPadding = true
         radius = (if (fullForm) 0 else App.px8).toFloat()
         preventCornerOverlap = false
-        setCardBackgroundColor(getColorFromAttr(context, R.attr.cards_background))
+        setCardBackgroundColor(context.getColorFromAttr(R.attr.cards_background))
         //На случай, когда добавляются несколько слушателей
         advancedButton!!.setOnClickListener(OnClickListener { v: View? ->
             for (listener in advancedListeners) listener.onClick(v)
@@ -147,7 +147,7 @@ class MessagePanel(
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length > 0) {
                     if (sendButton!!.getColorFilter() == null) {
-                        sendButton!!.setColorFilter(getColorFromAttr(context, androidx.appcompat.R.attr.colorAccent))
+                        sendButton!!.setColorFilter(context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent))
                     }
                 } else {
                     if (sendButton!!.getColorFilter() != null) {

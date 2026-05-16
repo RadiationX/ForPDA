@@ -62,7 +62,7 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
         recyclerView.addOnScrollListener(pauseOnScrollListener)
 
 
-        fab.setImageDrawable(App.getVecDrawable(requireContext(), R.drawable.ic_fab_create))
+        fab.setImageResource(R.drawable.ic_fab_create)
         fab.setOnClickListener { presenter.openChatCreator() }
         fab.visibility = View.VISIBLE
 

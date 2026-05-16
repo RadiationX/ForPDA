@@ -9,11 +9,10 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.viewpager.widget.ViewPager
-import com.github.chrisbanes.photoview.OnPhotoTapListener
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.chrisbanes.photoview.OnPhotoTapListener
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.LocaleHelper
 import forpdateam.ru.forpda.common.Utils
@@ -47,11 +46,9 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
         binding.imageViewerPullBack.setCallback(pullBackCallback)
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setNavigationOnClickListener { finish() }
-        binding.toolbar.navigationIcon =
-            ContextCompat.getDrawable(binding.toolbar.context, R.drawable.ic_arrow_back_white_24dp)
-                ?.apply {
-                    setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-                }
+        binding.toolbar.navigationIcon = binding.toolbar.context.getDrawable(R.drawable.ic_arrow_back_white_24dp)?.apply {
+            setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        }
 
 
         val extUrls = mutableListOf<String>()

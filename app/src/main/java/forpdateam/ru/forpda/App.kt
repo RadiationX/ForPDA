@@ -9,20 +9,11 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.VectorDrawable
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
-import android.util.TypedValue
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache
 import com.nostra13.universalimageloader.core.DisplayImageOptions
@@ -90,52 +81,6 @@ class App : Application() {
         @JvmStatic
         fun getContext(): Context {
             return get()
-        }
-
-        @JvmStatic
-        @ColorInt
-        fun getColorFromAttr(context: Context?, @AttrRes attr: Int): Int {
-            val typedValue = TypedValue()
-            return if (context != null && context.theme.resolveAttribute(
-                    attr,
-                    typedValue,
-                    true
-                )
-            ) typedValue.data
-            else Color.RED
-        }
-
-        @JvmStatic
-        @DrawableRes
-        fun getDrawableResAttr(context: Context, @AttrRes attr: Int): Int {
-            val a = context.theme.obtainStyledAttributes(intArrayOf(attr))
-            val attributeResourceId = a.getResourceId(0, 0)
-            a.recycle()
-            return attributeResourceId
-        }
-
-        @JvmStatic
-        fun getDrawableAttr(context: Context, @AttrRes attr: Int): Drawable? {
-            return AppCompatResources.getDrawable(context, getDrawableResAttr(context, attr))
-        }
-
-        @JvmStatic
-        fun getToolBarHeight(context: Context): Int {
-            val attrs = intArrayOf(androidx.appcompat.R.attr.actionBarSize)
-            val ta = context.obtainStyledAttributes(attrs)
-            val toolBarHeight = ta.getDimensionPixelSize(0, -1)
-            ta.recycle()
-            return toolBarHeight
-        }
-
-        /*Only vector icon*/
-        @JvmStatic
-        fun getVecDrawable(context: Context, @DrawableRes id: Int): Drawable {
-            val drawable = AppCompatResources.getDrawable(context, id)
-            if (!(drawable is VectorDrawableCompat || drawable is VectorDrawable)) {
-                throw RuntimeException()
-            }
-            return drawable
         }
 
         val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()

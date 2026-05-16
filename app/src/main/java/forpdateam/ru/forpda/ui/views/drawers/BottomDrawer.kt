@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ActivityMainBinding
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.model.MenuMapper
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
@@ -153,7 +153,7 @@ class BottomDrawer(
                 }
                 adapter = tabsAdapter
 
-                val color = App.getColorFromAttr(context, R.attr.item_tab_close_color)
+                val color = context.getColorFromAttr(R.attr.item_tab_close_color)
                 val swipeHandler = object : TabSwipeToDeleteCallback(color) {
                     override fun onSwiped(
                         viewHolder: RecyclerView.ViewHolder,

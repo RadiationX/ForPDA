@@ -11,7 +11,6 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
@@ -110,7 +109,7 @@ class AdvancedPopup(private val context: Context, private val messagePanel: Mess
 
     private fun hidePopup() {
         val localDimensions = dimensionsProvider.getDimensions()
-        messagePanel.advancedButton!!.setImageDrawable(getVecDrawable(context, R.drawable.ic_add))
+        messagePanel.advancedButton!!.setImageResource(R.drawable.ic_add)
 
         if (popupWindow.isShowing) {
             if (localDimensions.isFakeKeyboardShow) {
@@ -137,12 +136,7 @@ class AdvancedPopup(private val context: Context, private val messagePanel: Mess
 
     private fun showPopup() {
         val localDimensions = dimensionsProvider.getDimensions()
-        messagePanel.advancedButton!!.setImageDrawable(
-            getVecDrawable(
-                context,
-                R.drawable.ic_keyboard
-            )
-        )
+        messagePanel.advancedButton!!.setImageResource(R.drawable.ic_keyboard)
 
         if (!popupWindow.isShowing) {
             if (!localDimensions.isFakeKeyboardShow) {

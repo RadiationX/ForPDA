@@ -5,15 +5,14 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemBottomTabBinding
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 
 class BottomMenuDelegate(
     private val clickListener: Listener
@@ -53,17 +52,13 @@ class BottomMenuDelegate(
             this.currentItem = item
             view.apply {
                 contentDescription = context.getString(item.title)
-                binding.itemBottomMenuIcon.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        item.icon
-                    )
-                )
+                binding.itemBottomMenuIcon.setImageResource(item.icon)
 
-                val colorRes = if (selected) App.getColorFromAttr(
-                    context,
-                    androidx.appcompat.R.attr.colorAccent
-                ) else App.getColorFromAttr(context, R.attr.icon_base)
+                val colorRes = if (selected) {
+                    binding.itemBottomMenuIcon.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
+                } else {
+                    binding.itemBottomMenuIcon.context.getColorFromAttr(R.attr.icon_base)
+                }
                 binding.itemBottomMenuIcon.setColorFilter(
                     colorRes,
                     PorterDuff.Mode.SRC_ATOP

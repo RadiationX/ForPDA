@@ -32,6 +32,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentDeviceBinding
 import forpdateam.ru.forpda.databinding.ToolbarDeviceBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
+import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.presentation.devdb.device.DevicePresenter
 import forpdateam.ru.forpda.presentation.devdb.device.DeviceView
 import forpdateam.ru.forpda.ui.DimensionHelper
@@ -140,13 +141,13 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
             App.px2.toFloat(),
             0f,
             0f,
-            App.getColorFromAttr(requireContext(), androidx.appcompat.R.attr.colorPrimary)
+            toolbarTitleView.context.getColorFromAttr(androidx.appcompat.R.attr.colorPrimary)
         )
         toolbarSubtitleView.setShadowLayer(
             App.px2.toFloat(),
             0f,
             0f,
-            App.getColorFromAttr(requireContext(), androidx.appcompat.R.attr.colorPrimary)
+            toolbarTitleView.context.getColorFromAttr(androidx.appcompat.R.attr.colorPrimary)
         )
 
         toolbarLayout.setExpandedTitleColor(Color.TRANSPARENT)
@@ -157,10 +158,8 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
         tabLayout.setupWithViewPager(fragmentsPager)
 
         imagesPager.setIndicatorTintColorScheme(
-            App.getColorFromAttr(
-                requireContext(),
-                R.attr.default_text_color
-            ), App.getColorFromAttr(requireContext(), R.attr.second_text_color)
+            imagesPager.context.getColorFromAttr(R.attr.default_text_color),
+            imagesPager.context.getColorFromAttr(R.attr.second_text_color)
         )
 
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, offset ->
@@ -269,7 +268,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
         if (data.rating > 0) {
             rating.text = data.rating.toString()
-            rating.background = App.getDrawableAttr(rating.context, R.attr.count_background)
+            rating.setBackgroundResource(R.attr.count_background)
             rating.background.colorFilter = DevDbHelper.getColorFilter(data.rating)
             rating.visibility = View.VISIBLE
             if (!data.comments.isEmpty()) {

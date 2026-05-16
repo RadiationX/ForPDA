@@ -78,7 +78,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         super.addBaseToolbarMenu(menu)
         menu
             .add(R.string.add)
-            .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_add))
+            .setIcon(R.drawable.ic_toolbar_add)
             .setOnMenuItemClickListener {
                 presenter.addNote()
                 true

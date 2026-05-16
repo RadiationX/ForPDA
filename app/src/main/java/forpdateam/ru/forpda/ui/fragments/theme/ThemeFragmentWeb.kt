@@ -81,9 +81,9 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
         }
         webView.setOnDirectionListener { direction ->
             if (direction == ExtendedWebView.DIRECTION_DOWN) {
-                fab.setImageDrawable(App.getVecDrawable(fab.context, R.drawable.ic_arrow_down))
+                fab.setImageResource(R.drawable.ic_arrow_down)
             } else if (direction == ExtendedWebView.DIRECTION_UP) {
-                fab.setImageDrawable(App.getVecDrawable(fab.context, R.drawable.ic_arrow_up))
+                fab.setImageResource(R.drawable.ic_arrow_up)
             }
         }
         topScroller = WebViewTopScroller(webView, appBarLayout)
@@ -99,31 +99,21 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
                 menu.clear()
 
                 menu.add(0, R.id.action_mode_item_copy, 0, R.string.copy)
-                    .setIcon(
-                        App.getVecDrawable(
-                            requireContext(),
-                            R.drawable.ic_toolbar_content_copy
-                        )
-                    )
+                    .setIcon(R.drawable.ic_toolbar_content_copy)
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
                 if (!authHolder.get().isAuth() || presenter.canQuote()) {
                     menu.add(0, R.id.action_mode_item_quote, 0, R.string.quote)
-                        .setIcon(
-                            App.getVecDrawable(
-                                requireContext(),
-                                R.drawable.ic_toolbar_quote_post
-                            )
-                        )
+                        .setIcon(R.drawable.ic_toolbar_quote_post)
                         .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
                 }
 
                 menu.add(0, R.id.action_mode_item_select_all, 0, R.string.all_text)
-                    .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_select_all))
+                    .setIcon(R.drawable.ic_toolbar_select_all)
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
                 menu.add(0, R.id.action_mode_item_share, 0, R.string.share)
-                    .setIcon(App.getVecDrawable(requireContext(), R.drawable.ic_toolbar_share))
+                    .setIcon(R.drawable.ic_toolbar_share)
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
                 for (item in items) {

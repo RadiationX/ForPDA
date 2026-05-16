@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 import android.view.View
 import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App.Companion.getVecDrawable
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ProfileSubItemContactBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.Contact
@@ -41,12 +40,7 @@ internal class ContactsAdapter(
 
         override fun bind(item: Contact) {
             currentItem = item
-            binding.itemIcon.setImageDrawable(
-                getVecDrawable(
-                    binding.itemIcon.context,
-                    getContactIcon(item.type)
-                )
-            )
+            binding.itemIcon.setImageResource(getContactIcon(item.type))
             binding.itemIcon.contentDescription = item.title
         }
 

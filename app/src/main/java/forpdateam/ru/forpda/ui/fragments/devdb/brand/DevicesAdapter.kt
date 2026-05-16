@@ -4,14 +4,10 @@ import android.graphics.Bitmap
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App.Companion.getDrawableAttr
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.BrandItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand.DeviceItem
@@ -46,8 +42,7 @@ class DevicesAdapter : BaseAdapter<DeviceItem, DeviceItemHolder>() {
         private val binding by viewBinding<BrandItemBinding>()
 
         init {
-            binding.itemRating.background =
-                getDrawableAttr(binding.itemRating.context, R.attr.count_background)
+            binding.itemRating.setBackgroundResource(R.attr.count_background)
             v.setOnClickListener(this)
             v.setOnLongClickListener(this)
         }
