@@ -16,6 +16,7 @@ import com.github.chrisbanes.photoview.OnPhotoTapListener
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.databinding.ActivityImgViewerBinding
+import forpdateam.ru.forpda.extensions.mutateWithTint
 import forpdateam.ru.forpda.extensions.transform
 import ru.radiationx.quill.inject
 
@@ -44,9 +45,9 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
         binding.imageViewerPullBack.setCallback(pullBackCallback)
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setNavigationOnClickListener { finish() }
-        binding.toolbar.navigationIcon = binding.toolbar.context.getDrawable(R.drawable.ic_arrow_back_white_24dp)?.transform {
-            it.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        }
+        binding.toolbar.navigationIcon = binding.toolbar.context
+            .getDrawable(R.drawable.ic_arrow_back_white_24dp)
+            ?.mutateWithTint(Color.WHITE)
 
 
         val extUrls = mutableListOf<String>()

@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.databinding.FragmentProfileBinding
 import forpdateam.ru.forpda.databinding.ToolbarProfileBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.extensions.coRunCatching
+import forpdateam.ru.forpda.extensions.mutateWithTint
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.presentation.LinkHandler
@@ -121,18 +122,22 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
         val scrimHelper = ScrimHelper(appBarLayout, toolbarLayout)
         scrimHelper.setScrimListener { scrim: Boolean ->
             isScrim = scrim
-            if (scrim) {
-                toolbar.navigationIcon?.clearColorFilter()
-                toolbar.overflowIcon?.clearColorFilter()
-            } else {
-                toolbar.navigationIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-                toolbar.overflowIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+            toolbar.apply {
+                if (scrim) {
+                    navigationIcon = navigationIcon?.mutateWithTint(null)
+                    overflowIcon = overflowIcon?.mutateWithTint(null)
+                } else {
+                    navigationIcon = navigationIcon?.mutateWithTint(Color.WHITE)
+                    overflowIcon = overflowIcon?.mutateWithTint(Color.WHITE)
+                }
             }
             updateStatusBar()
         }
 
-        toolbar.navigationIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        toolbar.overflowIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        toolbar.apply {
+            navigationIcon = navigationIcon?.mutateWithTint(Color.WHITE)
+            overflowIcon = overflowIcon?.mutateWithTint(Color.WHITE)
+        }
     }
 
     override fun isShadowVisible(): Boolean {

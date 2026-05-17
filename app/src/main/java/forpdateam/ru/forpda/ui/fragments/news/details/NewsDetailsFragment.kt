@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
@@ -20,6 +21,7 @@ import forpdateam.ru.forpda.databinding.FragmentArticleBinding
 import forpdateam.ru.forpda.databinding.ToolbarNewsDetailsBinding
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.mutateWithTint
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailPresenter
@@ -107,14 +109,15 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
         val scrimHelper = ScrimHelper(appBarLayout, toolbarLayout)
         scrimHelper.setScrimListener { scrim1 ->
             isScrim = scrim1
-            if (scrim1) {
-                toolbar.navigationIcon?.clearColorFilter()
-                toolbar.overflowIcon?.clearColorFilter()
-                toolbarTitleView.visibility = View.VISIBLE
-            } else {
-                toolbar.navigationIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-                toolbar.overflowIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-                toolbarTitleView.visibility = View.GONE
+            toolbarTitleView.isVisible = scrim1
+            toolbar.apply {
+                if (scrim1) {
+                    navigationIcon = navigationIcon?.mutateWithTint(null)
+                    overflowIcon = overflowIcon?.mutateWithTint(null)
+                } else {
+                    navigationIcon = navigationIcon?.mutateWithTint(Color.WHITE)
+                    overflowIcon = overflowIcon?.mutateWithTint(Color.WHITE)
+                }
             }
             updateStatusBar()
         }
@@ -145,9 +148,11 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
             }
         }
 
-        toolbarTitleView.visibility = View.GONE
-        toolbar.navigationIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        toolbar.overflowIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        toolbarTitleView.isVisible = false
+        toolbar.apply {
+            navigationIcon = navigationIcon?.mutateWithTint(Color.WHITE)
+            overflowIcon = overflowIcon?.mutateWithTint(Color.WHITE)
+        }
         detailsNick.setOnClickListener { presenter.openAuthorProfile() }
     }
 

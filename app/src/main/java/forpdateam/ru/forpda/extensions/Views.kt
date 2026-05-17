@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.extensions
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,9 +58,3 @@ val ViewBinding.context: Context
 
 val RecyclerView.ViewHolder.context: Context
     get() = itemView.context
-
-fun Drawable.transform(block: (Drawable) -> Unit): Drawable {
-    val mutated = mutate()
-    block(mutated)
-    return mutated
-}

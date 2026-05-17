@@ -3,9 +3,6 @@ package forpdateam.ru.forpda.ui.views.pagination
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +19,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDimensionPixelSizeAttr
+import forpdateam.ru.forpda.extensions.mutateWithTint
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
 import forpdateam.ru.forpda.ui.DimensionsProvider
 import kotlinx.coroutines.CoroutineScope
@@ -212,10 +210,10 @@ class PaginationHelper(context: Activity) {
                 tag = (tab.tag as Int?)!!
                 if ((tag) == TAG_SELECT) continue
                 if (tab.icon != null) {
-                    if (if ((tag == TAG_FIRST || tag == TAG_PREV)) prevDisabled else nextDisabled) {
-                        tab.icon!!.colorFilter = colorFilter
+                    tab.icon = if (if ((tag == TAG_FIRST || tag == TAG_PREV)) prevDisabled else nextDisabled) {
+                        tab.icon!!.mutateWithTint(disabledColor)
                     } else {
-                        tab.icon!!.clearColorFilter()
+                        tab.icon!!.mutateWithTint(null)
                     }
                 }
             }
@@ -276,7 +274,6 @@ class PaginationHelper(context: Activity) {
         private const val TAG_SELECT = 2
         private const val TAG_NEXT = 3
         private const val TAG_LAST = 4
-        private val colorFilter: ColorFilter =
-            PorterDuffColorFilter(Color.argb(80, 255, 255, 255), PorterDuff.Mode.DST_IN)
+        private val disabledColor = Color.argb(80, 255, 255, 255)
     }
 }
