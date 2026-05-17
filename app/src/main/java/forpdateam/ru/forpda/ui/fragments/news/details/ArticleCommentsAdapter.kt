@@ -1,8 +1,5 @@
 package forpdateam.ru.forpda.ui.fragments.news.details
 
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +9,9 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ArticleCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.Comment.Karma
-import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.setTintColorAttr
+import forpdateam.ru.forpda.extensions.setTintColorRes
 import forpdateam.ru.forpda.model.AuthHolder
 
 /**
@@ -23,8 +21,6 @@ class ArticleCommentsAdapter(
     private val authHolder: AuthHolder
 ) : RecyclerView.Adapter<ArticleCommentsAdapter.ViewHolder>() {
     private val list = ArrayList<Comment>()
-    private var likedColorFilter: ColorFilter? = null
-    private var dislikedColorFilter: ColorFilter? = null
     var clickListener: ClickListener? = null
 
     @JvmOverloads
@@ -36,18 +32,6 @@ class ArticleCommentsAdapter(
 
     fun clear() {
         list.clear()
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        likedColorFilter = PorterDuffColorFilter(
-            recyclerView.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent),
-            PorterDuff.Mode.SRC_ATOP
-        )
-        dislikedColorFilter = PorterDuffColorFilter(
-            recyclerView.context.getColor(R.color.dislike_color),
-            PorterDuff.Mode.SRC_ATOP
-        )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -120,19 +104,19 @@ class ArticleCommentsAdapter(
                 when (karma.status) {
                     Karma.LIKED -> {
                         binding.commentLikeImage.setImageResource(R.drawable.ic_heart)
-                        binding.commentLikeImage.colorFilter = likedColorFilter
+                        binding.commentLikeImage.setTintColorAttr(androidx.appcompat.R.attr.colorAccent)
                         binding.commentLikeImage.isClickable = false
                     }
 
                     Karma.DISLIKED -> {
                         binding.commentLikeImage.setImageResource(R.drawable.ic_heart_outline)
-                        binding.commentLikeImage.colorFilter = dislikedColorFilter
+                        binding.commentLikeImage.setTintColorRes(R.color.dislike_color)
                         binding.commentLikeImage.isClickable = false
                     }
 
                     Karma.NOT_LIKED -> {
                         binding.commentLikeImage.setImageResource(R.drawable.ic_heart_outline)
-                        binding.commentLikeImage.clearColorFilter()
+                        binding.commentLikeImage.imageTintList = null
                         binding.commentLikeImage.isClickable = authData.userId != item.user.id
                     }
                 }

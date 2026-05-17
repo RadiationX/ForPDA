@@ -71,7 +71,8 @@ class PaginationHelper(context: Activity) {
     private fun updateDimens(dimensions: Dimensions) {
         if (tabLayoutInToolbar != null) {
             val params = tabLayoutInToolbar!!.layoutParams as CollapsingToolbarLayout.LayoutParams
-            params.topMargin = tabLayoutInToolbar!!.context.getDimensionPixelSizeAttr(androidx.appcompat.R.attr.actionBarSize) + dimensions.statusBar
+            params.topMargin =
+                tabLayoutInToolbar!!.context.getDimensionPixelSizeAttr(androidx.appcompat.R.attr.actionBarSize) + dimensions.statusBar
             tabLayoutInToolbar!!.layoutParams = params
         }
     }
@@ -211,9 +212,11 @@ class PaginationHelper(context: Activity) {
                 tag = (tab.tag as Int?)!!
                 if ((tag) == TAG_SELECT) continue
                 if (tab.icon != null) {
-                    if (if ((tag == TAG_FIRST || tag == TAG_PREV)) prevDisabled else nextDisabled) tab.icon!!.colorFilter =
-                        colorFilter
-                    else tab.icon!!.clearColorFilter()
+                    if (if ((tag == TAG_FIRST || tag == TAG_PREV)) prevDisabled else nextDisabled) {
+                        tab.icon!!.colorFilter = colorFilter
+                    } else {
+                        tab.icon!!.clearColorFilter()
+                    }
                 }
             }
         }

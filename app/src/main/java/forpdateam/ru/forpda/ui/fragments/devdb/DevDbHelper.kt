@@ -1,23 +1,23 @@
 package forpdateam.ru.forpda.ui.fragments.devdb
 
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.util.SparseArray
+import android.util.SparseIntArray
+import androidx.annotation.ColorInt
+import androidx.core.graphics.toColorInt
 
 
 object DevDbHelper {
-    private val colorFilters = SparseArray<ColorFilter>().apply {
-        put(1, PorterDuffColorFilter(Color.parseColor("#850113"), PorterDuff.Mode.SRC_IN))
-        put(2, PorterDuffColorFilter(Color.parseColor("#d50000"), PorterDuff.Mode.SRC_IN))
-        put(3, PorterDuffColorFilter(Color.parseColor("#ffac00"), PorterDuff.Mode.SRC_IN))
-        put(4, PorterDuffColorFilter(Color.parseColor("#99cc00"), PorterDuff.Mode.SRC_IN))
-        put(5, PorterDuffColorFilter(Color.parseColor("#339900"), PorterDuff.Mode.SRC_IN))
+
+    private val ratingColors = SparseIntArray().apply {
+        put(1, "#850113".toColorInt())
+        put(2, "#d50000".toColorInt())
+        put(3, "#ffac00".toColorInt())
+        put(4, "#99cc00".toColorInt())
+        put(5, "#339900".toColorInt())
     }
 
-    fun getColorFilter(rating: Int): ColorFilter {
-        return colorFilters.get(getRatingCode(rating))
+    @ColorInt
+    fun getColor(rating: Int): Int {
+        return ratingColors.get(getRatingCode(rating))
     }
 
     fun getRatingCode(rating: Int): Int {

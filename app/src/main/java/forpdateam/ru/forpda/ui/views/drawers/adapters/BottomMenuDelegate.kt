@@ -1,6 +1,5 @@
 package forpdateam.ru.forpda.ui.views.drawers.adapters
 
-import android.graphics.PorterDuff
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ItemBottomTabBinding
-import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.setTintColorAttr
 
 class BottomMenuDelegate(
     private val clickListener: Listener
@@ -54,15 +53,12 @@ class BottomMenuDelegate(
                 contentDescription = context.getString(item.title)
                 binding.itemBottomMenuIcon.setImageResource(item.icon)
 
-                val colorRes = if (selected) {
-                    binding.itemBottomMenuIcon.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
+                val colorAttr = if (selected) {
+                    androidx.appcompat.R.attr.colorAccent
                 } else {
-                    binding.itemBottomMenuIcon.context.getColorFromAttr(R.attr.icon_base)
+                    R.attr.icon_base
                 }
-                binding.itemBottomMenuIcon.setColorFilter(
-                    colorRes,
-                    PorterDuff.Mode.SRC_ATOP
-                )
+                binding.itemBottomMenuIcon.setTintColorAttr(colorAttr)
 
                 binding.itemBottomMenuCounter.visibility = if (item.appItem.count > 0) {
                     // This is done that way because of a bug in the support library related to autosizing when width/height=WRAP_CONTENT

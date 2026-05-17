@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.fragments.theme
 
 import android.app.SearchManager
 import android.content.Context
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -32,7 +31,6 @@ import forpdateam.ru.forpda.entity.app.EditPostSyncData
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
-import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
@@ -159,10 +157,6 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
         setFontSize(mainPreferencesHolder.webViewFontSize.get())
 
-        notificationButton.setColorFilter(
-            notificationButton.context.getColorFromAttr(R.attr.contrast_text_color),
-            PorterDuff.Mode.SRC_ATOP
-        )
         notificationTitle.text = "Новое сообщение"
         notificationView.visibility = View.GONE
         notificationButton.setOnClickListener { notificationView.visibility = View.GONE }
@@ -537,7 +531,8 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     }
 
     override fun onDeleteFromFavorite(result: Boolean) {
-        Toast.makeText(requireContext(), getString(if (result) R.string.favorite_theme_deleted else R.string.error), Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(if (result) R.string.favorite_theme_deleted else R.string.error), Toast.LENGTH_SHORT)
+            .show()
         refreshToolbarMenuItems(true)
     }
 

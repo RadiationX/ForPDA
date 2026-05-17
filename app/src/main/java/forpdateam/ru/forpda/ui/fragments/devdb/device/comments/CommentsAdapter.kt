@@ -8,8 +8,9 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DeviceCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.extensions.setBackgroundAttr
+import forpdateam.ru.forpda.extensions.setBackgroundTintColor
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.spannedFromHtml
-import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper.getColorFilter
+import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper
 import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsAdapter.CommentHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -61,7 +62,7 @@ class CommentsAdapter(
             binding.itemRating.text = item.rating.toString()
             binding.itemLikeBtn.text = item.likes.toString()
             binding.itemDislikeBtn.text = item.dislikes.toString()
-            binding.itemRating.background.colorFilter = getColorFilter(item.rating)
+            binding.itemRating.setBackgroundTintColor(DevDbHelper.getColor(item.rating))
         }
 
         fun interface Listener {

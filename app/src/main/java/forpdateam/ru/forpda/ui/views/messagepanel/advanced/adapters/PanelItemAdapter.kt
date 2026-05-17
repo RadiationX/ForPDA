@@ -9,7 +9,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.MessagePanelAdvancedItemBinding
-import forpdateam.ru.forpda.extensions.setTintColor
+import forpdateam.ru.forpda.extensions.setTintColorRes
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.PanelListItem
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback.ItemTouchHelperAdapter
 import java.util.Collections
@@ -96,7 +96,7 @@ class PanelItemAdapter(
 
         fun bind(item: PanelListItem.Color) {
             binding.itemIcon.setImageResource(R.drawable.bg_circle_black)
-            binding.itemIcon.setTintColor(item.color)
+            binding.itemIcon.setTintColorRes(item.color)
             binding.root.contentDescription = item.hexColor
             binding.itemTitle.isVisible = false
             binding.root.setOnClickListener {

@@ -35,6 +35,7 @@ import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.extensions.setBackgroundAttr
+import forpdateam.ru.forpda.extensions.setBackgroundTintColor
 import forpdateam.ru.forpda.presentation.devdb.device.DevicePresenter
 import forpdateam.ru.forpda.presentation.devdb.device.DeviceView
 import forpdateam.ru.forpda.ui.DimensionHelper
@@ -261,7 +262,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
         if (data.rating > 0) {
             rating.text = data.rating.toString()
             rating.setBackgroundAttr(R.attr.count_background)
-            rating.background.colorFilter = DevDbHelper.getColorFilter(data.rating)
+            rating.setBackgroundTintColor(DevDbHelper.getColor(data.rating))
             rating.visibility = View.VISIBLE
             if (!data.comments.isEmpty()) {
                 rating.isClickable = true

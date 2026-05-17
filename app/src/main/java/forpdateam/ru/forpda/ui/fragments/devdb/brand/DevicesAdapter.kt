@@ -11,8 +11,10 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.BrandItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand.DeviceItem
+import forpdateam.ru.forpda.extensions.clearBackgroundTint
 import forpdateam.ru.forpda.extensions.setBackgroundAttr
-import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper.getColorFilter
+import forpdateam.ru.forpda.extensions.setBackgroundTintColor
+import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesAdapter.DeviceItemHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -52,9 +54,10 @@ class DevicesAdapter : BaseAdapter<DeviceItem, DeviceItemHolder>() {
             binding.itemTitle.text = item.title
             if (item.rating > 0) {
                 binding.itemRating.text = item.rating.toString()
-                binding.itemRating.background.colorFilter = getColorFilter(item.rating)
+                binding.itemRating.setBackgroundTintColor(DevDbHelper.getColor(item.rating))
                 binding.itemRating.visibility = View.VISIBLE
             } else {
+                binding.itemRating.clearBackgroundTint()
                 binding.itemRating.visibility = View.GONE
             }
             ImageLoader.getInstance()

@@ -16,8 +16,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
+import forpdateam.ru.forpda.extensions.clearTint
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.setTintColorAttr
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.ui.views.CodeEditor
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.AdvancedPopup
@@ -116,7 +118,12 @@ class MessagePanel(
         )
         //params.setBehavior(panelBehavior);
         params!!.gravity = Gravity.BOTTOM
-        if (!fullForm) params!!.setMargins(context.getDimenPx(R.dimen.dp8), context.getDimenPx(R.dimen.dp8), context.getDimenPx(R.dimen.dp8), context.getDimenPx(R.dimen.dp8))
+        if (!fullForm) params!!.setMargins(
+            context.getDimenPx(R.dimen.dp8),
+            context.getDimenPx(R.dimen.dp8),
+            context.getDimenPx(R.dimen.dp8),
+            context.getDimenPx(R.dimen.dp8)
+        )
         layoutParams = params
         clipToPadding = true
         radius = (if (fullForm) 0 else context.getDimenPx(R.dimen.dp8)).toFloat()
@@ -146,14 +153,10 @@ class MessagePanel(
 
         messageField!!.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.length > 0) {
-                    if (sendButton!!.getColorFilter() == null) {
-                        sendButton!!.setColorFilter(context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent))
-                    }
+                if (s.isNotEmpty()) {
+                    sendButton?.setTintColorAttr(androidx.appcompat.R.attr.colorAccent)
                 } else {
-                    if (sendButton!!.getColorFilter() != null) {
-                        sendButton!!.clearColorFilter()
-                    }
+                    sendButton?.clearTint()
                 }
             }
         })
