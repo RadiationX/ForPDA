@@ -82,7 +82,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     }
 
     private fun getSubText(subTypeIndex: Int): CharSequence {
-        return "${getString(R.string.fav_change_subscribe_type)} (${getSubNames(requireContext())[subTypeIndex]})",
+        return "${getString(R.string.fav_change_subscribe_type)} (${getSubNames(requireContext())[subTypeIndex]})"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

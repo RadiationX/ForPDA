@@ -1,17 +1,24 @@
 package forpdateam.ru.forpda.ui
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
+import android.os.Bundle
+import android.util.Log
 import biz.source_code.miniTemplator.MiniTemplator
+import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.common.apptheme.AppTheme
 import forpdateam.ru.forpda.common.apptheme.AppThemeController
+import forpdateam.ru.forpda.common.simple.SimpleActivityLifecycleCallbacks
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import ru.radiationx.quill.get
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import javax.inject.Inject
 
 class TemplateManager @Inject constructor(
-    private val context: Context,
+    private val application: Application,
     private val appThemeController: AppThemeController
 ) {
 
@@ -28,9 +35,13 @@ class TemplateManager @Inject constructor(
     private val staticStrings = mutableMapOf<String, String>()
     private val templates = mutableMapOf<String, MiniTemplator>()
 
-    fun setStaticStrings(strings: Map<String, String>) {
-        staticStrings.clear()
-        staticStrings.putAll(strings)
+    init {
+        updateStaticRes(application)
+        application.registerActivityLifecycleCallbacks(object : SimpleActivityLifecycleCallbacks() {
+            override fun onActivityPreCreated(activity: Activity, savedInstanceState: Bundle?) {
+                updateStaticRes(activity)
+            }
+        })
     }
 
     fun observeThemeType(): Flow<String> = appThemeController
@@ -61,7 +72,7 @@ class TemplateManager @Inject constructor(
         ?: findTemplate(name).apply { templates[name] = this }
 
     private fun findTemplate(name: String): MiniTemplator = try {
-        val stream = context.assets.open("template_$name.html")
+        val stream = application.assets.open("template_$name.html")
         MiniTemplator.Builder().build(stream, Charset.forName("utf-8"))
     } catch (ex: Exception) {
         ex.printStackTrace()
@@ -69,6 +80,22 @@ class TemplateManager @Inject constructor(
             ByteArrayInputStream("Template error!".toByteArray(Charset.forName("utf-8"))),
             Charset.forName("utf-8")
         )
+    }
+
+    private fun updateStaticRes(context: Context) {
+        Log.e("kekosina", "updateStaticRes")
+        val templateStringCache = HashMap<String, String>()
+        for (f in string::class.java.fields) {
+            try {
+                if (f.name.startsWith("res_s_")) {
+                    templateStringCache[f.name] = context.getString(f.getInt(f))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+        staticStrings.clear()
+        staticStrings.putAll(templateStringCache)
     }
 
 }

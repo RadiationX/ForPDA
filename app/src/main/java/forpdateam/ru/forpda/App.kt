@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
@@ -16,13 +15,11 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
-import forpdateam.ru.forpda.R.string
 import forpdateam.ru.forpda.client.AppImageDownloader
 import forpdateam.ru.forpda.common.Html
 import forpdateam.ru.forpda.common.apptheme.AppThemeController
 import forpdateam.ru.forpda.common.di.AppModule
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
-import forpdateam.ru.forpda.ui.TemplateManager
 import forpdateam.ru.forpda.work.WorkUtils
 import io.appmetrica.analytics.AppMetrica
 import io.appmetrica.analytics.AppMetricaConfig
@@ -39,29 +36,6 @@ import ru.radiationx.quill.get
 class App : Application() {
 
     companion object {
-
-        val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
-            .cacheInMemory(true)
-            .resetViewBeforeLoading(true)
-            .cacheOnDisk(true)
-            .bitmapConfig(Bitmap.Config.ARGB_8888)
-            .handler(Handler(Looper.getMainLooper()))
-            .displayer(FadeInBitmapDisplayer(500, true, true, false))
-
-        fun initImageLoader(context: Context, imageDownloader: AppImageDownloader) {
-            val config = ImageLoaderConfiguration.Builder(context)
-                .imageDownloader(imageDownloader)
-                .threadPoolSize(5)
-                .threadPriority(Thread.MIN_PRIORITY)
-                .denyCacheImageMultipleSizesInMemory()
-                .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
-                .diskCacheFileNameGenerator(HashCodeFileNameGenerator())
-                .defaultDisplayImageOptions(defaultOptionsUIL.build())
-                .build()
-
-            ImageLoader.getInstance().init(config)
-        }
-
 
         fun getActivity(): Activity? {
             try {
@@ -105,7 +79,6 @@ class App : Application() {
         Html.initApplication(this)
         get<AppThemeController>().init()
         initImageLoader(this, get<AppImageDownloader>())
-        updateStaticRes()
         initMintPermissions()
 
         val wakeUpFilter = IntentFilter()
@@ -118,31 +91,34 @@ class App : Application() {
             WorkUtils.enqueuePeriodicInspectorCheck(this@App)
         }
 
-        Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time))
-    }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        updateStaticRes()
+        Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time))
     }
 
     private fun initDependencies() {
         Quill.getRootScope().installModules(AppModule(this))
     }
 
-    private fun updateStaticRes() {
-        Log.e("kekosina", "updateStaticRes")
+    private fun initImageLoader(context: Context, imageDownloader: AppImageDownloader) {
+        val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
+            .cacheInMemory(true)
+            .resetViewBeforeLoading(true)
+            .cacheOnDisk(true)
+            .considerExifParams(true)
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
+            .handler(Handler(Looper.getMainLooper()))
+            .displayer(FadeInBitmapDisplayer(500, true, true, false))
 
-        val templateStringCache = HashMap<String, String>()
-        for (f in string::class.java.fields) {
-            try {
-                if (f.name.contains("res_s_")) {
-                    templateStringCache[f.name] = getString(f.getInt(f))
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-        get<TemplateManager>().setStaticStrings(templateStringCache)
+        val config = ImageLoaderConfiguration.Builder(context)
+            .imageDownloader(imageDownloader)
+            .threadPoolSize(5)
+            .threadPriority(Thread.MIN_PRIORITY)
+            .denyCacheImageMultipleSizesInMemory()
+            .memoryCache(UsingFreqLimitedMemoryCache(5 * 1024 * 1024)) // 5 Mb
+            .diskCacheFileNameGenerator(HashCodeFileNameGenerator())
+            .defaultDisplayImageOptions(defaultOptionsUIL.build())
+            .build()
+
+        ImageLoader.getInstance().init(config)
     }
 }

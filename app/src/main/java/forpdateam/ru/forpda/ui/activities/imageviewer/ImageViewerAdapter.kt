@@ -6,13 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import com.github.chrisbanes.photoview.OnPhotoTapListener
-import com.github.chrisbanes.photoview.PhotoView
-import com.github.rahatarmanahmed.cpv.CircularProgressView
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ImgViewPageBinding
 
 /**
@@ -20,13 +16,6 @@ import forpdateam.ru.forpda.databinding.ImgViewPageBinding
  */
 
 class ImageViewerAdapter : PagerAdapter() {
-
-    private val options by lazy {
-        App.defaultOptionsUIL
-            .bitmapConfig(Bitmap.Config.ARGB_8888)
-            .considerExifParams(true)
-            .build()
-    }
 
     private var tapListener: OnPhotoTapListener? = null
 
@@ -71,7 +60,7 @@ class ImageViewerAdapter : PagerAdapter() {
 
 
         ImageLoader.getInstance()
-            .displayImage(item, binding.photoView, options, object : SimpleImageLoadingListener() {
+            .displayImage(item, binding.photoView, null, object : SimpleImageLoadingListener() {
                 override fun onLoadingFailed(
                     imageUri: String?,
                     view: View?,

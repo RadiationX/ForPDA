@@ -179,7 +179,7 @@ class TabNavigator(
             is Back -> back()
             is Replace -> replace(command)
             is BackTo -> backTo(command)
-            is SystemMessage -> showSystemMessage(command.message)
+            is SystemMessage -> showSystemMessage(command)
         }
     }
 
@@ -284,8 +284,12 @@ class TabNavigator(
         activity.finish()
     }
 
-    private fun showSystemMessage(message: String) {
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
+    private fun showSystemMessage(message: SystemMessage) {
+        val text = when (message) {
+            is SystemMessage.Text -> message.message
+            is SystemMessage.Res -> activity.getString(message.res)
+        }
+        Toast.makeText(activity, text, Toast.LENGTH_SHORT).show()
     }
 
     private fun createActivityIntent(context: Context, screen: Screen): Intent? {
