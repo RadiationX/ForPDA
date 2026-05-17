@@ -16,8 +16,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.BitmapUtils.centerCrop
-import forpdateam.ru.forpda.common.BitmapUtils.createAvatar
+import forpdateam.ru.forpda.common.BitmapUtils
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.asMutableFlag
 import forpdateam.ru.forpda.extensions.coRunCatching
@@ -297,8 +296,8 @@ class NotificationEventSender @Inject constructor(
                 val height = context.getDimenPx(android.R.dimen.notification_large_icon_height)
                 val width = context.getDimenPx(android.R.dimen.notification_large_icon_width)
 
-                centerCrop(bitmap, width, height, 1.0f).let {
-                    createAvatar(it, width, height, true)
+                BitmapUtils.centerCrop(bitmap, width, height, 1.0f).let {
+                    BitmapUtils.createAvatar(it, width, height, true)
                 }
             }
         }.onFailure {

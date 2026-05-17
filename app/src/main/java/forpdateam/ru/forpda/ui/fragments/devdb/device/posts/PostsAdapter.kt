@@ -8,7 +8,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DevicePostForumItemBinding
 import forpdateam.ru.forpda.databinding.DevicePostNewsItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device.PostItem
-import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.spannedFromHtml
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
@@ -59,7 +59,7 @@ class PostsAdapter(
             binding.itemTitle.text = item.title
             binding.itemDate.text = item.date
             if (item.desc != null) {
-                binding.itemDesc.text = spannedFromHtml(item.desc)
+                binding.itemDesc.text = ApiUtils.spannedFromHtml(item.desc)
                 binding.itemDesc.visibility = View.VISIBLE
             } else {
                 binding.itemDesc.visibility = View.GONE
@@ -85,7 +85,7 @@ class PostsAdapter(
             binding.itemTitle.text = item.title
             binding.itemDate.text = item.date
             if (item.desc != null) {
-                binding.itemDesc.text = spannedFromHtml(item.desc)
+                binding.itemDesc.text = ApiUtils.spannedFromHtml(item.desc)
                 binding.itemDesc.visibility = View.VISIBLE
             } else {
                 binding.itemDesc.visibility = View.GONE

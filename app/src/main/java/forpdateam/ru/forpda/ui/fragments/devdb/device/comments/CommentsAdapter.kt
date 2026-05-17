@@ -9,7 +9,7 @@ import forpdateam.ru.forpda.databinding.DeviceCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.extensions.setBackgroundAttr
 import forpdateam.ru.forpda.extensions.setBackgroundTintColor
-import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.spannedFromHtml
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper
 import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsAdapter.CommentHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -58,7 +58,7 @@ class CommentsAdapter(
             currentItem = item
             binding.itemTitle.text = item.user.nick
             binding.itemDate.text = item.date
-            binding.itemDesc.text = spannedFromHtml(item.text)
+            binding.itemDesc.text = ApiUtils.spannedFromHtml(item.text)
             binding.itemRating.text = item.rating.toString()
             binding.itemLikeBtn.text = item.likes.toString()
             binding.itemDislikeBtn.text = item.dislikes.toString()

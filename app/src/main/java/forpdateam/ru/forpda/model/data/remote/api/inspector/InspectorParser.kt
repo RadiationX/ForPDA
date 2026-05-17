@@ -3,24 +3,24 @@ package forpdateam.ru.forpda.model.data.remote.api.inspector
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.map
-import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.fromHtml
+import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.07.17.
  */
-class InspectorParser @Inject constructor() {
+class InspectorParser @Inject constructor(): BaseParser() {
 
     fun parseFavoritesEvents(response: String): List<InspectorItem.Favorite> {
         return inspectorFavoritesPattern.matcher(response).map { matcher ->
             InspectorItem.Favorite(
                 topicId = matcher.group(1).toInt(),
-                sourceTitle = fromHtml(matcher.group(2))!!,
+                sourceTitle = matcher.group(2).fromHtml()!!,
                 msgCount = matcher.group(3).toInt(),
                 user = User.required(
                     id = matcher.group(4).toInt(),
-                    nick = fromHtml(matcher.group(5))
+                    nick = matcher.group(5).fromHtml()
                 ),
                 timeStamp = matcher.group(6).toLong() * 1000L,
                 lastTimeStamp = matcher.group(7).toLong() * 1000L,
@@ -33,13 +33,13 @@ class InspectorParser @Inject constructor() {
     fun parseQmsEvents(response: String): List<InspectorItem.Qms> {
         return inspectorQmsPattern.matcher(response).map { matcher ->
             val sourceId = matcher.group(1).toInt()
-            var userNick = fromHtml(matcher.group(4))!!
+            var userNick = matcher.group(4).fromHtml()!!
             if (userNick.isEmpty() && sourceId == 0) {
                 userNick = "Сообщения 4PDA"
             }
             InspectorItem.Qms(
                 themeId = sourceId,
-                sourceTitle = fromHtml(matcher.group(2))!!,
+                sourceTitle = matcher.group(2).fromHtml()!!,
                 user = User.required(
                     id = matcher.group(3).toInt(),
                     nick = userNick

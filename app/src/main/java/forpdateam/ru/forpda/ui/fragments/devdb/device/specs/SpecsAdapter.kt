@@ -8,7 +8,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DeviceSpecItemBinding
 import forpdateam.ru.forpda.extensions.getColorFromAttr
-import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.coloredFromHtml
+import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 
 /**
  * Created by radiationx on 08.08.17.
@@ -72,7 +72,7 @@ class SpecsAdapter : RecyclerView.Adapter<SpecsAdapter.ViewHolder>() {
                 }
             }
 
-            binding.itemDesc.text = coloredFromHtml(builder.toString())
+            binding.itemDesc.text = ApiUtils.coloredFromHtml(builder.toString())
         }
     }
 }

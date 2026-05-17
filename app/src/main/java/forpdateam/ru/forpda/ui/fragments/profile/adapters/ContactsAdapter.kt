@@ -6,7 +6,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ProfileSubItemContactBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.Contact
-import forpdateam.ru.forpda.model.repository.temp.TempHelper.getContactIcon
+import forpdateam.ru.forpda.model.repository.temp.TempHelper
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
@@ -40,7 +40,7 @@ internal class ContactsAdapter(
 
         override fun bind(item: Contact) {
             currentItem = item
-            binding.itemIcon.setImageResource(getContactIcon(item.type))
+            binding.itemIcon.setImageResource(TempHelper.getContactIcon(item.type))
             binding.itemIcon.contentDescription = item.title
         }
 

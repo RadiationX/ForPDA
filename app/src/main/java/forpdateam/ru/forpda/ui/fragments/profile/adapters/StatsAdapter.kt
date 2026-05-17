@@ -2,12 +2,11 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ProfileSubItemStatBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel.Stat
-import forpdateam.ru.forpda.model.repository.temp.TempHelper.getTypeString
+import forpdateam.ru.forpda.model.repository.temp.TempHelper
 import forpdateam.ru.forpda.ui.fragments.profile.adapters.StatsAdapter.StatHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
@@ -42,7 +41,7 @@ internal class StatsAdapter(
 
         override fun bind(item: Stat) {
             currentItem = item
-            binding.itemTitle.text = getTypeString(binding.itemTitle.context, item.type)
+            binding.itemTitle.text = TempHelper.getTypeString(binding.itemTitle.context, item.type)
             binding.itemValue.text = item.value
         }
 

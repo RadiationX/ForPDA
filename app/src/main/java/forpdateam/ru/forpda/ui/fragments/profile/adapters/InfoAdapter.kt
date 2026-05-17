@@ -6,7 +6,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ProfileSubItemInfoBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
-import forpdateam.ru.forpda.model.repository.temp.TempHelper.getTypeString
+import forpdateam.ru.forpda.model.repository.temp.TempHelper
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder
 
@@ -26,7 +26,7 @@ internal class InfoAdapter : BaseAdapter<ProfileModel.Info, InfoAdapter.InfoHold
         private val binding by viewBinding<ProfileSubItemInfoBinding>()
 
         override fun bind(item: ProfileModel.Info) {
-            binding.itemTitle.text = getTypeString(binding.itemTitle.context, item.type)
+            binding.itemTitle.text = TempHelper.getTypeString(binding.itemTitle.context, item.type)
             binding.itemValue.text = item.value
         }
     }
