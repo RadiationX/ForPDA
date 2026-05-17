@@ -6,8 +6,9 @@ import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.extensions.replace
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
 
-class CloseableInfoHolder(
+class CloseableInfoHolder @Inject constructor(
     private val preferences: SharedPreferences
 ) {
 

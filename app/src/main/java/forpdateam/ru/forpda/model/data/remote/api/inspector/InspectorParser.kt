@@ -5,11 +5,12 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.map
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.fromHtml
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.07.17.
  */
-class InspectorParser {
+class InspectorParser @Inject constructor() {
 
     fun parseFavoritesEvents(response: String): List<InspectorItem.Favorite> {
         return inspectorFavoritesPattern.matcher(response).map { matcher ->

@@ -17,8 +17,12 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import forpdateam.ru.forpda.R.string
+import forpdateam.ru.forpda.client.AppImageDownloader
 import forpdateam.ru.forpda.common.Html
+import forpdateam.ru.forpda.common.apptheme.AppThemeController
+import forpdateam.ru.forpda.common.di.AppModule
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
+import forpdateam.ru.forpda.ui.TemplateManager
 import forpdateam.ru.forpda.work.WorkUtils
 import io.appmetrica.analytics.AppMetrica
 import io.appmetrica.analytics.AppMetricaConfig
@@ -26,6 +30,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
+import ru.radiationx.quill.Quill
+import ru.radiationx.quill.get
 
 /**
  * Created by radiationx on 28.07.16.
@@ -52,9 +58,9 @@ class App : Application() {
             .handler(Handler(Looper.getMainLooper()))
             .displayer(FadeInBitmapDisplayer(500, true, true, false))
 
-        fun initImageLoader(context: Context, dependencies: Dependencies) {
+        fun initImageLoader(context: Context, imageDownloader: AppImageDownloader) {
             val config = ImageLoaderConfiguration.Builder(context)
-                .imageDownloader(dependencies.appImageDownloader)
+                .imageDownloader(imageDownloader)
                 .threadPoolSize(5)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .denyCacheImageMultipleSizesInMemory()
@@ -98,6 +104,10 @@ class App : Application() {
         }
     }
 
+    init {
+        instance = this
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -106,12 +116,12 @@ class App : Application() {
         AppMetrica.activate(applicationContext, config)
         AppMetrica.enableActivityAutoTracking(this)
 
+        initDependencies()
         Html.initApplication(this)
-        dependencies.appThemeController.init()
-        initMintPermissions()
-        initImageLoader(this, dependencies)
+        get<AppThemeController>().init()
+        initImageLoader(this, get<AppImageDownloader>())
         updateStaticRes()
-
+        initMintPermissions()
 
         val wakeUpFilter = IntentFilter()
         wakeUpFilter.addAction(Intent.ACTION_BOOT_COMPLETED)
@@ -124,6 +134,15 @@ class App : Application() {
         }
 
         Log.e("APP", "TIME APP FINAL " + (System.currentTimeMillis() - time))
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateStaticRes()
+    }
+
+    private fun initDependencies() {
+        Quill.getRootScope().installModules(AppModule(this))
     }
 
     private fun updateStaticRes() {
@@ -139,21 +158,6 @@ class App : Application() {
                 ex.printStackTrace()
             }
         }
-        dependencies.templateManager.setStaticStrings(templateStringCache)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        updateStaticRes()
-    }
-
-    private val dependencies by lazy { Dependencies(this) }
-
-    fun Di(): Dependencies {
-        return dependencies
-    }
-
-    init {
-        instance = this
+        get<TemplateManager>().setStaticStrings(templateStringCache)
     }
 }

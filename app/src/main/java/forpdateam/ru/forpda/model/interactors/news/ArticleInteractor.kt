@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ArticleInteractor(
+class ArticleInteractor @Inject constructor(
     val initData: InitData,
     private val newsRepository: NewsRepository,
     private val articleTemplate: ArticleTemplate

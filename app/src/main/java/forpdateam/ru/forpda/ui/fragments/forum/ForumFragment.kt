@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.forum.ForumPresenter
 import forpdateam.ru.forpda.presentation.forum.ForumView
@@ -16,8 +18,7 @@ import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 15.02.17.
@@ -26,7 +27,7 @@ import moxy.presenter.ProvidePresenter
 class ForumFragment : RecyclerFragment(), ForumView {
 
     private lateinit var dialogMenu: DynamicDialogMenu<ForumFragment, ForumItemFlat>
-    private val authHolder = App.get().Di().authHolder
+    private val authHolder by inject<AuthHolder>()
 
     private lateinit var adapter: ForumsAdapter
 
@@ -54,17 +55,7 @@ class ForumFragment : RecyclerFragment(), ForumView {
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: ForumPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): ForumPresenter = ForumPresenter(
-        App.get().Di().forumRepository,
-        App.get().Di().favoritesRepository,
-        App.get().Di().router,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<ForumPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_forum)

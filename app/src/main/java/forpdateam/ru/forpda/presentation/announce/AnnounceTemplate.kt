@@ -2,8 +2,9 @@ package forpdateam.ru.forpda.presentation.announce
 
 import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.ui.TemplateManager
+import javax.inject.Inject
 
-class AnnounceTemplate(
+class AnnounceTemplate @Inject constructor(
     private val templateManager: TemplateManager
 ) {
 

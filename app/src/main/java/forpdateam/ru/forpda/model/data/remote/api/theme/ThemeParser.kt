@@ -11,8 +11,9 @@ import forpdateam.ru.forpda.entity.remote.theme.ThemePost
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import javax.inject.Inject
 
-class ThemeParser(
+class ThemeParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

@@ -6,8 +6,9 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.ui.TemplateManager
+import javax.inject.Inject
 
-class QmsChatTemplate(
+class QmsChatTemplate @Inject constructor(
     private val templateManager: TemplateManager
 ) {
 

@@ -5,8 +5,9 @@ import androidx.room.withTransaction
 import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatDb
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.model.data.db.ForumsDao
+import javax.inject.Inject
 
-class ForumCache(
+class ForumCache @Inject constructor(
     private val forumsDao: ForumsDao,
     private val database: RoomDatabase
 ) {

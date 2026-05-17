@@ -14,8 +14,9 @@ import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class ArticleParser(
+class ArticleParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

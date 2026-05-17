@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.history.HistoryPresenter
 import forpdateam.ru.forpda.presentation.history.HistoryView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -14,8 +15,6 @@ import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 06.09.17.
@@ -37,17 +36,7 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: HistoryPresenter
-
-    @ProvidePresenter
-    internal fun providePresenter(): HistoryPresenter = HistoryPresenter(
-        App.get().Di().historyRepository,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<HistoryPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_history)

@@ -5,8 +5,9 @@ import forpdateam.ru.forpda.entity.db.history.HistoryItemDb
 import forpdateam.ru.forpda.extensions.mapInnerList
 import forpdateam.ru.forpda.model.data.db.HistoryDao
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class HistoryCache(
+class HistoryCache @Inject constructor(
     private val historyDao: HistoryDao
 ) {
 

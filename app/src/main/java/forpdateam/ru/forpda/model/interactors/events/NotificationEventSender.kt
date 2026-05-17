@@ -31,8 +31,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
 import ru.mintrocket.lib.mintpermissions.ext.isGranted
+import javax.inject.Inject
 
-class NotificationEventSender(
+class NotificationEventSender @Inject constructor(
     private val context: Context,
     private val preferences: NotificationPreferencesHolder,
     private val avatarRepository: AvatarRepository,

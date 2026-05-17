@@ -8,18 +8,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.databinding.ActivityUpdaterBinding
 import forpdateam.ru.forpda.entity.app.checker.UpdateData
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
 import forpdateam.ru.forpda.presentation.checker.CheckerPresenter
 import forpdateam.ru.forpda.presentation.checker.CheckerView
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import moxy.MvpAppCompatActivity
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 24.07.17.
@@ -32,16 +32,9 @@ class UpdateCheckerActivity : MvpAppCompatActivity(R.layout.activity_updater), C
 
     private val binding by viewBinding<ActivityUpdaterBinding>()
 
-    private val systemLinkHandler = App.get().Di().systemLinkHandler
+    private val systemLinkHandler by inject<ISystemLinkHandler>()
 
-    @InjectPresenter
-    lateinit var presenter: CheckerPresenter
-
-    @ProvidePresenter
-    fun provideCheckerPresenter() = CheckerPresenter(
-        App.get().Di().checkerRepository,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<CheckerPresenter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -5,12 +5,13 @@ import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 22.09.16.
  */
 
-class FavoritesApi(
+class FavoritesApi @Inject constructor(
     private val webClient: IWebClient,
     private val favoritesParser: FavoritesParser
 ) {

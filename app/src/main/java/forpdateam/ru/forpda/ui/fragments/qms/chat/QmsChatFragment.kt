@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
@@ -22,9 +23,14 @@ import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.asRegular
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.temp.TempHelper
+import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatPresenter
+import forpdateam.ru.forpda.presentation.qms.chat.QmsChatTemplate
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
@@ -36,8 +42,7 @@ import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel.HeightChangeListener
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 import java.util.regex.Pattern
 
 /**
@@ -67,22 +72,13 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
 
     private lateinit var topScroller: WebViewTopScroller
 
-    private val qmsChatTemplate = App.get().Di().qmsChatTemplate
-
-    @InjectPresenter
-    lateinit var presenter: QmsChatPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): QmsChatPresenter = QmsChatPresenter(
-        App.get().Di().qmsInteractor,
-        App.get().Di().avatarRepository,
-        App.get().Di().webSocketEventsRepository,
-        App.get().Di().mainPreferencesHolder,
-        App.get().Di().templateManager,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler
-    )
+    private val qmsChatTemplate by inject<QmsChatTemplate>()
+    private val utils by inject<Utils>()
+    private val linkHandler by inject<ILinkHandler>()
+    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val router by inject<TabRouter>()
+    private val webViewClient by inject<CustomWebViewClient>()
+    private val presenter by quillMoxyPresenter<QmsChatPresenter>()
 
     private val filesPicker = registerFilesPicker {
         uploadFiles(it)
@@ -109,11 +105,11 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
-                webView.context,
-                App.get().Di().linkHandler,
-                App.get().Di().systemLinkHandler,
-                App.get().Di().utils,
-                App.get().Di().router
+                context = webView.context,
+                linkHandler = linkHandler,
+                systemLinkHandler = systemLinkHandler,
+                utils = utils,
+                router = router
             )
         )
         attachWebView(webView)
@@ -125,7 +121,7 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
         webView.setJsLifeCycleListener(this)
         webView.addJavascriptInterface(jsInterface, JS_INTERFACE)
         registerForContextMenu(webView)
-        webView.webViewClient = CustomWebViewClient()
+        webView.webViewClient = webViewClient
         webView.webChromeClient = CustomWebChromeClient()
         loadBaseWebContainer()
 

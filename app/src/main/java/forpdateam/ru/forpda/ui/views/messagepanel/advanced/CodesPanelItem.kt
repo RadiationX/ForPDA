@@ -10,18 +10,18 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.textfield.TextInputLayout
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.SimpleInstruction
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.ItemDragCallback
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.PanelItemAdapter
 import forpdateam.ru.forpda.ui.views.messagepanel.colorpicker.ColorPicker
 import forpdateam.ru.forpda.ui.views.messagepanel.inserthelper.InsertHelper
+import ru.radiationx.quill.inject
 import java.util.Collections
-import java.util.Locale
 
 /**
  * Created by radiationx on 08.01.17.
@@ -30,7 +30,7 @@ import java.util.Locale
 class CodesPanelItem(context: Context, panel: MessagePanel) :
     BasePanelItem(context, panel, context.getString(R.string.codes_title)) {
     private val openedCodes: List<String> = ArrayList()
-    private val otherPreferencesHolder = get().Di().otherPreferencesHolder
+    private val otherPreferencesHolder by context.inject<OtherPreferencesHolder>()
     private val clickListener = listener@{ item: PanelListItem ->
         if (item !is PanelListItem.BBCode) {
             return@listener

@@ -12,6 +12,7 @@ import forpdateam.ru.forpda.common.filepicker.registerFilePicker
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.notes.NotesPresenter
 import forpdateam.ru.forpda.presentation.notes.NotesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -21,8 +22,6 @@ import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 06.09.17.
@@ -33,18 +32,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
     private lateinit var adapter: NotesAdapter
     private val dialogMenu = DynamicDialogMenu<NotesFragment, NoteItem>()
 
-    @InjectPresenter
-    lateinit var presenter: NotesPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): NotesPresenter = NotesPresenter(
-        App.get().Di().notesRepository,
-        App.get().Di().closeableInfoHolder,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<NotesPresenter>()
 
     private val filePicker = registerFilePicker {
         presenter.importNotes(it)

@@ -28,13 +28,12 @@ import forpdateam.ru.forpda.databinding.FragmentAuthBinding
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.presentation.auth.AuthPresenter
 import forpdateam.ru.forpda.presentation.auth.AuthView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.tabBinding
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 29.07.16.
@@ -85,18 +84,7 @@ class AuthFragment : TabFragment(R.layout.fragment_auth), AuthView {
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: AuthPresenter
-
-    @ProvidePresenter
-    internal fun providePresenter(): AuthPresenter = AuthPresenter(
-        App.get().Di().authRepository,
-        App.get().Di().profileRepository,
-        App.get().Di().router,
-        App.get().Di().authHolder,
-        App.get().Di().errorHandler,
-        App.get().Di().systemLinkHandler
-    )
+    private val presenter by quillMoxyPresenter<AuthPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_auth)

@@ -6,12 +6,13 @@ import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import java.net.URLDecoder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 06.08.17.
  */
 
-class DevDbApi(
+class DevDbApi @Inject constructor(
     private val webClient: IWebClient,
     private val devDbParser: DevDbParser
 ) {

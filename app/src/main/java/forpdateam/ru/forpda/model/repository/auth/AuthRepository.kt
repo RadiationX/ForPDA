@@ -5,12 +5,13 @@ import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.remote.api.auth.AuthApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 02.01.18.
  */
 
-class AuthRepository(
+class AuthRepository @Inject constructor(
     private val authApi: AuthApi,
     private val countersHolder: CountersHolder,
 ) {

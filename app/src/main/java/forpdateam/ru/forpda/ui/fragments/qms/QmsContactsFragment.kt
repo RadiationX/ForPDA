@@ -12,6 +12,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.qms.contacts.QmsContactsPresenter
 import forpdateam.ru.forpda.presentation.qms.contacts.QmsContactsView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -20,8 +21,6 @@ import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsContactsAdapter
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 25.08.16.
@@ -32,17 +31,7 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
     private lateinit var adapter: QmsContactsAdapter
     private val dialogMenu = DynamicDialogMenu<QmsContactsFragment, QmsContact>()
 
-    @InjectPresenter
-    lateinit var presenter: QmsContactsPresenter
-
-    @ProvidePresenter
-    internal fun providePresenter(): QmsContactsPresenter = QmsContactsPresenter(
-        App.get().Di().qmsInteractor,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().countersHolder,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<QmsContactsPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_contacts)

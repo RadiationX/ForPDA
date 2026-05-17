@@ -5,8 +5,9 @@ import forpdateam.ru.forpda.entity.db.notes.NoteItemDb
 import forpdateam.ru.forpda.extensions.mapInnerList
 import forpdateam.ru.forpda.model.data.db.NotesDao
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class NotesCache(
+class NotesCache @Inject constructor(
     private val notesDao: NotesDao
 ) {
 

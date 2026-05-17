@@ -7,8 +7,9 @@ import forpdateam.ru.forpda.model.interactors.events.models.NotificationEvent
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import javax.inject.Inject
 
-class NotificationEventsHandler {
+class NotificationEventsHandler @Inject constructor() {
 
     private val newEvents = MutableSharedFlow<NotificationEvent>()
 

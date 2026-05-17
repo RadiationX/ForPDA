@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-class AuthHolder(
+class AuthHolder @Inject constructor(
     private val preferences: FlowPreferences,
     private val cookieStorage: CookieStorage
 ) {

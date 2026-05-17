@@ -5,8 +5,9 @@ import androidx.core.content.edit
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
 
-class CountersHolder(
+class CountersHolder @Inject constructor(
     private val preferences: SharedPreferences
 ) {
 

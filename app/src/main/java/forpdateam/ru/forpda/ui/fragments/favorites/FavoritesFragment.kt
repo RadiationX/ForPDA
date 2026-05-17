@@ -20,6 +20,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import forpdateam.ru.forpda.presentation.favorites.FavoritesPresenter
@@ -30,8 +31,6 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 22.09.16.
@@ -72,21 +71,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: FavoritesPresenter
-
-    @ProvidePresenter
-    internal fun providePresenter(): FavoritesPresenter {
-        return FavoritesPresenter(
-            App.get().Di().favoritesRepository,
-            App.get().Di().listsPreferencesHolder,
-            App.get().Di().crossScreenInteractor,
-            App.get().Di().router,
-            App.get().Di().linkHandler,
-            App.get().Di().errorHandler,
-            App.get().Di().utils
-        )
-    }
+    private val presenter by quillMoxyPresenter<FavoritesPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_favorite)

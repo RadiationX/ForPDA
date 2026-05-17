@@ -4,11 +4,12 @@ import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerApi
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 28.01.18.
  */
-class CheckerRepository(
+class CheckerRepository @Inject constructor(
     private val checkerApi: CheckerApi,
     private val patternProvider: PatternProvider
 ) {

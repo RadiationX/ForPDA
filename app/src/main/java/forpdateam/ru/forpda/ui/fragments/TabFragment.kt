@@ -29,12 +29,12 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBaseBinding
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.ui.DimensionHelper
+import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
@@ -42,6 +42,7 @@ import forpdateam.ru.forpda.ui.views.ScrollAwareFABBehavior
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import moxy.MvpAppCompatFragment
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 07.08.16.
@@ -122,7 +123,7 @@ open class TabFragment(
         ContentController(contentProgress, additionalContent, fragmentContent)
     }
 
-    private val dimensionsProvider = App.get().Di().dimensionsProvider
+    private val dimensionsProvider by inject<DimensionsProvider>()
 
     protected open fun isShadowVisible(): Boolean = true
 

@@ -8,8 +8,9 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import javax.inject.Inject
 
-class DevDbParser(
+class DevDbParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

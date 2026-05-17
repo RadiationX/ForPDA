@@ -24,8 +24,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-class EventsController(
+class EventsController @Inject constructor(
     private val webSocketEventsRepository: WebSocketEventsRepository,
     private val countersEventsHandler: CountersEventsHandler,
     private val favoritesEventsHandler: FavoritesEventsHandler,

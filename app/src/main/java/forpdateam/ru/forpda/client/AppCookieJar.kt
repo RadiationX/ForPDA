@@ -3,8 +3,9 @@ package forpdateam.ru.forpda.client
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
+import javax.inject.Inject
 
-class AppCookieJar(
+class AppCookieJar @Inject constructor(
     private val cookieStorage: CookieStorage
 ) : CookieJar {
 

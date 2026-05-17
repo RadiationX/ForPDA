@@ -2,8 +2,9 @@ package forpdateam.ru.forpda.model.interactors
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import javax.inject.Inject
 
-class CrossScreenInteractor {
+class CrossScreenInteractor @Inject constructor() {
 
     private val announceFlow = MutableSharedFlow<Int>()
     private val articleflow = MutableSharedFlow<Int>()

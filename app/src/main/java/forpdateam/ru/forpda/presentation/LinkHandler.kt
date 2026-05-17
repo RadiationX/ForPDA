@@ -2,17 +2,18 @@ package forpdateam.ru.forpda.presentation
 
 import android.net.Uri
 import android.util.Log
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.common.MimeTypeUtil
 import java.net.URLDecoder
 import java.util.Locale
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.02.18.
  */
-class LinkHandler(
-    private val systemLinkHandler: ISystemLinkHandler
+class LinkHandler @Inject constructor(
+    private val systemLinkHandler: ISystemLinkHandler,
+    private val router: TabRouter
 ) : ILinkHandler {
 
     companion object {
@@ -50,7 +51,7 @@ class LinkHandler(
     }
 
     override fun handle(inputUrl: String?, router: TabRouter?, args: Map<String, String?>): Boolean {
-        var someRouter = router
+        var someRouter = router ?: this.router
         var url = inputUrl.orEmpty()
         if (url.isBlank() || url == "#") {
             return false
@@ -63,9 +64,6 @@ class LinkHandler(
         url = url.replace("&amp;", "&").replace("\"", "").trim()
         Log.d(LOG_TAG, "Corrected url $url")
 
-        if (someRouter == null) {
-            someRouter = App.get().Di().router
-        }
 
         if (handleMedia(url, someRouter, args)) {
             return true

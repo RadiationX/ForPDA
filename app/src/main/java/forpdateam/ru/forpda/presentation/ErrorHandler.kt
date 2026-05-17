@@ -1,9 +1,11 @@
 package forpdateam.ru.forpda.presentation
 
+import javax.inject.Inject
+
 /**
  * Created by radiationx on 23.02.18.
  */
-class ErrorHandler(
+class ErrorHandler @Inject constructor(
     private val router: TabRouter
 ) : IErrorHandler {
 

@@ -5,12 +5,13 @@ import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
-class DevDbRepository(
+class DevDbRepository @Inject constructor(
     private val devDbApi: DevDbApi
 ) {
 

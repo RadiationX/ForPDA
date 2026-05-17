@@ -4,9 +4,10 @@ import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.common.flowpreferences.mapping
 import forpdateam.ru.forpda.model.data.remote.api.inspector.InspectorParser
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-class NotificationPreferencesHolder(
+class NotificationPreferencesHolder @Inject constructor(
     private val preferences: FlowPreferences,
     private val inspectorParser: InspectorParser
 ) {

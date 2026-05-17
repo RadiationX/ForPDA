@@ -7,12 +7,13 @@ import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 20.03.17.
  */
 
-class ReputationApi(
+class ReputationApi @Inject constructor(
     private val webClient: IWebClient,
     private val reputationParser: ReputationParser
 ) {

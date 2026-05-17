@@ -6,12 +6,13 @@ import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
-import forpdateam.ru.forpda.App.Companion.get
+import forpdateam.ru.forpda.model.interactors.events.EventsController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 31.07.17.
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
 class NotificationsService : Service() {
     private var lastHardCheckTime: Long = 0
 
-    private val eventsRepository = get().Di().eventsController
+    private val eventsRepository by inject<EventsController>()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 

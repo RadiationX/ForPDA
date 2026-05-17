@@ -15,12 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 import forpdateam.ru.forpda.common.LinkMovementMethod;
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel;
 import forpdateam.ru.forpda.extensions.ContextKt;
-import forpdateam.ru.forpda.presentation.ILinkHandler;
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment;
 import forpdateam.ru.forpda.ui.views.DividerItemDecoration;
 import forpdateam.ru.forpda.ui.views.adapters.BaseViewHolder;
@@ -153,8 +151,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private class AboutHolder extends BaseViewHolder<ProfileModel> {
-        private final ILinkHandler linkHandler = App.get().Di().getLinkHandler();
-
         private final TextView about;
 
         AboutHolder(View itemView) {
@@ -165,7 +161,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         @Override
         public void bind(ProfileModel item) {
             about.setText(item.getAbout());
-            about.setMovementMethod(new LinkMovementMethod(url -> linkHandler.handle(url, null)));
+            about.setMovementMethod(new LinkMovementMethod(url -> {
+                clickListener.onLinkClick(url);
+                return false;
+            }));
         }
     }
 
@@ -296,5 +295,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         void onDeviceClick(ProfileModel.Device item);
 
         void onStatClick(ProfileModel.Stat item);
+
+        void onLinkClick(String url);
     }
 }

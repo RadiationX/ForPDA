@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
@@ -23,6 +22,10 @@ import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.forumrules.ForumRulesPresenter
 import forpdateam.ru.forpda.presentation.forumrules.ForumRulesView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -30,8 +33,7 @@ import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import kotlinx.coroutines.launch
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 16.10.17.
@@ -43,17 +45,12 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
     private lateinit var webView: ExtendedWebView
     private lateinit var topScroller: WebViewTopScroller
 
-    @InjectPresenter
-    lateinit var presenter: ForumRulesPresenter
-
-    @ProvidePresenter
-    internal fun providePresenter(): ForumRulesPresenter = ForumRulesPresenter(
-        App.get().Di().forumRepository,
-        App.get().Di().mainPreferencesHolder,
-        App.get().Di().forumRulesTemplate,
-        App.get().Di().templateManager,
-        App.get().Di().errorHandler
-    )
+    private val utils by inject<Utils>()
+    private val linkHandler by inject<ILinkHandler>()
+    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val router by inject<TabRouter>()
+    private val webViewClient by inject<CustomWebViewClient>()
+    private val presenter by quillMoxyPresenter<ForumRulesPresenter>()
 
     init {
         configuration.defaultTitle = "Правила форума"
@@ -65,11 +62,11 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
-                webView.context,
-                App.get().Di().linkHandler,
-                App.get().Di().systemLinkHandler,
-                App.get().Di().utils,
-                App.get().Di().router
+                context = webView.context,
+                linkHandler = linkHandler,
+                systemLinkHandler = systemLinkHandler,
+                utils = utils,
+                router = router
             )
         )
         attachWebView(webView)
@@ -77,7 +74,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
 
 
         webView.addJavascriptInterface(this, JS_INTERFACE)
-        webView.webViewClient = CustomWebViewClient()
+        webView.webViewClient = webViewClient
         webView.webChromeClient = CustomWebChromeClient()
         webView.setJsLifeCycleListener(object : ExtendedWebView.JsLifeCycleListener {
             override fun onDomContentComplete(actions: ArrayList<String>) {
@@ -124,7 +121,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
             AlertDialog.Builder(requireContext())
                 .setMessage("Скопировать правило в буфер обмена?")
                 .setPositiveButton(R.string.ok) { _, _ ->
-                    App.get().Di().utils.copyToClipBoard(text)
+                    utils.copyToClipBoard(text)
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .show()

@@ -6,11 +6,12 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 04.08.16.
  */
-class ThemeApi(
+class ThemeApi @Inject constructor(
     private val webClient: IWebClient,
     private val themeParser: ThemeParser,
     private val authHolder: AuthHolder

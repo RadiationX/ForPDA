@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
+import javax.inject.Inject
 
-class TemplateManager(
+class TemplateManager @Inject constructor(
     private val context: Context,
     private val appThemeController: AppThemeController
 ) {

@@ -18,19 +18,19 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDimensionPixelSizeAttr
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
+import forpdateam.ru.forpda.ui.DimensionsProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 03.03.17.
@@ -39,7 +39,7 @@ class PaginationHelper(context: Activity) {
     private val context: Context = context
     private var tabLayoutInToolbar: TabLayout? = null
 
-    private val dimensionsProvider = get().Di().dimensionsProvider
+    private val dimensionsProvider by context.inject<DimensionsProvider>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     var currentPage: Int = 0

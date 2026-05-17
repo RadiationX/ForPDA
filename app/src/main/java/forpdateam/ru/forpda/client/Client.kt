@@ -13,8 +13,9 @@ import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okhttp3.coroutines.executeAsync
+import javax.inject.Inject
 
-class Client(
+class Client @Inject constructor(
     private val context: Context,
     private val client: OkHttpClient,
     private val countersHolder: CountersHolder

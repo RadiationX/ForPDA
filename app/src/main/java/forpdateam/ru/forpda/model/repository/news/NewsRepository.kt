@@ -7,12 +7,13 @@ import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.news.NewsApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
-class NewsRepository(
+class NewsRepository @Inject constructor(
     private val newsApi: NewsApi,
     private val forumUsersCache: ForumUsersCache
 ) {

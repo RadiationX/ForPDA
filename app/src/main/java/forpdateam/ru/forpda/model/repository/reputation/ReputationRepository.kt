@@ -2,12 +2,13 @@ package forpdateam.ru.forpda.model.repository.reputation
 
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.01.18.
  */
 
-class ReputationRepository(
+class ReputationRepository @Inject constructor(
     private val reputationApi: ReputationApi
 ) {
 

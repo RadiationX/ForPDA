@@ -6,19 +6,17 @@ import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentOtherBinding
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.other.OtherPresenter
 import forpdateam.ru.forpda.presentation.other.OtherView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 
 /**
@@ -43,23 +41,7 @@ class OtherFragment : TabFragment(R.layout.fragment_other), OtherView {
 
     private var listScrollY = 0
 
-    @InjectPresenter
-    lateinit var presenter: OtherPresenter
-
-    @ProvidePresenter
-    fun provideOtherPresenter(): OtherPresenter {
-        return OtherPresenter(
-            App.get().Di().router,
-            App.get().Di().authRepository,
-            App.get().Di().profileRepository,
-            App.get().Di().authHolder,
-            App.get().Di().errorHandler,
-            App.get().Di().menuRepository,
-            App.get().Di().closeableInfoHolder,
-            App.get().Di().linkHandler,
-            App.get().Di().systemLinkHandler
-        )
-    }
+    private val presenter by quillMoxyPresenter<OtherPresenter>()
 
     init {
         configuration.defaultTitle = "Полное меню приложения"

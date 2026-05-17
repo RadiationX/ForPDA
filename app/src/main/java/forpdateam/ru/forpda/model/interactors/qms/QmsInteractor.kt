@@ -9,8 +9,9 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.qms.QmsRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class QmsInteractor(
+class QmsInteractor @Inject constructor(
     private val qmsRepository: QmsRepository
 ) {
 

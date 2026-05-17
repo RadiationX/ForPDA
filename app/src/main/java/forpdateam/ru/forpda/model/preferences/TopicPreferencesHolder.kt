@@ -2,8 +2,9 @@ package forpdateam.ru.forpda.model.preferences
 
 import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
+import javax.inject.Inject
 
-class TopicPreferencesHolder(
+class TopicPreferencesHolder @Inject constructor(
     private val preferences: FlowPreferences
 ) {
 

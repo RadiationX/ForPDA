@@ -1,14 +1,16 @@
 package forpdateam.ru.forpda.model
 
 import android.content.Context
+import forpdateam.ru.forpda.common.di.DataPreferences
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.common.flowpreferences.mapping
 import forpdateam.ru.forpda.entity.remote.checker.PatternsDataJson
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-class PatternsStorage(
+class PatternsStorage @Inject constructor(
     private val context: Context,
-    private val preferences: FlowPreferences,
+    @param:DataPreferences private val preferences: FlowPreferences,
     private val json: Json,
 ) {
     companion object {

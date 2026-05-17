@@ -56,11 +56,12 @@ import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_WP7_GA
 import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_WP7_SOFTWARE
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.07.16.
  */
-class NewsApi(
+class NewsApi @Inject constructor(
     private val webClient: IWebClient,
     private val articleParser: ArticleParser
 ) {

@@ -11,6 +11,7 @@ import androidx.core.content.getSystemService
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.presentation.Screen
+import forpdateam.ru.forpda.presentation.TabRouter
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.text.ParseException
@@ -18,11 +19,15 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
+import javax.inject.Inject
 
 /**
  * Created by isanechek on 30.07.16.
  */
-class Utils(private val context: Context) {
+class Utils @Inject constructor(
+    private val context: Context,
+    private val router: TabRouter
+) {
 
     fun getFileNameFromUrl(url: String): String {
         var fileName = url
@@ -134,7 +139,6 @@ class Utils(private val context: Context) {
     }
 
     fun showNeedAuthDialog(context: Context) {
-        val router = App.get().Di().router
         AlertDialog.Builder(context)
             .setMessage("Необходимо войти в аккаунт 4pda")
             .setPositiveButton("Войти") { _, _ ->

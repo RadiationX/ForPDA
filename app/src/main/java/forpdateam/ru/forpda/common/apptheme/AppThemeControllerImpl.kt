@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.plus
+import javax.inject.Inject
 
-class AppThemeControllerImpl(
+class AppThemeControllerImpl @Inject constructor(
     private val application: Application,
     private val preferences: FlowPreferences
 ) : AppThemeController {

@@ -10,8 +10,9 @@ import okio.HashingSource
 import okio.blackholeSink
 import okio.buffer
 import okio.source
+import javax.inject.Inject
 
-class AttachmentsApi(
+class AttachmentsApi @Inject constructor(
     private val context: Context,
     private val webClient: IWebClient,
     private val attachmentsParser: AttachmentsParser

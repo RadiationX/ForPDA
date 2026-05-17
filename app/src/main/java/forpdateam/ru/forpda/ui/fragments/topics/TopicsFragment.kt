@@ -12,6 +12,8 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.topics.TopicsPresenter
 import forpdateam.ru.forpda.presentation.topics.TopicsView
@@ -20,8 +22,7 @@ import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 01.03.17.
@@ -32,7 +33,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     private lateinit var adapter: TopicsAdapter
     private lateinit var paginationHelper: PaginationHelper
     private lateinit var dialogMenu: DynamicDialogMenu<TopicsFragment, TopicItem>
-    private val authHolder = App.get().Di().authHolder
+    private val authHolder by inject<AuthHolder>()
 
 
     private val paginationListener = object : PaginationHelper.PaginationListener {
@@ -56,20 +57,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: TopicsPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): TopicsPresenter = TopicsPresenter(
-        App.get().Di().topicsRepository,
-        App.get().Di().forumRepository,
-        App.get().Di().favoritesRepository,
-        App.get().Di().crossScreenInteractor,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<TopicsPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_topics)

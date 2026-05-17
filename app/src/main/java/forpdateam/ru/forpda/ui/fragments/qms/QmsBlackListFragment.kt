@@ -1,12 +1,9 @@
 package forpdateam.ru.forpda.ui.fragments.qms
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewStub
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +13,7 @@ import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.databinding.ToolbarQmsBlackListBinding
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.qms.blacklist.QmsBlackListPresenter
 import forpdateam.ru.forpda.presentation.qms.blacklist.QmsBlackListView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -25,8 +23,6 @@ import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 22.03.17.
@@ -43,16 +39,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
     private lateinit var adapter: QmsContactsAdapter
     private val dialogMenu = DynamicDialogMenu<QmsBlackListFragment, QmsContact>()
 
-    @InjectPresenter
-    lateinit var presenter: QmsBlackListPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): QmsBlackListPresenter = QmsBlackListPresenter(
-        App.get().Di().qmsInteractor,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<QmsBlackListPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_blacklist)

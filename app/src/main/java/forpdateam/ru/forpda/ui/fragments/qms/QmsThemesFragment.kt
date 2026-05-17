@@ -11,6 +11,7 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.qms.themes.QmsThemesPresenter
 import forpdateam.ru.forpda.presentation.qms.themes.QmsThemesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -18,8 +19,6 @@ import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsThemesAdapter
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 25.08.16.
@@ -32,16 +31,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     private lateinit var adapter: QmsThemesAdapter
     private val dialogMenu = DynamicDialogMenu<QmsThemesFragment, QmsTheme>()
 
-    @InjectPresenter
-    lateinit var presenter: QmsThemesPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): QmsThemesPresenter = QmsThemesPresenter(
-        App.get().Di().qmsInteractor,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<QmsThemesPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_dialogs)

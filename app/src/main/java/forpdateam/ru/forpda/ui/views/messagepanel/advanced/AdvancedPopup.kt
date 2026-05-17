@@ -10,9 +10,9 @@ import androidx.core.view.doOnLayout
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.DimensionHelper.Dimensions
+import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +20,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 07.01.17.
@@ -30,7 +31,7 @@ class AdvancedPopup(private val context: Context, private val messagePanel: Mess
     private var isShowingKeyboard = false
     private var stateListener: StateListener? = null
 
-    private val dimensionsProvider = get().Di().dimensionsProvider
+    private val dimensionsProvider by context.inject<DimensionsProvider>()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 

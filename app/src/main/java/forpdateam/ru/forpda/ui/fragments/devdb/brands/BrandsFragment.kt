@@ -10,12 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsPresenter
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 08.08.17.
@@ -26,15 +25,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
 
     private lateinit var adapter: BrandsAdapter
 
-    @InjectPresenter
-    lateinit var presenter: BrandsPresenter
-
-    @ProvidePresenter
-    internal fun providePresenter(): BrandsPresenter = BrandsPresenter(
-        App.get().Di().devDbRepository,
-        App.get().Di().router,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<BrandsPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_brands)

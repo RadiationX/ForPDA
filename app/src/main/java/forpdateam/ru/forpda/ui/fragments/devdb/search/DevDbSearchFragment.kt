@@ -11,12 +11,12 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -28,8 +28,6 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 09.11.17.
@@ -50,16 +48,7 @@ class DevDbSearchFragment : TabFragment(R.layout.fragment_brand), SearchDevicesV
     private lateinit var searchMenuItem: MenuItem
     private val dialogMenu = DynamicDialogMenu<DevDbSearchFragment, Brand.DeviceItem>()
 
-    @InjectPresenter
-    lateinit var presenter: SearchDevicesPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): SearchDevicesPresenter = SearchDevicesPresenter(
-        App.get().Di().devDbRepository,
-        App.get().Di().router,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<SearchDevicesPresenter>()
 
     init {
         configuration.defaultTitle = "Поиск устройств"

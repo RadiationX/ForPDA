@@ -7,8 +7,9 @@ import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import javax.inject.Inject
 
-class ReputationParser(
+class ReputationParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

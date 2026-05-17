@@ -2,12 +2,13 @@ package forpdateam.ru.forpda.model.data.remote.api.topcis
 
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.model.data.remote.IWebClient
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.03.17.
  */
 
-class TopicsApi(
+class TopicsApi @Inject constructor(
     private val webClient: IWebClient,
     private val topicsParser: TopicsParser
 ) {

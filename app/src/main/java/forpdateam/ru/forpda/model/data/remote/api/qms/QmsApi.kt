@@ -9,12 +9,13 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
+import javax.inject.Inject
 
 
 /**
  * Created by radiationx on 29.07.16.
  */
-class QmsApi(
+class QmsApi @Inject constructor(
     private val webClient: IWebClient,
     private val qmsParser: QmsParser
 ) {

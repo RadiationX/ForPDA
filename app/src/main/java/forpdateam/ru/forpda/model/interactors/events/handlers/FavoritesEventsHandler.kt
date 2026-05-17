@@ -6,8 +6,9 @@ import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
 import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import java.sql.Date
+import javax.inject.Inject
 
-class FavoritesEventsHandler(
+class FavoritesEventsHandler @Inject constructor(
     private val favoritesCache: FavoritesCache,
     private val utils: Utils
 ) {

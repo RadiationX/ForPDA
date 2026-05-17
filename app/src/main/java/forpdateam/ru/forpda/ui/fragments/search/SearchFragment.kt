@@ -30,6 +30,7 @@ import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
@@ -38,7 +39,14 @@ import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
+import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
+import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
+import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.search.SearchPresenter
 import forpdateam.ru.forpda.presentation.search.SearchSiteView
 import forpdateam.ru.forpda.presentation.theme.ThemeJsInterface
@@ -57,8 +65,7 @@ import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 29.01.17.
@@ -92,8 +99,6 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     private lateinit var recyclerView: RecyclerView
 
     private val adapter = SearchAdapter()
-    private var webViewClient: CustomWebViewClient? = null
-
 
     private lateinit var paginationHelper: PaginationHelper
     private lateinit var dialogMenu: DynamicDialogMenu<SearchFragment, SearchItem>
@@ -109,9 +114,9 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     private lateinit var jsInterface: ThemeJsInterface
     private lateinit var dialogsHelper: ThemeDialogsHelper_V2
 
-    private val authHolder = App.get().Di().authHolder
-    private val mainPreferencesHolder = App.get().Di().mainPreferencesHolder
-    private val otherPreferencesHolder = App.get().Di().otherPreferencesHolder
+    private val authHolder by inject<AuthHolder>()
+    private val mainPreferencesHolder by inject<MainPreferencesHolder>()
+    private val otherPreferencesHolder by inject<OtherPreferencesHolder>()
 
     private val listener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -133,25 +138,12 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: SearchPresenter
-
-    @ProvidePresenter
-    internal fun providePresenter(): SearchPresenter = SearchPresenter(
-        App.get().Di().searchRepository,
-        App.get().Di().favoritesRepository,
-        App.get().Di().themeRepository,
-        App.get().Di().reputationRepository,
-        App.get().Di().topicPreferencesHolder,
-        App.get().Di().mainPreferencesHolder,
-        App.get().Di().otherPreferencesHolder,
-        App.get().Di().searchTemplate,
-        App.get().Di().templateManager,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val utils by inject<Utils>()
+    private val linkHandler by inject<ILinkHandler>()
+    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val router by inject<TabRouter>()
+    private val webViewClient by inject<CustomWebViewClient>()
+    private val presenter by quillMoxyPresenter<SearchPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_search)
@@ -231,11 +223,11 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
-                webView.context,
-                App.get().Di().linkHandler,
-                App.get().Di().systemLinkHandler,
-                App.get().Di().utils,
-                App.get().Di().router
+                context = webView.context,
+                linkHandler = linkHandler,
+                systemLinkHandler = systemLinkHandler,
+                utils = utils,
+                router = router
             )
         )
         attachWebView(webView)
@@ -583,11 +575,8 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
                 refreshLayout.addView(webView)
                 Log.d(LOG_TAG, "add webview")
             }
-            if (webViewClient == null) {
-                webViewClient = CustomWebViewClient()
-                webView.webViewClient = webViewClient!!
-                webView.webChromeClient = CustomWebChromeClient()
-            }
+            webView.webViewClient = webViewClient
+            webView.webChromeClient = CustomWebChromeClient()
             Log.d("SUKA", "SEARCH SHOW WEBVIEW")
             webView.loadDataWithBaseURL(
                 "https://4pda.to/forum/",

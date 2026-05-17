@@ -8,8 +8,9 @@ import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class ProfileParser(
+class ProfileParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

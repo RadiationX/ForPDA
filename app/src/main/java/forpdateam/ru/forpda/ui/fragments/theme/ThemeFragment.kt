@@ -24,7 +24,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
@@ -36,8 +35,12 @@ import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
+import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
+import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
 import forpdateam.ru.forpda.presentation.theme.ThemeView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -48,8 +51,7 @@ import forpdateam.ru.forpda.ui.views.FabOnScroll
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 20.10.16.
@@ -90,32 +92,12 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     private lateinit var notificationTitle: TextView
     private lateinit var notificationButton: ImageButton
 
-    protected val authHolder = App.get().Di().authHolder
-    private val mainPreferencesHolder = App.get().Di().mainPreferencesHolder
-    private val otherPreferencesHolder = App.get().Di().otherPreferencesHolder
-    private val utils = App.get().Di().utils
+    protected val authHolder by inject<AuthHolder>()
+    private val mainPreferencesHolder by inject<MainPreferencesHolder>()
+    private val otherPreferencesHolder by inject<OtherPreferencesHolder>()
+    private val utils by inject<Utils>()
 
-    @InjectPresenter
-    lateinit var presenter: ThemePresenter
-
-    @ProvidePresenter
-    fun providePresenter(): ThemePresenter = ThemePresenter(
-        App.get().Di().themeRepository,
-        App.get().Di().reputationRepository,
-        App.get().Di().editPostRepository,
-        App.get().Di().favoritesRepository,
-        App.get().Di().webSocketEventsRepository,
-        App.get().Di().profileRepository,
-        App.get().Di().topicPreferencesHolder,
-        App.get().Di().mainPreferencesHolder,
-        App.get().Di().crossScreenInteractor,
-        App.get().Di().themeTemplate,
-        App.get().Di().templateManager,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        utils
-    )
+    protected val presenter by quillMoxyPresenter<ThemePresenter>()
 
     private val filesPicker = registerFilesPicker {
         uploadFiles(it)

@@ -6,8 +6,9 @@ import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.cache.qms.QmsCache
+import javax.inject.Inject
 
-class QmsEventsHandler(
+class QmsEventsHandler @Inject constructor(
     private val qmsCache: QmsCache,
 ) {
 

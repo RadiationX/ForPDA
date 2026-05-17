@@ -6,12 +6,13 @@ import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.model.data.db.ForumUsersDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 08.07.17.
  */
 
-class ForumUsersCache(
+class ForumUsersCache @Inject constructor(
     private val userSource: UserSource,
     private val forumUsersDao: ForumUsersDao
 ) {

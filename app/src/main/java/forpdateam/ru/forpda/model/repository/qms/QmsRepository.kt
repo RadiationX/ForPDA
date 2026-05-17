@@ -12,12 +12,13 @@ import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.qms.QmsApi
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
-class QmsRepository(
+class QmsRepository @Inject constructor(
     private val qmsApi: QmsApi,
     private val attachmentsApi: AttachmentsApi,
     private val qmsCache: QmsCache,

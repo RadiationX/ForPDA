@@ -3,13 +3,15 @@ package forpdateam.ru.forpda.client
 import android.content.Context
 import android.util.Log
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader
+import forpdateam.ru.forpda.common.di.ImagesOkHttpClient
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.InputStream
+import javax.inject.Inject
 
-class AppImageDownloader(
+class AppImageDownloader @Inject constructor(
     context: Context,
-    val okHttpClient: OkHttpClient
+    @param:ImagesOkHttpClient private val okHttpClient: OkHttpClient
 ) : BaseImageDownloader(context) {
 
     override fun getStream(imageUri: String, extra: Any?): InputStream {

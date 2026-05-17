@@ -12,13 +12,17 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.lifecycleScope
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
+import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.ThemeJsInterface
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
@@ -26,6 +30,7 @@ import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import kotlinx.coroutines.launch
+import ru.radiationx.quill.inject
 import java.util.regex.Pattern
 
 /**
@@ -39,6 +44,13 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
     private lateinit var jsInterface: ThemeJsInterface
     private lateinit var topScroller: WebViewTopScroller
 
+
+    private val utils by inject<Utils>()
+    private val linkHandler by inject<ILinkHandler>()
+    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val router by inject<TabRouter>()
+    private val avatarRepository by inject<AvatarRepository>()
+
     override fun scrollToAnchor(anchor: String?) {
         webView.evalJs("scrollToElement(\"$anchor\")")
         topScroller.resetState()
@@ -51,17 +63,19 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
             webView.paddingBottom = newHeight
         }
 
-        webViewClient = ThemeWebViewClient()
-        chromeClient = ThemeChromeClient()
 
         webView = ExtendedWebView(requireContext())
+
+        webViewClient = ThemeWebViewClient(webView, presenter, avatarRepository, linkHandler)
+        chromeClient = ThemeChromeClient()
+
         webView.setDialogsHelper(
             DialogsHelper(
-                webView.context,
-                App.get().Di().linkHandler,
-                App.get().Di().systemLinkHandler,
-                App.get().Di().utils,
-                App.get().Di().router
+                context = webView.context,
+                linkHandler = linkHandler,
+                systemLinkHandler = systemLinkHandler,
+                utils = utils,
+                router = router
             )
         )
         attachWebView(webView)
@@ -257,7 +271,12 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
         dialogsHelper.openSpoilerLinkDialog(presenter, post, spoilNumber)
     }
 
-    private inner class ThemeWebViewClient : CustomWebViewClient() {
+    private class ThemeWebViewClient(
+        private val webView: ExtendedWebView,
+        private val presenter: ThemePresenter,
+        private val avatarRepository: AvatarRepository,
+        private val linkHandler: ILinkHandler
+    ) : CustomWebViewClient(avatarRepository, linkHandler) {
         private val p = Pattern.compile("\\.(jpg|png|gif|bmp)")
         private val m = p.matcher("")
 

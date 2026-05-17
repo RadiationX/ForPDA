@@ -1,12 +1,13 @@
 package forpdateam.ru.forpda.model.repository.avatar
 
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
-class AvatarRepository(
+class AvatarRepository @Inject constructor(
     private val forumUsersCache: ForumUsersCache
 ) {
 

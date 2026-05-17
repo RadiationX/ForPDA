@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.text.TextPaint
 import android.text.style.MetricAffectingSpan
 import android.util.LruCache
-import forpdateam.ru.forpda.App.Companion.getContext
 
 /**
  * Created by radiationx on 19.07.17.

@@ -8,12 +8,13 @@ import forpdateam.ru.forpda.model.data.remote.api.profile.ProfileApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 02.01.18.
  */
 
-class ProfileRepository(
+class ProfileRepository @Inject constructor(
     private val profileApi: ProfileApi,
     private val authHolder: AuthHolder,
     private val forumUsersCache: ForumUsersCache

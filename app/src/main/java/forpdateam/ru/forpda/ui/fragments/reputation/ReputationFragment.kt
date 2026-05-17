@@ -19,6 +19,8 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
 import forpdateam.ru.forpda.presentation.reputation.ReputationPresenter
 import forpdateam.ru.forpda.presentation.reputation.ReputationView
@@ -28,8 +30,7 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 20.03.17.
@@ -47,7 +48,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
     private lateinit var upRepMenuItem: MenuItem
     private lateinit var downRepMenuItem: MenuItem
 
-    private val authHolder = App.get().Di().authHolder
+    private val authHolder by inject<AuthHolder>()
+    private val utils by inject<Utils>()
 
     private val paginationListener = object : PaginationHelper.PaginationListener {
         override fun onTabSelected(tab: TabLayout.Tab): Boolean {
@@ -70,17 +72,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: ReputationPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): ReputationPresenter = ReputationPresenter(
-        App.get().Di().reputationRepository,
-        App.get().Di().avatarRepository,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<ReputationPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_reputation)
@@ -151,7 +143,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
                 if (authHolder.get().isAuth()) {
                     showChangeReputationDialog(true)
                 } else {
-                    App.get().Di().utils.showNeedAuthDialog(requireContext())
+                    utils.showNeedAuthDialog(requireContext())
                 }
                 false
             }
@@ -160,7 +152,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
                 if (authHolder.get().isAuth()) {
                     showChangeReputationDialog(false)
                 } else {
-                    App.get().Di().utils.showNeedAuthDialog(requireContext())
+                    utils.showNeedAuthDialog(requireContext())
                 }
                 false
             }

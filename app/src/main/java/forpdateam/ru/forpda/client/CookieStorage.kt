@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import okhttp3.Cookie
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import javax.inject.Inject
 
-class CookieStorage(
+class CookieStorage @Inject constructor(
     private val preferences: FlowPreferences
 ) {
 

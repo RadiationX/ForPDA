@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
@@ -23,6 +22,8 @@ import forpdateam.ru.forpda.databinding.ArticleCommentsBinding
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.comments.ArticleCommentView
 import forpdateam.ru.forpda.ui.fragments.RecyclerTopScroller
@@ -31,8 +32,7 @@ import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
 import forpdateam.ru.forpda.ui.views.ContentController
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import moxy.MvpAppCompatFragment
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 03.09.17.
@@ -56,23 +56,14 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
     private val writePanel: RelativeLayout
         get() = binding.commentWritePanel
 
-    private val authHolder = App.get().Di().authHolder
-    private val adapter = ArticleCommentsAdapter(authHolder)
+    private val authHolder by inject<AuthHolder>()
+    private val utils by inject<Utils>()
+    private val adapter by lazy { ArticleCommentsAdapter(authHolder) }
     private var currentReplyComment: Comment? = null
     private lateinit var contentController: ContentController
     private lateinit var topScroller: RecyclerTopScroller
 
-    @InjectPresenter
-    lateinit var presenter: ArticleCommentPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): ArticleCommentPresenter = ArticleCommentPresenter(
-        (parentFragment as NewsDetailsFragment).provideChildInteractor(),
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().authHolder,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<ArticleCommentPresenter>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -142,7 +133,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
 
     override fun onLikeClick(comment: Comment, position: Int) {
         if (!authHolder.get().isAuth()) {
-            App.get().Di().utils.showNeedAuthDialog(requireContext())
+            utils.showNeedAuthDialog(requireContext())
             return
         }
 
@@ -151,7 +142,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
 
     override fun onReplyClick(comment: Comment, position: Int) {
         if (!authHolder.get().isAuth()) {
-            App.get().Di().utils.showNeedAuthDialog(requireContext())
+            utils.showNeedAuthDialog(requireContext())
             return
         }
         if (messageField.text.isEmpty()) {

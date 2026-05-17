@@ -12,8 +12,9 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
-class NotesRepository(
+class NotesRepository @Inject constructor(
     private val context: Context,
     private val notesCache: NotesCache,
     private val externalStorage: ExternalStorageProvider

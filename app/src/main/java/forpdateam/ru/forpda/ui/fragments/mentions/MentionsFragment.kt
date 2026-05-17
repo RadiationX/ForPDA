@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.mentions
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -11,6 +10,8 @@ import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.presentation.mentions.MentionsPresenter
 import forpdateam.ru.forpda.presentation.mentions.MentionsView
@@ -21,8 +22,7 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 21.01.17.
@@ -33,7 +33,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
     private lateinit var dialogMenu: DynamicDialogMenu<MentionsFragment, MentionItem>
     private lateinit var adapter: MentionsAdapter
     private lateinit var paginationHelper: PaginationHelper
-    private val authHolder = App.get().Di().authHolder
+    private val authHolder by inject<AuthHolder>()
 
     private val paginationListener = object : PaginationHelper.PaginationListener {
         override fun onTabSelected(tab: TabLayout.Tab): Boolean {
@@ -57,18 +57,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
         }
     }
 
-    @InjectPresenter
-    lateinit var presenter: MentionsPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): MentionsPresenter = MentionsPresenter(
-        App.get().Di().mentionsRepository,
-        App.get().Di().favoritesRepository,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<MentionsPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_mentions)

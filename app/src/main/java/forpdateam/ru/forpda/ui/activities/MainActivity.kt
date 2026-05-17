@@ -18,27 +18,30 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.daasuu.ei.Ease
 import com.daasuu.ei.EasingInterpolator
-import forpdateam.ru.forpda.App
+import com.github.terrakok.cicerone.NavigatorHolder
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ActivityMainBinding
 import forpdateam.ru.forpda.extensions.asImmutableFlag
 import forpdateam.ru.forpda.extensions.getColorFromAttr
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.interactors.events.EventsController
+import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.main.MainPresenter
 import forpdateam.ru.forpda.presentation.main.MainView
 import forpdateam.ru.forpda.ui.DimensionHelper
+import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.activities.updatechecker.SimpleUpdateChecker
 import forpdateam.ru.forpda.ui.navigation.TabNavigator
 import forpdateam.ru.forpda.ui.views.drawers.BottomDrawer
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import moxy.MvpAppCompatActivity
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.get
+import ru.radiationx.quill.inject
 import kotlin.math.max
 
 class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     val removeTabListener = { view: View -> backHandler(true) }
-
 
     private val binding by viewBinding<ActivityMainBinding>()
 
@@ -46,27 +49,14 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     private var firstStartAnimator: ObjectAnimator? = null
 
     val tabNavigator = TabNavigator(this, R.id.fragments_container)
-    private val dimensionsProvider = App.get().Di().dimensionsProvider
-    private val notificationPreferencesRepository = App.get().Di().notificationPreferencesHolder
-    private val checkerRepository = App.get().Di().checkerRepository
-    private val permissionsController = App.get().Di().permissionsController
-    private val updateChecker by lazy { SimpleUpdateChecker(applicationContext, checkerRepository, permissionsController) }
 
+    private val router by inject<TabRouter>()
+    private val navigatorHolder by inject<NavigatorHolder>()
+    private val dimensionsProvider by inject<DimensionsProvider>()
+    private val updateChecker by inject<SimpleUpdateChecker>()
+    private val eventsController by inject<EventsController>()
 
-    @InjectPresenter
-    lateinit var presenter: MainPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): MainPresenter = MainPresenter(
-        App.get().Di().router,
-        App.get().Di().authHolder,
-        App.get().Di().linkHandler,
-        App.get().Di().menuRepository,
-        App.get().Di().qmsInteractor,
-        App.get().Di().otherPreferencesHolder,
-        App.get().Di().mainPreferencesHolder,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<MainPresenter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
@@ -83,12 +73,12 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         }
 
         bottomDrawer = BottomDrawer(
-            this,
-            binding,
-            tabNavigator,
-            App.get().Di().router,
-            App.get().Di().menuRepository,
-            App.get().Di().mainPreferencesHolder
+            activity = this,
+            binding = binding,
+            tabNavigator = tabNavigator,
+            router = get(),
+            menuRepository = get(),
+            mainPreferencesHolder = get()
         )
         bottomDrawer.setListener(object : BottomDrawer.DrawerListener {
             override fun onHide() {
@@ -143,9 +133,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
             }
             .launchIn(lifecycleScope)
 
-        if (notificationPreferencesRepository.updateEnabled.get()) {
-            updateChecker.checkUpdate()
-        }
+        updateChecker.checkUpdate()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -202,13 +190,13 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     override fun onStart() {
         super.onStart()
         bottomDrawer.onStart()
-        App.get().Di().eventsController.start()
+        eventsController.start()
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
         Log.d(LOG_TAG, "onResumeFragments")
-        App.get().Di().navigatorHolder.setNavigator(tabNavigator)
+        navigatorHolder.setNavigator(tabNavigator)
     }
 
 
@@ -218,7 +206,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     }
 
     override fun onPause() {
-        App.get().Di().navigatorHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
         super.onPause()
         Log.d(LOG_TAG, "onPause")
     }
@@ -271,7 +259,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     private fun backHandler(fromToolbar: Boolean) {
         val active = tabNavigator.getCurrentFragment()
         if (active == null) {
-            App.get().Di().router.exit()
+            router.exit()
             return
         }
         if (fromToolbar || !active.onBackPressed()) {

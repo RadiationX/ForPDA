@@ -14,6 +14,7 @@ import ru.radiationx.regexparser.RegexParser
 import ru.radiationx.regexparser.core.RegexContext
 import ru.radiationx.regexparser.extensions.toRegexParser
 import java.util.regex.Pattern
+import javax.inject.Inject
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.AtomicLong
@@ -21,7 +22,7 @@ import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.update
 import kotlin.time.Duration.Companion.minutes
 
-class PatternProviderImpl(
+class PatternProviderImpl @Inject constructor(
     private val patternsApi: PatternsApi,
     private val patternsStorage: PatternsStorage
 ) : PatternProvider {

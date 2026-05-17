@@ -2,12 +2,13 @@ package forpdateam.ru.forpda.model.data.remote.api.mentions
 
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
 import forpdateam.ru.forpda.model.data.remote.IWebClient
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 21.01.17.
  */
 
-class MentionsApi(
+class MentionsApi @Inject constructor(
     private val webClient: IWebClient,
     private val mentionsParser: MentionsParser
 ) {

@@ -6,8 +6,9 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import ru.radiationx.regexparser.RegexParser
+import javax.inject.Inject
 
-class EditPostParser(
+class EditPostParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

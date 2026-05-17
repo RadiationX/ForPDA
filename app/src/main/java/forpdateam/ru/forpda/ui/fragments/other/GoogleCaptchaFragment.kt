@@ -4,12 +4,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
-import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.common.webview.CustomWebViewClient
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.webview.DialogsHelper
+import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
+import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
@@ -18,6 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import ru.radiationx.quill.inject
 import java.util.regex.Pattern
 
 /**
@@ -27,6 +35,12 @@ import java.util.regex.Pattern
 class GoogleCaptchaFragment : TabFragment() {
     private lateinit var webView: ExtendedWebView
     private var content = ""
+
+    private val utils by inject<Utils>()
+    private val linkHandler by inject<ILinkHandler>()
+    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val router by inject<TabRouter>()
+    private val webClient by inject<IWebClient>()
 
     init {
         configuration.defaultTitle = "Проверка"
@@ -45,11 +59,11 @@ class GoogleCaptchaFragment : TabFragment() {
         webView = ExtendedWebView(requireContext())
         webView.setDialogsHelper(
             DialogsHelper(
-                webView.context,
-                App.get().Di().linkHandler,
-                App.get().Di().systemLinkHandler,
-                App.get().Di().utils,
-                App.get().Di().router
+                context = webView.context,
+                linkHandler = linkHandler,
+                systemLinkHandler = systemLinkHandler,
+                utils = utils,
+                router = router
             )
         )
         attachWebView(webView)
@@ -60,8 +74,16 @@ class GoogleCaptchaFragment : TabFragment() {
         webView.loadDataWithBaseURL("https://4pda.to/forum/", content, "text/html", "utf-8", null)
     }
 
-    internal inner class CaptchaWebViewClient : CustomWebViewClient() {
-        override fun handleUri(uri: Uri): Boolean {
+    internal inner class CaptchaWebViewClient : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            return handleUri(request.url)
+        }
+
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            return handleUri(url.toUri())
+        }
+
+        private fun handleUri(uri: Uri): Boolean {
             Log.e("SUKA", uri.toString())
             if (Pattern.compile("https://4pda.to/cdn-cgi/l/chk_captcha").matcher(uri.toString())
                     .find()
@@ -69,7 +91,7 @@ class GoogleCaptchaFragment : TabFragment() {
                 runBlocking {
                     runCatching {
                         val nr = NetworkRequest.Builder().url(uri.toString()).withoutBody().build()
-                        App.get().Di().webClient.request(nr)
+                        webClient.request(nr)
                     }
                     withContext(Dispatchers.Main) {
                         this@GoogleCaptchaFragment.onResponse()

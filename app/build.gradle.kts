@@ -134,6 +134,10 @@ appmetrica {
 dependencies {
     implementation(project(":lib:regexparser"))
 
+    implementation(project(":lib:quill-di"))
+    compileOnly(libs.toothpick)
+    ksp(libs.toothpick.compiler)
+
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
 

@@ -34,9 +34,11 @@ import forpdateam.ru.forpda.databinding.ToolbarDeviceBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.devdb.device.DevicePresenter
 import forpdateam.ru.forpda.presentation.devdb.device.DeviceView
 import forpdateam.ru.forpda.ui.DimensionHelper
+import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper
@@ -48,8 +50,7 @@ import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 import java.util.Locale
 
 /**
@@ -72,7 +73,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
     private val toolbarContent: RelativeLayout
         get() = toolbarBinding.root
 
-    private val dimensionsProvider = App.get().Di().dimensionsProvider
+    private val dimensionsProvider by inject<DimensionsProvider>()
 
     private lateinit var copyLinkMenuItem: MenuItem
     private lateinit var shareMenuItem: MenuItem
@@ -82,17 +83,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
     private var appBarOffset = 0
 
-    @InjectPresenter
-    lateinit var presenter: DevicePresenter
-
-    @ProvidePresenter
-    fun providePresenter(): DevicePresenter = DevicePresenter(
-        App.get().Di().devDbRepository,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<DevicePresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_device)

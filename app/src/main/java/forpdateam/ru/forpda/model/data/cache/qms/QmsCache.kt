@@ -15,8 +15,9 @@ import forpdateam.ru.forpda.model.data.db.QmsThemesDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class QmsCache(
+class QmsCache @Inject constructor(
     private val qmsContactsDao: QmsContactsDao,
     private val qmsThemesDao: QmsThemesDao,
     private val database: RoomDatabase

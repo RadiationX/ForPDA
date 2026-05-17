@@ -3,11 +3,12 @@ package forpdateam.ru.forpda.model.data.remote.api.checker
 import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.entity.remote.checker.UpdateDataJson
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 27.01.18.
  */
-class CheckerParser(
+class CheckerParser @Inject constructor(
     private val json: Json
 ) {
 

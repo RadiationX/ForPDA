@@ -22,10 +22,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.shareIn
 import okhttp3.WebSocket
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-class WebSocketController(
+class WebSocketController @Inject constructor(
     private val webClient: IWebClient,
     private val authHolder: AuthHolder,
     private val networkObserver: NetworkObserver

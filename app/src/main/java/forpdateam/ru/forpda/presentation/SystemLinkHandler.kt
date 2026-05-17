@@ -26,8 +26,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
 import ru.mintrocket.lib.mintpermissions.ext.isGranted
+import javax.inject.Inject
 
-class SystemLinkHandler(
+class SystemLinkHandler @Inject constructor(
     private val context: Context,
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val webClient: IWebClient,

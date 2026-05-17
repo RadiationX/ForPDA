@@ -3,12 +3,13 @@ package forpdateam.ru.forpda.model.data.remote.api.search
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.model.data.remote.IWebClient
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.02.17.
  */
 
-class SearchApi(
+class SearchApi @Inject constructor(
     private val webClient: IWebClient,
     private val searchParser: SearchParser
 ) {

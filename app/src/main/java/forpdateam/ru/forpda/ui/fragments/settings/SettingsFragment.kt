@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.ui.fragments.settings
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
@@ -10,26 +11,30 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.common.Preferences
 import forpdateam.ru.forpda.extensions.coRunCatching
+import forpdateam.ru.forpda.model.AuthHolder
+import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
+import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.ui.activities.SettingsActivity
 import forpdateam.ru.forpda.ui.activities.updatechecker.UpdateCheckerActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 25.12.16.
  */
 
 class SettingsFragment : BaseSettingFragment() {
-    private val authRepository = App.get().Di().authRepository
-    private val authHolder = App.get().Di().authHolder
-    private val mainPreferencesHolder = App.get().Di().mainPreferencesHolder
+    private val authRepository by inject<AuthRepository>()
+    private val authHolder by inject<AuthHolder>()
+    private val mainPreferencesHolder by inject<MainPreferencesHolder>()
+    private val preferences by inject<SharedPreferences>()
     private var logoutJob: Job? = null
 
     @SuppressLint("InflateParams")
@@ -60,7 +65,7 @@ class SettingsFragment : BaseSettingFragment() {
                 AlertDialog.Builder(requireActivity())
                     .setMessage("Подтвердите действие")
                     .setPositiveButton(R.string.ok) { _, _ ->
-                        App.get().Di().preferences.edit().remove("menu_items_sequence").apply()
+                        preferences.edit().remove("menu_items_sequence").apply()
                     }
                     .setNegativeButton(R.string.cancel, null)
                     .show()

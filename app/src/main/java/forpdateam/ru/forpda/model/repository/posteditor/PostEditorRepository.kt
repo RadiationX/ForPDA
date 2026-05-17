@@ -8,12 +8,13 @@ import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
-class PostEditorRepository(
+class PostEditorRepository @Inject constructor(
     private val editPostApi: EditPostApi,
     private val attachmentsApi: AttachmentsApi,
     private val forumUsersCache: ForumUsersCache

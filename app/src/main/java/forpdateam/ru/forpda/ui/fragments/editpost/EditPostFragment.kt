@@ -11,14 +11,13 @@ import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.presentation.editpost.EditPostPresenter
 import forpdateam.ru.forpda.presentation.editpost.EditPostView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 14.01.17.
@@ -32,16 +31,7 @@ class EditPostFragment : TabFragment(), EditPostView {
     private lateinit var attachmentsPopup: AttachmentsPopup
     private var pollPopup: EditPollPopup? = null
 
-    @InjectPresenter
-    lateinit var presenter: EditPostPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): EditPostPresenter = EditPostPresenter(
-        App.get().Di().editPostRepository,
-        App.get().Di().themeTemplate,
-        App.get().Di().router,
-        App.get().Di().errorHandler
-    )
+    private val presenter by quillMoxyPresenter<EditPostPresenter>()
 
     private val filesPicker = registerFilesPicker {
         uploadFiles(it)

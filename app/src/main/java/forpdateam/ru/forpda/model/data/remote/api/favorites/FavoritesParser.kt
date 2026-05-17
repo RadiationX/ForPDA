@@ -8,8 +8,9 @@ import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import ru.radiationx.regexparser.core.RegexMatch
+import javax.inject.Inject
 
-class FavoritesParser(
+class FavoritesParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

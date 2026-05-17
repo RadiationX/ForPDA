@@ -1,21 +1,21 @@
 package forpdateam.ru.forpda.common.webview
 
-import android.annotation.TargetApi
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.net.http.SslError
 import android.os.Build
 import android.util.Base64
 import android.util.Log
-import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.extensions.coRunCatching
+import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
+import forpdateam.ru.forpda.presentation.ILinkHandler
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -25,12 +25,12 @@ import java.util.regex.Pattern
 /**
  * Created by radiationx on 12.09.17.
  */
-open class CustomWebViewClient : WebViewClient() {
+open class CustomWebViewClient(
+    private val avatarRepository: AvatarRepository,
+    private val linkHandler: ILinkHandler
+) : WebViewClient() {
     private val cachePattern: Pattern =
         Pattern.compile("app_cache:avatars\\?(url|nick)=([\\s\\S]*)")
-
-    private val avatarRepository = get().Di().avatarRepository
-    private val linkHandler = get().Di().linkHandler
 
     override fun shouldInterceptRequest(
         view: WebView,
@@ -39,6 +39,7 @@ open class CustomWebViewClient : WebViewClient() {
         return super.shouldInterceptRequest(view, request)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
         val matcher = cachePattern.matcher(url)
         if (matcher.find()) {
@@ -74,7 +75,6 @@ open class CustomWebViewClient : WebViewClient() {
                 return resourceResponse
             } catch (e: Exception) {
                 e.printStackTrace()
-                super.shouldInterceptRequest(view, url)
             }
         }
         return super.shouldInterceptRequest(view, url)
@@ -97,12 +97,12 @@ open class CustomWebViewClient : WebViewClient() {
         return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
     }
 
-    @Suppress("deprecation")
+    @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-        return handleUri(Uri.parse(url))
+        return handleUri(url.toUri())
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
         return handleUri(request.url)
     }
@@ -110,14 +110,6 @@ open class CustomWebViewClient : WebViewClient() {
     open fun handleUri(uri: Uri): Boolean {
         linkHandler.handle(uri.toString(), null)
         return true
-    }
-
-    override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            handler.proceed()
-        } else {
-            super.onReceivedSslError(view, handler, error)
-        }
     }
 
     companion object {

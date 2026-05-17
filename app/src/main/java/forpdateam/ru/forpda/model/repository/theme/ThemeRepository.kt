@@ -4,12 +4,13 @@ import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.cache.history.HistoryCache
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 15.03.18.
  */
 
-class ThemeRepository(
+class ThemeRepository @Inject constructor(
     private val themeApi: ThemeApi,
     private val historyCache: HistoryCache,
     private val forumUsersCache: ForumUsersCache

@@ -13,8 +13,9 @@ import forpdateam.ru.forpda.model.data.db.FavoriteTopicsDao
 import forpdateam.ru.forpda.model.data.db.FavoritesDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class FavoritesCache(
+class FavoritesCache @Inject constructor(
     private val favoritesDao: FavoritesDao,
     private val favoriteIdsDao: FavoriteIdsDao,
     private val favoriteTopicsDao: FavoriteTopicsDao,

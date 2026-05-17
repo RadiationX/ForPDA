@@ -13,13 +13,12 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import forpdateam.ru.forpda.App
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.ui.views.CodeEditor
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.AdvancedPopup
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
@@ -29,6 +28,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 07.01.17.
@@ -74,7 +74,7 @@ class MessagePanel(
     private var fullForm = false
     private var params: CoordinatorLayout.LayoutParams? = null
     private var isMonospace = true
-    private val mainPreferencesHolder = get().Di().mainPreferencesHolder
+    private val mainPreferencesHolder by inject<MainPreferencesHolder>()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     init {

@@ -10,12 +10,13 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 25.03.17.
  */
 
-class AuthApi(
+class AuthApi @Inject constructor(
     private val webClient: IWebClient,
     private val authParser: AuthParser,
     private val authHolder: AuthHolder

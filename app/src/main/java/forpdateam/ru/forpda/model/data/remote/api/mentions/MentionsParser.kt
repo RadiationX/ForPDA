@@ -6,8 +6,9 @@ import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import javax.inject.Inject
 
-class MentionsParser(
+class MentionsParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

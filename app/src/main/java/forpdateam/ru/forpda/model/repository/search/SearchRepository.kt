@@ -5,12 +5,13 @@ import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.search.SearchApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
-class SearchRepository(
+class SearchRepository @Inject constructor(
     private val searchApi: SearchApi,
     private val forumUsersCache: ForumUsersCache
 ) {

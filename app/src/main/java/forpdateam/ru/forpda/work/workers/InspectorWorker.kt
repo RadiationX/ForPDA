@@ -3,7 +3,8 @@ package forpdateam.ru.forpda.work.workers
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import forpdateam.ru.forpda.App
+import forpdateam.ru.forpda.model.interactors.events.EventsController
+import ru.radiationx.quill.get
 
 class InspectorWorker(
     appContext: Context,
@@ -11,7 +12,7 @@ class InspectorWorker(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        val eventsController = App.get().Di().eventsController
+        val eventsController = applicationContext.get<EventsController>()
         eventsController.start()
         eventsController.checkEvents()
         return Result.success()

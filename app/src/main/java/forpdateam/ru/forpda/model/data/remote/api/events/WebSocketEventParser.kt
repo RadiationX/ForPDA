@@ -3,11 +3,12 @@ package forpdateam.ru.forpda.model.data.remote.api.events
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.extensions.mapOnce
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.07.17.
  */
-class WebSocketEventParser {
+class WebSocketEventParser @Inject constructor() {
 
     fun parseWebSocketEvent(message: String): WebSocketEvent? {
         return webSocketEventPattern.matcher(message).mapOnce { matcher ->

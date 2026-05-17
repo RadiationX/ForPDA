@@ -6,12 +6,13 @@ import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 01.01.18.
  */
 
-class FavoritesRepository(
+class FavoritesRepository @Inject constructor(
     private val favoritesApi: FavoritesApi,
     private val favoritesCache: FavoritesCache
 ) {

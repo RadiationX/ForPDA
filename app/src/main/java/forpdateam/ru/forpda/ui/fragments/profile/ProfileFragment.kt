@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
 import com.google.android.material.appbar.AppBarLayout
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.BitmapUtils
 import forpdateam.ru.forpda.common.LinkMovementMethod
@@ -27,6 +26,9 @@ import forpdateam.ru.forpda.databinding.FragmentProfileBinding
 import forpdateam.ru.forpda.databinding.ToolbarProfileBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.extensions.coRunCatching
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.model.AuthHolder
+import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.profile.ProfilePresenter
 import forpdateam.ru.forpda.presentation.profile.ProfileView
 import forpdateam.ru.forpda.ui.activities.MainActivity
@@ -38,8 +40,7 @@ import forpdateam.ru.forpda.ui.views.ScrimHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 03.08.16.
@@ -70,8 +71,8 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
 
     private lateinit var adapter: ProfileAdapter
 
-    private val authHolder = App.get().Di().authHolder
-    private val linkHandler = App.get().Di().linkHandler
+    private val authHolder by inject<AuthHolder>()
+    private val linkHandler by inject<ILinkHandler>()
 
     private var isResume = false
     private var isScrim = false
@@ -79,17 +80,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
     private var lastBlurWidth = 0
     private var lastBlurHeight = 0
 
-    @InjectPresenter
-    lateinit var presenter: ProfilePresenter
-
-    @ProvidePresenter
-    fun providePresenter(): ProfilePresenter = ProfilePresenter(
-        App.get().Di().profileRepository,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<ProfilePresenter>()
 
     init {
         configuration.isFitSystemWindow = true
@@ -217,6 +208,10 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
 
     override fun onStatClick(item: ProfileModel.Stat) {
         presenter.onStatClick(item)
+    }
+
+    override fun onLinkClick(url: String?) {
+        linkHandler.handle(url, null)
     }
 
     override fun onSaveNote(success: Boolean) {

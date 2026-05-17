@@ -9,12 +9,13 @@ import forpdateam.ru.forpda.model.data.remote.IWebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 10.01.17.
  */
 
-class EditPostApi(
+class EditPostApi @Inject constructor(
     private val webClient: IWebClient,
     private val editPostParser: EditPostParser,
     private val attachmentsParser: AttachmentsParser,

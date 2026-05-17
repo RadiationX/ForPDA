@@ -3,8 +3,9 @@ package forpdateam.ru.forpda.presentation.articles.detail
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.ui.TemplateManager
+import javax.inject.Inject
 
-class ArticleTemplate(
+class ArticleTemplate @Inject constructor(
     private val templateManager: TemplateManager
 ) {
 

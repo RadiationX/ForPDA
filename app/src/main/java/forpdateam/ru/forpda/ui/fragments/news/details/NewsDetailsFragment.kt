@@ -21,6 +21,7 @@ import forpdateam.ru.forpda.databinding.FragmentArticleBinding
 import forpdateam.ru.forpda.databinding.ToolbarNewsDetailsBinding
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailView
@@ -32,8 +33,9 @@ import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.ScrimHelper
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
+import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.quillModule
 
 /**
  * Created by isanechek on 8/19/17.
@@ -67,41 +69,27 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
     private var isResume = false
     private var isScrim = false
 
-    private val interactor = ArticleInteractor(
-        ArticleInteractor.InitData(),
-        App.get().Di().newsRepository,
-        App.get().Di().articleTemplate
-    )
+    private val interactor by inject<ArticleInteractor>()
 
-    @InjectPresenter
-    lateinit var presenter: ArticleDetailPresenter
-
-    fun provideChildInteractor(): ArticleInteractor {
-        return interactor
-    }
+    private val presenter by quillMoxyPresenter<ArticleDetailPresenter>()
 
     fun getAppBar() = appBarLayout
-
-    public override fun attachWebView(webView: ExtendedWebView) {
-        super.attachWebView(webView)
-    }
-
-    @ProvidePresenter
-    fun providePresenter(): ArticleDetailPresenter = ArticleDetailPresenter(
-        interactor,
-        App.get().Di().router,
-        App.get().Di().linkHandler,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_news)
         configuration.isFitSystemWindow = true
     }
 
+    public override fun attachWebView(webView: ExtendedWebView) {
+        super.attachWebView(webView)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installModules(quillModule {
+            instance(ArticleInteractor.InitData())
+            single<ArticleInteractor>()
+        })
         Log.e("lalala", "onCreate " + this + " : " + arguments)
         arguments?.apply {
             interactor.initData.newsUrl = getString(ARG_NEWS_URL)

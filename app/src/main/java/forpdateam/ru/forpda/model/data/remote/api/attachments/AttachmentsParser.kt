@@ -7,8 +7,9 @@ import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import ru.radiationx.regexparser.core.RegexMatch
 import java.text.DecimalFormat
+import javax.inject.Inject
 
-class AttachmentsParser(
+class AttachmentsParser @Inject constructor(
     private val patternProvider: PatternProvider
 ) : BaseParser() {
 

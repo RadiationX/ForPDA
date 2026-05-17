@@ -15,6 +15,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerTopScroller
@@ -26,8 +27,6 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 /**
  * Created by radiationx on 08.08.17.
@@ -52,16 +51,7 @@ class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
     private lateinit var topScroller: RecyclerTopScroller
 
 
-    @InjectPresenter
-    lateinit var presenter: DevicesPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): DevicesPresenter = DevicesPresenter(
-        App.get().Di().devDbRepository,
-        App.get().Di().router,
-        App.get().Di().errorHandler,
-        App.get().Di().utils
-    )
+    private val presenter by quillMoxyPresenter<DevicesPresenter>()
 
     init {
         configuration.defaultTitle = App.get().getString(R.string.fragment_title_brand)

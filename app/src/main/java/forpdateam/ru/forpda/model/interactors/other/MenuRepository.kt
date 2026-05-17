@@ -12,8 +12,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-class MenuRepository(
+class MenuRepository @Inject constructor(
     private val preferences: FlowPreferences,
     private val authHolder: AuthHolder,
     private val countersHolder: CountersHolder

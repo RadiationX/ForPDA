@@ -2,8 +2,9 @@ package forpdateam.ru.forpda.presentation.forumrules
 
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.ui.TemplateManager
+import javax.inject.Inject
 
-class ForumRulesTemplate(
+class ForumRulesTemplate @Inject constructor(
     private val templateManager: TemplateManager
 ) {
 

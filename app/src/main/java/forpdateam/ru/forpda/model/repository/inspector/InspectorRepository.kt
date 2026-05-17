@@ -5,8 +5,9 @@ import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorMention
 import forpdateam.ru.forpda.model.data.remote.api.inspector.InspectorApi
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
+import javax.inject.Inject
 
-class InspectorRepository(
+class InspectorRepository @Inject constructor(
     private val inspectorApi: InspectorApi,
     private val preferences: NotificationPreferencesHolder
 ) {

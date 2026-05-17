@@ -13,10 +13,10 @@ import androidx.core.view.doOnLayout
 import androidx.viewpager.widget.ViewPager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.chrisbanes.photoview.OnPhotoTapListener
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.databinding.ActivityImgViewerBinding
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 24.05.17.
@@ -30,6 +30,7 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
     private val names = mutableListOf<String>()
     private var currentIndex = 0
     private val adapter: ImageViewerAdapter = ImageViewerAdapter()
+    private val utils by inject<Utils>()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.ImageViewTheme)
@@ -55,7 +56,7 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
         }
 
         currentImages.addAll(extUrls)
-        names.addAll(currentImages.map { App.get().Di().utils.getFileNameFromUrl(it) })
+        names.addAll(currentImages.map { utils.getFileNameFromUrl(it) })
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_INDEX_KEY)) {
             currentIndex = savedInstanceState.getInt(SELECTED_INDEX_KEY, 0)

@@ -12,8 +12,9 @@ import forpdateam.ru.forpda.model.repository.temp.TempHelper
 import forpdateam.ru.forpda.ui.TemplateManager
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class ThemeTemplate(
+class ThemeTemplate @Inject constructor(
     private val templateManager: TemplateManager,
     private val authHolder: AuthHolder,
     private val topicPreferencesHolder: TopicPreferencesHolder

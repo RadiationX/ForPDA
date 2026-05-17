@@ -5,12 +5,13 @@ import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.data.cache.forum.ForumCache
 import forpdateam.ru.forpda.model.data.remote.api.forum.ForumApi
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 03.01.18.
  */
 
-class ForumRepository(
+class ForumRepository @Inject constructor(
     private val forumApi: ForumApi,
     private val forumCache: ForumCache
 ) {

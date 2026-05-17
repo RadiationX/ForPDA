@@ -10,12 +10,12 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.AppBuildConfig
 import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.immutableFlag
+import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -31,12 +31,16 @@ import ru.mintrocket.lib.mintpermissions.ext.isGranted
 class SimpleUpdateChecker(
     private val context: Context,
     private val checkerRepository: CheckerRepository,
-    private val permissionsController: MintPermissionsController
+    private val permissionsController: MintPermissionsController,
+    private val notificationPreferencesHolder: NotificationPreferencesHolder
 ) {
 
     private var checkJob: Job? = null
 
     fun checkUpdate() {
+        if (!notificationPreferencesHolder.updateEnabled.get()) {
+            return
+        }
         cancel()
         checkJob = GlobalScope.launch(Dispatchers.Main) {
             coRunCatching {

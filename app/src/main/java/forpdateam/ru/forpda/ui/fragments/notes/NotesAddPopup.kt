@@ -9,13 +9,14 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
+import forpdateam.ru.forpda.model.repository.note.NotesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import ru.radiationx.quill.inject
 
 /**
  * Created by radiationx on 06.09.17.
@@ -28,7 +29,7 @@ class NotesAddPopup(context: Context, item: NoteItem?) {
     private val linkField: EditText
     private val contentField: EditText
     private var editingMode = false
-    private val notesRepository = get().Di().notesRepository
+    private val notesRepository by context.inject<NotesRepository>()
     private var saveJob: Job? = null
 
     init {

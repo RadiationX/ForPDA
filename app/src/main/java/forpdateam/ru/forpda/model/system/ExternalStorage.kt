@@ -14,8 +14,9 @@ import ru.mintrocket.lib.mintpermissions.MintPermissionsController
 import ru.mintrocket.lib.mintpermissions.ext.isGranted
 import java.io.File
 import java.io.InputStream
+import javax.inject.Inject
 
-class ExternalStorage(
+class ExternalStorage @Inject constructor(
     private val context: Context,
     private val permissionsController: MintPermissionsController
 ) : ExternalStorageProvider {
