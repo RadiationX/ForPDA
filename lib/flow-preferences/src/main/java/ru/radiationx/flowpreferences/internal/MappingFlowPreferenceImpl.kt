@@ -1,15 +1,16 @@
-package ru.radiationx.flowpreferences
+package ru.radiationx.flowpreferences.internal
 
 import kotlinx.coroutines.flow.FlowCollector
+import ru.radiationx.flowpreferences.core.FlowPreference
 
-class MappingFlowPreferenceImpl<T, R>(
+internal class MappingFlowPreferenceImpl<T, R>(
     private val flowPreference: FlowPreference<T>,
     private val transformGet: (T) -> R,
     private val transformSet: (R) -> T
 ) : FlowPreference<R> {
 
     private val transformedFlow by lazy {
-        TransformStateFlow(flowPreference, transformGet)
+        TransformStateFlowImpl(flowPreference, transformGet)
     }
 
     override fun get(): R {

@@ -1,4 +1,4 @@
-package ru.radiationx.flowpreferences
+package ru.radiationx.flowpreferences.core
 
 import kotlinx.coroutines.flow.StateFlow
 

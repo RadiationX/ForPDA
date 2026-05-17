@@ -1,4 +1,4 @@
-package ru.radiationx.flowpreferences
+package ru.radiationx.flowpreferences.core
 
 sealed interface PreferenceValue {
     data object Null : PreferenceValue

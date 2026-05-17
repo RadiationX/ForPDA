@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.model
 import android.content.Context
 import forpdateam.ru.forpda.common.di.DataPreferences
 import ru.radiationx.flowpreferences.FlowPreferences
-import ru.radiationx.flowpreferences.mapping
+import ru.radiationx.flowpreferences.ext.mapping
 import forpdateam.ru.forpda.entity.remote.checker.PatternsDataJson
 import kotlinx.serialization.json.Json
 import javax.inject.Inject

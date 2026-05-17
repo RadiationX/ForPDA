@@ -6,7 +6,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import forpdateam.ru.forpda.common.Preferences
 import ru.radiationx.flowpreferences.FlowPreferences
-import ru.radiationx.flowpreferences.mapping
+import ru.radiationx.flowpreferences.ext.mapping
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow

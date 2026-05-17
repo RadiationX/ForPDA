@@ -1,10 +1,10 @@
-package ru.radiationx.flowpreferences
+package ru.radiationx.flowpreferences.internal
 
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class TransformStateFlow<T, R>(
+internal class TransformStateFlowImpl<T, R>(
     private val parent: StateFlow<T>,
     private val transform: (T) -> R
 ) : StateFlow<R> {

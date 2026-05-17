@@ -2,8 +2,8 @@ package forpdateam.ru.forpda.client
 
 import android.util.Log
 import ru.radiationx.flowpreferences.FlowPreferences
-import ru.radiationx.flowpreferences.PreferenceValue
-import ru.radiationx.flowpreferences.mapping
+import ru.radiationx.flowpreferences.core.PreferenceValue
+import ru.radiationx.flowpreferences.ext.mapping
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.Cookie
 import okhttp3.HttpUrl

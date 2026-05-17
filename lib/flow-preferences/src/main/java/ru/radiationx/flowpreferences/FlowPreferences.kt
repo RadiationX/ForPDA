@@ -7,6 +7,19 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.shareIn
+import ru.radiationx.flowpreferences.core.FlowPreference
+import ru.radiationx.flowpreferences.core.FlowPreferenceMap
+import ru.radiationx.flowpreferences.core.PreferenceAdapter
+import ru.radiationx.flowpreferences.core.PreferenceValue
+import ru.radiationx.flowpreferences.internal.FlowPreferenceImpl
+import ru.radiationx.flowpreferences.internal.FlowPreferenceMapImpl
+import ru.radiationx.flowpreferences.internal.adapters.BooleanPreferenceAdapter
+import ru.radiationx.flowpreferences.internal.adapters.EnumPreferenceAdapter
+import ru.radiationx.flowpreferences.internal.adapters.FloatPreferenceAdapter
+import ru.radiationx.flowpreferences.internal.adapters.IntPreferenceAdapter
+import ru.radiationx.flowpreferences.internal.adapters.LongPreferenceAdapter
+import ru.radiationx.flowpreferences.internal.adapters.StringPreferenceAdapter
+import ru.radiationx.flowpreferences.internal.adapters.StringSetPreferenceAdapter
 
 class FlowPreferences(
     private val coroutineScope: CoroutineScope,
@@ -27,7 +40,7 @@ class FlowPreferences(
         return FlowPreferenceMapImpl(preferences, keysFilter, keysFlow)
     }
 
-    fun <T> get(key: String, default: T, adapter: FlowPreferenceAdapter<T>): FlowPreference<T> {
+    fun <T> get(key: String, default: T, adapter: PreferenceAdapter<T>): FlowPreference<T> {
         return FlowPreferenceImpl(coroutineScope, preferences, key, default, adapter, keysFlow)
     }
 

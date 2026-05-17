@@ -1,4 +1,4 @@
-package ru.radiationx.flowpreferences
+package ru.radiationx.flowpreferences.internal
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
@@ -10,9 +10,11 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import ru.radiationx.flowpreferences.core.FlowPreferenceMap
+import ru.radiationx.flowpreferences.core.PreferenceValue
 import kotlin.time.Duration.Companion.seconds
 
-class FlowPreferenceMapImpl(
+internal class FlowPreferenceMapImpl(
     private val preferences: SharedPreferences,
     private val keysFilter: ((String) -> Boolean)?,
     private val keysFlow: Flow<String?>
@@ -28,7 +30,7 @@ class FlowPreferenceMapImpl(
                 }
             }
             .map { loadAll() }
-            .stateIn(GlobalScope, SharingStarted.WhileSubscribed(1.seconds), loadAll())
+            .stateIn(GlobalScope, SharingStarted.Companion.WhileSubscribed(1.seconds), loadAll())
     }
 
     override fun get(): Map<String, PreferenceValue> {

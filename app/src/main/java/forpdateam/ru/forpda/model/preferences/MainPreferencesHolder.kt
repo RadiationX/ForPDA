@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.model.preferences
 
 import forpdateam.ru.forpda.common.Preferences
 import ru.radiationx.flowpreferences.FlowPreferences
-import ru.radiationx.flowpreferences.mapping
+import ru.radiationx.flowpreferences.ext.mapping
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min

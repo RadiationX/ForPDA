@@ -1,6 +1,10 @@
-package ru.radiationx.flowpreferences
+package ru.radiationx.flowpreferences.ext
 
 import kotlinx.coroutines.flow.Flow
+import ru.radiationx.flowpreferences.core.FlowPreference
+import ru.radiationx.flowpreferences.core.FlowPreferenceMap
+import ru.radiationx.flowpreferences.internal.MappingFlowPreferenceImpl
+import ru.radiationx.flowpreferences.internal.MappingFlowPreferenceMapImpl
 
 fun <T, R> FlowPreference<T>.mapping(
     transformGet: (T) -> R,
