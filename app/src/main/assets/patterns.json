@@ -127,6 +127,10 @@
         {
           "key": "check_action",
           "value": "<div style=\"[^\"]*background:#dff0d8[^\"]*\">[\\s\\S]*<div id=\"navstrip"
+        },
+        {
+          "key": "sorting",
+          "value": "<div class=\"forum_sort\"[^>]*?>[\\s\\S]*?<select name=\"sort_key\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>[\\s\\S]*?<select name=\"sort_by\">[\\s\\S]*?<option value=\"([^\"]*?)\" selected(?:=\"selected\")?[^>]*?>"
         }
       ]
     },

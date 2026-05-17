@@ -5,6 +5,8 @@ import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting.Key
+import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting.Order
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import ru.radiationx.regexparser.core.RegexMatch
@@ -25,7 +27,7 @@ class FavoritesParser @Inject constructor(
         return FavoritesData(
             items = list,
             pagination = Pagination.parseForum(response),
-            sorting = Sorting.parse(response)
+            sorting = parseSorting(response)
         )
     }
 
@@ -34,6 +36,23 @@ class FavoritesParser @Inject constructor(
             .getRegexParser(scope.scope, scope.check_action)
             .mapOnce(result) { true }
             ?: false
+    }
+
+    private fun parseSorting(response: String): Sorting {
+        val sorting = Sorting()
+        patternProvider
+            .getRegexParser(scope.scope, scope.sorting)
+            .findOnce(response) {
+                when (it.require(1)) {
+                    Key.LAST_POST -> sorting.key = Key.LAST_POST
+                    Key.TITLE -> sorting.key = Key.TITLE
+                }
+                when (it.require(2)) {
+                    Order.DESC -> sorting.order = Order.DESC
+                    Order.ASC -> sorting.order = Order.ASC
+                }
+            }
+        return sorting
     }
 
     private fun parseFavorite(match: RegexMatch): Favorite {

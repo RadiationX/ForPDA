@@ -46,6 +46,7 @@ object ParserPatterns {
         const val scope = "favorites"
         const val main = "main"
         const val check_action = "check_action"
+        const val sorting = "sorting"
     }
 
     object Forum {
