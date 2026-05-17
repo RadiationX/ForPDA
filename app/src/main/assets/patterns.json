@@ -375,6 +375,22 @@
         {
           "key": "attached_images",
           "value": "(4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?"
+        },
+        {
+          "key": "report_post_error",
+          "value": "<div class=\"errorwrap\">\\n\\s*<h4>Причина:<\\/h4>\\n\\s*\\n\\s*<p>(.*)<\\/p>"
+        },
+        {
+          "key": "vote_post_result",
+          "value": "ok:\\s*?((?:\\+|\\-)?\\d+)"
+        },
+        {
+          "key": "vote_post_already_voted",
+          "value": "evote"
+        },
+        {
+          "key": "delete_post_success",
+          "value": "ok"
         }
       ]
     },

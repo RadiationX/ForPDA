@@ -130,6 +130,10 @@ object ParserPatterns {
         const val poll_question_item = "poll_question_item"
         const val poll_buttons = "poll_buttons"
         const val attached_images = "attached_images"
+        const val report_post_error = "report_post_error"
+        const val vote_post_result = "vote_post_result"
+        const val vote_post_already_voted = "vote_post_already_voted"
+        const val delete_post_success = "delete_post_success"
     }
 
     object Topics {

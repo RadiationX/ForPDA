@@ -29,56 +29,28 @@ class ThemeApi @Inject constructor(
             .formHeader("message", URLEncoder.encode(message, "windows-1251"), true)
             .build()
         val response = webClient.request(request)
-        val p = Pattern.compile(
-            "<div class=\"errorwrap\">\n" +
-                    "\\s*<h4>Причина:</h4>\n" +
-                    "\\s*\n" +
-                    "\\s*<p>(.*)</p>", Pattern.MULTILINE
-        )
-        val m = p.matcher(response.body)
-        if (m.find()) {
-            throw Exception("Ошибка отправки жалобы: " + m.group(1))
+        themeParser.parseReportPostError(response.body)?.also {
+            throw Exception("Ошибка отправки жалобы: $it")
         }
     }
 
     suspend fun deletePost(postId: Int) {
-        val url =
-            "https://4pda.to/forum/index.php?act=zmod&auth_key=${authHolder.getAuthKey().orEmpty()}&code=postchoice&tact=delete&selectedpids=$postId"
+        val authKey = authHolder.getAuthKey().orEmpty()
+        val url = "https://4pda.to/forum/index.php?act=zmod&auth_key=${authKey}&code=postchoice&tact=delete&selectedpids=$postId"
         val response = webClient.request(NetworkRequest.Builder().url(url).xhrHeader().build())
-        val body = response.body
-        if (body != "ok") {
-            throw Exception("Ошибка изменения репутации поста")
+        if (!themeParser.checkDeletePostSuccess(response.body)) {
+            throw Exception("Ошибка удалении поста")
         }
     }
 
-    suspend  fun votePost(postId: Int, type: Boolean): String {
-        val response =
-            webClient.get("https://4pda.to/forum/zka.php?i=$postId&v=${if (type) "1" else "-1"}")
-        var result: String? = null
-
-        val alreadyVote = "Ошибка: Вы уже голосовали за это сообщение"
-
-        val m = Pattern.compile("ok:\\s*?((?:\\+|\\-)?\\d+)").matcher(response.body)
-        if (m.find()) {
-            val code = m.group(1).toInt()
-            when (code) {
-                0 -> result = alreadyVote
-                1 -> result = "Репутация поста повышена"
-                -1 -> result = "Репутация поста понижена"
-            }
+    suspend fun votePost(postId: Int, type: Boolean): String {
+        val response = webClient.get("https://4pda.to/forum/zka.php?i=$postId&v=${if (type) "1" else "-1"}")
+        val code = themeParser.parseVotePostResult(response.body)
+        return when (code) {
+            -1 -> "Репутация поста понижена"
+            0 -> "Ошибка: Вы уже голосовали за это сообщение"
+            1 -> "Репутация поста повышена"
+            else -> throw Exception("Ошибка изменения репутации поста")
         }
-        if (response.body == "evote") {
-            result = alreadyVote
-        }
-        if (result == null) {
-            throw Exception("Ошибка изменения репутации поста")
-        }
-        return result
-    }
-
-    companion object {
-        val elemToScrollPattern = Pattern.compile("(?:anchor=|#)([^&\\n\\=\\?\\.\\#]*)")
-        val attachImagesPattern =
-            Pattern.compile("(4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/[^\"']*?\\.(?:jpe?g|png|gif|bmp))\"?(?:[^>]*?title=\"([^\"']*?\\.(?:jpe?g|png|gif|bmp)) - [^\"']*?\")?")
     }
 }

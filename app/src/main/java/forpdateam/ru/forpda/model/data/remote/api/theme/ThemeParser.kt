@@ -30,9 +30,7 @@ class ThemeParser @Inject constructor(
         var title = ""
         var desc = ""
         var favId: Int? = null
-        val anchors = patternProvider
-            .getRegexParser(scope.scope, scope.scroll_anchor)
-            .map(argUrl) { it.require(1) }
+        val anchors = parseAnchors(argUrl)
 
         patternProvider
             .getRegexParser(scope.scope, scope.topic_id)
@@ -90,11 +88,7 @@ class ThemeParser @Inject constructor(
         .map(response) { matcher ->
             val number = matcher.require(6).toInt()
             val body = matcher.require(21)
-            val attachImages = patternProvider
-                .getRegexParser(scope.scope, scope.attached_images)
-                .map(body) {
-                    Pair("https://${it.require(1)}", it.require(2))
-                }
+            val attachImages = parseAttachedImages(body)
             val forumPost = ForumPost(
                 topicId = id,
                 id = matcher.require(1).toInt(),
@@ -183,5 +177,49 @@ class ThemeParser @Inject constructor(
                 questions = questions
             )
         }
+
+
+    fun parseAnchors(url: String): List<String> {
+        return patternProvider
+            .getRegexParser(scope.scope, scope.scroll_anchor)
+            .map(url) { it.require(1) }
+    }
+
+    fun parseAttachedImages(text: String): List<Pair<String, String>> {
+        return patternProvider
+            .getRegexParser(scope.scope, scope.attached_images)
+            .map(text) {
+                Pair("https://${it.require(1)}", it.require(2))
+            }
+    }
+
+    fun parseReportPostError(response: String): String? {
+        return patternProvider
+            .getRegexParser(scope.scope, scope.report_post_error)
+            .mapOnce(response) { it.require(1) }
+    }
+
+    fun parseVotePostResult(response: String): Int? {
+        val codeResult = patternProvider
+            .getRegexParser(scope.scope, scope.vote_post_result)
+            .mapOnce(response) { it.require(1).toInt() }
+        if (codeResult != null) {
+            return codeResult
+        }
+        val alreadyVoted = patternProvider
+            .getRegexParser(scope.scope, scope.vote_post_already_voted)
+            .mapOnce(response) { true }
+        if (alreadyVoted != null) {
+            return 0
+        }
+        return null
+    }
+
+    fun checkDeletePostSuccess(response: String): Boolean {
+        return patternProvider
+            .getRegexParser(scope.scope, scope.delete_post_success)
+            .mapOnce(response) { true }
+            ?: false
+    }
 
 }

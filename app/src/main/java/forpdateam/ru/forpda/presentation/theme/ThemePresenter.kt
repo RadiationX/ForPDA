@@ -20,6 +20,7 @@ import forpdateam.ru.forpda.extensions.replaceAt
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
+import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
@@ -67,7 +68,8 @@ class ThemePresenter(
     private val router: TabRouter,
     private val linkHandler: LinkHandler,
     private val errorHandler: ErrorHandler,
-    private val utils: Utils
+    private val utils: Utils,
+    private val themeParser: ThemeParser
 ) : BasePresenter<ThemeView>(), IThemePresenter {
 
     var loadAction = ActionState.NORMAL
@@ -574,12 +576,7 @@ class ThemePresenter(
                         }
                         Log.d(LOG_TAG, "param postId: $postId")
                         if (postId != null && getPostById(Integer.parseInt(postId.trim { it <= ' ' })) != null) {
-                            val matcher = ThemeApi.elemToScrollPattern.matcher(url)
-                            var elem: String? = null
-                            while (matcher.find()) {
-                                elem = matcher.group(1)
-                            }
-                            Log.d(LOG_TAG, " scroll to $postId : $elem")
+                            val elem = themeParser.parseAnchors(url).lastOrNull()
                             val finalAnchor = (if (elem == null) "entry" else "") + (elem ?: postId)
                             if (topicPreferencesHolder.anchorHistory.get()) {
                                 currentPage = currentPage?.let {
@@ -597,7 +594,7 @@ class ThemePresenter(
                 }
             }
 
-            if (ThemeApi.attachImagesPattern.matcher(url).find()) {
+            if (themeParser.parseAttachedImages(url).isNotEmpty()) {
                 currentPage?.let {
                     for (post in it.posts) {
                         for (image in post.attachImages) {
