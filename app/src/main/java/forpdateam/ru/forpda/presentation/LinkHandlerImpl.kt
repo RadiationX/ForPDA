@@ -3,9 +3,9 @@ package forpdateam.ru.forpda.presentation
 import android.net.Uri
 import android.util.Log
 import forpdateam.ru.forpda.common.MimeTypeUtil
+import forpdateam.ru.forpda.model.data.remote.api.common.LinkHandlerParser
 import java.net.URLDecoder
 import java.util.Locale
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**
@@ -13,23 +13,13 @@ import javax.inject.Inject
  */
 class LinkHandlerImpl @Inject constructor(
     private val systemLinkHandler: SystemLinkHandler,
-    private val router: TabRouter
+    private val router: TabRouter,
+    private val linkHandlerParser: LinkHandlerParser
 ) : LinkHandler {
 
     companion object {
         const val LOG_TAG = "LinkHandler"
     }
-
-    private val forumMediaPattern by lazy { Pattern.compile("https?:\\/\\/4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))") }
-
-    private val supportImagePattern by lazy { Pattern.compile("\\/\\/.*?(4pda\\.to|4pda\\.(?:ru|to)|ggpht\\.com|googleusercontent\\.com|windowsphone\\.com|mzstatic\\.com|savepic\\.net|savepice\\.ru|savepic\\.ru|.*?\\.ibb\\.com?)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)") }
-
-    private val forumLofiPattern by lazy { Pattern.compile("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)\\/forum\\/lofiversion\\/[^\\?]*?\\?(t|f)(\\d+)(?:-(\\d+))?") }
-
-    private val baseFourPdaPattern by lazy { Pattern.compile("(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*") }
-
-    private val sitePattern by lazy { Pattern.compile("https?:\\/\\/4pda\\.(?:ru|to)\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/|[\\w\\/]*?\\/?(newer|older)\\/)(\\d+)(?:\\/#comment(\\d+))?") }
-
 
     private fun handleDownload(url: String, name: String? = null) {
         systemLinkHandler.handleDownload(url, name)
@@ -70,7 +60,7 @@ class LinkHandlerImpl @Inject constructor(
         }
         url = normalizeForumUrl(url)
 
-        if (baseFourPdaPattern.matcher(url).matches()) {
+        if (linkHandlerParser.basicMatches(url)) {
             val uri = Uri.parse(url.lowercase(Locale.getDefault()))
             Log.d(LOG_TAG, "Compare uri/url " + uri.toString() + " : " + url)
 
@@ -210,14 +200,12 @@ class LinkHandlerImpl @Inject constructor(
     }
 
     private fun handleSite(uri: Uri, router: TabRouter?, args: Map<String, String?>): Boolean {
-        val matcher = sitePattern.matcher(uri.toString())
-        if (matcher.find()) {
+        val site = linkHandlerParser.site(uri.toString())
+        if (site != null) {
             navigateTo(Screen.ArticleDetail().apply {
-                matcher.group(2)?.also {
-                    articleId = it.toInt()
-                }
-                matcher.group(3)?.also {
-                    commentId = it.toInt()
+                articleId = site.articleId
+                if (site.commentId != null) {
+                    commentId = site.commentId
                 }
                 articleUrl = uri.toString()
             }, router, args)
@@ -280,25 +268,19 @@ class LinkHandlerImpl @Inject constructor(
     }
 
     private fun handleMedia(url: String, router: TabRouter?, args: Map<String, String?>): Boolean {
-        val matcher = forumMediaPattern.matcher(url)
-        if (matcher.find()) {
-            var fullName = matcher.group(1)
-            try {
-                fullName = URLDecoder.decode(fullName, "CP1251")
-            } catch (ignore: Exception) {
-            }
-
-            val extension = matcher.group(2)
-            val isImage = MimeTypeUtil.isImage(extension)
+        val forumMedia = linkHandlerParser.forumMedia(url)
+        if (forumMedia != null) {
+            val isImage = MimeTypeUtil.isImage(forumMedia.extension)
             if (isImage) {
                 navigateTo(Screen.ImageViewer().apply {
                     urls.add(url)
                 }, router, args)
             } else {
-                handleDownload(url, fullName)
+                handleDownload(url, forumMedia.fileName)
             }
             return true
-        } else if (supportImagePattern.matcher(url).find()) {
+        }
+        if (linkHandlerParser.isSupportImage(url)) {
             navigateTo(Screen.ImageViewer().apply {
                 urls.add(url)
             }, router, args)
@@ -308,20 +290,20 @@ class LinkHandlerImpl @Inject constructor(
     }
 
     private fun normalizeForumUrl(inputUrl: String): String {
-        val matcher = forumLofiPattern.matcher(inputUrl)
-        if (matcher.find()) {
-            var url = "https://4pda.to/forum/index.php?"
-
-            url += when (matcher.group(1)) {
-                "t" -> "showtopic="
-                "f" -> "showforum="
-                else -> ""
-            } + matcher.group(2)
-
-            matcher.group(3)?.also {
-                url += "&st=$it"
+        val forumLoFi = linkHandlerParser.forumLoFi(inputUrl)
+        if (forumLoFi != null) {
+            return buildString {
+                append("https://4pda.to/forum/index.php?")
+                when (forumLoFi.type) {
+                    "t" -> append("showtopic=")
+                    "f" -> append("showforum=")
+                }
+                append(forumLoFi.id)
+                if (forumLoFi.st != null) {
+                    append("&st=")
+                    append(forumLoFi.st)
+                }
             }
-            return url
         }
         return inputUrl
     }

@@ -2,11 +2,88 @@
   "version": 31,
   "scopes": [
     {
-      "scope":"global",
-      "patterns":[
+      "scope": "global",
+      "patterns": [
         {
-          "key":"meta_tags",
-          "value":"<meta[^>]*?property=\"([^:]*?):([^\"]*?)\"[^>]*?content=\"([^>]*?)\"[^>]*?>"
+          "key": "meta_tags",
+          "value": "<meta[^>]*?property=\"([^:]*?):([^\"]*?)\"[^>]*?content=\"([^>]*?)\"[^>]*?>"
+        },
+        {
+          "key": "counters",
+          "value": "act=mentions\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?act=fav[^\"]*?\" (?:data-count=\"(\\d+)\")?[^>]*?[\\s\\S]*?span id=\"events-count\"[\\s\\S]*?(?:data-count=\"(\\d+)\")"
+        },
+        {
+          "key": "forum_error",
+          "value": "^[\\s\\S]*?wr va-m text\">([\\s\\S]*?)<\\/div><\\/div><\\/div><\\/div><div class=\"footer\">"
+        }
+      ]
+    },
+    {
+      "scope": "pagination",
+      "patterns": [
+        {
+          "key": "forum",
+          "value": "parseInt\\((\\d*)\\)[\\s\\S]*?parseInt\\(st\\*(\\d*)\\)[\\s\\S]*?pagination\">[\\s\\S]*?<span[^>]*?>([^<]*?)<\\/span>"
+        },
+        {
+          "key": "news",
+          "value": "class=\"s-count[\\s\\S]*?<strong>(\\d+)<\\/strong>[\\s\\S]*?<ul class=\"page-nav[^>]*?>[\\s\\S]*?<li class=\"active\"><a[^>]*?>(\\d+)"
+        }
+      ]
+    },
+    {
+      "scope": "websocket",
+      "patterns": [
+        {
+          "key": "event",
+          "value": "\\[(\\d+),(\\d+),\"([\\s\\S])(\\d+)\",(\\d+),(\\d+)\\]"
+        }
+      ]
+    },
+    {
+      "scope": "inspector",
+      "patterns": [
+        {
+          "key": "favorites",
+          "value": "(\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)"
+        },
+        {
+          "key": "qms",
+          "value": "(\\d+) \"([\\s\\S]*?)\" (\\d+) \"([\\s\\S]*?)\" (\\d+) (\\d+) (\\d+)"
+        }
+      ]
+    },
+    {
+      "scope": "link_handler",
+      "patterns": [
+        {
+          "key": "basic",
+          "value": "(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*"
+        },
+        {
+          "key": "forum_media",
+          "value": "https?:\\/\\/4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))"
+        },
+        {
+          "key": "support_images",
+          "value": "\\/\\/.*?(4pda\\.to|4pda\\.(?:ru|to)|ggpht\\.com|googleusercontent\\.com|windowsphone\\.com|mzstatic\\.com|savepic\\.net|savepice\\.ru|savepic\\.ru|.*?\\.ibb\\.com?)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)"
+        },
+        {
+          "key": "forum_lofi",
+          "value": "(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)\\/forum\\/lofiversion\\/[^\\?]*?\\?(t|f)(\\d+)(?:-(\\d+))?"
+        },
+        {
+          "key": "site",
+          "value": "https?:\\/\\/4pda\\.(?:ru|to)\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/|[\\w\\/]*?\\/?(newer|older)\\/)(\\d+)(?:\\/#comment(\\d+))?"
+        }
+      ]
+    },
+    {
+      "scope": "captcha",
+      "patterns": [
+        {
+          "key": "redirect",
+          "value": "https://4pda.to/cdn-cgi/l/chk_captcha"
         }
       ]
     },

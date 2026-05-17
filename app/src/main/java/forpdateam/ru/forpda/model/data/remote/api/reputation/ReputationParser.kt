@@ -1,16 +1,17 @@
 package forpdateam.ru.forpda.model.data.remote.api.reputation
 
-import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import javax.inject.Inject
 
 class ReputationParser @Inject constructor(
-    private val patternProvider: PatternProvider
+    private val patternProvider: PatternProvider,
+    private val paginationParser: PaginationParser
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Reputation
@@ -31,7 +32,7 @@ class ReputationParser @Inject constructor(
                     date = matcher.require(7)
                 )
             }
-        val pagination = Pagination.parseForum(response)
+        val pagination = paginationParser.parseForum(response)
 
         return patternProvider
             .getRegexParser(scope.scope, scope.info)

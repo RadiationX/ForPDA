@@ -1,13 +1,11 @@
 package forpdateam.ru.forpda.client
 
 import android.content.Context
-import android.util.Log
-import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
-import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
+import forpdateam.ru.forpda.model.data.remote.api.common.GlobalParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -18,7 +16,8 @@ import javax.inject.Inject
 class WebClientImpl @Inject constructor(
     private val context: Context,
     private val client: OkHttpClient,
-    private val countersHolder: CountersHolder
+    private val countersHolder: CountersHolder,
+    private val globalParser: GlobalParser
 ) : WebClient {
 
     private val mapper = NetworkRequestMapper(context)
@@ -73,28 +72,13 @@ class WebClientImpl @Inject constructor(
         return client.newWebSocket(request, webSocketListener)
     }
 
-    @Throws(Exception::class)
     private fun checkForumErrors(res: String) {
-        val errorMatcher = WebClient.errorPattern.matcher(res)
-        if (errorMatcher.find()) {
-            throw OnlyShowException(ApiUtils.fromHtml(errorMatcher.group(1)))
-        }
+        val error = globalParser.parseForumError(res) ?: return
+        throw OnlyShowException(error)
     }
 
     private fun getCounts(response: String) {
-        val countsMatcher = WebClient.countsPattern.matcher(response)
-
-        if (countsMatcher.find()) {
-            try {
-                val counters = MessageCounters(
-                    mentions = countsMatcher.group(1)?.toInt() ?: 0,
-                    favorites = countsMatcher.group(2)?.toInt() ?: 0,
-                    qms = countsMatcher.group(3)?.toInt() ?: 0
-                )
-                countersHolder.set(counters)
-            } catch (exception: Exception) {
-                Log.d("WATAFUCK", response, exception)
-            }
-        }
+        val counters = globalParser.parseCounters(response) ?: return
+        countersHolder.set(counters)
     }
 }

@@ -42,7 +42,6 @@ import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel.HeightChangeListener
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
 import ru.radiationx.quill.inject
-import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 25.08.16.
@@ -163,26 +162,6 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
         webView.setRelativeFontSize(size)
     }
 
-    private fun addUnusedAttachments() {
-        try {
-            val matcher = attachmentPattern.matcher(messagePanel.message)
-            val attachmentsUrls = ArrayList<String>()
-            while (matcher.find()) {
-                attachmentsUrls.add(matcher.group(1))
-            }
-            val notAttached = ArrayList<AttachmentItem>()
-            for (item in attachmentsPopup.getAttachments()) {
-                if (!attachmentsUrls.contains(item.url)) {
-                    notAttached.add(item)
-                }
-            }
-            messagePanel.messageField!!.setSelection(messagePanel.messageField!!.text!!.length)
-            attachmentsPopup.insertAttachment(notAttached, false)
-        } catch (ignore: Exception) {
-        }
-
-    }
-
     override fun addBaseToolbarMenu(menu: Menu) {
         super.addBaseToolbarMenu(menu)
         blackListMenuItem = menu
@@ -239,7 +218,6 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
 
     //From theme creator
     override fun onCreateNewTheme(nick: String, title: String, message: String) {
-        //addUnusedAttachments()
         presenter.sendNewTheme(nick, title, message, attachmentsPopup.getAttachments())
     }
 
@@ -305,7 +283,6 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     }
 
     private fun sendMessage() {
-        //addUnusedAttachments()
         presenter.sendMessage(messagePanel.message, attachmentsPopup.getAttachments())
     }
 
@@ -391,7 +368,5 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
         const val USER_AVATAR_ARG = "USER_AVATAR_ARG"
         const val THEME_ID_ARG = "THEME_ID_ARG"
         const val THEME_TITLE_ARG = "THEME_TITLE_ARG"
-        private val attachmentPattern =
-            Pattern.compile("\\[url=(https:\\/\\/.*?\\.ibb\\.co[^\\]]*?)\\]")
     }
 }

@@ -11,9 +11,9 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.client.AppCookieJar
 import forpdateam.ru.forpda.client.AppImageDownloader
-import forpdateam.ru.forpda.client.WebClientImpl
 import forpdateam.ru.forpda.client.CookieStorage
 import forpdateam.ru.forpda.client.NetworkObserver
+import forpdateam.ru.forpda.client.WebClientImpl
 import forpdateam.ru.forpda.client.websocket.WebSocketController
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.apptheme.AppThemeController
@@ -50,6 +50,10 @@ import forpdateam.ru.forpda.model.data.remote.api.auth.AuthApi
 import forpdateam.ru.forpda.model.data.remote.api.auth.AuthParser
 import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerApi
 import forpdateam.ru.forpda.model.data.remote.api.checker.CheckerParser
+import forpdateam.ru.forpda.model.data.remote.api.common.CaptchaParser
+import forpdateam.ru.forpda.model.data.remote.api.common.GlobalParser
+import forpdateam.ru.forpda.model.data.remote.api.common.LinkHandlerParser
+import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbApi
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbParser
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostApi
@@ -115,11 +119,11 @@ import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
 import forpdateam.ru.forpda.model.repository.topics.TopicsRepository
 import forpdateam.ru.forpda.model.system.ExternalStorageImpl
 import forpdateam.ru.forpda.model.system.PatternProviderImpl
-import forpdateam.ru.forpda.presentation.ErrorHandlerImpl
 import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.ErrorHandlerImpl
 import forpdateam.ru.forpda.presentation.LinkHandler
-import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.LinkHandlerImpl
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandlerImpl
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.announce.AnnounceTemplate
@@ -215,6 +219,10 @@ class AppModule(
         single<TopicsParser>()
         single<CheckerParser>()
         single<AttachmentsParser>()
+        single<CaptchaParser>()
+        single<GlobalParser>()
+        single<LinkHandlerParser>()
+        single<PaginationParser>()
 
         single<AuthApi>()
         single<DevDbApi>()

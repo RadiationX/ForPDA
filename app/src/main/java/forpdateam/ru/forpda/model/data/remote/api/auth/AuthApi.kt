@@ -8,7 +8,6 @@ import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**
@@ -39,7 +38,7 @@ class AuthApi @Inject constructor(
             .formHeader("captcha-time", requireNotNull(captcha.captchaTime))
             .formHeader("captcha-sig", requireNotNull(captcha.captchaSig))
             .formHeader("captcha", requireNotNull(form.captcha))
-            .formHeader("return", WebClient.MINIMAL_PAGE)
+            .formHeader("return", MINIMAL_PAGE_URL)
             .formHeader("login", URLEncoder.encode(form.nick, "windows-1251"), true)
             .formHeader("password", URLEncoder.encode(form.password, "windows-1251"), true)
             .formHeader("remember", "1")
@@ -61,7 +60,7 @@ class AuthApi @Inject constructor(
             if (authParser.parseAlreadyLoggedOut(response.body)) {
                 throw Exception("You already logout")
             }
-            checkLogin(webClient.get(WebClient.MINIMAL_PAGE).body)
+            checkLogin(webClient.get(MINIMAL_PAGE_URL).body)
         }.onFailure {
             Log.e(TAG, "logout", it)
         }
@@ -80,6 +79,7 @@ class AuthApi @Inject constructor(
     companion object {
         private const val TAG = "AuthApi"
         private const val AUTH_BASE_URL = "https://4pda.to/forum/index.php?act=auth"
+        private const val MINIMAL_PAGE_URL = "https://4pda.to/forum/index.php?showforum=200#afterauth"
     }
 
 }

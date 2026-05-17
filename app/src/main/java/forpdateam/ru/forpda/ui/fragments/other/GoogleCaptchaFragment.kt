@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
+import forpdateam.ru.forpda.model.data.remote.api.common.CaptchaParser
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
@@ -26,7 +27,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import ru.radiationx.quill.inject
-import java.util.regex.Pattern
 
 /**
  * Created by radiationx on 09.11.17.
@@ -41,6 +41,7 @@ class GoogleCaptchaFragment : TabFragment() {
     private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val webClient by inject<WebClient>()
+    private val captchaParser by inject<CaptchaParser>()
 
     init {
         configuration.defaultTitle = "Проверка"
@@ -85,9 +86,7 @@ class GoogleCaptchaFragment : TabFragment() {
 
         private fun handleUri(uri: Uri): Boolean {
             Log.e("SUKA", uri.toString())
-            if (Pattern.compile("https://4pda.to/cdn-cgi/l/chk_captcha").matcher(uri.toString())
-                    .find()
-            ) {
+            if (captchaParser.checkRedirect(uri.toString())) {
                 runBlocking {
                     runCatching {
                         val nr = NetworkRequest.Builder().url(uri.toString()).withoutBody().build()

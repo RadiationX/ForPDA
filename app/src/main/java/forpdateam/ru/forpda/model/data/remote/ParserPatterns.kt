@@ -5,6 +5,39 @@ object ParserPatterns {
     object Global {
         const val scope = "global"
         const val meta_tags = "meta_tags"
+        const val counters = "counters"
+        const val forum_error = "forum_error"
+    }
+
+    object Pagination {
+        const val scope = "pagination"
+        const val forum = "forum"
+        const val news = "news"
+    }
+
+    object WebSocket {
+        const val scope = "websocket"
+        const val event = "event"
+    }
+
+    object Inspector {
+        const val scope = "inspector"
+        const val favorites = "favorites"
+        const val qms = "qms"
+    }
+
+    object LinkHandler {
+        const val scope = "link_handler"
+        const val basic = "basic"
+        const val forum_media = "forum_media"
+        const val support_images = "support_images"
+        const val forum_lofi = "forum_lofi"
+        const val site = "site"
+    }
+
+    object Captcha {
+        const val scope = "captcha"
+        const val redirect = "redirect"
     }
 
     object Auth {

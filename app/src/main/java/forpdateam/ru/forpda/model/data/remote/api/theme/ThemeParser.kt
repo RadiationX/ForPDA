@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.theme
 
 import forpdateam.ru.forpda.entity.remote.ForumPost
-import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.ForumPostUser
 import forpdateam.ru.forpda.entity.remote.theme.Poll
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
@@ -9,12 +8,14 @@ import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import javax.inject.Inject
 
 class ThemeParser @Inject constructor(
-    private val patternProvider: PatternProvider
+    private val patternProvider: PatternProvider,
+    private val paginationParser: PaginationParser
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Topic
@@ -57,7 +58,7 @@ class ThemeParser @Inject constructor(
 
         val poll = parsePoll(response)
 
-        val pagination = Pagination.parseForum(response)
+        val pagination = paginationParser.parseForum(response)
 
         return ThemePage(
             id = id,

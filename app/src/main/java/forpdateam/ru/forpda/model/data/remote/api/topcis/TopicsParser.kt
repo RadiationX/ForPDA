@@ -1,17 +1,18 @@
 package forpdateam.ru.forpda.model.data.remote.api.topcis
 
-import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.topics.TopicFlags
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import javax.inject.Inject
 
 class TopicsParser @Inject constructor(
-    private val patternProvider: PatternProvider
+    private val patternProvider: PatternProvider,
+    private val paginationParser: PaginationParser
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Topics
@@ -83,7 +84,7 @@ class TopicsParser @Inject constructor(
                 )
             }
 
-        val pagination = Pagination.parseForum(response)
+        val pagination = paginationParser.parseForum(response)
         return TopicsData(
             id = id,
             title = requireNotNull(title) { "title" },

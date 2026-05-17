@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.model.data.remote.api.favorites
 
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
-import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting.Key
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting.Order
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
@@ -13,7 +13,8 @@ import ru.radiationx.regexparser.core.RegexMatch
 import javax.inject.Inject
 
 class FavoritesParser @Inject constructor(
-    private val patternProvider: PatternProvider
+    private val patternProvider: PatternProvider,
+    private val paginationParser: PaginationParser
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Favorites
@@ -26,7 +27,7 @@ class FavoritesParser @Inject constructor(
             }
         return FavoritesData(
             items = list,
-            pagination = Pagination.parseForum(response),
+            pagination = paginationParser.parseForum(response),
             sorting = parseSorting(response)
         )
     }

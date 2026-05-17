@@ -1,19 +1,20 @@
 package forpdateam.ru.forpda.model.data.remote.api.search
 
 import forpdateam.ru.forpda.entity.remote.ForumPost
-import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.entity.remote.others.user.ForumPostUser
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import javax.inject.Inject
 
 class SearchParser @Inject constructor(
-    private val patternProvider: PatternProvider
+    private val patternProvider: PatternProvider,
+    private val paginationParser: PaginationParser
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Search
@@ -31,9 +32,9 @@ class SearchParser @Inject constructor(
             }
         }
         val pagination = if (isNews) {
-            Pagination.parseNews(response)
+            paginationParser.parseNews(response)
         } else {
-            Pagination.parseForum(response)
+            paginationParser.parseForum(response)
         }
         return SearchResult(
             items = items,

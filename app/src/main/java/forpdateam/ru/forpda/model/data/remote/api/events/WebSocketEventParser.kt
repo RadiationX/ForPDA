@@ -1,29 +1,35 @@
 package forpdateam.ru.forpda.model.data.remote.api.events
 
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
-import forpdateam.ru.forpda.extensions.mapOnce
-import java.util.regex.Pattern
+import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
+import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.07.17.
  */
-class WebSocketEventParser @Inject constructor() {
+class WebSocketEventParser @Inject constructor(
+    private val patternProvider: PatternProvider
+) : BaseParser() {
+
+    private val scope = ParserPatterns.WebSocket
 
     fun parseWebSocketEvent(message: String): WebSocketEvent? {
-        return webSocketEventPattern.matcher(message).mapOnce { matcher ->
-            //// TODO: 02.10.17 сделать обратку нотификации форума
-            val sourceId = matcher.group(4).toInt()
-            val type = matcher.group(5).toInt()
-            val typeParam = matcher.group(6).toLong()
-            return when (matcher.group(3)) {
-                SRC_SOURCE_TOPIC -> createWebSocketTopic(sourceId, type, typeParam)
-                SRC_SOURCE_SITE -> createWebSocketSite(sourceId, type, typeParam)
-                SRC_SOURCE_QMS -> createWebSocketQms(sourceId, type, typeParam)
-                SRC_SOURCE_FORUM -> createWebSocketForum(sourceId, type, typeParam)
-                else -> null
+        return patternProvider
+            .getRegexParser(scope.scope, scope.event)
+            .mapOnce(message) { match ->
+                val sourceId = match.require(4).toInt()
+                val type = match.require(5).toInt()
+                val typeParam = match.require(6).toLong()
+                when (match.require(3)) {
+                    SRC_SOURCE_TOPIC -> createWebSocketTopic(sourceId, type, typeParam)
+                    SRC_SOURCE_SITE -> createWebSocketSite(sourceId, type, typeParam)
+                    SRC_SOURCE_QMS -> createWebSocketQms(sourceId, type, typeParam)
+                    SRC_SOURCE_FORUM -> createWebSocketForum(sourceId, type, typeParam)
+                    else -> null
+                }
             }
-        }
     }
 
     private fun createWebSocketTopic(sourceId: Int, srcType: Int, typeParam: Long): WebSocketEvent.Topic? {
@@ -105,8 +111,5 @@ class WebSocketEventParser @Inject constructor() {
         private const val SRC_SOURCE_TOPIC = "t"
         private const val SRC_SOURCE_QMS = "q"
         private const val SRC_SOURCE_FORUM = "f"
-
-        private val webSocketEventPattern: Pattern =
-            Pattern.compile("\\[(\\d+),(\\d+),\"([\\s\\S])(\\d+)\",(\\d+),(\\d+)\\]")
     }
 }

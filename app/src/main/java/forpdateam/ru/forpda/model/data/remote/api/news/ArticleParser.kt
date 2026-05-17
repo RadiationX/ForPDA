@@ -8,6 +8,7 @@ import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.entity.remote.news.Tag
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.common.GlobalParser
 import forpdateam.ru.forpda.model.data.remote.api.regex.parser.Node
 import forpdateam.ru.forpda.model.data.remote.api.regex.parser.Parser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
@@ -17,7 +18,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ArticleParser @Inject constructor(
-    private val patternProvider: PatternProvider
+    private val patternProvider: PatternProvider,
+    private val globalParser: GlobalParser
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Articles
@@ -74,17 +76,11 @@ class ArticleParser @Inject constructor(
     private fun parseArticleV2(response: String): DetailsPage = patternProvider
         .getRegexParser(scope.scope, scope.detail_v2)
         .mapOnce(response) { matcher ->
-            var imgUrl: String? = null
-            patternProvider
-                .getRegexParser(ParserPatterns.Global.scope, ParserPatterns.Global.meta_tags)
-                .findAll(response) {
-                    val metaTarget = it.require(1)
-                    val metaType = it.require(2)
-                    val metaContent = it.require(3)
-                    if (metaTarget == "og" && metaType == "image") {
-                        imgUrl = metaContent
-                    }
-                }
+            val imgUrl: String? = globalParser
+                .parseMetaTags(response)
+                .find { it.target == "og" && it.type == "image" }
+                ?.content
+
             DetailsPage(
                 id = matcher.require(1).toInt(),
                 imgUrl = requireNotNull(imgUrl) { "imgUrl" },

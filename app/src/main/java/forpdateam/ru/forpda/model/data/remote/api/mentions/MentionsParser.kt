@@ -2,14 +2,15 @@ package forpdateam.ru.forpda.model.data.remote.api.mentions
 
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
-import forpdateam.ru.forpda.entity.remote.others.pagination.Pagination
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
+import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import javax.inject.Inject
 
 class MentionsParser @Inject constructor(
-    private val patternProvider: PatternProvider
+    private val patternProvider: PatternProvider,
+    private val paginationParser: PaginationParser
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Mentions
@@ -41,7 +42,7 @@ class MentionsParser @Inject constructor(
 
         return MentionsData(
             items = items,
-            pagination = Pagination.parseForum(response)
+            pagination = paginationParser.parseForum(response)
         )
     }
 }
