@@ -2,14 +2,14 @@ package forpdateam.ru.forpda.model.data.remote.api.inspector
 
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorMention
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 31.07.17.
  */
 class InspectorApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val parser: InspectorParser
 ) {
 

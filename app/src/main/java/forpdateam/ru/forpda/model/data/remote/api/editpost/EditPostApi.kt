@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostPermissionException
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
@@ -16,7 +16,7 @@ import javax.inject.Inject
  */
 
 class EditPostApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val editPostParser: EditPostParser,
     private val attachmentsParser: AttachmentsParser,
     private val themeParser: ThemeParser,

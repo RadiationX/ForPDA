@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.CountersHolder
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
@@ -15,11 +15,11 @@ import okhttp3.WebSocketListener
 import okhttp3.coroutines.executeAsync
 import javax.inject.Inject
 
-class Client @Inject constructor(
+class WebClientImpl @Inject constructor(
     private val context: Context,
     private val client: OkHttpClient,
     private val countersHolder: CountersHolder
-) : IWebClient {
+) : WebClient {
 
     private val mapper = NetworkRequestMapper(context)
 
@@ -75,14 +75,14 @@ class Client @Inject constructor(
 
     @Throws(Exception::class)
     private fun checkForumErrors(res: String) {
-        val errorMatcher = IWebClient.errorPattern.matcher(res)
+        val errorMatcher = WebClient.errorPattern.matcher(res)
         if (errorMatcher.find()) {
             throw OnlyShowException(ApiUtils.fromHtml(errorMatcher.group(1)))
         }
     }
 
     private fun getCounts(response: String) {
-        val countsMatcher = IWebClient.countsPattern.matcher(response)
+        val countsMatcher = WebClient.countsPattern.matcher(response)
 
         if (countsMatcher.find()) {
             try {

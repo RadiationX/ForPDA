@@ -9,7 +9,7 @@ import java.util.regex.Pattern
 /**
  * Created by radiationx on 26.03.17.
  */
-interface IWebClient {
+interface WebClient {
 
     suspend fun get(url: String): NetworkResponse
 

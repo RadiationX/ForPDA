@@ -23,8 +23,8 @@ import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.forumrules.ForumRulesPresenter
 import forpdateam.ru.forpda.presentation.forumrules.ForumRulesView
@@ -46,8 +46,8 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
     private lateinit var topScroller: WebViewTopScroller
 
     private val utils by inject<Utils>()
-    private val linkHandler by inject<ILinkHandler>()
-    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val linkHandler by inject<LinkHandler>()
+    private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val webViewClient by inject<CustomWebViewClient>()
     private val presenter by quillMoxyPresenter<ForumRulesPresenter>()

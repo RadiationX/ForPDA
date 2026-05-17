@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.profile
 
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import javax.inject.Inject
 
@@ -9,7 +9,7 @@ import javax.inject.Inject
  * Created by radiationx on 03.08.16.
  */
 class ProfileApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val profileParser: ProfileParser
 ) {
 

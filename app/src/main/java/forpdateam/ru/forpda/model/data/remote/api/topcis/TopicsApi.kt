@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.topcis
 
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import javax.inject.Inject
 
 /**
@@ -9,7 +9,7 @@ import javax.inject.Inject
  */
 
 class TopicsApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val topicsParser: TopicsParser
 ) {
 

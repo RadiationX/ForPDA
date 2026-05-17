@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.mentions
 
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import javax.inject.Inject
 
 /**
@@ -9,7 +9,7 @@ import javax.inject.Inject
  */
 
 class MentionsApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val mentionsParser: MentionsParser
 ) {
     suspend fun getMentions(st: Int): MentionsData {

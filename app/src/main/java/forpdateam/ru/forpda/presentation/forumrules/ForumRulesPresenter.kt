@@ -4,7 +4,7 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.ui.TemplateManager
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,7 +21,7 @@ class ForumRulesPresenter(
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val forumRulesTemplate: ForumRulesTemplate,
     private val templateManager: TemplateManager,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<ForumRulesView>() {
 
     override fun onFirstViewAttach() {

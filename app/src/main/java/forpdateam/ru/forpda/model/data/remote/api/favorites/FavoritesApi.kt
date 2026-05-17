@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.model.data.remote.api.favorites
 import android.net.Uri
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ import javax.inject.Inject
  */
 
 class FavoritesApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val favoritesParser: FavoritesParser
 ) {
 

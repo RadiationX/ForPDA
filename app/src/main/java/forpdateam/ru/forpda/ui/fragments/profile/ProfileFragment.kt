@@ -28,7 +28,7 @@ import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.profile.ProfilePresenter
 import forpdateam.ru.forpda.presentation.profile.ProfileView
 import forpdateam.ru.forpda.ui.activities.MainActivity
@@ -72,7 +72,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
     private lateinit var adapter: ProfileAdapter
 
     private val authHolder by inject<AuthHolder>()
-    private val linkHandler by inject<ILinkHandler>()
+    private val linkHandler by inject<LinkHandler>()
 
     private var isResume = false
     private var isScrim = false

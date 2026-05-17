@@ -4,7 +4,7 @@ import android.util.SparseArray
 import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ALL
 import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ARTICLES
@@ -62,7 +62,7 @@ import javax.inject.Inject
  * Created by radiationx on 31.07.16.
  */
 class NewsApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val articleParser: ArticleParser
 ) {
 

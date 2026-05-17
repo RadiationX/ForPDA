@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.model.data.remote.api.forum
 import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ import javax.inject.Inject
  */
 
 class ForumApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val forumParser: ForumParser
 ) {
 

@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api
 
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 
 /**
  * Created by radiationx on 02.05.17.
@@ -112,6 +112,6 @@ class NetworkRequest(
     data class File(
         val requestName: String,
         val file: RequestFile,
-        val progressListener: IWebClient.ProgressListener
+        val progressListener: WebClient.ProgressListener
     )
 }

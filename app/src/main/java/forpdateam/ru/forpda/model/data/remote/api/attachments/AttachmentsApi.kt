@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.model.data.remote.api.attachments
 
 import android.content.Context
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class AttachmentsApi @Inject constructor(
     private val context: Context,
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val attachmentsParser: AttachmentsParser
 ) {
 

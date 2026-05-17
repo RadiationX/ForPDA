@@ -6,8 +6,8 @@ import android.webkit.WebView
 import androidx.core.util.Pair
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity.Companion.startActivity
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
@@ -17,8 +17,8 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
  */
 class DialogsHelper(
     context: Context,
-    linkHandler: ILinkHandler,
-    systemLinkHandler: ISystemLinkHandler,
+    linkHandler: LinkHandler,
+    systemLinkHandler: SystemLinkHandler,
     utils: Utils,
     router: TabRouter?
 ) {

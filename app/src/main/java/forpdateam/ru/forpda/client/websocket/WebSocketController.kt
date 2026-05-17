@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.client.websocket
 import android.util.Log
 import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class WebSocketController @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val authHolder: AuthHolder,
     private val networkObserver: NetworkObserver
 ) {

@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.presentation.announce
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.ui.TemplateManager
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -19,7 +19,7 @@ class AnnouncePresenter(
     private val forumRepository: ForumRepository,
     private val announceTemplate: AnnounceTemplate,
     private val templateManager: TemplateManager,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<AnnounceView>() {
 
     var id = 0

@@ -6,8 +6,8 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.flow.filterNotNull
@@ -25,8 +25,8 @@ import moxy.InjectViewState
 class QmsThemesPresenter(
     private val qmsInteractor: QmsInteractor,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val linkHandler: LinkHandler,
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<QmsThemesView>() {
 
     var userId: Int = 0

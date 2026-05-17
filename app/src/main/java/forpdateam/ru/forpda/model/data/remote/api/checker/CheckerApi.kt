@@ -1,14 +1,14 @@
 package forpdateam.ru.forpda.model.data.remote.api.checker
 
 import forpdateam.ru.forpda.entity.app.checker.UpdateData
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import javax.inject.Inject
 
 /**
  * Created by radiationx on 28.01.18.
  */
 class CheckerApi @Inject constructor(
-    private val client: IWebClient,
+    private val client: WebClient,
     private val checkerParser: CheckerParser,
 ) {
 

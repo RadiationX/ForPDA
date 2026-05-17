@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.presentation.devdb.device
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.devdb.Device
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.fragments.devdb.device.posts.PostsFragment
 import moxy.InjectViewState
@@ -14,7 +14,7 @@ import moxy.InjectViewState
 @InjectViewState
 class SubDevicePresenter(
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler
+    private val linkHandler: LinkHandler
 ) : BasePresenter<SubDeviceView>() {
 
     fun onCommentClick(item: Device.Comment) {

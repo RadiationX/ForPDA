@@ -11,8 +11,8 @@ import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.news.Constants
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.news.NewsRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.async
@@ -30,8 +30,8 @@ class ArticlesListPresenter(
     private val avatarRepository: AvatarRepository,
     private val authHolder: AuthHolder,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler,
+    private val linkHandler: LinkHandler,
+    private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<ArticlesListView>() {
     private val category = Constants.NEWS_CATEGORY_ROOT

@@ -15,7 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.ui.views.drawers.adapters.AttachmentListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.AttachmentSelectorListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
@@ -230,7 +230,7 @@ class AttachmentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private var name: TextView
         private var attributes: TextView
         private var description: View
-        private var progressListener = IWebClient.ProgressListener { percent ->
+        private var progressListener = WebClient.ProgressListener { percent ->
             GlobalScope.launch(Dispatchers.Main) {
                 updateProgress(percent)
             }

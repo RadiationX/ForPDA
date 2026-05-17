@@ -8,8 +8,8 @@ import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
@@ -23,8 +23,8 @@ class ReputationPresenter(
     private val reputationRepository: ReputationRepository,
     private val avatarRepository: AvatarRepository,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val linkHandler: LinkHandler,
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<ReputationView>() {
 
     var currentArgs = RepArgs.empty()

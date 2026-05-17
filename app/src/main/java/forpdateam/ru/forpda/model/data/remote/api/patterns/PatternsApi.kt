@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.patterns
 
 import forpdateam.ru.forpda.entity.remote.checker.PatternsDataJson
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -9,7 +9,7 @@ import javax.inject.Inject
  * Created by radiationx on 28.01.18.
  */
 class PatternsApi @Inject constructor(
-    private val client: IWebClient,
+    private val client: WebClient,
     private val json: Json
 ) {
 

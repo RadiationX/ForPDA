@@ -12,10 +12,10 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.webview.DialogsHelper
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.activities.MainActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -37,10 +37,10 @@ class GoogleCaptchaFragment : TabFragment() {
     private var content = ""
 
     private val utils by inject<Utils>()
-    private val linkHandler by inject<ILinkHandler>()
-    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val linkHandler by inject<LinkHandler>()
+    private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
-    private val webClient by inject<IWebClient>()
+    private val webClient by inject<WebClient>()
 
     init {
         configuration.defaultTitle = "Проверка"

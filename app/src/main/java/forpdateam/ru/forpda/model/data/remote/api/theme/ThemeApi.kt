@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.model.data.remote.api.theme
 
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -12,7 +12,7 @@ import javax.inject.Inject
  * Created by radiationx on 04.08.16.
  */
 class ThemeApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val themeParser: ThemeParser,
     private val authHolder: AuthHolder
 ) {

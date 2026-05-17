@@ -7,8 +7,8 @@ import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,8 +24,8 @@ class AuthPresenter(
     private val profileRepository: ProfileRepository,
     private val router: TabRouter,
     private val authHolder: AuthHolder,
-    private val errorHandler: IErrorHandler,
-    private val systemLinkHandler: ISystemLinkHandler
+    private val errorHandler: ErrorHandler,
+    private val systemLinkHandler: SystemLinkHandler
 ) : BasePresenter<AuthView>() {
 
     private var currentCaptcha: AuthCaptcha? = null

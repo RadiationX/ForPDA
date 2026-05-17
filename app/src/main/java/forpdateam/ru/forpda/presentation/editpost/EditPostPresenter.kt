@@ -9,7 +9,7 @@ import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.ThemeTemplate
@@ -25,7 +25,7 @@ class EditPostPresenter(
     private val editorRepository: PostEditorRepository,
     private val themeTemplate: ThemeTemplate,
     private val router: TabRouter,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<EditPostView>() {
 
     private val postForm = EditPostForm()

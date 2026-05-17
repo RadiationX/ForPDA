@@ -5,8 +5,8 @@ import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,9 +21,9 @@ import moxy.InjectViewState
 class ArticleCommentPresenter(
     private val articleInteractor: ArticleInteractor,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
+    private val linkHandler: LinkHandler,
     private val authHolder: AuthHolder,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<ArticleCommentView>() {
 
     private var firstShow: Boolean = true

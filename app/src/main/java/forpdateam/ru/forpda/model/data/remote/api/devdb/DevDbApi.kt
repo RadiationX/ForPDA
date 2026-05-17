@@ -4,7 +4,7 @@ import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import java.net.URLDecoder
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ import javax.inject.Inject
  */
 
 class DevDbApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val devDbParser: DevDbParser
 ) {
 

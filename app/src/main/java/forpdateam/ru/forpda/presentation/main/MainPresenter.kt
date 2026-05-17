@@ -7,8 +7,8 @@ import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import moxy.InjectViewState
@@ -17,12 +17,12 @@ import moxy.InjectViewState
 class MainPresenter(
     private val router: TabRouter,
     private val authHolder: AuthHolder,
-    private val linkHandler: ILinkHandler,
+    private val linkHandler: LinkHandler,
     private val menuRepository: MenuRepository,
     private val qmsInteractor: QmsInteractor,
     private val otherPreferencesHolder: OtherPreferencesHolder,
     private val mainPreferencesHolder: MainPreferencesHolder,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<MainView>() {
 
     private var isRestored: Boolean = false

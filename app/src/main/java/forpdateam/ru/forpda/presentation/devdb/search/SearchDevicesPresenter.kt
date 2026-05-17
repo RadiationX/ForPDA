@@ -6,7 +6,7 @@ import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.devdb.DevDbRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ import moxy.InjectViewState
 class SearchDevicesPresenter(
     private val devDbRepository: DevDbRepository,
     private val router: TabRouter,
-    private val errorHandler: IErrorHandler,
+    private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<SearchDevicesView>() {
 

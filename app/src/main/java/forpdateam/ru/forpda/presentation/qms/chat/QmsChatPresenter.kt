@@ -12,8 +12,8 @@ import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.events.WebSocketEventsRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
@@ -35,8 +35,8 @@ class QmsChatPresenter(
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val templateManager: TemplateManager,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val linkHandler: LinkHandler,
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<QmsChatView>(), IQmsChatPresenter {
 
     companion object {

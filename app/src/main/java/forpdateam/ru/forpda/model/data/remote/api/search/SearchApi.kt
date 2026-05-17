@@ -2,7 +2,7 @@ package forpdateam.ru.forpda.model.data.remote.api.search
 
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import javax.inject.Inject
 
 /**
@@ -10,7 +10,7 @@ import javax.inject.Inject
  */
 
 class SearchApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val searchParser: SearchParser
 ) {
 

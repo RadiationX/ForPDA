@@ -10,9 +10,9 @@ import forpdateam.ru.forpda.model.CloseableInfoHolder
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
 import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.flow.launchIn
@@ -26,11 +26,11 @@ class OtherPresenter(
     private val authRepository: AuthRepository,
     private val profileRepository: ProfileRepository,
     private val authHolder: AuthHolder,
-    private val errorHandler: IErrorHandler,
+    private val errorHandler: ErrorHandler,
     private val menuRepository: MenuRepository,
     private val closeableInfoHolder: CloseableInfoHolder,
-    private val linkHandler: ILinkHandler,
-    private val systemLinkHandler: ISystemLinkHandler
+    private val linkHandler: LinkHandler,
+    private val systemLinkHandler: SystemLinkHandler
 ) : BasePresenter<OtherView>() {
 
     private val closeableInfoIds = arrayOf(

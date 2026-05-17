@@ -5,8 +5,8 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.flow.launchIn
@@ -23,9 +23,9 @@ import java.util.Locale
 class QmsContactsPresenter(
     private val qmsInteractor: QmsInteractor,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
+    private val linkHandler: LinkHandler,
     private val countersHolder: CountersHolder,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<QmsContactsView>() {
 
     private val localItems = mutableListOf<QmsContact>()

@@ -11,8 +11,8 @@ import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.model.repository.topics.TopicsRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.flow.launchIn
@@ -31,8 +31,8 @@ class TopicsPresenter(
     private val favoritesRepository: FavoritesRepository,
     private val crossScreenInteractor: CrossScreenInteractor,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler,
+    private val linkHandler: LinkHandler,
+    private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<TopicsView>() {
 

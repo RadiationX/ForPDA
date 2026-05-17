@@ -20,8 +20,8 @@ import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.theme.ThemeJsInterface
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
@@ -46,8 +46,8 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
 
 
     private val utils by inject<Utils>()
-    private val linkHandler by inject<ILinkHandler>()
-    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val linkHandler by inject<LinkHandler>()
+    private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val avatarRepository by inject<AvatarRepository>()
 
@@ -275,7 +275,7 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
         private val webView: ExtendedWebView,
         private val presenter: ThemePresenter,
         private val avatarRepository: AvatarRepository,
-        private val linkHandler: ILinkHandler
+        private val linkHandler: LinkHandler
     ) : CustomWebViewClient(avatarRepository, linkHandler) {
         private val p = Pattern.compile("\\.(jpg|png|gif|bmp)")
         private val m = p.matcher("")

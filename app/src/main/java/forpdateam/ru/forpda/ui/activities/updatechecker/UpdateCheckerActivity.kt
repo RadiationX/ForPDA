@@ -14,7 +14,7 @@ import forpdateam.ru.forpda.databinding.ActivityUpdaterBinding
 import forpdateam.ru.forpda.entity.app.checker.UpdateData
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.checker.CheckerPresenter
 import forpdateam.ru.forpda.presentation.checker.CheckerView
 import forpdateam.ru.forpda.ui.activities.MainActivity
@@ -32,7 +32,7 @@ class UpdateCheckerActivity : MvpAppCompatActivity(R.layout.activity_updater), C
 
     private val binding by viewBinding<ActivityUpdaterBinding>()
 
-    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val systemLinkHandler by inject<SystemLinkHandler>()
 
     private val presenter by quillMoxyPresenter<CheckerPresenter>()
 

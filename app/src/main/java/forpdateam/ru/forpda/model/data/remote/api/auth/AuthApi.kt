@@ -5,7 +5,7 @@ import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
@@ -17,7 +17,7 @@ import javax.inject.Inject
  */
 
 class AuthApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val authParser: AuthParser,
     private val authHolder: AuthHolder
 ) {
@@ -40,7 +40,7 @@ class AuthApi @Inject constructor(
             .formHeader("captcha-time", requireNotNull(captcha.captchaTime))
             .formHeader("captcha-sig", requireNotNull(captcha.captchaSig))
             .formHeader("captcha", requireNotNull(form.captcha))
-            .formHeader("return", IWebClient.MINIMAL_PAGE)
+            .formHeader("return", WebClient.MINIMAL_PAGE)
             .formHeader("login", URLEncoder.encode(form.nick, "windows-1251"), true)
             .formHeader("password", URLEncoder.encode(form.password, "windows-1251"), true)
             .formHeader("remember", "1")
@@ -65,7 +65,7 @@ class AuthApi @Inject constructor(
             if (matcher.find()) {
                 throw Exception("You already logout")
             }
-            checkLogin(webClient.get(IWebClient.MINIMAL_PAGE).body)
+            checkLogin(webClient.get(WebClient.MINIMAL_PAGE).body)
         }.onFailure {
             Log.e(TAG, "logout", it)
         }

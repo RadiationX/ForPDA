@@ -44,8 +44,8 @@ import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.search.SearchPresenter
 import forpdateam.ru.forpda.presentation.search.SearchSiteView
@@ -139,8 +139,8 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     }
 
     private val utils by inject<Utils>()
-    private val linkHandler by inject<ILinkHandler>()
-    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val linkHandler by inject<LinkHandler>()
+    private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val webViewClient by inject<CustomWebViewClient>()
     private val presenter by quillMoxyPresenter<SearchPresenter>()

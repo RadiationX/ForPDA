@@ -7,8 +7,8 @@ import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.mentions.MentionsRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
@@ -24,8 +24,8 @@ class MentionsPresenter(
     private val mentionsRepository: MentionsRepository,
     private val favoritesRepository: FavoritesRepository,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler,
+    private val linkHandler: LinkHandler,
+    private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<MentionsView>() {
 

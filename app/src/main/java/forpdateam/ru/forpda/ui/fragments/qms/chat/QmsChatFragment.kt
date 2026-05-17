@@ -26,8 +26,8 @@ import forpdateam.ru.forpda.entity.remote.qms.asRegular
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.temp.TempHelper
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatPresenter
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatTemplate
@@ -74,8 +74,8 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
 
     private val qmsChatTemplate by inject<QmsChatTemplate>()
     private val utils by inject<Utils>()
-    private val linkHandler by inject<ILinkHandler>()
-    private val systemLinkHandler by inject<ISystemLinkHandler>()
+    private val linkHandler by inject<LinkHandler>()
+    private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val webViewClient by inject<CustomWebViewClient>()
     private val presenter by quillMoxyPresenter<QmsChatPresenter>()

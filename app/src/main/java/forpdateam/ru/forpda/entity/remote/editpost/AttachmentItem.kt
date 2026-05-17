@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.entity.remote.editpost
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.Log
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import java.util.regex.Pattern
 
 /**
@@ -35,12 +35,12 @@ class AttachmentItem : Parcelable {
     var progress: Int = -1
         private set
 
-    val itemProgressListener: IWebClient.ProgressListener =
-        IWebClient.ProgressListener { percent ->
+    val itemProgressListener: WebClient.ProgressListener =
+        WebClient.ProgressListener { percent ->
             this@AttachmentItem.progress = percent
             if (progressListener != null) progressListener!!.onProgress(percent)
         }
-    var progressListener: IWebClient.ProgressListener? = null
+    var progressListener: WebClient.ProgressListener? = null
 
     constructor()
 

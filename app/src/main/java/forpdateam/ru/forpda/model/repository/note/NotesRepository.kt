@@ -4,7 +4,7 @@ import android.content.Context
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.model.data.cache.notes.NotesCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
-import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
+import forpdateam.ru.forpda.model.data.storage.ExternalStorage
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONException
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class NotesRepository @Inject constructor(
     private val context: Context,
     private val notesCache: NotesCache,
-    private val externalStorage: ExternalStorageProvider
+    private val externalStorage: ExternalStorage
 ) {
 
     fun observeItems(): Flow<List<NoteItem>> {

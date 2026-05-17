@@ -4,7 +4,7 @@ import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.extensions.requireOnce
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import javax.inject.Inject
  */
 
 class ReputationApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val reputationParser: ReputationParser
 ) {
 

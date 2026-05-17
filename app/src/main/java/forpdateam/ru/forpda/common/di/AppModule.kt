@@ -11,7 +11,7 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.client.AppCookieJar
 import forpdateam.ru.forpda.client.AppImageDownloader
-import forpdateam.ru.forpda.client.Client
+import forpdateam.ru.forpda.client.WebClientImpl
 import forpdateam.ru.forpda.client.CookieStorage
 import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.client.websocket.WebSocketController
@@ -42,8 +42,8 @@ import forpdateam.ru.forpda.model.data.db.HistoryDao
 import forpdateam.ru.forpda.model.data.db.NotesDao
 import forpdateam.ru.forpda.model.data.db.QmsContactsDao
 import forpdateam.ru.forpda.model.data.db.QmsThemesDao
-import forpdateam.ru.forpda.model.data.providers.UserSourceProvider
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.providers.UserSourceImpl
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
 import forpdateam.ru.forpda.model.data.remote.api.auth.AuthApi
@@ -78,7 +78,7 @@ import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 import forpdateam.ru.forpda.model.data.remote.api.topcis.TopicsApi
 import forpdateam.ru.forpda.model.data.remote.api.topcis.TopicsParser
-import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
+import forpdateam.ru.forpda.model.data.storage.ExternalStorage
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.interactors.events.EventsController
@@ -113,14 +113,14 @@ import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
 import forpdateam.ru.forpda.model.repository.search.SearchRepository
 import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
 import forpdateam.ru.forpda.model.repository.topics.TopicsRepository
-import forpdateam.ru.forpda.model.system.ExternalStorage
+import forpdateam.ru.forpda.model.system.ExternalStorageImpl
 import forpdateam.ru.forpda.model.system.PatternProviderImpl
+import forpdateam.ru.forpda.presentation.ErrorHandlerImpl
 import forpdateam.ru.forpda.presentation.ErrorHandler
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
-import forpdateam.ru.forpda.presentation.ISystemLinkHandler
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandlerImpl
+import forpdateam.ru.forpda.presentation.SystemLinkHandlerImpl
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.presentation.announce.AnnounceTemplate
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleTemplate
@@ -160,8 +160,8 @@ class AppModule(
         instance<NavigatorHolder> { cicerone.getNavigatorHolder() }
 
         single<Utils>()
-        singleImpl<ISystemLinkHandler, SystemLinkHandler>()
-        singleImpl<ILinkHandler, LinkHandler>()
+        singleImpl<SystemLinkHandler, SystemLinkHandlerImpl>()
+        singleImpl<LinkHandler, LinkHandlerImpl>()
 
         singleProvider<SharedPreferences, PreferencesProvider>()
         singleProvider<SharedPreferences, DataPreferencesProvider>(DataPreferences::class)
@@ -169,8 +169,8 @@ class AppModule(
         singleProvider<FlowPreferences, FlowPreferencesProvider>()
         singleProvider<FlowPreferences, FlowDataPreferencesProvider>(DataPreferences::class)
 
-        singleImpl<IErrorHandler, ErrorHandler>()
-        singleImpl<ExternalStorageProvider, ExternalStorage>()
+        singleImpl<ErrorHandler, ErrorHandlerImpl>()
+        singleImpl<ExternalStorage, ExternalStorageImpl>()
         single<CookieStorage>()
         single<AppCookieJar>()
         single<AuthHolder>()
@@ -188,7 +188,7 @@ class AppModule(
         singleProvider<OkHttpClient, ImagesOkHttpProvider>(ImagesOkHttpClient::class)
 
         single<AppImageDownloader>()
-        singleImpl<IWebClient, Client>()
+        singleImpl<WebClient, WebClientImpl>()
 
         instance {
             Json {
@@ -256,7 +256,7 @@ class AppModule(
         instance<QmsContactsDao> { database.qmsContactsDao() }
         instance<QmsThemesDao> { database.qmsThemesDao() }
 
-        singleImpl<UserSource, UserSourceProvider>()
+        singleImpl<UserSource, UserSourceImpl>()
         single<ForumUsersCache>()
         single<FavoritesCache>()
         single<ForumCache>()

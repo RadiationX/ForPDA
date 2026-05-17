@@ -29,8 +29,8 @@ import forpdateam.ru.forpda.model.repository.posteditor.PostEditorRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
 import forpdateam.ru.forpda.model.repository.theme.ThemeRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
@@ -64,8 +64,8 @@ class ThemePresenter(
     private val themeTemplate: ThemeTemplate,
     private val templateManager: TemplateManager,
     private val router: TabRouter,
-    private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler,
+    private val linkHandler: LinkHandler,
+    private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<ThemeView>(), IThemePresenter {
 

@@ -6,7 +6,7 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
  * Created by radiationx on 29.07.16.
  */
 class QmsApi @Inject constructor(
-    private val webClient: IWebClient,
+    private val webClient: WebClient,
     private val qmsParser: QmsParser
 ) {
 

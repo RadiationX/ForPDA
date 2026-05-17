@@ -15,19 +15,20 @@ import androidx.core.net.toUri
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
-import forpdateam.ru.forpda.presentation.ILinkHandler
+import forpdateam.ru.forpda.presentation.LinkHandler
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.net.URLDecoder
 import java.util.regex.Pattern
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 12.09.17.
  */
-open class CustomWebViewClient(
+open class CustomWebViewClient @Inject constructor(
     private val avatarRepository: AvatarRepository,
-    private val linkHandler: ILinkHandler
+    private val linkHandler: LinkHandler
 ) : WebViewClient() {
     private val cachePattern: Pattern =
         Pattern.compile("app_cache:avatars\\?(url|nick)=([\\s\\S]*)")

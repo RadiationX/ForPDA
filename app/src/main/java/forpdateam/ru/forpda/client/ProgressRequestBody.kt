@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.client
 
-import forpdateam.ru.forpda.model.data.remote.IWebClient
+import forpdateam.ru.forpda.model.data.remote.WebClient
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.Buffer
@@ -14,7 +14,7 @@ import okio.buffer
  */
 class ProgressRequestBody(
     private val requestBody: RequestBody,
-    private val listener: IWebClient.ProgressListener
+    private val listener: WebClient.ProgressListener
 ) : RequestBody() {
 
     override fun contentType(): MediaType? {

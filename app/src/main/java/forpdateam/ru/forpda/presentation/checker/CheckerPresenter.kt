@@ -4,7 +4,7 @@ import android.util.Log
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.repository.checker.CheckerRepository
-import forpdateam.ru.forpda.presentation.IErrorHandler
+import forpdateam.ru.forpda.presentation.ErrorHandler
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 
@@ -14,7 +14,7 @@ import moxy.InjectViewState
 @InjectViewState
 class CheckerPresenter(
     private val checkerRepository: CheckerRepository,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: ErrorHandler
 ) : BasePresenter<CheckerView>() {
 
     var forceLoad = false

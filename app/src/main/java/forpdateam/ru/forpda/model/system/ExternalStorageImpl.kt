@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
-import forpdateam.ru.forpda.model.data.storage.ExternalStorageProvider
+import forpdateam.ru.forpda.model.data.storage.ExternalStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
@@ -16,10 +16,10 @@ import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
 
-class ExternalStorage @Inject constructor(
+class ExternalStorageImpl @Inject constructor(
     private val context: Context,
     private val permissionsController: MintPermissionsController
-) : ExternalStorageProvider {
+) : ExternalStorage {
 
     override suspend fun getText(stream: InputStream): String {
         return withContext(Dispatchers.IO) {
