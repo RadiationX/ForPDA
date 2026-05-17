@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 include(":app")
 include(":lib:regexparser")
+include(":lib:quill-di")

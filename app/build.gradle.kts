@@ -171,6 +171,7 @@ dependencies {
 
     implementation(libs.moxy)
     implementation(libs.moxy.androidx)
+    implementation(libs.moxy.ktx)
     kapt(libs.moxy.compiler)
 
     implementation(libs.cicerone)
