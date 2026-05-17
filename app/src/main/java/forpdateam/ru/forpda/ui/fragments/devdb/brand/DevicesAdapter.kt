@@ -11,6 +11,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.BrandItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand.DeviceItem
+import forpdateam.ru.forpda.extensions.setBackgroundAttr
 import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper.getColorFilter
 import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesAdapter.DeviceItemHolder
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
@@ -42,7 +43,7 @@ class DevicesAdapter : BaseAdapter<DeviceItem, DeviceItemHolder>() {
         private val binding by viewBinding<BrandItemBinding>()
 
         init {
-            binding.itemRating.setBackgroundResource(R.attr.count_background)
+            binding.itemRating.setBackgroundAttr(R.attr.count_background)
             v.setOnClickListener(this)
             v.setOnLongClickListener(this)
         }

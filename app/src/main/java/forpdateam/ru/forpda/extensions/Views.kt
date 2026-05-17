@@ -24,6 +24,10 @@ fun ImageView.setTintColorAttr(@AttrRes colorAttr: Int) {
     imageTintList = ColorStateList.valueOf(context.getColorFromAttr(colorAttr))
 }
 
+fun View.setBackgroundAttr(@AttrRes res: Int) {
+    setBackgroundResource(context.getDrawableResAttr(res))
+}
+
 val ViewBinding.context: Context
     get() = root.context
 

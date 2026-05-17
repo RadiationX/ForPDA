@@ -17,7 +17,6 @@ import forpdateam.ru.forpda.databinding.EditPollQuestionBinding
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Companion.findQuestionByIndex
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
-import forpdateam.ru.forpda.extensions.context
 
 /**
  * Created by radiationx on 28.07.17.
@@ -116,7 +115,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
         }
 
         fun bind(item: Question) {
-            val qstr = context.getString(R.string.poll_question_Pos,adapterPosition + 1)
+            val qstr = binding.root.context.getString(R.string.poll_question_Pos, adapterPosition + 1)
             customTextWatcher.updatePosition(adapterPosition)
             checkedChangeListener.updatePosition(adapterPosition)
 

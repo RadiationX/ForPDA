@@ -15,7 +15,6 @@ import forpdateam.ru.forpda.databinding.EditPollChoiceBinding
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Companion.findChoiceByIndex
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
-import forpdateam.ru.forpda.extensions.context
 
 /**
  * Created by radiationx on 28.07.17.
@@ -104,7 +103,7 @@ class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
         fun bind(item: EditPoll.Choice) {
             myCustomEditTextListener.updatePosition(adapterPosition)
             binding.pollChoiceTitle.editText!!.setText(item.title)
-            binding.pollChoiceTitle.hint = context.getString(R.string.poll_answer_Pos, adapterPosition + 1)
+            binding.pollChoiceTitle.hint = binding.pollChoiceTitle.context.getString(R.string.poll_answer_Pos, adapterPosition + 1)
         }
     }
 

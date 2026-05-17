@@ -7,6 +7,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.DeviceCommentItemBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
+import forpdateam.ru.forpda.extensions.setBackgroundAttr
 import forpdateam.ru.forpda.model.data.remote.api.ApiUtils.spannedFromHtml
 import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper.getColorFilter
 import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsAdapter.CommentHolder
@@ -49,7 +50,7 @@ class CommentsAdapter(
                     )
                 )
             }
-            binding.itemRating.setBackgroundResource(R.attr.count_background)
+            binding.itemRating.setBackgroundAttr(R.attr.count_background)
         }
 
         override fun bind(item: Device.Comment, position: Int) {

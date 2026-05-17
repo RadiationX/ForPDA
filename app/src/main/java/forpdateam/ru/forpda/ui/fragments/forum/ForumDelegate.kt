@@ -7,6 +7,7 @@ import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ForumItemDefaultBinding
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
+import forpdateam.ru.forpda.extensions.setBackgroundAttr
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ForumListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
@@ -48,8 +49,7 @@ class ForumDelegate(
             }
             binding.forumItemIcon.setImageResource(iconRes)
             if (listItem.isLeaf) {
-                val bg = binding.forumItemIcon.context.getDrawableResAttr(R.attr.count_background)
-                binding.forumItemIcon.setBackgroundResource(bg)
+                binding.forumItemIcon.setBackgroundAttr(R.attr.count_background)
             } else {
                 binding.forumItemIcon.background = null
             }
