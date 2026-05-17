@@ -24,6 +24,10 @@
         {
           "key": "errors_list",
           "value": "errors-list\">([\\s\\S]*?)</ul>"
+        },
+        {
+          "key": "already_logged_out",
+          "value": "wr va-m text"
         }
       ]
     },

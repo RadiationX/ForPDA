@@ -6,7 +6,6 @@ import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
-import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -47,11 +46,9 @@ class AuthApi @Inject constructor(
             .formHeader("hidden", if (form.isHidden) "1" else "0")
 
         val response = webClient.request(builder.build())
-        val matcher = errorPattern.matcher(response.body)
-        if (matcher.find()) {
-            throw Exception(
-                ApiUtils.fromHtml(matcher.group(1))?.replace("\\.".toRegex(), ".\n")?.trim()
-            )
+        val errors = authParser.parseErrors(response.body)
+        if (errors != null) {
+            throw Exception(errors)
         }
         if (!checkLogin(response.body)) {
             throw Exception("Ошибка при проверке авторизации")
@@ -61,8 +58,7 @@ class AuthApi @Inject constructor(
     suspend fun logout() {
         coRunCatching {
             val response = webClient.get("https://4pda.to/forum/index.php?act=logout&CODE=03&k=" + authHolder.getAuthKey().orEmpty())
-            val matcher = Pattern.compile("wr va-m text").matcher(response.body)
-            if (matcher.find()) {
+            if (authParser.parseAlreadyLoggedOut(response.body)) {
                 throw Exception("You already logout")
             }
             checkLogin(webClient.get(WebClient.MINIMAL_PAGE).body)
@@ -73,11 +69,9 @@ class AuthApi @Inject constructor(
     }
 
     private fun checkLogin(response: String): Boolean {
-        val matcher =
-            Pattern.compile("<i class=\"icon-profile\">[\\s\\S]*?<ul class=\"dropdown-menu\">[\\s\\S]*?showuser=(\\d+)\"[\\s\\S]*?action=logout[^\"]*?k=([a-z0-9]{32})")
-                .matcher(response)
-        if (matcher.find()) {
-            authHolder.setAuthKey(matcher.group(2))
+        val authKey = authParser.parseAuthKey(response)
+        if (authKey != null) {
+            authHolder.setAuthKey(authKey)
             return true
         }
         return false
@@ -86,7 +80,6 @@ class AuthApi @Inject constructor(
     companion object {
         private const val TAG = "AuthApi"
         private const val AUTH_BASE_URL = "https://4pda.to/forum/index.php?act=auth"
-        private val errorPattern = Pattern.compile("errors-list\">([\\s\\S]*?)</ul>")
     }
 
 }

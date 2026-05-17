@@ -12,6 +12,7 @@ object ParserPatterns {
         const val captcha = "captcha"
         const val check_login = "check_login"
         const val errors_list = "errors_list"
+        const val already_logged_out = "already_logged_out"
     }
 
     object DevDb {
