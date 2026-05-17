@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.ui.fragments.favorites
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -16,7 +17,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
@@ -74,7 +74,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     private val presenter by quillMoxyPresenter<FavoritesPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_favorite)
+        configuration.defaultTitle = getString(R.string.fragment_title_favorite)
     }
 
     private fun getPinText(b: Boolean): CharSequence {
@@ -82,11 +82,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     }
 
     private fun getSubText(subTypeIndex: Int): CharSequence {
-        return String.format(
-            "%s (%s)",
-            getString(R.string.fav_change_subscribe_type),
-            SUB_NAMES[subTypeIndex]
-        )
+        return "${getString(R.string.fav_change_subscribe_type)} (${getSubNames(requireContext())[subTypeIndex]})",
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -260,7 +256,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         val subTypeIndex = FavoritesApi.SUB_TYPES.indexOf(item.trackType)
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
-            .setSingleChoiceItems(SUB_NAMES, subTypeIndex) { dialog, which ->
+            .setSingleChoiceItems(getSubNames(requireContext()), subTypeIndex) { dialog, which ->
                 presenter.changeFav(
                     FavoritesApi.ACTION_EDIT_SUB_TYPE,
                     FavoritesApi.SUB_TYPES[which],
@@ -295,14 +291,15 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
     }
 
     companion object {
-        @JvmField
-        var SUB_NAMES = arrayOf<CharSequence>(
-            App.get().getString(R.string.fav_subscribe_none),
-            App.get().getString(R.string.fav_subscribe_delayed),
-            App.get().getString(R.string.fav_subscribe_immediate),
-            App.get().getString(R.string.fav_subscribe_daily),
-            App.get().getString(R.string.fav_subscribe_weekly),
-            App.get().getString(R.string.fav_subscribe_pinned)
-        )
+        fun getSubNames(context: Context): Array<String> {
+            return arrayOf(
+                context.getString(R.string.fav_subscribe_none),
+                context.getString(R.string.fav_subscribe_delayed),
+                context.getString(R.string.fav_subscribe_immediate),
+                context.getString(R.string.fav_subscribe_daily),
+                context.getString(R.string.fav_subscribe_weekly),
+                context.getString(R.string.fav_subscribe_pinned)
+            )
+        }
     }
 }

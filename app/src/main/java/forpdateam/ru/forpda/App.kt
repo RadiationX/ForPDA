@@ -40,16 +40,6 @@ class App : Application() {
 
     companion object {
 
-        private var instance: App? = null
-
-        @JvmStatic
-        fun get(): App {
-            if (instance == null) {
-                instance = App()
-            }
-            return requireNotNull(instance)
-        }
-
         val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
             .cacheInMemory(true)
             .resetViewBeforeLoading(true)
@@ -104,13 +94,8 @@ class App : Application() {
         }
     }
 
-    init {
-        instance = this
-    }
-
     override fun onCreate() {
         super.onCreate()
-        instance = this
         val time = System.currentTimeMillis()
         val config = AppMetricaConfig.newConfigBuilder("a94d9236-cdf3-4a5e-af30-d6dbffaea362").build()
         AppMetrica.activate(applicationContext, config)

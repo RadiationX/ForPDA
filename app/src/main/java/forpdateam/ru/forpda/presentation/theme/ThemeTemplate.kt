@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.theme
 
-import forpdateam.ru.forpda.App
+import android.content.Context
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
@@ -15,6 +15,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 class ThemeTemplate @Inject constructor(
+    private val context: Context,
     private val templateManager: TemplateManager,
     private val authHolder: AuthHolder,
     private val topicPreferencesHolder: TopicPreferencesHolder
@@ -139,8 +140,11 @@ class ThemeTemplate @Inject constructor(
                 setVariableOpt("poll_type", if (isResult) "result" else "default")
                 setVariableOpt(
                     "poll_title",
-                    if (poll.title.isNullOrEmpty() || poll.title == "-") App.get()
-                        .getString(R.string.poll) else poll.title
+                    if (poll.title.isNullOrEmpty() || poll.title == "-") {
+                        context.getString(R.string.poll)
+                    } else {
+                        poll.title
+                    }
                 )
 
                 for (question in poll.questions) {

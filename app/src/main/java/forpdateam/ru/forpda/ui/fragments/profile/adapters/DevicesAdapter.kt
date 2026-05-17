@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.fragments.profile.adapters
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.ProfileSubItemDeviceBinding
@@ -40,7 +39,7 @@ internal class DevicesAdapter(
 
         override fun bind(item: ProfileModel.Device) {
             currentItem = item
-            binding.itemTitle.text = String.format("%s %s", item.name, item.accessory)
+            binding.itemTitle.text = String.format("${item.name} ${item.accessory}")
         }
 
         internal interface Listener {

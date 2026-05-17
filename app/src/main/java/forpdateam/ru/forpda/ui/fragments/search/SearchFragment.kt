@@ -28,7 +28,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.webview.CustomWebChromeClient
@@ -146,7 +145,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     private val presenter by quillMoxyPresenter<SearchPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_search)
+        configuration.defaultTitle = getString(R.string.fragment_title_search)
     }
 
     override fun updateShowAvatarState(isShow: Boolean) {
@@ -406,7 +405,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     override fun showAddInFavDialog(item: SearchItem) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
-            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+            .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
                 presenter.addTopicToFavorite(item, FavoritesApi.SUB_TYPES[which])
             }
             .show()

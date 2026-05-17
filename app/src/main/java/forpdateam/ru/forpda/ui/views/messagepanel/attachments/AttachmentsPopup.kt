@@ -11,7 +11,6 @@ import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
@@ -24,7 +23,7 @@ import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
  * Created by radiationx on 09.01.17.
  */
 
-class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel) {
+class AttachmentsPopup(private val context: Context, private val messagePanel: MessagePanel) {
     private val dialog: BottomSheetDialog
     private val bottomSheet: View?
     private val recyclerView: AutoFitRecyclerView
@@ -201,8 +200,7 @@ class AttachmentsPopup(context: Context, private val messagePanel: MessagePanel)
     private fun onDataChange(count: Int) {
         messagePanel.updateAttachmentsCounter(count)
         if (count > 0) {
-            noAttachments.text =
-                String.format(App.get().getString(R.string.attachments_count), count)
+            noAttachments.text = context.getString(R.string.attachments_count, count)
             //dialog.setPeekHeight(App.getKeyboardHeight());
         } else {
             noAttachments.setText(R.string.no_attachments)

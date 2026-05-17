@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.filepicker.registerFilePicker
 import forpdateam.ru.forpda.entity.app.CloseableInfo
@@ -39,7 +38,7 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
     }
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_notes)
+        configuration.defaultTitle = getString(R.string.fragment_title_notes)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

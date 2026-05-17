@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
@@ -29,7 +28,7 @@ class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, 
     private val presenter by quillMoxyPresenter<ArticlesListPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_news_list)
+        configuration.defaultTitle = getString(R.string.fragment_title_news_list)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

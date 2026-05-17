@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
@@ -54,7 +53,7 @@ class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
     private val presenter by quillMoxyPresenter<DevicesPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_brand)
+        configuration.defaultTitle = getString(R.string.fragment_title_brand)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

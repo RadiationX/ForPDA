@@ -27,7 +27,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import com.robohorse.pagerbullet.PagerBullet
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentDeviceBinding
 import forpdateam.ru.forpda.databinding.ToolbarDeviceBinding
@@ -51,7 +50,6 @@ import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.quill.inject
-import java.util.Locale
 
 /**
  * Created by radiationx on 08.08.17.
@@ -86,7 +84,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
     private val presenter by quillMoxyPresenter<DevicePresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_device)
+        configuration.defaultTitle = getString(R.string.fragment_title_device)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -288,48 +286,32 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
         init {
             if (!this.device.specs.isEmpty()) {
                 fragments.add(SpecsFragment().setDevice(this.device))
-                titles.add(App.get().getString(R.string.device_page_specs))
+                titles.add(getString(R.string.device_page_specs))
             }
             if (!this.device.comments.isEmpty()) {
                 fragments.add(CommentsFragment().setDevice(this.device))
-                val title = String.format(
-                    Locale.getDefault(),
-                    App.get().getString(R.string.device_page_comments),
-                    this.device.comments.size
-                )
+                val title = getString(R.string.device_page_comments, this.device.comments.size)
                 titles.add(title)
             }
             if (!this.device.discussions.isEmpty()) {
                 fragments.add(
                     PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device)
                 )
-                val title = String.format(
-                    Locale.getDefault(),
-                    App.get().getString(R.string.device_page_discussions),
-                    this.device.discussions.size
-                )
+                val title = getString(R.string.device_page_discussions, this.device.discussions.size)
                 titles.add(title)
             }
             if (!this.device.news.isEmpty()) {
                 fragments.add(
                     PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device)
                 )
-                val title = String.format(
-                    Locale.getDefault(),
-                    App.get().getString(R.string.device_page_news),
-                    this.device.news.size
-                )
+                val title = getString(R.string.device_page_news, this.device.news.size)
                 titles.add(title)
             }
             if (!this.device.firmwares.isEmpty()) {
                 fragments.add(
                     PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device)
                 )
-                val title = String.format(
-                    Locale.getDefault(),
-                    App.get().getString(R.string.device_page_firmwares),
-                    this.device.firmwares.size
-                )
+                val title = getString(R.string.device_page_firmwares, this.device.firmwares.size)
                 titles.add(title)
             }
         }

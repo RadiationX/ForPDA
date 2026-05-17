@@ -74,7 +74,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<Preference>("about.application")?.apply {
-            summary = String.format(getString(R.string.version_Build), AppBuildConfig.versionName)
+            summary = getString(R.string.version_Build, AppBuildConfig.versionName)
         }
 
         findPreference<Preference>("about.check_update")?.apply {

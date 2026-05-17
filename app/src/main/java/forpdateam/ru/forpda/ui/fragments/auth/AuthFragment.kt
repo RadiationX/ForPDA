@@ -20,7 +20,6 @@ import androidx.appcompat.app.AlertDialog
 import com.github.rahatarmanahmed.cpv.CircularProgressView
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleAnimationListener
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
@@ -87,7 +86,7 @@ class AuthFragment : TabFragment(R.layout.fragment_auth), AuthView {
     private val presenter by quillMoxyPresenter<AuthPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_auth)
+        configuration.defaultTitle = getString(R.string.fragment_title_auth)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -199,13 +198,7 @@ class AuthFragment : TabFragment(R.layout.fragment_auth), AuthView {
 
     override fun showProfile(profile: ProfileModel) {
         ImageLoader.getInstance().displayImage(profile.user.avatar, avatar)
-        completeText.text = ApiUtils.spannedFromHtml(
-            String.format(
-                "%s, <b>%s</b>!",
-                getString(R.string.auth_hello),
-                profile.user.nick
-            )
-        )
+        completeText.text = ApiUtils.spannedFromHtml("${getString(R.string.auth_hello)}, <b>${profile.user.nick}</b>!")
         completeText.visibility = View.VISIBLE
 
         completeText.startAnimation(AlphaAnimation(0.0f, 1.0f).apply {

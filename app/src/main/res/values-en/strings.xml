@@ -276,7 +276,7 @@
     <string name="editpost_error_edit">You cannot edit this post</string>
     <string name="editpost_reason">Reason for editing</string>
     <!-- Pagination -->
-    <string name="pagination_page_number" formatted="false">Page №%d</string>
+    <string name="pagination_page_Num" formatted="false">Page №%d</string>
     <string name="pagination_first">To the first page</string>
     <string name="pagination_prev">To the previous page</string>
     <string name="pagination_select_desc">Select a page</string>
@@ -290,8 +290,8 @@
     <!-- Forum -->
     <string name="forum_refresh">Refresh forums</string>
     <!-- Intent -->
-    <string name="load_file" formatted="false">Download a file %s?</string>
-    <string name="perform_request_link" formatted="false">Requesting download link %s</string>
+    <string name="load_file_Name" formatted="false">Download a file %s?</string>
+    <string name="perform_request_link_Name" formatted="false">Requesting download link %s</string>
     <string name="perform_loading" formatted="false">Performing download %s</string>
     <string name="perform_loading_error">An error has occurred. Will be loaded via an external downloader.</string>
     <!-- Poll -->

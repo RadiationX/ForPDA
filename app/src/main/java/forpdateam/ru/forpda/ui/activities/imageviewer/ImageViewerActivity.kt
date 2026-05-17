@@ -88,11 +88,7 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
     private fun updateTitle(selectedPageIndex: Int) {
         currentIndex = selectedPageIndex
         binding.toolbar.title = names[selectedPageIndex]
-        binding.toolbar.subtitle = String.format(
-            getString(R.string.image_viewer_subtitle_Cur_All),
-            selectedPageIndex + 1,
-            currentImages.size
-        )
+        binding.toolbar.subtitle = getString(R.string.image_viewer_subtitle_Cur_All, selectedPageIndex + 1, currentImages.size)
     }
 
     private fun toggle() {

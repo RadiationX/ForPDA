@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
@@ -75,7 +74,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
     private val presenter by quillMoxyPresenter<ReputationPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_reputation)
+        configuration.defaultTitle = getString(R.string.fragment_title_reputation)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -193,8 +192,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
 
         val text = layout.findViewById<View>(R.id.reputation_text) as TextView
         val messageField = layout.findViewById<View>(R.id.reputation_text_field) as EditText
-        text.text = String.format(
-            getString(R.string.change_reputation_Type_Nick),
+        text.text = getString(
+            R.string.change_reputation_Type_Nick,
             getString(if (type) R.string.increase else R.string.decrease),
             presenter.currentData?.nick.orEmpty()
         )

@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
@@ -60,7 +59,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     private val presenter by quillMoxyPresenter<TopicsPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_topics)
+        configuration.defaultTitle = getString(R.string.fragment_title_topics)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,7 +149,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     private fun openAddForumToFavoriteDialog(forumId: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
-            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+            .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
                 presenter.addForumToFavorite(forumId, FavoritesApi.SUB_TYPES[which])
             }
             .show()
@@ -159,7 +158,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     private fun openAddTopicToFavoriteDialog(topicId: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
-            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+            .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
                 presenter.addTopicToFavorite(topicId, FavoritesApi.SUB_TYPES[which])
             }
             .show()

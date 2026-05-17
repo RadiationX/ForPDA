@@ -100,10 +100,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
         val messageField = layout.findViewById<EditText>(R.id.report_text_field)
         val inputLayout = layout.findViewById<TextInputLayout>(R.id.report_input_layout)
         val i = intArrayOf(listLines.size + 1)
-        inputLayout.hint = String.format(
-            context.getString(R.string.codes_list_item_Pos),
-            i[0]
-        )
+        inputLayout.hint = context.getString(R.string.codes_list_item_Pos, i[0])
         val alertDialog = AlertDialog.Builder(
             context
         )
@@ -129,9 +126,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             i[0]++
             listLines.add(messageField.text.toString())
             messageField.setText("")
-            inputLayout.hint = String.format(
-                context.getString(R.string.codes_list_item_Pos), i[0]
-            )
+            inputLayout.hint = context.getString(R.string.codes_list_item_Pos, i[0])
         }
         messageField.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -141,7 +136,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
     }
 
     private fun colorInsert(item: PanelListItem.BBCode) {
-        ColorPicker(context,messagePanel) {
+        ColorPicker(context, messagePanel) {
             val color = getHtmlColor(it.hexColor)
             val resultHeaders: MutableList<Pair<String?, String?>> = ArrayList()
             resultHeaders.add(Pair(null, color))
@@ -161,10 +156,7 @@ class CodesPanelItem(context: Context, panel: MessagePanel) :
             "7 (36pt)"
         )
         for (i in items.indices) {
-            items[i] = String.format(
-                context.getString(R.string.codes_text_size_item_Size),
-                items[i]
-            )
+            items[i] = context.getString(R.string.codes_text_size_item_Size,items[i])
         }
         AlertDialog.Builder(context)
             .setTitle(R.string.codes_text_size)

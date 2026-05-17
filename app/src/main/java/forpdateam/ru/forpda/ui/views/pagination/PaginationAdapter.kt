@@ -6,15 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
-import java.util.Locale
 
 /**
  * Created by radiationx on 26.10.16.
  */
-class PaginationAdapter(context: Context?, private val data: IntArray) : BaseAdapter() {
-    private val page = get().getString(R.string.pagination_page_number)
+class PaginationAdapter(context: Context, private val data: IntArray) : BaseAdapter() {
+    private val page = context.getString(R.string.pagination_page_Num)
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
@@ -45,8 +43,7 @@ class PaginationAdapter(context: Context?, private val data: IntArray) : BaseAda
         }
 
 
-        holder.text!!.text =
-            String.format(Locale.getDefault(), page, data[position])
+        holder.text!!.text = holder.text!!.context.getString(R.string.pagination_page_Num, data[position])
         return convertView
     }
 

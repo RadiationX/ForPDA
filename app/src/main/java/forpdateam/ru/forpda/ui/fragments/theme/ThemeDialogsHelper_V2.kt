@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.model.AuthHolder
@@ -29,27 +28,27 @@ class ThemeDialogsHelper_V2(
 
     init {
         userMenu.addItem(
-            get().getString(R.string.profile)
+            context.getString(R.string.profile)
         ) { context1: IThemePresenter, data: ForumPost -> context1.openProfile(data.id) }
         userMenu.addItem(
-            get().getString(R.string.reputation)
+            context.getString(R.string.reputation)
         ) { context1: IThemePresenter, data: ForumPost -> context1.onReputationMenuClick(data.id) }
         userMenu.addItem(
-            get().getString(R.string.pm_qms)
+            context.getString(R.string.pm_qms)
         ) { context1: IThemePresenter, data: ForumPost -> context1.openQms(data.id) }
         userMenu.addItem(
-            get().getString(R.string.user_themes)
+            context.getString(R.string.user_themes)
         ) { context1: IThemePresenter, data: ForumPost -> context1.openSearchUserTopic(data.id) }
         userMenu.addItem(
-            get().getString(R.string.messages_in_this_theme)
+            context.getString(R.string.messages_in_this_theme)
         ) { context1: IThemePresenter, data: ForumPost -> context1.openSearchInTopic(data.id) }
         userMenu.addItem(
-            get().getString(R.string.user_messages)
+            context.getString(R.string.user_messages)
         ) { context1: IThemePresenter, data: ForumPost -> context1.openSearchUserMessages(data.id) }
 
 
         reputationMenu.addItem(
-            get().getString(R.string.increase)
+            context.getString(R.string.increase)
         ) { context1: IThemePresenter, data: ForumPost ->
             context1.onChangeReputationClick(
                 data.id,
@@ -57,10 +56,10 @@ class ThemeDialogsHelper_V2(
             )
         }
         reputationMenu.addItem(
-            get().getString(R.string.look)
+            context.getString(R.string.look)
         ) { context1: IThemePresenter, data: ForumPost -> context1.openReputationHistory(data.id) }
         reputationMenu.addItem(
-            get().getString(R.string.decrease)
+            context.getString(R.string.decrease)
         ) { context1: IThemePresenter, data: ForumPost ->
             context1.onChangeReputationClick(
                 data.id,
@@ -69,28 +68,28 @@ class ThemeDialogsHelper_V2(
         }
 
         postMenu.addItem(
-            get().getString(R.string.reply)
+            context.getString(R.string.reply)
         ) { context1: IThemePresenter, data: ForumPost -> context1.onReplyPostClick(data.id) }
         postMenu.addItem(
-            get().getString(R.string.quote_from_clipboard)
+            context.getString(R.string.quote_from_clipboard)
         ) { context1: IThemePresenter, data: ForumPost -> context1.quoteFromBuffer(data.id) }
         postMenu.addItem(
-            get().getString(R.string.report)
+            context.getString(R.string.report)
         ) { context1: IThemePresenter, data: ForumPost -> context1.onReportPostClick(data.id) }
         postMenu.addItem(
-            get().getString(R.string.edit)
+            context.getString(R.string.edit)
         ) { context1: IThemePresenter, data: ForumPost -> context1.onEditPostClick(data.id) }
         postMenu.addItem(
-            get().getString(R.string.delete)
+            context.getString(R.string.delete)
         ) { context1: IThemePresenter, data: ForumPost -> context1.onDeletePostClick(data.id) }
         postMenu.addItem(
-            get().getString(R.string.copy_link)
+            context.getString(R.string.copy_link)
         ) { context1: IThemePresenter, data: ForumPost -> context1.copyPostLink(data.id) }
         postMenu.addItem(
-            get().getString(R.string.create_note)
+            context.getString(R.string.create_note)
         ) { context1: IThemePresenter, data: ForumPost -> context1.createNote(data.id) }
         postMenu.addItem(
-            get().getString(R.string.share)
+            context.getString(R.string.share)
         ) { context1: IThemePresenter, data: ForumPost -> context1.sharePostLink(data.id) }
     }
 
@@ -117,7 +116,7 @@ class ThemeDialogsHelper_V2(
         if (!authHolder.get().isAuth() || post.canMinusRep) {
             reputationMenu.allow(2)
         }
-        val title = get().getString(R.string.reputation) + (" " + post.user.nick)
+        val title = context.getString(R.string.reputation) + (" " + post.user.nick)
         reputationMenu.show(context, title, presenter, post)
     }
 
@@ -161,7 +160,7 @@ class ThemeDialogsHelper_V2(
         val messageField = layout.findViewById<EditText>(R.id.report_text_field)
 
         AlertDialog.Builder(context)
-            .setTitle(String.format(get().getString(R.string.report_to_post_Nick), post.user.nick))
+            .setTitle(context.getString(R.string.report_to_post_Nick, post.user.nick))
             .setView(layout)
             .setPositiveButton(
                 R.string.send
@@ -177,7 +176,7 @@ class ThemeDialogsHelper_V2(
 
     fun deletePost(presenter: IThemePresenter, post: ForumPost) {
         AlertDialog.Builder(context)
-            .setMessage(String.format(get().getString(R.string.ask_delete_post_Nick), post.user.nick))
+            .setMessage(context.getString(R.string.ask_delete_post_Nick, post.user.nick))
             .setPositiveButton(
                 R.string.ok
             ) { dialogInterface: DialogInterface?, i: Int -> presenter.deletePost(post.id) }
@@ -192,8 +191,8 @@ class ThemeDialogsHelper_V2(
 
         val text = layout.findViewById<TextView>(R.id.reputation_text)
         val messageField = layout.findViewById<EditText>(R.id.reputation_text_field)
-        text.text = String.format(
-            context.getString(R.string.change_reputation_Type_Nick),
+        text.text = context.getString(
+            R.string.change_reputation_Type_Nick,
             context.getString(if (type) R.string.increase else R.string.decrease),
             post.user.nick
         )
@@ -216,8 +215,7 @@ class ThemeDialogsHelper_V2(
     fun votePost(presenter: IThemePresenter, post: ForumPost, type: Boolean) {
         AlertDialog.Builder(context)
             .setMessage(
-                String.format(
-                    context.getString(R.string.change_post_reputation_Type_Nick),
+                context.getString(R.string.change_post_reputation_Type_Nick,
                     context.getString(if (type) R.string.increase else R.string.decrease),
                     post.user.nick
                 )

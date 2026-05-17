@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.databinding.ToolbarQmsBlackListBinding
@@ -42,7 +41,7 @@ class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener
     private val presenter by quillMoxyPresenter<QmsBlackListPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_blacklist)
+        configuration.defaultTitle = getString(R.string.fragment_title_blacklist)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

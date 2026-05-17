@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.views.messagepanel.advanced
 
 import android.annotation.SuppressLint
 import android.content.Context
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.PanelItemAdapter
@@ -12,7 +11,7 @@ import forpdateam.ru.forpda.ui.views.messagepanel.advanced.adapters.PanelItemAda
  */
 @SuppressLint("ViewConstructor")
 class SmilesPanelItem(context: Context, panel: MessagePanel) :
-    BasePanelItem(context, panel, get().getString(R.string.smiles_title)) {
+    BasePanelItem(context, panel, context.getString(R.string.smiles_title)) {
     init {
         val adapter = PanelItemAdapter(getSmiles().toMutableList()) {
             if (it is PanelListItem.Smile) {

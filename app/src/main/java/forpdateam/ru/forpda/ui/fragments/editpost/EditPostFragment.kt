@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
@@ -65,12 +64,12 @@ class EditPostFragment : TabFragment(), EditPostView {
         attachmentsPopup.setDeleteOnClickListener { removeFiles() }
         arguments?.apply {
             val title = getString(ARG_THEME_NAME, "")
-            setTitle(
-                "${
-                    App.get()
-                        .getString(if (formType == EditPostForm.TYPE_NEW_POST) R.string.editpost_title_answer else R.string.editpost_title_edit)
-                } $title"
-            )
+            val prefixRes = if (formType == EditPostForm.TYPE_NEW_POST) {
+                R.string.editpost_title_answer
+            } else {
+                R.string.editpost_title_edit
+            }
+            setTitle("${getString(prefixRes)} $title")
         }
 
         messagePanel.editPollButton!!.setOnClickListener {

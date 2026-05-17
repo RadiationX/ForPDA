@@ -306,7 +306,7 @@
     <string name="editpost_reason">Причина редактирования</string>
 
     <!-- Pagination -->
-    <string name="pagination_page_number" formatted="false">Страница №%d</string>
+    <string name="pagination_page_Num" formatted="false">Страница №%d</string>
     <string name="pagination_first">К первой странице</string>
     <string name="pagination_prev">К предыдущей странице</string>
     <string name="pagination_select_desc">Выбор страницы</string>
@@ -324,8 +324,8 @@
     <string name="forum_refresh">Обновить форумы</string>
 
     <!-- Intent -->
-    <string name="load_file" formatted="false">Загрузить файл %s?</string>
-    <string name="perform_request_link" formatted="false">Запрашиваю ссылку для загрузки %s</string>
+    <string name="load_file_Name" formatted="false">Загрузить файл %s?</string>
+    <string name="perform_request_link_Name" formatted="false">Запрашиваю ссылку для загрузки %s</string>
     <string name="perform_loading" formatted="false">Выполняется загрузка %s</string>
     <string name="perform_loading_error">Произошла ошибка. Будет загружено через внешний загрузчик.</string>
 

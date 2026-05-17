@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.app.history.HistoryItem
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
@@ -39,7 +38,7 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
     private val presenter by quillMoxyPresenter<HistoryPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_history)
+        configuration.defaultTitle = getString(R.string.fragment_title_history)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

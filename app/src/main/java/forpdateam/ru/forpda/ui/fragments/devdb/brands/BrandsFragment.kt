@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
@@ -28,7 +27,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
     private val presenter by quillMoxyPresenter<BrandsPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_brands)
+        configuration.defaultTitle = getString(R.string.fragment_title_brands)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,20 +105,13 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
     }
 
     private fun getCategoryTitle(category: String): String? {
-        when (category) {
-            BrandsPresenter.CATEGORY_PHONES -> return App.get()
-                .getString(R.string.brands_category_phones)
-
-            BrandsPresenter.CATEGORY_PAD -> return App.get()
-                .getString(R.string.brands_category_tabs)
-
-            BrandsPresenter.CATEGORY_EBOOK -> return App.get()
-                .getString(R.string.brands_category_ebook)
-
-            BrandsPresenter.CATEGORY_SMARTWATCH -> return App.get()
-                .getString(R.string.brands_category_smartwatch)
+        return when (category) {
+            BrandsPresenter.CATEGORY_PHONES -> getString(R.string.brands_category_phones)
+            BrandsPresenter.CATEGORY_PAD -> getString(R.string.brands_category_tabs)
+            BrandsPresenter.CATEGORY_EBOOK -> getString(R.string.brands_category_ebook)
+            BrandsPresenter.CATEGORY_SMARTWATCH -> getString(R.string.brands_category_smartwatch)
+            else -> null
         }
-        return null
     }
 
     companion object {

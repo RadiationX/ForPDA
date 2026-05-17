@@ -15,7 +15,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentArticleBinding
 import forpdateam.ru.forpda.databinding.ToolbarNewsDetailsBinding
@@ -76,7 +75,7 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
     fun getAppBar() = appBarLayout
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_news)
+        configuration.defaultTitle = getString(R.string.fragment_title_news)
         configuration.isFitSystemWindow = true
     }
 
@@ -129,12 +128,7 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
             val newsCount = getInt(ARG_NEWS_COMMENTS_COUNT, -1)
             if (newsTitle != null) {
                 setTitle(newsTitle)
-                setTabTitle(
-                    String.format(
-                        getString(R.string.fragment_tab_title_article),
-                        newsTitle
-                    )
-                )
+                setTabTitle(getString(R.string.fragment_tab_title_article, newsTitle))
                 detailsTitle.text = newsTitle
             }
             if (newsNick != null) {
@@ -215,7 +209,7 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
 
     override fun showArticle(data: DetailsPage) {
         setTitle(data.title)
-        setTabTitle(String.format(getString(R.string.fragment_tab_title_article), data.title))
+        setTabTitle(getString(R.string.fragment_tab_title_article, data.title))
         detailsTitle.text = data.title
         detailsNick.text = data.author
         detailsDate.text = data.date
@@ -262,10 +256,10 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
 
         init {
             fragments.add(ArticleContentFragment())
-            titles.add(App.get().getString(R.string.news_page_content))
+            titles.add(getString(R.string.news_page_content))
 
             fragments.add(ArticleCommentsFragment())
-            titles.add(App.get().getString(R.string.news_page_comments))
+            titles.add(getString(R.string.news_page_comments))
         }
 
         override fun getItem(position: Int): Fragment {

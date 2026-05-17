@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
@@ -34,7 +33,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     private val presenter by quillMoxyPresenter<QmsThemesPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_dialogs)
+        configuration.defaultTitle = getString(R.string.fragment_title_dialogs)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +110,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     override fun showThemes(data: QmsThemes) {
         recyclerView.scrollToPosition(0)
 
-        setTabTitle(String.format(getString(R.string.dialogs_Nick), data.user.nick))
+        setTabTitle(getString(R.string.dialogs_Nick, data.user.nick))
         setTitle(data.user.nick)
 
         adapter.addAll(data.themes)
@@ -122,16 +121,16 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
         ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView)
         toolbarImageView.visibility = View.VISIBLE
         toolbarImageView.setOnClickListener { presenter.openProfile(presenter.userId) }
-        toolbarImageView.contentDescription = App.get().getString(R.string.user_avatar)
+        toolbarImageView.contentDescription = getString(R.string.user_avatar)
     }
 
     override fun showCreateNote(nick: String, url: String) {
-        val title = String.format(getString(R.string.dialogs_Nick), nick)
+        val title = getString(R.string.dialogs_Nick, nick)
         NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 
     override fun showCreateNote(name: String, nick: String, url: String) {
-        val title = String.format(getString(R.string.dialog_Title_Nick), name, nick)
+        val title = getString(R.string.dialog_Title_Nick, name, nick)
         NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 

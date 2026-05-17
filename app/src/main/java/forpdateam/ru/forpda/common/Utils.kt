@@ -8,7 +8,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
@@ -67,7 +66,7 @@ class Utils @Inject constructor(
         sendIntent.putExtra(Intent.EXTRA_TEXT, text)
         sendIntent.type = "text/plain"
         sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(Intent.createChooser(sendIntent, App.get().getString(R.string.share)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.share)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     fun <T> checkNotNull(value: T?, message: String?): T {

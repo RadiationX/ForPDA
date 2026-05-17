@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
@@ -60,7 +59,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
     private val presenter by quillMoxyPresenter<MentionsPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_mentions)
+        configuration.defaultTitle = getString(R.string.fragment_title_mentions)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -131,7 +130,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
     override fun showAddFavoritesDialog(id: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
-            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+            .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
                 presenter.addTopicToFavorite(id, FavoritesApi.SUB_TYPES[which])
             }
             .show()

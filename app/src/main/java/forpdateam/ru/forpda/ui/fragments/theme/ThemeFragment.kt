@@ -293,7 +293,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
         setTitle(page.title)
 
-        setTabTitle(String.format(getString(R.string.fragment_tab_title_theme), page.title))
+        setTabTitle(getString(R.string.fragment_tab_title_theme, page.title))
 
         val pagination = page.pagination
         setSubtitle("${pagination.current}/${pagination.all}")
@@ -507,7 +507,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     override fun showAddInFavDialog(page: ThemePage) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
-            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+            .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
                 presenter.addTopicToFavorite(page.id, FavoritesApi.SUB_TYPES[which])
             }
             .show()

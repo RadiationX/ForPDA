@@ -87,12 +87,7 @@ class SimpleUpdateChecker(
         mBuilder.setSmallIcon(R.drawable.ic_notify_mention)
 
         mBuilder.setContentTitle(context.getString(R.string.updater_notification_title))
-        mBuilder.setContentText(
-            String.format(
-                context.getString(R.string.updater_notification_content_VerName),
-                update.name
-            )
-        )
+        mBuilder.setContentText(context.getString(R.string.updater_notification_content_VerName, update.name))
 
         mBuilder.setChannelId(channelId)
 

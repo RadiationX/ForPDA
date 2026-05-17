@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
@@ -58,7 +57,7 @@ class ForumFragment : RecyclerFragment(), ForumView {
     private val presenter by quillMoxyPresenter<ForumPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_forum)
+        configuration.defaultTitle = getString(R.string.fragment_title_forum)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,7 +118,7 @@ class ForumFragment : RecyclerFragment(), ForumView {
     private fun openAddToFavoriteDialog(forumId: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
-            .setItems(FavoritesFragment.SUB_NAMES) { _, which ->
+            .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
                 presenter.addToFavorite(forumId, FavoritesApi.SUB_TYPES[which])
             }
             .show()

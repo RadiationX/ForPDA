@@ -11,13 +11,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import forpdateam.ru.forpda.App.Companion.get
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.databinding.EditPollQuestionBinding
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Companion.findQuestionByIndex
 import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
+import forpdateam.ru.forpda.extensions.context
 
 /**
  * Created by radiationx on 28.07.17.
@@ -44,7 +44,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
         } else {
             Toast.makeText(
                 context,
-                String.format(get().getString(R.string.poll_questions_Max), poll!!.maxQuestions),
+                context.getString(R.string.poll_questions_Max, poll!!.maxQuestions),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -116,8 +116,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
         }
 
         fun bind(item: Question) {
-            val qstr =
-                String.format(get().getString(R.string.poll_question_Pos), (adapterPosition + 1))
+            val qstr = context.getString(R.string.poll_question_Pos,adapterPosition + 1)
             customTextWatcher.updatePosition(adapterPosition)
             checkedChangeListener.updatePosition(adapterPosition)
 

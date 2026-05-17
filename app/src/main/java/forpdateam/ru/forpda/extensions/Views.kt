@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.extensions
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.ImageView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
@@ -21,3 +23,9 @@ fun ImageView.setTintColor(@ColorRes colorRes: Int) {
 fun ImageView.setTintColorAttr(@AttrRes colorAttr: Int) {
     imageTintList = ColorStateList.valueOf(context.getColorFromAttr(colorAttr))
 }
+
+val ViewBinding.context: Context
+    get() = root.context
+
+val RecyclerView.ViewHolder.context: Context
+    get() = itemView.context

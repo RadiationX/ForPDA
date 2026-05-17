@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
@@ -34,7 +33,7 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
     private val presenter by quillMoxyPresenter<QmsContactsPresenter>()
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_contacts)
+        configuration.defaultTitle = getString(R.string.fragment_title_contacts)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -127,7 +126,7 @@ class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<
     }
 
     override fun showCreateNote(nick: String, url: String) {
-        val title = String.format(getString(R.string.dialogs_Nick), nick)
+        val title = getString(R.string.dialogs_Nick, nick)
         NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 

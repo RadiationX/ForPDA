@@ -1,8 +1,8 @@
 package forpdateam.ru.forpda.presentation.theme
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
@@ -52,6 +52,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 @InjectViewState
 class ThemePresenter(
+    private val context: Context,
     private val themeRepository: ThemeRepository,
     private val reputationRepository: ReputationRepository,
     private val editorRepository: PostEditorRepository,
@@ -736,7 +737,7 @@ class ThemePresenter(
                 coRunCatching {
                     reputationRepository.changeReputation(it.id, it.user.id, type, message)
                 }.onSuccess {
-                    router.showSystemMessage(App.get().getString(R.string.reputation_changed))
+                    router.showSystemMessage(R.string.reputation_changed)
                 }.onFailure {
                     errorHandler.handle(it)
                 }
@@ -797,7 +798,7 @@ class ThemePresenter(
                     themeRepository.deletePost(post.id)
                 }.onSuccess {
                     viewState.deletePostUi(post)
-                    router.showSystemMessage(App.get().getString(R.string.message_deleted))
+                    router.showSystemMessage(R.string.message_deleted)
                 }.onFailure {
                     errorHandler.handle(it)
                 }
@@ -808,14 +809,8 @@ class ThemePresenter(
     override fun createNote(postId: Int) {
         getPostById(postId)?.let {
             val themeTitle: String = currentPage?.title.orEmpty()
-            val title = String.format(
-                App.get().getString(R.string.post_Topic_Nick_Number),
-                themeTitle,
-                it.user.nick,
-                it.id
-            )
-            val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=" + it.topicId + "&view=findpost&p=" + it.id
+            val title = context.getString(R.string.post_Topic_Nick_Number, themeTitle, it.user.nick, it.id)
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=" + it.topicId + "&view=findpost&p=" + it.id
             viewState.showNoteCreate(title, url)
         }
     }

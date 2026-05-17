@@ -9,7 +9,6 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
@@ -85,7 +84,7 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     }
 
     init {
-        configuration.defaultTitle = App.get().getString(R.string.fragment_title_chat)
+        configuration.defaultTitle = getString(R.string.fragment_title_chat)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -269,7 +268,7 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     override fun setTitles(title: String, nick: String) {
         setSubtitle(nick)
         setTitle(title)
-        setTabTitle(String.format(getString(R.string.fragment_tab_title_chat), title, nick))
+        setTabTitle(getString(R.string.fragment_tab_title_chat, title, nick))
     }
 
     override fun onNewThemeCreate(data: QmsChatModel) {
@@ -325,7 +324,7 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     }
 
     override fun showCreateNote(name: String, nick: String, url: String) {
-        val title = String.format(getString(R.string.dialog_Title_Nick), name, nick)
+        val title = getString(R.string.dialog_Title_Nick, name, nick)
         NotesAddPopup.showAddNoteDialog(requireContext(), title, url)
     }
 

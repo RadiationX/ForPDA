@@ -227,7 +227,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
         adapter.setProfile(data)
         adapter.notifyDataSetChanged()
 
-        setTabTitle(String.format(getString(R.string.profile_with_Nick), data.user.nick))
+        setTabTitle(getString(R.string.profile_with_Nick, data.user.nick))
         setTitle(data.user.nick)
         nick.text = data.user.nick
         group.text = data.group

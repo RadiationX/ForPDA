@@ -55,7 +55,7 @@ class SystemLinkHandlerImpl @Inject constructor(
         val activity = App.getActivity()
         if (activity != null) {
             AlertDialog.Builder(activity)
-                .setMessage(String.format(activity.getString(R.string.load_file), fileName))
+                .setMessage(activity.getString(R.string.load_file_Name, fileName))
                 .setPositiveButton(activity.getString(R.string.ok)) { dialog, which ->
                     redirectDownload(fileName, url)
                 }
@@ -69,7 +69,7 @@ class SystemLinkHandlerImpl @Inject constructor(
     private fun redirectDownload(fileName: String, url: String) {
         Toast.makeText(
             context,
-            String.format(context.getString(R.string.perform_request_link), fileName),
+            context.getString(R.string.perform_request_link_Name, fileName),
             Toast.LENGTH_SHORT
         ).show()
 

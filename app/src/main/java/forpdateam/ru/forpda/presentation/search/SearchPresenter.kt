@@ -1,6 +1,6 @@
 package forpdateam.ru.forpda.presentation.search
 
-import forpdateam.ru.forpda.App
+import android.content.Context
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
@@ -29,6 +29,7 @@ import moxy.InjectViewState
 
 @InjectViewState
 class SearchPresenter(
+    private val context: Context,
     private val searchRepository: SearchRepository,
     private val favoritesRepository: FavoritesRepository,
     private val themeRepository: ThemeRepository,
@@ -509,7 +510,7 @@ class SearchPresenter(
                         message
                     )
                 }.onSuccess {
-                    router.showSystemMessage(App.get().getString(R.string.reputation_changed))
+                    router.showSystemMessage(R.string.reputation_changed)
                 }.onFailure {
                     errorHandler.handle(it)
                 }
@@ -562,7 +563,7 @@ class SearchPresenter(
                     themeRepository.deletePost(post.post.id)
                 }.onSuccess {
                     viewState.deletePostUi(post)
-                    router.showSystemMessage(App.get().getString(R.string.message_deleted))
+                    router.showSystemMessage(R.string.message_deleted)
                 }.onFailure {
                     errorHandler.handle(it)
                 }
@@ -573,8 +574,8 @@ class SearchPresenter(
     override fun createNote(postId: Int) {
         getPostById(postId)?.let {
             val topicTitle: String = it.title
-            val title = String.format(
-                App.get().getString(R.string.post_Topic_Nick_Number),
+            val title = context.getString(
+                R.string.post_Topic_Nick_Number,
                 topicTitle,
                 it.post.user.nick,
                 it.post.id
