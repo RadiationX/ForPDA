@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.common.flowpreferences
+package ru.radiationx.flowpreferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
@@ -28,7 +28,7 @@ class FlowPreferences(
     }
 
     fun <T> get(key: String, default: T, adapter: FlowPreferenceAdapter<T>): FlowPreference<T> {
-        return FlowPreferenceImpl(preferences, key, default, adapter, keysFlow)
+        return FlowPreferenceImpl(coroutineScope, preferences, key, default, adapter, keysFlow)
     }
 
     fun getString(key: String, default: String? = null): FlowPreference<String?> {

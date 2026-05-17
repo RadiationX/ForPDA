@@ -133,6 +133,7 @@ appmetrica {
 
 dependencies {
     implementation(project(":lib:regexparser"))
+    implementation(project(":lib:flow-preferences"))
 
     implementation(project(":lib:quill-di"))
     compileOnly(libs.toothpick)

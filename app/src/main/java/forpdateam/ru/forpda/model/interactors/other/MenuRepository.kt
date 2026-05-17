@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model.interactors.other
 
 import android.util.Log
-import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
+import ru.radiationx.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.entity.app.other.AppMenuItem
 import forpdateam.ru.forpda.entity.common.MessageCounters
 import forpdateam.ru.forpda.model.AuthHolder

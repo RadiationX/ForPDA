@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.common.flowpreferences
+package ru.radiationx.flowpreferences
 
 sealed interface PreferenceValue {
     data object Null : PreferenceValue

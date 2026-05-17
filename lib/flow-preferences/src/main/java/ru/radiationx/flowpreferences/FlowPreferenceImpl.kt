@@ -1,7 +1,8 @@
-package forpdateam.ru.forpda.common.flowpreferences
+package ru.radiationx.flowpreferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlin.time.Duration.Companion.seconds
 
 class FlowPreferenceImpl<T>(
+    private val coroutineScope: CoroutineScope,
     private val preferences: SharedPreferences,
     private val key: String,
     private val defaultValue: T,
@@ -24,7 +26,7 @@ class FlowPreferenceImpl<T>(
         keysFlow
             .filter { it == null || it == key }
             .map { loadValue() }
-            .stateIn(GlobalScope, SharingStarted.WhileSubscribed(1.seconds), loadValue())
+            .stateIn(coroutineScope, SharingStarted.WhileSubscribed(1.seconds), loadValue())
     }
 
     override fun get(): T {

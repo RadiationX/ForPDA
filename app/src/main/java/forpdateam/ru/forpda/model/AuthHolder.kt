@@ -1,7 +1,7 @@
 package forpdateam.ru.forpda.model
 
 import forpdateam.ru.forpda.client.CookieStorage
-import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
+import ru.radiationx.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.entity.common.AuthData
 import forpdateam.ru.forpda.entity.common.AuthState
 import kotlinx.coroutines.GlobalScope

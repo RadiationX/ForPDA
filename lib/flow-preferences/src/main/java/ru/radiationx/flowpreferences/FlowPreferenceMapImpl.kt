@@ -1,4 +1,4 @@
-package forpdateam.ru.forpda.common.flowpreferences
+package ru.radiationx.flowpreferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit

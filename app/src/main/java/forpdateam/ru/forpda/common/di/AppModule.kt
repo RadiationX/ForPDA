@@ -18,7 +18,7 @@ import forpdateam.ru.forpda.client.websocket.WebSocketController
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.apptheme.AppThemeController
 import forpdateam.ru.forpda.common.apptheme.AppThemeControllerImpl
-import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
+import ru.radiationx.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
