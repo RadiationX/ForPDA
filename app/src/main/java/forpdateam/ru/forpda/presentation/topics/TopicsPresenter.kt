@@ -32,7 +32,8 @@ class TopicsPresenter(
     private val crossScreenInteractor: CrossScreenInteractor,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<TopicsView>() {
 
     var id = 0
@@ -162,7 +163,7 @@ class TopicsPresenter(
 
     fun copyLink(item: TopicItem) {
         val link = getItemLink(item)
-        Utils.copyToClipBoard(link)
+        utils.copyToClipBoard(link)
     }
 
     private fun getItemLink(item: TopicItem): String {

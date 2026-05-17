@@ -59,7 +59,8 @@ class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
     fun providePresenter(): DevicesPresenter = DevicesPresenter(
         App.get().Di().devDbRepository,
         App.get().Di().router,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {

@@ -40,7 +40,8 @@ class SearchPresenter(
     private val templateManager: TemplateManager,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<SearchSiteView>(), IThemePresenter {
 
     companion object {
@@ -263,12 +264,12 @@ class SearchPresenter(
     }
 
     fun copyLink() {
-        Utils.copyToClipBoard(settings.toUrl())
+        utils.copyToClipBoard(settings.toUrl())
     }
 
     fun copyLink(item: SearchItem) {
         val url = getItemUrl(item)
-        Utils.copyToClipBoard(url)
+        utils.copyToClipBoard(url)
     }
 
     private fun getItemUrl(item: SearchItem): String {
@@ -365,7 +366,7 @@ class SearchPresenter(
     override fun setHistoryBody(index: Int, body: String) = unavailableFunction()
 
     override fun shareText(text: String) {
-        Utils.shareText(text)
+        utils.shareText(text)
     }
 
     private fun getPostById(postId: Int): SearchItem.Post? = currentData
@@ -421,7 +422,7 @@ class SearchPresenter(
     }
 
     override fun copyText(text: String) {
-        Utils.copyToClipBoard(text)
+        utils.copyToClipBoard(text)
     }
 
     override fun toast(text: String) {

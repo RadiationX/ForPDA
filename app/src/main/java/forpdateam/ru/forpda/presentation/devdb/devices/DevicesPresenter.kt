@@ -19,7 +19,8 @@ import moxy.InjectViewState
 class DevicesPresenter(
     private val devDbRepository: DevDbRepository,
     private val router: TabRouter,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<DevicesView>() {
 
     var categoryId: String? = null
@@ -60,13 +61,13 @@ class DevicesPresenter(
 
     fun copyLink(item: Brand.DeviceItem) {
         currentData?.let {
-            Utils.copyToClipBoard("https://4pda.to/devdb/${item.id}")
+            utils.copyToClipBoard("https://4pda.to/devdb/${item.id}")
         }
     }
 
     fun shareLink(item: Brand.DeviceItem) {
         currentData?.let {
-            Utils.shareText("https://4pda.to/devdb/${item.id}")
+            utils.shareText("https://4pda.to/devdb/${item.id}")
         }
     }
 

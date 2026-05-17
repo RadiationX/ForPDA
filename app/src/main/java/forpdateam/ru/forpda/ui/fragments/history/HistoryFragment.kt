@@ -45,7 +45,8 @@ class HistoryFragment : RecyclerFragment(), HistoryView {
         App.get().Di().historyRepository,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {

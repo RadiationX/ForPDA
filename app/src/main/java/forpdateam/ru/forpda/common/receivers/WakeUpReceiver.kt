@@ -14,6 +14,6 @@ class WakeUpReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("SUKA", "RECIEVER ACTION " + intent.action)
         App.get().Di().eventsController.start()
-        NotificationsService.startAndCheck()
+        NotificationsService.startAndCheck(context)
     }
 }

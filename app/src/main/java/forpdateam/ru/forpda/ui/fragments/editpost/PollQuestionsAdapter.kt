@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.editpost
 
+import android.content.Context
 import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.App.Companion.getContext
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.databinding.EditPollQuestionBinding
@@ -34,7 +34,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
 
     constructor()
 
-    fun add(question: Question) {
+    fun add(context: Context, question: Question) {
         if (questions.size < poll!!.maxQuestions) {
             poll!!.increaseIndexOffset()
             question.index = poll!!.indexOffset + poll!!.baseIndexOffset
@@ -43,7 +43,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
             notifyDataSetChanged()
         } else {
             Toast.makeText(
-                getContext(),
+                context,
                 String.format(get().getString(R.string.poll_questions_Max), poll!!.maxQuestions),
                 Toast.LENGTH_SHORT
             ).show()
@@ -86,7 +86,7 @@ class PollQuestionsAdapter : RecyclerView.Adapter<PollQuestionsAdapter.ViewHolde
 
             binding.pollAddChoice.setOnClickListener { v1: View? ->
                 val choicesAdapter = choiceAdapters[questions[layoutPosition]]
-                choicesAdapter!!.add(EditPoll.Choice())
+                choicesAdapter!!.add(binding.root.context, EditPoll.Choice())
             }
 
             binding.pollQuestionDelete.setOnClickListener { v1: View? ->

@@ -57,7 +57,8 @@ class DevDbSearchFragment : TabFragment(R.layout.fragment_brand), SearchDevicesV
     fun providePresenter(): SearchDevicesPresenter = SearchDevicesPresenter(
         App.get().Di().devDbRepository,
         App.get().Di().router,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {

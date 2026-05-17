@@ -21,7 +21,8 @@ class DevicePresenter(
     private val devDbRepository: DevDbRepository,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<DeviceView>() {
 
     var deviceId: String? = null
@@ -53,13 +54,13 @@ class DevicePresenter(
 
     fun copyLink() {
         currentData?.let {
-            Utils.copyToClipBoard("https://4pda.to/index.php?p=${it.id}")
+            utils.copyToClipBoard("https://4pda.to/index.php?p=${it.id}")
         }
     }
 
     fun shareLink() {
         currentData?.let {
-            Utils.shareText("https://4pda.to/devdb/${it.id}")
+            utils.shareText("https://4pda.to/devdb/${it.id}")
         }
     }
 

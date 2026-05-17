@@ -42,7 +42,8 @@ class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickList
         App.get().Di().closeableInfoHolder,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     private val filePicker = registerFilePicker {

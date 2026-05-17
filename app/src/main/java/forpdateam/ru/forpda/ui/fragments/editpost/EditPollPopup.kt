@@ -19,7 +19,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPoll.Question
 /**
  * Created by radiationx on 28.07.17.
  */
-class EditPollPopup(context: Context) {
+class EditPollPopup(private val context: Context) {
     private val dialog = BottomSheetDialog(context)
     private val bottomSheet: View?
 
@@ -48,7 +48,7 @@ class EditPollPopup(context: Context) {
         questionsView.layoutManager = LinearLayoutManager(questionsView.context)
 
         addPoll.setOnClickListener { v: View? ->
-            questionsAdapter!!.add(Question())
+            questionsAdapter!!.add(context, Question())
         }
         pollTitleField.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {

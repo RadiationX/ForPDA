@@ -24,7 +24,8 @@ class HistoryPresenter(
     private val historyRepository: HistoryRepository,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<HistoryView>() {
 
     override fun onFirstViewAttach() {
@@ -63,7 +64,7 @@ class HistoryPresenter(
     }
 
     fun copyLink(item: HistoryItem) {
-        Utils.copyToClipBoard(item.url)
+        utils.copyToClipBoard(item.url)
     }
 
     fun onItemClick(item: HistoryItem) {

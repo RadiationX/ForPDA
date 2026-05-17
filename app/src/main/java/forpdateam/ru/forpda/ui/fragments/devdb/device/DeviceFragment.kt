@@ -90,7 +90,8 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
         App.get().Di().devDbRepository,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {

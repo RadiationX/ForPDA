@@ -8,7 +8,8 @@ import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
 import java.sql.Date
 
 class FavoritesEventsHandler(
-    private val favoritesCache: FavoritesCache
+    private val favoritesCache: FavoritesCache,
+    private val utils: Utils
 ) {
 
     suspend fun handle(event: WebSocketEvent) {
@@ -19,7 +20,7 @@ class FavoritesEventsHandler(
             when (event.type) {
                 is WebSocketEvent.Topic.Type.New -> favItem.copy(
                     isNew = true,
-                    date = Utils.getForumDateTime(Date(event.timeStamp))
+                    date = utils.getForumDateTime(Date(event.timeStamp))
                 )
 
                 is WebSocketEvent.Topic.Type.Read -> favItem
@@ -41,7 +42,7 @@ class FavoritesEventsHandler(
                     },
                     lastUser = inspectorItem.user,
                     isPin = inspectorItem.isImportant,
-                    date = Utils.getForumDateTime(Date(inspectorItem.timeStamp))
+                    date = utils.getForumDateTime(Date(inspectorItem.timeStamp))
                 )
             }
         }

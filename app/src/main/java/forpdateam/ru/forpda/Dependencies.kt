@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.client.Client
 import forpdateam.ru.forpda.client.CookieStorage
 import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.client.websocket.WebSocketController
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.apptheme.AppThemeController
 import forpdateam.ru.forpda.common.apptheme.AppThemeControllerImpl
 import forpdateam.ru.forpda.common.flowpreferences.FlowPreferences
@@ -143,13 +144,15 @@ class Dependencies internal constructor(
     val router: TabRouter by lazy { cicerone.router }
     val navigatorHolder: NavigatorHolder by lazy { cicerone.getNavigatorHolder() }
 
+    val utils by lazy { Utils(context) }
     val systemLinkHandler: ISystemLinkHandler by lazy {
         SystemLinkHandler(
             context,
             mainPreferencesHolder,
             webClient,
             permissionsController,
-            errorHandler
+            errorHandler,
+            utils
         )
     }
     val linkHandler: ILinkHandler by lazy { LinkHandler(systemLinkHandler) }
@@ -407,7 +410,7 @@ class Dependencies internal constructor(
         EventsController(
             webSocketEventsRepository,
             CountersEventsHandler(countersHolder),
-            FavoritesEventsHandler(favoritesCache),
+            FavoritesEventsHandler(favoritesCache,utils),
             QmsEventsHandler(qmsCache),
             NotificationEventsHandler(),
             inspectorRepository,

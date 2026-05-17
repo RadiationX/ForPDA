@@ -93,6 +93,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     protected val authHolder = App.get().Di().authHolder
     private val mainPreferencesHolder = App.get().Di().mainPreferencesHolder
     private val otherPreferencesHolder = App.get().Di().otherPreferencesHolder
+    private val utils = App.get().Di().utils
 
     @InjectPresenter
     lateinit var presenter: ThemePresenter
@@ -112,7 +113,8 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
         App.get().Di().templateManager,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        utils
     )
 
     private val filesPicker = registerFilesPicker {
@@ -354,7 +356,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
             .setIcon(R.drawable.ic_toolbar_create)
             .setOnMenuItemClickListener {
                 if (!authHolder.get().isAuth()) {
-                    Utils.showNeedAuthDialog(requireContext())
+                    utils.showNeedAuthDialog(requireContext())
                     return@setOnMenuItemClickListener false
                 }
                 toggleMessagePanel()
@@ -531,11 +533,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
     override fun showDeleteInFavDialog(page: ThemePage) {
         if (page.favId == null) {
-            Toast.makeText(
-                App.getContext(),
-                R.string.fav_delete_error_id_not_found,
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(requireContext(), R.string.fav_delete_error_id_not_found, Toast.LENGTH_SHORT).show()
             return
         }
         AlertDialog.Builder(requireContext())
@@ -557,11 +555,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     }
 
     override fun onDeleteFromFavorite(result: Boolean) {
-        Toast.makeText(
-            App.getContext(),
-            getString(if (result) R.string.favorite_theme_deleted else R.string.error),
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(requireContext(), getString(if (result) R.string.favorite_theme_deleted else R.string.error), Toast.LENGTH_SHORT).show()
         refreshToolbarMenuItems(true)
     }
 
@@ -647,7 +641,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
     override fun insertText(text: String) {
         if (!authHolder.get().isAuth()) {
-            Utils.showNeedAuthDialog(requireContext())
+            utils.showNeedAuthDialog(requireContext())
             return
         }
         messagePanel.insertText(text)
@@ -694,7 +688,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
     override fun votePost(post: ForumPost, type: Boolean) {
         if (!authHolder.get().isAuth()) {
-            Utils.showNeedAuthDialog(requireContext())
+            utils.showNeedAuthDialog(requireContext())
             return
         }
         dialogsHelper.votePost(presenter, post, type)
@@ -702,7 +696,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
     override fun showChangeReputation(post: ForumPost, type: Boolean) {
         if (!authHolder.get().isAuth()) {
-            Utils.showNeedAuthDialog(requireContext())
+            utils.showNeedAuthDialog(requireContext())
             return
         }
         dialogsHelper.changeReputation(presenter, post, type)

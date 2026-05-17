@@ -1,12 +1,12 @@
 package forpdateam.ru.forpda.notifications
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
 import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.App.Companion.getContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -61,10 +61,10 @@ class NotificationsService : Service() {
 
     companion object {
         private val LOG_TAG = NotificationsService::class.java.simpleName
-        fun startAndCheck() {
+        fun startAndCheck(context: Context) {
             try {
-                val intent = Intent(getContext(), NotificationsService::class.java)
-                getContext().startService(intent)
+                val intent = Intent(context, NotificationsService::class.java)
+                context.startService(intent)
             } catch (ex: Exception) {
                 Log.e(LOG_TAG, "startAndCheck", ex)
             }

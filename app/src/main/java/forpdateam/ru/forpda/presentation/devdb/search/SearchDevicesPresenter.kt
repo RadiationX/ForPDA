@@ -20,7 +20,8 @@ import moxy.InjectViewState
 class SearchDevicesPresenter(
     private val devDbRepository: DevDbRepository,
     private val router: TabRouter,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<SearchDevicesView>() {
 
     var searchQuery: String? = null
@@ -62,13 +63,13 @@ class SearchDevicesPresenter(
 
     fun copyLink(item: Brand.DeviceItem) {
         currentData?.let {
-            Utils.copyToClipBoard("https://4pda.to/devdb/${item.id}")
+            utils.copyToClipBoard("https://4pda.to/devdb/${item.id}")
         }
     }
 
     fun shareLink(item: Brand.DeviceItem) {
         currentData?.let {
-            Utils.shareText("https://4pda.to/devdb/${item.id}")
+            utils.shareText("https://4pda.to/devdb/${item.id}")
         }
     }
 

@@ -139,9 +139,9 @@ class SettingsFragment : BaseSettingFragment() {
             coRunCatching {
                 authRepository.signOut()
             }.onSuccess {
-                Toast.makeText(App.getContext(), "Logout complete", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Logout complete", Toast.LENGTH_LONG).show()
             }.onFailure {
-                Toast.makeText(App.getContext(), "Logout error: $it", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Logout error: $it", Toast.LENGTH_LONG).show()
             }
         }
     }

@@ -64,7 +64,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import forpdateam.ru.forpda.App;
 import forpdateam.ru.forpda.R;
 
 /**
@@ -170,6 +169,12 @@ public class Html {
      * The bit which indicates if lines delimited by '\n' will be grouped into &lt;p&gt; elements.
      */
     private static final int TO_HTML_PARAGRAPH_FLAG = 0x00000001;
+
+    protected static Application application = null;
+
+    public static void initApplication(Application application) {
+        Html.application = application;
+    }
 
     private Html() {
     }
@@ -532,7 +537,6 @@ public class Html {
                     AbsoluteSizeSpan s = ((AbsoluteSizeSpan) style[j]);
                     float sizeDip = s.getSize();
                     if (!s.getDip()) {
-                        Application application = App.get();
                         sizeDip /= application.getResources().getDisplayMetrics().density;
                     }
                     // px in CSS is the equivalance of dip in Android
@@ -1216,7 +1220,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         Font font = getLast(text, Font.class);
         if (font != null) {
             if (font.mFace.equalsIgnoreCase("fontello")) {
-                setSpanFromMark(text, font, new AssetsTypefaceSpan("fontello/fontello.ttf"));
+                setSpanFromMark(text, font, new AssetsTypefaceSpan(Html.application, "fontello/fontello.ttf"));
             }
         }
         Strikethrough s = getLast(text, Strikethrough.class);
@@ -1244,7 +1248,7 @@ class HtmlToSpannedConverter implements ContentHandler {
             //TODO kakayato tam drawabla hz zachem
             /*d = Resources.getSystem().
                     getDrawable(R.drawable.adf);*/
-            d = App.getContext().getResources().getDrawable(R.drawable.adf);
+            d = Html.application.getDrawable(R.drawable.adf);
             d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
         }
         int len = text.length();

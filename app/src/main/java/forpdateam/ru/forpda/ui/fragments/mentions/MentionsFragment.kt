@@ -66,7 +66,8 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
         App.get().Di().favoritesRepository,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {

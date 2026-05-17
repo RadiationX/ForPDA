@@ -22,7 +22,8 @@ class ForumPresenter(
     private val forumRepository: ForumRepository,
     private val favoritesRepository: FavoritesRepository,
     private val router: TabRouter,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<ForumView>() {
 
     var targetForumId = -1
@@ -114,7 +115,7 @@ class ForumPresenter(
     }
 
     fun copyLink(item: ForumItemFlat) {
-        Utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.id}")
+        utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.id}")
     }
 
     fun navigateToForum(item: ForumItemFlat) {

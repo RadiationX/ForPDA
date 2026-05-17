@@ -112,6 +112,7 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
+                App.get().Di().utils,
                 App.get().Di().router
             )
         )

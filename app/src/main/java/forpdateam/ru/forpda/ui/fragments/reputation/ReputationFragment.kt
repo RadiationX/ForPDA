@@ -151,7 +151,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
                 if (authHolder.get().isAuth()) {
                     showChangeReputationDialog(true)
                 } else {
-                    Utils.showNeedAuthDialog(requireContext())
+                    App.get().Di().utils.showNeedAuthDialog(requireContext())
                 }
                 false
             }
@@ -160,7 +160,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
                 if (authHolder.get().isAuth()) {
                     showChangeReputationDialog(false)
                 } else {
-                    Utils.showNeedAuthDialog(requireContext())
+                    App.get().Di().utils.showNeedAuthDialog(requireContext())
                 }
                 false
             }

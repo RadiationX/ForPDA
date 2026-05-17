@@ -34,7 +34,6 @@ import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
-import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
 import io.appmetrica.analytics.AppMetrica
 import kotlinx.coroutines.flow.debounce
@@ -66,7 +65,8 @@ class ThemePresenter(
     private val templateManager: TemplateManager,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<ThemeView>(), IThemePresenter {
 
     var loadAction = ActionState.NORMAL
@@ -406,12 +406,12 @@ class ThemePresenter(
     }
 
     override fun shareText(text: String) {
-        Utils.shareText(text)
+        utils.shareText(text)
     }
 
     fun copyLink() {
         currentPage?.let {
-            Utils.copyToClipBoard("https://4pda.to/forum/index.php?showtopic=${it.id}")
+            utils.copyToClipBoard("https://4pda.to/forum/index.php?showtopic=${it.id}")
         }
     }
 
@@ -427,7 +427,8 @@ class ThemePresenter(
     fun openSearchMyPosts() {
         currentPage?.let {
             viewModelScope.launch {
-                var url = "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username="
+                var url =
+                    "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username="
 
                 try {
                     url += URLEncoder.encode(profileRepository.getCurrentUser()?.nick.orEmpty(), "windows-1251")
@@ -488,7 +489,7 @@ class ThemePresenter(
 
     override fun onQuotePostClick(postId: Int, text: String) {
         getPostById(postId)?.let {
-            val date = Utils.getForumDateTime(Utils.parseForumDateTime(it.date))
+            val date = utils.getForumDateTime(utils.parseForumDateTime(it.date))
             val insert =
                 "[quote name=\"${it.user.nick}\" date=\"$date\" post=${it.id}]$text[/quote]\n"
             viewState.insertText(insert)
@@ -528,7 +529,7 @@ class ThemePresenter(
     }
 
     override fun copyText(text: String) {
-        Utils.copyToClipBoard(text)
+        utils.copyToClipBoard(text)
     }
 
     override fun toast(text: String) {
@@ -604,11 +605,10 @@ class ThemePresenter(
                                 for (attaches in post.attachImages) {
                                     list.add(attaches.first)
                                 }
-                                ImageViewerActivity.startActivity(
-                                    App.getContext(),
-                                    list,
-                                    post.attachImages.indexOf(image)
-                                )
+                                router.navigateTo(Screen.ImageViewer().apply {
+                                    urls = list
+                                    selected = post.attachImages.indexOf(image)
+                                })
                                 return
                             }
                         }
@@ -769,7 +769,7 @@ class ThemePresenter(
 
     override fun quoteFromBuffer(postId: Int) {
         getPostById(postId)?.let {
-            val text = Utils.readFromClipboard()
+            val text = utils.readFromClipboard()
             if (!text.isNullOrEmpty()) {
                 onQuotePostClick(postId, text)
             }

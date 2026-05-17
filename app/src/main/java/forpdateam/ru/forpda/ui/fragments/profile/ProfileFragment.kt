@@ -87,7 +87,8 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
         App.get().Di().profileRepository,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {
@@ -294,7 +295,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
                 toolbarBackground.setImageBitmap(it)
             }.onFailure {
                 it.printStackTrace()
-                Toast.makeText(App.getContext(), it.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
             }
         }
     }

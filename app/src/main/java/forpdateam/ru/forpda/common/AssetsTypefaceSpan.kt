@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.common
 
+import android.content.Context
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.TextPaint
@@ -31,7 +32,7 @@ import forpdateam.ru.forpda.App.Companion.getContext
  *
  * @author Tristan Waddington
  */
-class AssetsTypefaceSpan(typefaceName: String) : MetricAffectingSpan() {
+class AssetsTypefaceSpan(context: Context, typefaceName: String) : MetricAffectingSpan() {
 
     private var mTypeface: Typeface?
 
@@ -42,11 +43,7 @@ class AssetsTypefaceSpan(typefaceName: String) : MetricAffectingSpan() {
         mTypeface = sTypefaceCache[typefaceName]
 
         if (mTypeface == null) {
-            mTypeface = Typeface.createFromAsset(
-                getContext().assets,
-                String.format("fonts/%s", typefaceName)
-            )
-
+            mTypeface = Typeface.createFromAsset(context.assets, "fonts/$typefaceName")
             // Cache the loaded Typeface
             sTypefaceCache.put(typefaceName, mTypeface)
         }

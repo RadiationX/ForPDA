@@ -5,7 +5,7 @@ import android.util.Log
 import android.webkit.WebView
 import androidx.core.util.Pair
 import forpdateam.ru.forpda.R
-import forpdateam.ru.forpda.common.Utils.copyToClipBoard
+import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.presentation.ILinkHandler
 import forpdateam.ru.forpda.presentation.ISystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
@@ -19,6 +19,7 @@ class DialogsHelper(
     context: Context,
     linkHandler: ILinkHandler,
     systemLinkHandler: ISystemLinkHandler,
+    utils: Utils,
     router: TabRouter?
 ) {
     private val dynamicDialogMenu = DynamicDialogMenu<Context, Pair<String, String>>()
@@ -49,7 +50,7 @@ class DialogsHelper(
         dynamicDialogMenu.addItem(
             copyUrl
         ) { context1: Context?, data: Pair<String, String> ->
-            copyToClipBoard(
+            utils.copyToClipBoard(
                 data.second
             )
         }
@@ -71,7 +72,7 @@ class DialogsHelper(
         dynamicDialogMenu.addItem(
             copyImageUrl
         ) { context1: Context?, data: Pair<String, String> ->
-            copyToClipBoard(
+            utils.copyToClipBoard(
                 data.first
             )
         }

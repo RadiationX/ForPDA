@@ -29,6 +29,7 @@ import ru.mintrocket.lib.mintpermissions.ext.isGranted
  */
 
 class SimpleUpdateChecker(
+    private val context: Context,
     private val checkerRepository: CheckerRepository,
     private val permissionsController: MintPermissionsController
 ) {
@@ -62,7 +63,6 @@ class SimpleUpdateChecker(
         if (!permissionsController.get(Manifest.permission.POST_NOTIFICATIONS).isGranted()) {
             return
         }
-        val context: Context = App.getContext()
         val channelId = "forpda_channel_updates"
         val channelName = context.getString(R.string.updater_notification_title)
 

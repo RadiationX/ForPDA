@@ -17,6 +17,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer
 import forpdateam.ru.forpda.R.string
+import forpdateam.ru.forpda.common.Html
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.work.WorkUtils
 import io.appmetrica.analytics.AppMetrica
@@ -41,11 +42,6 @@ class App : Application() {
                 instance = App()
             }
             return requireNotNull(instance)
-        }
-
-        @JvmStatic
-        fun getContext(): Context {
-            return get()
         }
 
         val defaultOptionsUIL: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
@@ -110,6 +106,7 @@ class App : Application() {
         AppMetrica.activate(applicationContext, config)
         AppMetrica.enableActivityAutoTracking(this)
 
+        Html.initApplication(this)
         dependencies.appThemeController.init()
         initMintPermissions()
         initImageLoader(this, dependencies)

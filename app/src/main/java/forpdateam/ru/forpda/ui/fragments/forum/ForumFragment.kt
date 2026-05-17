@@ -62,7 +62,8 @@ class ForumFragment : RecyclerFragment(), ForumView {
         App.get().Di().forumRepository,
         App.get().Di().favoritesRepository,
         App.get().Di().router,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {

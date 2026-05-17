@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.ui.fragments.editpost
 
+import android.content.Context
 import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import forpdateam.ru.forpda.App.Companion.get
-import forpdateam.ru.forpda.App.Companion.getContext
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.databinding.EditPollChoiceBinding
@@ -31,7 +31,7 @@ class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
         this.question = question
     }
 
-    fun add(choice: EditPoll.Choice) {
+    fun add(context: Context, choice: EditPoll.Choice) {
         if (choices.size < poll!!.maxChoices) {
             question!!.increaseIndexOffset()
             choice.index = question!!.indexOffset + question!!.baseIndexOffset
@@ -40,7 +40,7 @@ class PollChoicesAdapter : RecyclerView.Adapter<PollChoicesAdapter.ViewHolder> {
             notifyDataSetChanged()
         } else {
             Toast.makeText(
-                getContext(),
+                context,
                 String.format(get().getString(R.string.poll_answers_Max), poll!!.maxChoices),
                 Toast.LENGTH_SHORT
             ).show()

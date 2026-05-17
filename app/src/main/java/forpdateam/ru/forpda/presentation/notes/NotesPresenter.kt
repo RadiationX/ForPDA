@@ -28,7 +28,8 @@ class NotesPresenter(
     private val closeableInfoHolder: CloseableInfoHolder,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<NotesView>() {
 
     private val closeableInfoIds = arrayOf(
@@ -128,7 +129,7 @@ class NotesPresenter(
     }
 
     fun copyLink(item: NoteItem) {
-        Utils.copyToClipBoard(item.link)
+        utils.copyToClipBoard(item.link)
     }
 
     fun editNote(item: NoteItem) {

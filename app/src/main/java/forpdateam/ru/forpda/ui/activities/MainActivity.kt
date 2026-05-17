@@ -50,7 +50,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
     private val notificationPreferencesRepository = App.get().Di().notificationPreferencesHolder
     private val checkerRepository = App.get().Di().checkerRepository
     private val permissionsController = App.get().Di().permissionsController
-    private val updateChecker by lazy { SimpleUpdateChecker(checkerRepository, permissionsController) }
+    private val updateChecker by lazy { SimpleUpdateChecker(applicationContext, checkerRepository, permissionsController) }
 
 
     @InjectPresenter

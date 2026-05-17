@@ -61,7 +61,8 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
-                App.get().Di().router
+                App.get().Di().utils,
+                App.get().Di().router,
             )
         )
         registerForContextMenu(webView)

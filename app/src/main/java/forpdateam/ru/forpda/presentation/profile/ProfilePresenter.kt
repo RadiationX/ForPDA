@@ -23,7 +23,8 @@ class ProfilePresenter(
     private val profileRepository: ProfileRepository,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<ProfileView>() {
 
     var profileUrl: String? = null
@@ -76,7 +77,7 @@ class ProfilePresenter(
     }
 
     fun copyUrl() {
-        Utils.copyToClipBoard(profileUrl)
+        utils.copyToClipBoard(profileUrl)
     }
 
     fun navigateToQms() {

@@ -31,7 +31,8 @@ class ArticlesListPresenter(
     private val authHolder: AuthHolder,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<ArticlesListView>() {
     private val category = Constants.NEWS_CATEGORY_ROOT
     private var currentPage = 1
@@ -128,11 +129,11 @@ class ArticlesListPresenter(
     }
 
     fun copyLink(item: NewsItem) {
-        Utils.copyToClipBoard("https://4pda.to/index.php?p=${item.id}")
+        utils.copyToClipBoard("https://4pda.to/index.php?p=${item.id}")
     }
 
     fun shareLink(item: NewsItem) {
-        Utils.shareText("https://4pda.to/index.php?p=${item.id}")
+        utils.shareText("https://4pda.to/index.php?p=${item.id}")
     }
 
     fun openProfile(item: NewsItem) {

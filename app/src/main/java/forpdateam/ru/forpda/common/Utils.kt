@@ -5,9 +5,9 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.getSystemService
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.presentation.Screen
@@ -22,7 +22,7 @@ import java.util.GregorianCalendar
 /**
  * Created by isanechek on 30.07.16.
  */
-object Utils {
+class Utils(private val context: Context) {
 
     fun getFileNameFromUrl(url: String): String {
         var fileName = url
@@ -38,17 +38,14 @@ object Utils {
         return fileName
     }
 
-    @JvmStatic
     fun copyToClipBoard(s: String?) {
-        val clipboard =
-            App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = context.getSystemService<ClipboardManager>()!!
         val clip = ClipData.newPlainText("label", s)
         clipboard.setPrimaryClip(clip)
     }
 
     fun readFromClipboard(): String? {
-        val clipboard =
-            App.getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = context.getSystemService<ClipboardManager>()!!
         if (clipboard.hasPrimaryClip()) {
             val description = clipboard.primaryClipDescription
             val data = clipboard.primaryClip
@@ -65,10 +62,7 @@ object Utils {
         sendIntent.putExtra(Intent.EXTRA_TEXT, text)
         sendIntent.type = "text/plain"
         sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        App.get().startActivity(
-            Intent.createChooser(sendIntent, App.get().getString(R.string.share))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
+        context.startActivity(Intent.createChooser(sendIntent, App.get().getString(R.string.share)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     fun <T> checkNotNull(value: T?, message: String?): T {

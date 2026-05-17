@@ -25,7 +25,8 @@ class MentionsPresenter(
     private val favoritesRepository: FavoritesRepository,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<MentionsView>() {
 
     var currentSt: Int = 0
@@ -74,7 +75,7 @@ class MentionsPresenter(
     }
 
     fun copyLink(item: MentionItem) {
-        Utils.copyToClipBoard(item.link)
+        utils.copyToClipBoard(item.link)
     }
 
     fun addToFavorites(item: MentionItem) {

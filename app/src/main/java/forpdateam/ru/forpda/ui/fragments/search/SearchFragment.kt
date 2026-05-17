@@ -149,7 +149,8 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
         App.get().Di().templateManager,
         App.get().Di().router,
         App.get().Di().linkHandler,
-        App.get().Di().errorHandler
+        App.get().Di().errorHandler,
+        App.get().Di().utils
     )
 
     init {
@@ -233,6 +234,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
+                App.get().Di().utils,
                 App.get().Di().router
             )
         )

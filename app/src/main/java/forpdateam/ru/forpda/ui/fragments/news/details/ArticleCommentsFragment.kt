@@ -142,7 +142,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
 
     override fun onLikeClick(comment: Comment, position: Int) {
         if (!authHolder.get().isAuth()) {
-            Utils.showNeedAuthDialog(requireContext())
+            App.get().Di().utils.showNeedAuthDialog(requireContext())
             return
         }
 
@@ -151,7 +151,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
 
     override fun onReplyClick(comment: Comment, position: Int) {
         if (!authHolder.get().isAuth()) {
-            Utils.showNeedAuthDialog(requireContext())
+            App.get().Di().utils.showNeedAuthDialog(requireContext())
             return
         }
         if (messageField.text.isEmpty()) {

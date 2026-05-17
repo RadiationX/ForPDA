@@ -13,6 +13,7 @@ import androidx.core.view.doOnLayout
 import androidx.viewpager.widget.ViewPager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.chrisbanes.photoview.OnPhotoTapListener
+import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.databinding.ActivityImgViewerBinding
@@ -54,7 +55,7 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
         }
 
         currentImages.addAll(extUrls)
-        names.addAll(currentImages.map { Utils.getFileNameFromUrl(it) })
+        names.addAll(currentImages.map { App.get().Di().utils.getFileNameFromUrl(it) })
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_INDEX_KEY)) {
             currentIndex = savedInstanceState.getInt(SELECTED_INDEX_KEY, 0)

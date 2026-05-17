@@ -48,6 +48,7 @@ class GoogleCaptchaFragment : TabFragment() {
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
+                App.get().Di().utils,
                 App.get().Di().router
             )
         )
@@ -81,15 +82,9 @@ class GoogleCaptchaFragment : TabFragment() {
 
     private fun onResponse() {
         viewLifecycleOwner.lifecycleScope.launch {
-            Toast.makeText(App.getContext(), "Приложение будет перезапущено", Toast.LENGTH_SHORT)
-                .show()
+            val activity = requireActivity()
+            Toast.makeText(activity, "Приложение будет перезапущено", Toast.LENGTH_SHORT).show()
             delay(1000)
-            val activity = App.getActivity()
-            if (activity == null) {
-                Toast.makeText(App.getContext(), "Перезапустите приложение", Toast.LENGTH_SHORT)
-                    .show()
-                return@launch
-            }
             MainActivity.restartApplication(activity)
         }
     }

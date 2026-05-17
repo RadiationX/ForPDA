@@ -28,7 +28,8 @@ class FavoritesPresenter(
     private val crossScreenInteractor: CrossScreenInteractor,
     private val router: TabRouter,
     private val linkHandler: ILinkHandler,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : BasePresenter<FavoritesView>() {
 
 
@@ -137,7 +138,7 @@ class FavoritesPresenter(
             is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId
             is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId
         }
-        Utils.copyToClipBoard(url)
+        utils.copyToClipBoard(url)
     }
 
     fun openAttachments(item: Favorite) {

@@ -15,13 +15,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.nostra13.universalimageloader.core.ImageLoader
-import forpdateam.ru.forpda.App.Companion.getContext
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.BitmapUtils.centerCrop
 import forpdateam.ru.forpda.common.BitmapUtils.createAvatar
 import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.extensions.asMutableFlag
 import forpdateam.ru.forpda.extensions.coRunCatching
+import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationEvent
 import forpdateam.ru.forpda.model.interactors.events.models.NotificationId
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
@@ -293,10 +293,8 @@ class NotificationEventSender(
             }
         }.mapCatching { bitmap ->
             withContext(Dispatchers.Default) {
-                val res = getContext().resources
-                val height =
-                    res.getDimension(android.R.dimen.notification_large_icon_height).toInt()
-                val width = res.getDimension(android.R.dimen.notification_large_icon_width).toInt()
+                val height = context.getDimenPx(android.R.dimen.notification_large_icon_height)
+                val width = context.getDimenPx(android.R.dimen.notification_large_icon_width)
 
                 centerCrop(bitmap, width, height, 1.0f).let {
                     createAvatar(it, width, height, true)

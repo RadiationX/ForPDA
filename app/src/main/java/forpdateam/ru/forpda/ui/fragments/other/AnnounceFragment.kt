@@ -72,6 +72,7 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
+                App.get().Di().utils,
                 App.get().Di().router
             )
         )

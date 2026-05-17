@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Environment
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.getSystemService
 import forpdateam.ru.forpda.App
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.MimeTypeUtil
@@ -31,7 +32,8 @@ class SystemLinkHandler(
     private val mainPreferencesHolder: MainPreferencesHolder,
     private val webClient: IWebClient,
     private val permissionsController: MintPermissionsController,
-    private val errorHandler: IErrorHandler
+    private val errorHandler: IErrorHandler,
+    private val utils: Utils
 ) : ISystemLinkHandler {
     override fun handle(url: String) {
         try {
@@ -48,7 +50,7 @@ class SystemLinkHandler(
     }
 
     override fun handleDownload(url: String, inputFileName: String?) {
-        val fileName = Utils.getFileNameFromUrl(url)
+        val fileName = utils.getFileNameFromUrl(url)
         val activity = App.getActivity()
         if (activity != null) {
             AlertDialog.Builder(activity)
@@ -83,9 +85,8 @@ class SystemLinkHandler(
             }
 
             coRunCatching {
-                val activity = App.getActivity()
                 val downloadUrl = response.redirect
-                if (!mainPreferencesHolder.systemDownloader.get() || activity == null) {
+                if (!mainPreferencesHolder.systemDownloader.get()) {
                     externalDownloader(downloadUrl)
                 } else {
                     systemDownloader(fileName, downloadUrl)
@@ -106,7 +107,7 @@ class SystemLinkHandler(
         }
 
         try {
-            val dm = App.getContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val dm = context.getSystemService<DownloadManager>()!!
             val request = DownloadManager.Request(Uri.parse(url))
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)

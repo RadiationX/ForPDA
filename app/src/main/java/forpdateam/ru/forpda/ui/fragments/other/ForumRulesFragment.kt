@@ -68,6 +68,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
                 webView.context,
                 App.get().Di().linkHandler,
                 App.get().Di().systemLinkHandler,
+                App.get().Di().utils,
                 App.get().Di().router
             )
         )
@@ -123,7 +124,7 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
             AlertDialog.Builder(requireContext())
                 .setMessage("Скопировать правило в буфер обмена?")
                 .setPositiveButton(R.string.ok) { _, _ ->
-                    Utils.copyToClipBoard(text)
+                    App.get().Di().utils.copyToClipBoard(text)
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .show()
