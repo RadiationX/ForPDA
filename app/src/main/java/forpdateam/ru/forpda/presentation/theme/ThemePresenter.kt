@@ -19,7 +19,6 @@ import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replaceAt
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
-import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
@@ -36,13 +35,13 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import forpdateam.ru.forpda.ui.TemplateManager
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
-import io.appmetrica.analytics.AppMetrica
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.analytics.Analytics
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -614,7 +613,7 @@ class ThemePresenter(
                 }
             }
         } catch (ex: Exception) {
-            AppMetrica.reportError("${ex.message ?: ex.toString()}; uri $uri", ex)
+            Analytics.reportError("${ex.message ?: ex.toString()}; uri $uri", ex)
         }
         linkHandler.handle(url, router)
     }

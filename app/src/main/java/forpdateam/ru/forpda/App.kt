@@ -21,12 +21,11 @@ import forpdateam.ru.forpda.common.apptheme.AppThemeController
 import forpdateam.ru.forpda.common.di.AppModule
 import forpdateam.ru.forpda.common.receivers.WakeUpReceiver
 import forpdateam.ru.forpda.work.WorkUtils
-import io.appmetrica.analytics.AppMetrica
-import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
+import ru.radiationx.analytics.Analytics
 import ru.radiationx.quill.Quill
 import ru.radiationx.quill.get
 
@@ -71,9 +70,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         val time = System.currentTimeMillis()
-        val config = AppMetricaConfig.newConfigBuilder("a94d9236-cdf3-4a5e-af30-d6dbffaea362").build()
-        AppMetrica.activate(applicationContext, config)
-        AppMetrica.enableActivityAutoTracking(this)
+        Analytics.initAppMetrica(this, "a94d9236-cdf3-4a5e-af30-d6dbffaea362")
 
         initDependencies()
         Html.initApplication(this)

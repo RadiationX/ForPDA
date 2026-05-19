@@ -20,12 +20,12 @@ import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
-import io.appmetrica.analytics.AppMetrica
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
 import ru.mintrocket.lib.mintpermissions.ext.isGranted
+import ru.radiationx.analytics.Analytics
 import javax.inject.Inject
 
 class SystemLinkHandlerImpl @Inject constructor(
@@ -46,7 +46,7 @@ class SystemLinkHandlerImpl @Inject constructor(
                 ).addFlags(FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (e: ActivityNotFoundException) {
-            AppMetrica.reportError(e.message.orEmpty(), e)
+            Analytics.reportError(e.message.orEmpty(), e)
         }
     }
 
@@ -93,7 +93,7 @@ class SystemLinkHandlerImpl @Inject constructor(
                     systemDownloader(fileName, downloadUrl)
                 }
             }.onFailure {
-                AppMetrica.reportError(it.message.orEmpty(), it)
+                Analytics.reportError(it.message.orEmpty(), it)
             }
         }
     }
@@ -130,7 +130,7 @@ class SystemLinkHandlerImpl @Inject constructor(
                 ).addFlags(FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (e: ActivityNotFoundException) {
-            AppMetrica.reportError(e.message.orEmpty(), e)
+            Analytics.reportError(e.message.orEmpty(), e)
         }
 
     }

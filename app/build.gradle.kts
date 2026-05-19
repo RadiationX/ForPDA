@@ -132,9 +132,10 @@ appmetrica {
 }
 
 dependencies {
+    implementation(project(":modules:analytics"))
+
     implementation(project(":lib:regexparser"))
     implementation(project(":lib:flow-preferences"))
-
     implementation(project(":lib:quill-di"))
     compileOnly(libs.toothpick)
     ksp(libs.toothpick.compiler)
@@ -189,8 +190,6 @@ dependencies {
 
     implementation(libs.mintpermissions)
     //implementation(libs.mintpermissions.flows)
-
-    implementation(libs.appmetrica)
 
     implementation(libs.roundedimageview)
     implementation(libs.viewbindingpropertydelegate)
