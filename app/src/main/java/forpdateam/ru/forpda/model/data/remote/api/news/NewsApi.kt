@@ -6,54 +6,6 @@ import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ALL
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ARTICLES
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_GAMES
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_ROOT
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_CATEGORY_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ACCESSORIES_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ACOUSTICS_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ANDROID_GAME
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_ANDROID_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_DEVSTORY_GAMES
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_DEVSTORY_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_ANDROID
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_INTERVIEW
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_IOS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_HOW_TO_WP
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_IOS_GAME
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_IOS_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_NOTEBOOKS_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_SMARTPHONES_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_SMART_WATCH_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_TABLETS_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_WP7_GAME
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_SUBCATEGORY_WP7_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ACCESSORIES_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ACOUSTICS_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ALL
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ANDROID_GAME
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ANDROID_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ARTICLES
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_DEVSTORY_GAMES
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_DEVSTORY_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_GAMES
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_ANDROID
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_INTERVIEW
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_IOS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_HOW_TO_WP
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_IOS_GAME
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_IOS_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_NOTEBOOKS_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_ROOT
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_SMARTPHONES_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_SMART_WATCH_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_SOFTWARE
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_TABLETS_REVIEWS
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_WP7_GAME
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants.NEWS_URL_WP7_SOFTWARE
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import javax.inject.Inject
@@ -66,9 +18,8 @@ class NewsApi @Inject constructor(
     private val articleParser: ArticleParser
 ) {
 
-    suspend fun getNews(category: String, pageNumber: Int): List<NewsItem> {
-        val url = getLink(category, pageNumber)
-        val response = webClient.get(url)
+    suspend fun getNews(pageNumber: Int): List<NewsItem> {
+        val response = webClient.get("https://4pda.to/page/${pageNumber}/")
         return articleParser.parseArticles(response.body)
     }
 
@@ -125,45 +76,5 @@ class NewsApi @Inject constructor(
             .formHeader("comment", comment, true)
         val response = webClient.request(builder.build())
         return articleParser.parseArticle(response.body)
-    }
-
-
-    private fun getLink(category: String?, pageNumber: Int): String {
-        var link = getUrlCategory(category)
-        if (pageNumber >= 2) {
-            link = link + "page/" + pageNumber + "/"
-        }
-        return link
-    }
-
-    private fun getUrlCategory(category: String?): String {
-        if (category == null) return NEWS_URL_ROOT
-        when (category) {
-            NEWS_CATEGORY_ROOT -> return NEWS_URL_ROOT
-            NEWS_CATEGORY_ALL -> return NEWS_URL_ALL
-            NEWS_CATEGORY_ARTICLES -> return NEWS_URL_ARTICLES
-            NEWS_CATEGORY_REVIEWS -> return NEWS_URL_REVIEWS
-            NEWS_CATEGORY_SOFTWARE -> return NEWS_URL_SOFTWARE
-            NEWS_CATEGORY_GAMES -> return NEWS_URL_GAMES
-            NEWS_SUBCATEGORY_DEVSTORY_GAMES -> return NEWS_URL_DEVSTORY_GAMES
-            NEWS_SUBCATEGORY_WP7_GAME -> return NEWS_URL_WP7_GAME
-            NEWS_SUBCATEGORY_IOS_GAME -> return NEWS_URL_IOS_GAME
-            NEWS_SUBCATEGORY_ANDROID_GAME -> return NEWS_URL_ANDROID_GAME
-            NEWS_SUBCATEGORY_DEVSTORY_SOFTWARE -> return NEWS_URL_DEVSTORY_SOFTWARE
-            NEWS_SUBCATEGORY_WP7_SOFTWARE -> return NEWS_URL_WP7_SOFTWARE
-            NEWS_SUBCATEGORY_IOS_SOFTWARE -> return NEWS_URL_IOS_SOFTWARE
-            NEWS_SUBCATEGORY_ANDROID_SOFTWARE -> return NEWS_URL_ANDROID_SOFTWARE
-            NEWS_SUBCATEGORY_SMARTPHONES_REVIEWS -> return NEWS_URL_SMARTPHONES_REVIEWS
-            NEWS_SUBCATEGORY_TABLETS_REVIEWS -> return NEWS_URL_TABLETS_REVIEWS
-            NEWS_SUBCATEGORY_SMART_WATCH_REVIEWS -> return NEWS_URL_SMART_WATCH_REVIEWS
-            NEWS_SUBCATEGORY_ACCESSORIES_REVIEWS -> return NEWS_URL_ACCESSORIES_REVIEWS
-            NEWS_SUBCATEGORY_NOTEBOOKS_REVIEWS -> return NEWS_URL_NOTEBOOKS_REVIEWS
-            NEWS_SUBCATEGORY_ACOUSTICS_REVIEWS -> return NEWS_URL_ACOUSTICS_REVIEWS
-            NEWS_SUBCATEGORY_HOW_TO_ANDROID -> return NEWS_URL_HOW_TO_ANDROID
-            NEWS_SUBCATEGORY_HOW_TO_IOS -> return NEWS_URL_HOW_TO_IOS
-            NEWS_SUBCATEGORY_HOW_TO_WP -> return NEWS_URL_HOW_TO_WP
-            NEWS_SUBCATEGORY_HOW_TO_INTERVIEW -> return NEWS_URL_HOW_TO_INTERVIEW
-        }
-        return NEWS_URL_ALL
     }
 }

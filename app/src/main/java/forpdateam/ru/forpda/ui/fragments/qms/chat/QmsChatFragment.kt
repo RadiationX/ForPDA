@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils

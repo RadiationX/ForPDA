@@ -1,12 +1,12 @@
 ![API](https://img.shields.io/badge/API-19%2B-blue.svg?style=flat)
 # ForPDA #
 
-**ForPDA** – это простой и удобный клиент для сайта [4pda.ru](http://4pda.ru/)
+**ForPDA** – это простой и удобный клиент для сайта [4pda.to](http://4pda.to/)
 
-<a href="http://4pda.ru/forum/index.php?showtopic=820313" target="_blank"><img src="https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/logo.png" height="192px" alt="Логотип ForPDA" /></a>
+<a href="http://4pda.to/forum/index.php?showtopic=820313" target="_blank"><img src="https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/logo.png" height="192px" alt="Логотип ForPDA" /></a>
 
 <a href="https://play.google.com/store/apps/details?id=ru.forpdateam.forpda"><img alt="Get it on Google Play" src="https://play.google.com/intl/ru_ru/badges/images/apps/ru-play-badge.png" height="48px"/></a>
-<a href="http://4pda.ru/forum/index.php?showtopic=820313" target="_blank"><img src="https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/icon_4pda.png" height="48px" alt="Тема на форуме 4PDA" /></a>
+<a href="http://4pda.to/forum/index.php?showtopic=820313" target="_blank"><img src="https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/icon_4pda.png" height="48px" alt="Тема на форуме 4PDA" /></a>
 
 ##
 **Скриншоты:**
@@ -14,7 +14,7 @@
 ![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen1.png)![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen2.png)![](https://raw.githubusercontent.com/RadiationX/ForPDA/master/gh_res/screen3.png)
 ##
 
-Вы можете просматривать информацию с [сайта](http://4pda.ru/) в удобном виде, писать и редактировать сообщения на [форуме](http://4pda.ru/forum/index.php?act=idx), искать нужную вам информацию, скачивать файлы, общаться с другими [пользователями](http://4pda.ru/forum/index.php?act=Members) в чате [QMS](http://4pda.ru/forum/index.php?act=qms&code=no) и многое другое! 
+Вы можете просматривать информацию с [сайта](http://4pda.to/) в удобном виде, писать и редактировать сообщения на [форуме](http://4pda.to/forum/index.php?act=idx), искать нужную вам информацию, скачивать файлы, общаться с другими [пользователями](http://4pda.to/forum/index.php?act=Members) в чате [QMS](http://4pda.to/forum/index.php?act=qms&code=no) и многое другое! 
 
 **Основные возможности**
 
@@ -26,8 +26,8 @@
 - Возможность редактировать темы на форуме
 - Возможность скачивать и загружать файлы на форум
 - Простой и удобный доступ к избранному
-- Доступ к каталогу устройств [DevDB](http://4pda.ru/devdb)
-- Доступ к [QMS](http://4pda.ru/forum/index.php?act=qms&code=no) (создание/удаление диалогов, а также управление черным списком)
+- Доступ к каталогу устройств [DevDB](http://4pda.to/devdb)
+- Доступ к [QMS](http://4pda.to/forum/index.php?act=qms&code=no) (создание/удаление диалогов, а также управление черным списком)
 - Доступ профилю пользователей
 - Просмотр упоминаний
 - История посещённых тем

@@ -8,7 +8,6 @@ import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.data.remote.api.news.Constants
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.news.NewsRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
@@ -34,7 +33,6 @@ class ArticlesListPresenter(
     private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<ArticlesListView>() {
-    private val category = Constants.NEWS_CATEGORY_ROOT
     private var currentPage = 1
 
     private val currentItems = mutableListOf<NewsItem>()
@@ -50,7 +48,7 @@ class ArticlesListPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                newsRepository.getNews(category, currentPage)
+                newsRepository.getNews(currentPage)
             }.onSuccess {
                 if (withClear) {
                     currentItems.clear()

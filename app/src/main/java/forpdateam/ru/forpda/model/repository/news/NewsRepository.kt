@@ -18,7 +18,7 @@ class NewsRepository @Inject constructor(
     private val forumUsersCache: ForumUsersCache
 ) {
 
-    suspend fun getNews(category: String, pageNumber: Int): List<NewsItem> {
+    suspend fun getNews(pageNumber: Int): List<NewsItem> {
         val news = newsApi.getNews(category, pageNumber)
         return news.map {
             val forumUser = forumUsersCache.getUserById(it.authorId)
