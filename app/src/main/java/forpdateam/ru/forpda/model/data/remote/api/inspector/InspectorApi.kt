@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.inspector
 
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorMention
 import forpdateam.ru.forpda.model.data.remote.WebClient
@@ -14,17 +15,17 @@ class InspectorApi @Inject constructor(
 ) {
 
     suspend fun getFavorites(): List<InspectorItem.Favorite> {
-        val response = webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=fav")
+        val response = webClient.request(ApiRequest.Forum.Inspector.Favorites)
         return parser.parseFavoritesEvents(response.body)
     }
 
     suspend fun getQms(): List<InspectorItem.Qms> {
-        val response = webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=qms")
+        val response = webClient.request(ApiRequest.Forum.Inspector.Qms)
         return parser.parseQmsEvents(response.body)
     }
 
     suspend fun getMentionsCount(): InspectorMention {
-        val response = webClient.get("https://4pda.to/forum/index.php?act=inspector&CODE=mentions")
+        val response = webClient.request(ApiRequest.Forum.Inspector.Mentions)
         return InspectorMention(response.body.toInt())
     }
 

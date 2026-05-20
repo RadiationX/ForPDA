@@ -9,9 +9,8 @@ class NetworkRequest(
     val url: String,
     val headers: Map<String, String>,
     val formHeaders: Map<String, String>,
-    val encodedFormHeaders: Set<String>,
     val isMultipartForm: Boolean,
-    val file: File?,
+    val files: Map<String, File>,
     val isWithoutBody: Boolean
 ) {
 
@@ -19,9 +18,8 @@ class NetworkRequest(
         private var url: String = ""
         private var headers: MutableMap<String, String>? = null
         private var formHeaders: MutableMap<String, String>? = null
-        private var encodedFormHeaders: MutableSet<String>? = null
         private var isMultipartForm: Boolean = false
-        private var file: File? = null
+        private var files: MutableMap<String, File>? = null
         private var withoutBody: Boolean = false
 
         private fun getHeaders(): MutableMap<String, String> {
@@ -32,8 +30,8 @@ class NetworkRequest(
             return (formHeaders ?: mutableMapOf()).also { formHeaders = it }
         }
 
-        private fun getEncodedFormHeaders(): MutableSet<String> {
-            return (encodedFormHeaders ?: mutableSetOf()).also { encodedFormHeaders = it }
+        private fun getFiles(): MutableMap<String, File> {
+            return (files ?: mutableMapOf()).also { files = it }
         }
 
         fun url(url: String): Builder {
@@ -57,26 +55,12 @@ class NetworkRequest(
         }
 
         fun formHeaders(formHeaders: Map<String, String>): Builder {
-            return formHeaders(formHeaders, false)
-        }
-
-        fun formHeaders(formHeaders: Map<String, String>, encoded: Boolean): Builder {
             getFormHeaders().putAll(formHeaders)
-            if (encoded) {
-                getEncodedFormHeaders().addAll(formHeaders.keys)
-            }
             return this
         }
 
         fun formHeader(name: String, value: String): Builder {
-            return formHeader(name, value, false)
-        }
-
-        fun formHeader(name: String, value: String, encoded: Boolean): Builder {
             getFormHeaders()[name] = value
-            if (encoded) {
-                getEncodedFormHeaders().add(name)
-            }
             return this
         }
 
@@ -90,8 +74,8 @@ class NetworkRequest(
             return this
         }
 
-        fun file(file: File?): Builder {
-            this.file = file
+        fun file(key: String, file: File): Builder {
+            getFiles()[key] = file
             isMultipartForm = true
             return this
         }
@@ -101,16 +85,14 @@ class NetworkRequest(
                 url = url,
                 headers = headers?.toMap().orEmpty(),
                 formHeaders = formHeaders?.toMap().orEmpty(),
-                encodedFormHeaders = encodedFormHeaders?.toSet().orEmpty(),
                 isMultipartForm = isMultipartForm,
-                file = file,
+                files = files?.toMap().orEmpty(),
                 isWithoutBody = withoutBody,
             )
         }
     }
 
     data class File(
-        val requestName: String,
         val file: RequestFile,
         val progressListener: WebClient.ProgressListener
     )

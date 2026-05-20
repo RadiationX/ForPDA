@@ -1,13 +1,12 @@
 package forpdateam.ru.forpda.model.data.remote.api.auth
 
 import android.util.Log
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.auth.AuthCaptcha
 import forpdateam.ru.forpda.entity.remote.auth.AuthForm
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
-import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
-import java.net.URLEncoder
 import javax.inject.Inject
 
 /**
@@ -21,7 +20,7 @@ class AuthApi @Inject constructor(
 ) {
 
     suspend fun getCaptcha(): AuthCaptcha {
-        val response = webClient.get(AUTH_BASE_URL)
+        val response = webClient.request(ApiRequest.Forum.Auth.GetCaptcha)
 
         if (response.body.isEmpty())
             throw Exception("Page empty!")
@@ -33,18 +32,7 @@ class AuthApi @Inject constructor(
     }
 
     suspend fun login(captcha: AuthCaptcha, form: AuthForm) {
-        val builder = NetworkRequest.Builder()
-            .url(AUTH_BASE_URL)
-            .formHeader("captcha-time", requireNotNull(captcha.captchaTime))
-            .formHeader("captcha-sig", requireNotNull(captcha.captchaSig))
-            .formHeader("captcha", requireNotNull(form.captcha))
-            .formHeader("return", MINIMAL_PAGE_URL)
-            .formHeader("login", URLEncoder.encode(form.nick, "windows-1251"), true)
-            .formHeader("password", URLEncoder.encode(form.password, "windows-1251"), true)
-            .formHeader("remember", "1")
-            .formHeader("hidden", if (form.isHidden) "1" else "0")
-
-        val response = webClient.request(builder.build())
+        val response = webClient.request(ApiRequest.Forum.Auth.Login(captcha, form))
         val errors = authParser.parseErrors(response.body)
         if (errors != null) {
             throw Exception(errors)
@@ -56,11 +44,10 @@ class AuthApi @Inject constructor(
 
     suspend fun logout() {
         coRunCatching {
-            val response = webClient.get("https://4pda.to/forum/index.php?act=logout&CODE=03&k=" + authHolder.getAuthKey().orEmpty())
+            val response = webClient.request(ApiRequest.Forum.Auth.Logout(authHolder.getAuthKey()))
             if (authParser.parseAlreadyLoggedOut(response.body)) {
                 throw Exception("You already logout")
             }
-            checkLogin(webClient.get(MINIMAL_PAGE_URL).body)
         }.onFailure {
             Log.e(TAG, "logout", it)
         }
@@ -78,8 +65,6 @@ class AuthApi @Inject constructor(
 
     companion object {
         private const val TAG = "AuthApi"
-        private const val AUTH_BASE_URL = "https://4pda.to/forum/index.php?act=auth"
-        private const val MINIMAL_PAGE_URL = "https://4pda.to/forum/index.php?showforum=200#afterauth"
     }
 
 }

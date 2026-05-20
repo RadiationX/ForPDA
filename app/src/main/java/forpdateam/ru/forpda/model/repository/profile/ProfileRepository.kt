@@ -42,11 +42,11 @@ class ProfileRepository @Inject constructor(
     }
 
     suspend fun loadSelf(): ProfileModel {
-        return loadProfile("https://4pda.to/forum/index.php?showuser=" + authHolder.get().userId)
+        return loadProfile(authHolder.get().userId)
     }
 
-    suspend fun loadProfile(url: String): ProfileModel {
-        return profileApi.getProfile(url).also {
+    suspend fun loadProfile(userId: Int): ProfileModel {
+        return profileApi.getProfile(userId).also {
             forumUsersCache.saveUser(it.user)
         }
     }

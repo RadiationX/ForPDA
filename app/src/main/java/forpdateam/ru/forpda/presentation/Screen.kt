@@ -88,7 +88,6 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
     class ArticleDetail : Screen() {
         var articleId: Int = NO_ID
         var commentId: Int = NO_ID
-        var articleUrl: String? = null
         var articleTitle: String? = null
         var articleAuthorNick: String? = null
         var articleDate: String? = null
@@ -111,9 +110,7 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
 
     class GoogleCaptcha : Screen()
 
-    class Profile : Screen() {
-        var profileUrl: String? = null
-    }
+    class Profile(val userId: Int) : Screen()
 
     class QmsContacts : Screen() {
         override var isAlone: Boolean = true

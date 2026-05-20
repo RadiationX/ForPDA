@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.search
 
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.model.data.remote.WebClient
@@ -15,7 +16,7 @@ class SearchApi @Inject constructor(
 ) {
 
     suspend fun getSearch(settings: SearchSettings): SearchResult {
-        val response = webClient.get(settings.toUrl())
+        val response = webClient.request(ApiRequest.Search(settings))
         return searchParser.parse(response.body, settings)
     }
 }

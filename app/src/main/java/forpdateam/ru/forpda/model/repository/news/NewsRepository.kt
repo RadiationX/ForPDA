@@ -19,7 +19,7 @@ class NewsRepository @Inject constructor(
 ) {
 
     suspend fun getNews(pageNumber: Int): List<NewsItem> {
-        val news = newsApi.getNews(category, pageNumber)
+        val news = newsApi.getNews(pageNumber)
         return news.map {
             val forumUser = forumUsersCache.getUserById(it.authorId)
             Log.e(
@@ -48,10 +48,6 @@ class NewsRepository @Inject constructor(
 
     suspend fun getDetails(id: Int): DetailsPage {
         return newsApi.getDetails(id)
-    }
-
-    suspend fun getDetails(url: String): DetailsPage {
-        return newsApi.getDetails(url)
     }
 
     suspend fun getComments(article: DetailsPage): List<Comment> {

@@ -1,9 +1,8 @@
 package forpdateam.ru.forpda.entity.remote.search
 
-import android.net.Uri
+import forpdateam.ru.forpda.common.ApiRequest
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
-import java.net.URLEncoder
 import java.util.Locale
 import java.util.regex.Pattern
 
@@ -155,70 +154,7 @@ data class SearchSettings(
         }
 
         fun toUrl(settings: SearchSettings): String {
-            val builder = Uri.Builder()
-            builder.scheme("https")
-                .authority("4pda.to")
-            if (settings.resourceType == RESOURCE_NEWS.first) {
-                builder.appendPath("page")
-                builder.appendPath(settings.st.toString())
-                try {
-                    builder.appendQueryParameter(
-                        ARG_QUERY_NEWS,
-                        URLEncoder.encode(settings.query, "windows-1251")
-                    )
-                } catch (e: UnsupportedEncodingException) {
-                    e.printStackTrace()
-                }
-            } else {
-                builder.appendPath("forum")
-                builder.appendQueryParameter("act", "search")
-                builder.appendQueryParameter(ARG_RESULT, settings.result)
-                builder.appendQueryParameter(ARG_SORT, settings.sort)
-                builder.appendQueryParameter(ARG_SOURCE, settings.source)
-                if (!settings.query.isNullOrEmpty()) {
-                    try {
-                        builder.appendQueryParameter(
-                            ARG_QUERY_FORUM,
-                            URLEncoder.encode(settings.query, "windows-1251")
-                        )
-                    } catch (e: UnsupportedEncodingException) {
-                        e.printStackTrace()
-                    }
-                }
-                if (!settings.nick.isNullOrEmpty()) {
-                    try {
-                        builder.appendQueryParameter(
-                            ARG_NICK,
-                            URLEncoder.encode(settings.nick, "windows-1251")
-                        )
-                    } catch (e: UnsupportedEncodingException) {
-                        e.printStackTrace()
-                    }
-                }
-
-                for (forum in settings.forums) {
-                    builder.appendQueryParameter(ARG_FORUMS, forum.toString())
-                }
-
-                for (topic in settings.topics) {
-                    builder.appendQueryParameter(ARG_TOPICS, topic.toString())
-                }
-
-                if (settings.subforums != null) {
-                    builder.appendQueryParameter(ARG_SUB_FORUMS, settings.subforums)
-                }
-                builder.appendQueryParameter(ARG_NO_FORM, "1")
-                builder.appendQueryParameter(ARG_ST, settings.st.toString())
-                builder.appendQueryParameter(ARG_EXCLUDE_TRASH, settings.excludeTrash.toString())
-            }
-
-            val url = builder.build().toString()
-            try {
-                return URLDecoder.decode(url, "UTF-8")
-            } catch (e: UnsupportedEncodingException) {
-                e.printStackTrace()
-            }
-            return url
+            return ApiRequest.Search(settings).buildHttpUrl().toString()
         }
     }
 }

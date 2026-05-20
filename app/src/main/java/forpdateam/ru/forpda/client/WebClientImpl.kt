@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.client
 
 import android.content.Context
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.model.CountersHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
@@ -22,7 +23,10 @@ class WebClientImpl @Inject constructor(
 
     private val mapper = NetworkRequestMapper(context)
 
-    //Network
+    override suspend fun request(request: ApiRequest): NetworkResponse {
+        return request(request.buildNetworkRequest())
+    }
+
     @Throws(Exception::class)
     override suspend fun get(url: String): NetworkResponse {
         return request(NetworkRequest.Builder().url(url).build())

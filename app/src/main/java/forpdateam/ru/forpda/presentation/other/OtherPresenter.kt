@@ -12,8 +12,8 @@ import forpdateam.ru.forpda.model.repository.auth.AuthRepository
 import forpdateam.ru.forpda.model.repository.profile.ProfileRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.LinkHandler
-import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.Screen
+import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -158,8 +158,9 @@ class OtherPresenter(
     }
 
     fun onProfileClick() {
-        if (authHolder.get().isAuth()) {
-            router.navigateTo(Screen.Profile())
+        val authData = authHolder.get()
+        if (authData.isAuth()) {
+            router.navigateTo(Screen.Profile(authData.userId))
         } else {
             router.navigateTo(Screen.Auth())
         }

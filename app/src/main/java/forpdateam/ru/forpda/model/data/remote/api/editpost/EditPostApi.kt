@@ -1,12 +1,12 @@
 package forpdateam.ru.forpda.model.data.remote.api.editpost
 
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostPermissionException
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
-import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 import javax.inject.Inject
@@ -24,15 +24,12 @@ class EditPostApi @Inject constructor(
 ) {
 
     suspend fun loadForm(postId: Int): EditPost {
-        val postUrl = "https://4pda.to/forum/index.php?act=post&do=edit_post&p=$postId"
-        val attachmentsUrl =
-            "https://4pda.to/forum/index.php?act=attach&index=1&relId=$postId&maxSize=134217728&allowExt=&code=init&unlinked="
-        val postResponse = webClient.get(postUrl)
+        val postResponse = webClient.request(ApiRequest.Forum.Post.Edit(postId))
         if (postResponse.body == "nopermission") {
             throw EditPostPermissionException()
         }
 
-        val attachmentsResponse = webClient.get(attachmentsUrl)
+        val attachmentsResponse = webClient.request(ApiRequest.Forum.Attachments.GetAttachedToPost(postId))
         val form = editPostParser.parseForm(postResponse.body)
         val poll = editPostParser.parsePoll(postResponse.body)
         val attachments = attachmentsParser.parseAttachments(attachmentsResponse.body)
@@ -46,71 +43,7 @@ class EditPostApi @Inject constructor(
     }
 
     suspend fun sendPost(form: EditPostForm): ThemePage {
-        val url = "https://4pda.to/forum/index.php"
-        val headers = HashMap<String, String>()
-
-        val builder = NetworkRequest.Builder()
-            .url(url)
-            .formHeaders(headers)
-            .multipart()
-            .formHeader("act", "Post")
-            .formHeader("CODE", if (form.type == EditPostForm.TYPE_NEW_POST) "03" else "9")
-            .formHeader("f", form.forumId.toString())
-            .formHeader("t", form.topicId.toString())
-            .formHeader("auth_key", authHolder.getAuthKey().orEmpty())
-            .formHeader("Post", form.message)
-            .formHeader("enablesig", "yes")
-            .formHeader("enableemo", "yes")
-            .formHeader("st", form.st.toString())
-            .formHeader("removeattachid", "0")
-            .formHeader("MAX_FILE_SIZE", "0")
-            .formHeader("parent_id", "0")
-            .formHeader("ed-0_wysiwyg_used", "0")
-            .formHeader("editor_ids[]", "ed-0")
-            .formHeader("iconid", "0")
-            .formHeader("_upload_single_file", "1")
-
-        val poll = form.poll
-        if (poll != null) {
-            builder.formHeader("poll_question", poll.title.replace("\n".toRegex(), " "))
-            for (i in 0 until poll.getQuestions().size) {
-                val question = poll.getQuestion(i)
-                val q_index = i + 1
-                builder.formHeader(
-                    "question[$q_index]",
-                    question.title.replace("\n".toRegex(), " ")
-                )
-                builder.formHeader("multi[$q_index]", if (question.isMulti) "1" else "0")
-                for (j in 0 until question.getChoices().size) {
-                    val choice = question.getChoice(j)
-                    val c_index = j + 1
-                    builder.formHeader(
-                        "choice[$q_index${'_'}$c_index]",
-                        choice.title.replace("\n".toRegex(), " ")
-                    )
-                }
-            }
-        }
-
-        //.formHeader("file-list", addedFileList);
-        if (form.type == EditPostForm.TYPE_EDIT_POST) {
-            builder.formHeader("post_edit_reason", form.editReason)
-        }
-        val ids = StringBuilder()
-        if (form.attachments != null && !form.attachments.isEmpty()) {
-            for (i in 0 until form.attachments.size) {
-                val id = form.attachments[i].id
-                ids.append(id)
-                if (i < form.attachments.size - 1) {
-                    ids.append(",")
-                }
-            }
-        }
-        builder.formHeader("file-list", ids.toString())
-        if (form.postId != 0)
-            builder.formHeader("p", form.postId.toString())
-
-        val response = webClient.request(builder.build())
+        val response = webClient.request(ApiRequest.Forum.Post.Send(form, authHolder.getAuthKey()))
         val redirectUrl = response.redirect
         return themeParser.parsePage(response.body, redirectUrl, false, false)
     }

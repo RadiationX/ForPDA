@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.ui.fragments.profile
 import android.annotation.TargetApi
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -49,6 +48,10 @@ import ru.radiationx.quill.inject
 class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.ClickListener,
     ProfileView {
 
+    companion object {
+        const val ARG_USER_ID = "user_id"
+    }
+
     private val binding by tabBinding(FragmentProfileBinding::bind)
     private val toolbarBinding by tabToolbarBinding(ToolbarProfileBinding::bind)
 
@@ -89,14 +92,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var profileUrl: String? = null
-        arguments?.apply {
-            profileUrl = getString(ARG_TAB)
-        }
-        if (profileUrl.isNullOrEmpty()) {
-            profileUrl = "https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}"
-        }
-        presenter.profileUrl = profileUrl
+        presenter.argUserId = requireArguments().getInt(ARG_USER_ID)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

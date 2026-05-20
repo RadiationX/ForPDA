@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.presentation.profile
 
 import com.nostra13.universalimageloader.core.ImageLoader
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
@@ -27,7 +28,7 @@ class ProfilePresenter(
     private val utils: Utils
 ) : BasePresenter<ProfileView>() {
 
-    var profileUrl: String? = null
+    var argUserId: Int = 0
     private var currentData: ProfileModel? = null
 
     override fun onFirstViewAttach() {
@@ -36,11 +37,10 @@ class ProfilePresenter(
     }
 
     private fun loadProfile() {
-        val url = profileUrl ?: return
         viewState.setRefreshing(true)
         viewModelScope.launch {
             coRunCatching {
-                profileRepository.loadProfile(url)
+                profileRepository.loadProfile(argUserId)
             }.onSuccess { profileModel ->
                 currentData = profileModel
                 loadAvatar(profileModel)
@@ -77,7 +77,7 @@ class ProfilePresenter(
     }
 
     fun copyUrl() {
-        utils.copyToClipBoard(profileUrl)
+        utils.copyToClipBoard(ApiRequest.Forum.Profile.Load(argUserId))
     }
 
     fun navigateToQms() {
@@ -89,7 +89,7 @@ class ProfilePresenter(
     private fun loadAvatar(profile: ProfileModel) {
         viewModelScope.launch {
             coRunCatching {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     ImageLoader.getInstance().loadImageSync(profile.user.avatar)
                 }
             }.onSuccess {

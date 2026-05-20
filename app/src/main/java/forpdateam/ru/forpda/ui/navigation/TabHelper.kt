@@ -101,7 +101,6 @@ object TabHelper {
                 createFragment(NewsDetailsFragment::class.java, args.apply {
                     putInt(NewsDetailsFragment.ARG_NEWS_ID, screen.articleId)
                     putInt(NewsDetailsFragment.ARG_NEWS_COMMENT_ID, screen.commentId)
-                    putString(NewsDetailsFragment.ARG_NEWS_URL, screen.articleUrl)
                     putString(NewsDetailsFragment.ARG_NEWS_TITLE, screen.screenTitle)
                     putString(NewsDetailsFragment.ARG_NEWS_AUTHOR_NICK, screen.articleAuthorNick)
                     putString(NewsDetailsFragment.ARG_NEWS_DATE, screen.articleDate)
@@ -122,7 +121,7 @@ object TabHelper {
             is Screen.GoogleCaptcha -> createFragment(GoogleCaptchaFragment::class.java, args)
             is Screen.Profile -> {
                 createFragment(ProfileFragment::class.java, args.apply {
-                    putString(TabFragment.ARG_TAB, screen.profileUrl)
+                    putInt(ProfileFragment.ARG_USER_ID, screen.userId)
                 })
             }
 

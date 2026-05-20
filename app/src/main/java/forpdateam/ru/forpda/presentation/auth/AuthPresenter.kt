@@ -49,7 +49,7 @@ class AuthPresenter(
                 authRepository.signIn(captcha, form)
             }.onSuccess {
                 viewState.onSuccessAuth()
-                loadProfile("https://4pda.to/forum/index.php?showuser=${authHolder.get().userId}")
+                loadProfile()
             }.onFailure {
                 form = form.copy(captcha = "")
                 viewState.onFormChanged(form)
@@ -84,10 +84,10 @@ class AuthPresenter(
         }
     }
 
-    private fun loadProfile(url: String) {
+    private fun loadProfile() {
         viewModelScope.launch {
             coRunCatching {
-                profileRepository.loadProfile(url)
+                profileRepository.loadSelf()
             }.onSuccess {
                 viewState.showProfile(it)
                 delay(2000)

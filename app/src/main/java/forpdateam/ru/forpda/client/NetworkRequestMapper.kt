@@ -26,8 +26,8 @@ class NetworkRequestMapper(
         request.formHeaders.onEach { (key, value) ->
             Log.d(LOG_TAG, "Form header $key : ${getPrivateHeaderValue(key, value)}")
         }
-        if (request.file != null) {
-            Log.d(LOG_TAG, "Form file ${request.file}")
+        request.files.onEach { (key, file) ->
+            Log.d(LOG_TAG, "Form file $key: $file")
         }
         var url = request.url
         if (request.url.startsWith("//")) {
@@ -60,11 +60,6 @@ class NetworkRequestMapper(
         val formBuilder = FormBody.Builder()
         request.formHeaders.onEach { (key, value) ->
             formBuilder.add(key, value)
-            if (request.encodedFormHeaders.contains(key)) {
-                formBuilder.addEncoded(key, value)
-            } else {
-                formBuilder.add(key, value)
-            }
         }
         requestBuilder.post(formBuilder.build())
     }
@@ -73,7 +68,7 @@ class NetworkRequestMapper(
         request: NetworkRequest,
         requestBuilder: Request.Builder
     ) {
-        if (request.formHeaders.isEmpty() && request.file == null) {
+        if (request.formHeaders.isEmpty() && request.files.isEmpty()) {
             return
         }
         val multipartBuilder = MultipartBody.Builder()
@@ -81,14 +76,14 @@ class NetworkRequestMapper(
         request.formHeaders.onEach { (key, value) ->
             multipartBuilder.addFormDataPart(key, value)
         }
-        request.file?.also { file ->
+        request.files.onEach { (key, file) ->
             val metaData = file.file.getMetaData(context)
             val type = metaData.mimeType.toMediaTypeOrNull()
             val requestBody = InputStreamRequestBody(type, file.file.openInputStream(context)).let {
                 ProgressRequestBody(it, file.progressListener)
             }
             multipartBuilder.addFormDataPart(
-                name = file.requestName,
+                name = key,
                 filename = metaData.name,
                 body = requestBody
             )

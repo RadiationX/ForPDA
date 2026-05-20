@@ -93,7 +93,6 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
         })
         Log.e("lalala", "onCreate " + this + " : " + arguments)
         arguments?.apply {
-            interactor.initData.newsUrl = getString(ARG_NEWS_URL)
             interactor.initData.newsId = getInt(ARG_NEWS_ID, 0)
             interactor.initData.commentId = getInt(ARG_NEWS_COMMENT_ID, 0)
         }
@@ -281,7 +280,6 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
     }
 
     companion object {
-        const val ARG_NEWS_URL = "ARG_NEWS_URL"
         const val ARG_NEWS_ID = "ARG_NEWS_ID"
         const val ARG_NEWS_COMMENT_ID = "ARG_NEWS_COMMENT_ID"
         const val ARG_NEWS_TITLE = "ARG_NEWS_TITLE"

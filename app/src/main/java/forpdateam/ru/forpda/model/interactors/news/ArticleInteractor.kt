@@ -28,11 +28,7 @@ class ArticleInteractor @Inject constructor(
     fun observeComments(): Flow<List<Comment>> = commentsState.filterNotNull()
 
     suspend fun loadArticle(): DetailsPage {
-        val details = if (initData.newsId > 0) {
-            newsRepository.getDetails(initData.newsId)
-        } else {
-            newsRepository.getDetails(initData.newsUrl.orEmpty())
-        }
+        val details = newsRepository.getDetails(initData.newsId)
         return articleTemplate.mapEntity(details)
     }
 
@@ -90,7 +86,6 @@ class ArticleInteractor @Inject constructor(
     }
 
     data class InitData(
-        var newsUrl: String? = null,
         var newsId: Int = -1,
         var commentId: Int = -1
     )

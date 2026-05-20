@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote.api.topcis
 
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import javax.inject.Inject
@@ -14,7 +15,7 @@ class TopicsApi @Inject constructor(
 ) {
 
     suspend fun getTopics(id: Int, st: Int): TopicsData {
-        val response = webClient.get("https://4pda.to/forum/index.php?showforum=$id&st=$st")
+        val response = webClient.request(ApiRequest.Forum.Forums.GetTopics(id, st))
         return topicsParser.parse(response.body, id)
     }
 }

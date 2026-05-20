@@ -1,5 +1,6 @@
 package forpdateam.ru.forpda.model.data.remote
 
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.NetworkResponse
 import okhttp3.WebSocket
@@ -9,6 +10,8 @@ import okhttp3.WebSocketListener
  * Created by radiationx on 26.03.17.
  */
 interface WebClient {
+
+    suspend fun request(request: ApiRequest): NetworkResponse
 
     suspend fun get(url: String): NetworkResponse
 

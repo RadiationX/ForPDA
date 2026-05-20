@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.data.remote.api.attachments
 
 import android.content.Context
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
@@ -64,22 +65,7 @@ class AttachmentsApi @Inject constructor(
             }
             hashingSource.hash.hex()
         }
-
-        val builder = NetworkRequest.Builder()
-            .url("https://4pda.to/forum/index.php?act=attach")
-            .xhrHeader()
-            .formHeader("index", "1")
-            .formHeader("maxSize", "134217728")
-            .formHeader("allowExt", "")
-            .formHeader("forum-attach-files", "")
-            .formHeader("code", "check")
-            .formHeader("md5", md5Hash)
-            .formHeader("size", metaData.size.toString())
-            .formHeader("name", metaData.name)
-        if (postId != -1) {
-            builder.formHeader("relId", postId.toString())
-        }
-        val response = webClient.request(builder.build())
+        val response = webClient.request(ApiRequest.Forum.Attachments.GetExisted(postId, md5Hash, metaData.size, metaData.name))
         if (response.body == "0") {
             return null
         }
@@ -94,24 +80,8 @@ class AttachmentsApi @Inject constructor(
         file: RequestFile,
         item: AttachmentItem
     ): AttachmentItem {
-        val uploadRequest = NetworkRequest.Builder()
-            .url("https://4pda.to/forum/index.php?act=attach")
-            .xhrHeader()
-            .formHeader("index", "1")
-            .formHeader("maxSize", "134217728")
-            .formHeader("allowExt", "")
-            .formHeader("forum-attach-files", "")
-            .formHeader("code", "upload")
-            .file(NetworkRequest.File("FILE_UPLOAD[]", file, item.itemProgressListener))
-
-        if (postId != -1) {
-            uploadRequest.formHeader("relId", postId.toString())
-        }
-        if (relType != null) {
-            uploadRequest.formHeader("relType", relType)
-        }
-
-        val response = webClient.request(uploadRequest.build())
+        val networkFile = NetworkRequest.File(file, item.itemProgressListener)
+        val response = webClient.request(ApiRequest.Forum.Attachments.Upload(postId, relType, networkFile))
         return attachmentsParser.parseAttachment(response.body, item).also {
             it.status = AttachmentItem.STATUS_UPLOADED
         }
@@ -124,21 +94,7 @@ class AttachmentsApi @Inject constructor(
     ): List<AttachmentItem> {
         var response: NetworkResponse
         for (item in items) {
-            val builder = NetworkRequest.Builder()
-                .url("https://4pda.to/forum/index.php?act=attach")
-                .xhrHeader()
-                .formHeader("index", "1")
-                .formHeader("maxSize", "134217728")
-                .formHeader("allowExt", "")
-                .formHeader("code", "remove")
-                .formHeader("id", Integer.toString(item.id))
-            if (postId != -1) {
-                builder.formHeader("relId", postId.toString())
-            }
-            if (relType != null) {
-                builder.formHeader("relType", relType)
-            }
-            response = webClient.request(builder.build())
+            response = webClient.request(ApiRequest.Forum.Attachments.Delete(item.id, postId, relType))
             //todo проверка на ошибки, я хз че еще может быть кроме 0
             if (response.body == "0") {
                 item.status = AttachmentItem.STATUS_REMOVED

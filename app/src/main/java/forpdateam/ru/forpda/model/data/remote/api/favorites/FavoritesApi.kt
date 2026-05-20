@@ -1,10 +1,9 @@
 package forpdateam.ru.forpda.model.data.remote.api.favorites
 
-import android.net.Uri
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.model.data.remote.WebClient
-import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import javax.inject.Inject
 
 /**
@@ -54,57 +53,36 @@ class FavoritesApi @Inject constructor(
     }
 
     private suspend fun getFavorites(st: Int, sorting: Sorting): FavoritesData {
-        val uriBuilder = Uri.Builder()
-            .scheme("https")
-            .authority("4pda.to")
-            .appendPath("forum")
-            .appendQueryParameter("act", "fav")
-            .appendQueryParameter("type", "all")
-            .appendQueryParameter("st", st.toString())
-            .appendQueryParameter(Sorting.Key.HEADER, sorting.key)
-            .appendQueryParameter(Sorting.Order.HEADER, sorting.order)
-
-        val response = webClient.get(uriBuilder.build().toString())
+        val response = webClient.request(ApiRequest.Forum.Favorite.GetList(st, sorting))
         return favoritesParser.parseFavorites(response.body)
     }
 
     suspend fun editSubscribeType(type: String?, favId: Int): Boolean {
         checkNotNull(type)
-        val response =
-            webClient.get("https://4pda.to/forum/index.php?act=fav&sort_key=&sort_by=&type=all&st=0&tact=$type&selectedtids=$favId")
+        val response = webClient.request(ApiRequest.Forum.Favorite.EditTrackType(favId, type))
         return favoritesParser.checkIsComplete(response.body)
     }
 
     suspend fun editPinState(type: String?, favId: Int): Boolean {
         checkNotNull(type)
-        val builder = NetworkRequest.Builder()
-            .url("https://4pda.to/forum/index.php?act=fav")
-            .formHeader("selectedtids", favId.toString())
-            .formHeader("tact", type)
-        val response = webClient.request(builder.build())
+        val response = webClient.request(ApiRequest.Forum.Favorite.EditPinState(favId, type))
         return favoritesParser.checkIsComplete(response.body)
     }
 
     suspend fun delete(favId: Int): Boolean {
-        val builder = NetworkRequest.Builder()
-            .url("https://4pda.to/forum/index.php?act=fav")
-            .xhrHeader()
-            .formHeader("selectedtids", favId.toString())
-            .formHeader("tact", "delete")
-        val response = webClient.request(builder.build())
+        val response = webClient.request(ApiRequest.Forum.Favorite.Delete(favId))
         return favoritesParser.checkIsComplete(response.body)
     }
 
     suspend fun add(id: Int, action: Int, type: String?): Boolean {
         checkNotNull(type)
-        var url = "https://4pda.to/forum/index.php?act=fav&type=add&track_type=$type"
-        if (action == ACTION_ADD_FORUM) {
-            url += "&f="
-        } else if (action == ACTION_ADD) {
-            url += "&t="
+        val request = when (action) {
+            ACTION_ADD_FORUM -> ApiRequest.Forum.Favorite.Add.Forum(id, type)
+            ACTION_ADD -> ApiRequest.Forum.Favorite.Add.Topic(id, type)
+            else -> null
         }
-        url += id
-        val response = webClient.request(NetworkRequest.Builder().url(url).build())
+        requireNotNull(request)
+        val response = webClient.request(request)
         return favoritesParser.checkIsComplete(response.body)
     }
 

@@ -48,6 +48,10 @@ class Utils @Inject constructor(
         clipboard.setPrimaryClip(clip)
     }
 
+    fun copyToClipBoard(s: ApiRequest) {
+        copyToClipBoard(s.buildHttpUrl().toString())
+    }
+
     fun readFromClipboard(): String? {
         val clipboard = context.getSystemService<ClipboardManager>()!!
         if (clipboard.hasPrimaryClip()) {

@@ -3,11 +3,9 @@ package forpdateam.ru.forpda.model.data.remote.api.profile
 import android.text.Spanned
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
-import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 class ProfileParser @Inject constructor(
@@ -16,13 +14,10 @@ class ProfileParser @Inject constructor(
 
     private val scope = ParserPatterns.Profile
 
-    fun parse(response: String, argUrl: String): ProfileModel {
+    fun parse(response: String, userId: Int): ProfileModel {
         val profile = patternProvider
             .getRegexParser(scope.scope, scope.main)
             .mapOnce(response) { mainMatcher ->
-                val id = Pattern.compile("showuser=(\\d+)").matcher(argUrl).requireOnce { matcher ->
-                    matcher.group(1)!!.toInt()
-                }
                 val sign = mainMatcher.require(6).trim().let {
                     if (it == "Нет подписи") null else it.fromHtmlToColored()
                 }
@@ -34,7 +29,7 @@ class ProfileParser @Inject constructor(
                 stats.addAll(parseForumStats(mainMatcher.require(11)))
                 ProfileModel(
                     user = ForumUser.required(
-                        id = id,
+                        id = userId,
                         avatar = mainMatcher.require(1).trim(),
                         nick = mainMatcher.require(2).trim().fromHtml()
                     ),

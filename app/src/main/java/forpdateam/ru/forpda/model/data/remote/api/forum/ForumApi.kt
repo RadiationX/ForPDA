@@ -1,10 +1,10 @@
 package forpdateam.ru.forpda.model.data.remote.api.forum
 
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.data.remote.WebClient
-import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import javax.inject.Inject
 
 /**
@@ -17,32 +17,25 @@ class ForumApi @Inject constructor(
 ) {
 
     suspend fun getForums(): List<ForumItemFlat> {
-        val response = webClient.get("https://4pda.to/forum/index.php?act=search")
+        val response = webClient.request(ApiRequest.Forum.Forums.GetAllForums)
         return forumParser.parseForums(response.body)
     }
 
     suspend fun getRules(): ForumRules {
-        val response = webClient.get("https://4pda.to/forum/index.php?act=boardrules")
+        val response = webClient.request(ApiRequest.Forum.Forums.GetRules)
         return forumParser.parseRules(response.body)
     }
 
     suspend fun getAnnounce(id: Int, forumId: Int): Announce {
-        val response =
-            webClient.get("https://4pda.to/forum/index.php?act=announce&f=$forumId&st=$id")
+        val response = webClient.request(ApiRequest.Forum.Forums.GetAnnounce(forumId, id))
         return forumParser.parseAnnounce(response.body)
     }
 
     suspend fun markAllRead() {
-        val request = NetworkRequest.Builder()
-            .url("https://4pda.to/forum/index.php?act=auth&action=markboard").withoutBody()
-            .build()
-        webClient.request(request)
+        webClient.request(ApiRequest.Forum.Forums.MarkAllRead)
     }
 
     suspend fun markRead(id: Int) {
-        val request = NetworkRequest.Builder()
-            .url("https://4pda.to/forum/index.php?act=auth&action=markforum&f=$id&fromforum=$id")
-            .withoutBody().build()
-        webClient.request(request)
+        webClient.request(ApiRequest.Forum.Forums.MarkRead(id))
     }
 }

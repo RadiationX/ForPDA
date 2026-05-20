@@ -101,9 +101,7 @@ class LinkHandlerImpl @Inject constructor(
 
     private fun handleForum(uri: Uri, router: TabRouter?, args: Map<String, String?>): Boolean {
         uri.getQueryParameter("showuser")?.also { param ->
-            navigateTo(Screen.Profile().apply {
-                profileUrl = uri.toString()
-            }, router, args)
+            navigateTo(Screen.Profile(param.toInt()), router, args)
             return true
         }
         uri.getQueryParameter("showtopic")?.also { param ->
@@ -207,7 +205,6 @@ class LinkHandlerImpl @Inject constructor(
                 if (site.commentId != null) {
                     commentId = site.commentId
                 }
-                articleUrl = uri.toString()
             }, router, args)
             return true
         }

@@ -1,11 +1,11 @@
 package forpdateam.ru.forpda.model.data.remote.api.reputation
 
+import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.extensions.mapOnce
 import forpdateam.ru.forpda.extensions.requireOnce
 import forpdateam.ru.forpda.model.data.remote.WebClient
-import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -19,22 +19,13 @@ class ReputationApi @Inject constructor(
 ) {
 
     suspend fun getReputation(userId: Int, mode: String, sort: String, st: Int): RepData {
-        val response =
-            webClient.get("https://4pda.to/forum/index.php?act=rep&view=history&mid=$userId&mode=$mode&order=$sort&st=$st")
+        val response = webClient.request(ApiRequest.Forum.Reputation.GetPage(userId, mode, sort, st))
         return reputationParser.parse(response.body)
     }
 
     suspend fun editReputation(postId: Int, userId: Int, type: Boolean, message: String) {
-        val builder = NetworkRequest.Builder()
-            .url("https://4pda.to/forum/index.php")
-            .formHeader("act", "rep")
-            .formHeader("mid", userId.toString())
-            .formHeader("type", if (type) "add" else "minus")
-            .formHeader("message", message)
-        if (postId > 0) {
-            builder.formHeader("p", postId.toString())
-        }
-        webClient.request(builder.build())
+        val type = if (type) "add" else "minus"
+        webClient.request(ApiRequest.Forum.Reputation.Edit(postId, userId, type, message))
     }
 
     companion object {
