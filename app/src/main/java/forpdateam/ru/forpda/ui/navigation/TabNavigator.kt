@@ -303,18 +303,11 @@ class TabNavigator(
             }
 
             is Screen.ImageViewer -> {
-                return Intent(context, ImageViewerActivity::class.java).apply {
-                    putExtra(ImageViewerActivity.IMAGE_URLS_KEY, ArrayList<String>(screen.urls))
-                    putExtra(ImageViewerActivity.SELECTED_INDEX_KEY, screen.selected)
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
+                return ImageViewerActivity.createIntent(context, screen.urls, screen.selectedUrl)
             }
 
             is Screen.Settings -> {
-                return Intent(context, SettingsActivity::class.java).apply {
-                    putExtra(SettingsActivity.ARG_NEW_PREFERENCE_SCREEN, screen.fragment)
-                }
+                return Intent(context, SettingsActivity::class.java)
             }
 
             else -> {

@@ -59,7 +59,10 @@ object TabHelper {
                 })
             }
 
-            is Screen.DevDbBrands -> createFragment(BrandsFragment::class.java, args)
+            is Screen.DevDbBrands -> createFragment(BrandsFragment::class.java, args.apply {
+                putString(BrandsFragment.ARG_CATEGORY_ID, screen.categoryId)
+            })
+
             is Screen.DevDbDevice -> {
                 createFragment(DeviceFragment::class.java, args.apply {
                     putString(DeviceFragment.ARG_DEVICE_ID, screen.deviceId)
@@ -68,20 +71,20 @@ object TabHelper {
 
             is Screen.DevDbSearch -> createFragment(DevDbSearchFragment::class.java, args)
             is Screen.EditPost -> {
-                val arguments = if (screen.editPostForm == null) {
-                    EditPostFragment.fillArguments(
-                        args,
-                        screen.postId,
-                        screen.topicId,
-                        screen.forumId,
-                        screen.st,
-                        screen.themeName
+                val arguments = when (screen) {
+                    is Screen.EditPost.Existed -> EditPostFragment.fillArguments(
+                        args = args,
+                        postId = screen.postId,
+                        topicId = screen.topicId,
+                        forumId = screen.forumId,
+                        st = screen.st,
+                        themeName = screen.themeName
                     )
-                } else {
-                    EditPostFragment.fillArguments(
-                        args,
-                        screen.editPostForm!!,
-                        screen.themeName
+
+                    is Screen.EditPost.New -> EditPostFragment.fillArguments(
+                        args = args,
+                        form = screen.editPostForm,
+                        themeName = screen.themeName
                     )
                 }
                 createFragment(EditPostFragment::class.java, arguments)
@@ -98,15 +101,23 @@ object TabHelper {
             is Screen.Mentions -> createFragment(MentionsFragment::class.java, args)
             is Screen.ArticleList -> createFragment(NewsMainFragment::class.java, args)
             is Screen.ArticleDetail -> {
-                createFragment(NewsDetailsFragment::class.java, args.apply {
-                    putInt(NewsDetailsFragment.ARG_NEWS_ID, screen.articleId)
-                    putInt(NewsDetailsFragment.ARG_NEWS_COMMENT_ID, screen.commentId)
-                    putString(NewsDetailsFragment.ARG_NEWS_TITLE, screen.screenTitle)
-                    putString(NewsDetailsFragment.ARG_NEWS_AUTHOR_NICK, screen.articleAuthorNick)
-                    putString(NewsDetailsFragment.ARG_NEWS_DATE, screen.articleDate)
-                    putString(NewsDetailsFragment.ARG_NEWS_IMAGE, screen.articleImageUrl)
-                    putInt(NewsDetailsFragment.ARG_NEWS_COMMENTS_COUNT, screen.articleCommentsCount)
-                })
+                when (screen) {
+                    is Screen.ArticleDetail.FromLink -> createFragment(NewsDetailsFragment::class.java, args.apply {
+                        putInt(NewsDetailsFragment.ARG_NEWS_ID, screen.articleId)
+                        screen.commentId?.let {
+                            putInt(NewsDetailsFragment.ARG_NEWS_COMMENT_ID, it)
+                        }
+                    })
+
+                    is Screen.ArticleDetail.FromList -> createFragment(NewsDetailsFragment::class.java, args.apply {
+                        putInt(NewsDetailsFragment.ARG_NEWS_ID, screen.articleId)
+                        putString(NewsDetailsFragment.ARG_NEWS_TITLE, screen.articleTitle)
+                        putString(NewsDetailsFragment.ARG_NEWS_AUTHOR_NICK, screen.articleAuthorNick)
+                        putString(NewsDetailsFragment.ARG_NEWS_DATE, screen.articleDate)
+                        putString(NewsDetailsFragment.ARG_NEWS_IMAGE, screen.articleImageUrl)
+                        putInt(NewsDetailsFragment.ARG_NEWS_COMMENTS_COUNT, screen.articleCommentsCount)
+                    })
+                }
             }
 
             is Screen.Notes -> createFragment(NotesFragment::class.java, args)
@@ -135,24 +146,39 @@ object TabHelper {
             }
 
             is Screen.QmsChat -> {
-                createFragment(QmsChatFragment::class.java, args.apply {
-                    putInt(QmsChatFragment.THEME_ID_ARG, screen.themeId)
-                    putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
-                    putString(QmsChatFragment.USER_NICK_ARG, screen.userNick)
-                    putString(QmsChatFragment.USER_AVATAR_ARG, screen.avatarUrl)
-                    putString(QmsChatFragment.THEME_TITLE_ARG, screen.themeTitle)
-                })
+                when (screen) {
+                    is Screen.QmsChat.Create -> createFragment(QmsChatFragment::class.java)
+
+                    is Screen.QmsChat.CreateWithUser -> createFragment(QmsChatFragment::class.java, args.apply {
+                        putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
+                        putString(QmsChatFragment.USER_NICK_ARG, screen.userNick)
+                        putString(QmsChatFragment.USER_AVATAR_ARG, screen.avatarUrl)
+                    })
+
+                    is Screen.QmsChat.FromLink -> createFragment(QmsChatFragment::class.java, args.apply {
+                        putInt(QmsChatFragment.THEME_ID_ARG, screen.themeId)
+                        putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
+                    })
+
+                    is Screen.QmsChat.FromList -> createFragment(QmsChatFragment::class.java, args.apply {
+                        putInt(QmsChatFragment.THEME_ID_ARG, screen.themeId)
+                        putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
+                        putString(QmsChatFragment.USER_NICK_ARG, screen.userNick)
+                        putString(QmsChatFragment.USER_AVATAR_ARG, screen.avatarUrl)
+                        putString(QmsChatFragment.THEME_TITLE_ARG, screen.themeTitle)
+                    })
+                }
             }
 
             is Screen.Reputation -> {
                 createFragment(ReputationFragment::class.java, args.apply {
-                    putString(TabFragment.ARG_TAB, screen.reputationUrl)
+                    putParcelable(ReputationFragment.ARG_REP_ARGS, screen.args)
                 })
             }
 
             is Screen.Search -> {
                 createFragment(SearchFragment::class.java, args.apply {
-                    putString(TabFragment.ARG_TAB, screen.searchUrl)
+                    putParcelable(SearchFragment.ARG_SETTINGS, screen.settings)
                 })
             }
 
@@ -164,7 +190,7 @@ object TabHelper {
 
             is Screen.Topics -> {
                 createFragment(TopicsFragment::class.java, args.apply {
-                    putInt(TopicsFragment.TOPICS_ID_ARG, screen.forumId)
+                    putInt(TopicsFragment.FORUM_ID_ARG, screen.forumId)
                 })
             }
 

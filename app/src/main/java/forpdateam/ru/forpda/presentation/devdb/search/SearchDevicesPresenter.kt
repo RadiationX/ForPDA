@@ -51,9 +51,7 @@ class SearchDevicesPresenter(
 
     fun openDevice(item: Brand.DeviceItem) {
         currentData?.let {
-            router.navigateTo(Screen.DevDbDevice().apply {
-                deviceId = item.id
-            })
+            router.navigateTo(Screen.DevDbDevice(deviceId = item.id))
         }
     }
 

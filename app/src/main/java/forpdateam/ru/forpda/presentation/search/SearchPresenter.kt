@@ -74,18 +74,20 @@ class SearchPresenter(
         FIELD_SOURCE to sourceItems
     )
 
-    private var settings = SearchSettings.default()
+    private var argSettings = SearchSettings.default()
 
     private var currentData: SearchResult? = null
 
     init {
-        initSearchSettings(otherPreferencesHolder.searchSettings.get())
+        val settings = otherPreferencesHolder.searchSettings.get()?.let {
+            SearchSettings.parseSettings(it)
+        }
+        initSearchSettings(settings)
     }
 
-    fun initSearchSettings(url: String?) {
-        url?.let {
-            settings = SearchSettings.parseSettings(it)
-        }
+    fun initSearchSettings(settings: SearchSettings?) {
+        if (settings == null) return
+        argSettings = settings
     }
 
     override fun onFirstViewAttach() {
@@ -125,22 +127,22 @@ class SearchPresenter(
                 viewState.setStyleType(it)
             }
             .launchIn(viewModelScope)
-        viewState.fillSettingsData(settings, fields)
+        viewState.fillSettingsData(argSettings, fields)
         refreshData()
     }
 
     fun refreshData() {
-        if (settings.query.isNullOrEmpty() && settings.nick.isNullOrEmpty()) {
+        if (argSettings.query.isNullOrEmpty() && argSettings.nick.isNullOrEmpty()) {
             return
         }
         val withHtml =
-            settings.result == SearchSettings.RESULT_POSTS.first && settings.resourceType == SearchSettings.RESOURCE_FORUM.first
+            argSettings.result == SearchSettings.RESULT_POSTS.first && argSettings.resourceType == SearchSettings.RESOURCE_FORUM.first
 
         viewModelScope.launch {
             viewState.setRefreshing(true)
-            viewState.onStartSearch(settings)
+            viewState.onStartSearch(argSettings)
             coRunCatching {
-                searchRepository.getSearch(settings)
+                searchRepository.getSearch(argSettings)
             }.map {
                 if (withHtml) searchTemplate.mapEntity(it) else it
             }.onSuccess {
@@ -154,7 +156,7 @@ class SearchPresenter(
     }
 
     fun search(query: String, nick: String) {
-        settings = settings.copy(
+        argSettings = argSettings.copy(
             st = 0,
             query = query,
             nick = nick
@@ -163,7 +165,7 @@ class SearchPresenter(
     }
 
     fun search(pageNumber: Int) {
-        settings = settings.copy(
+        argSettings = argSettings.copy(
             st = pageNumber
         )
         refreshData()
@@ -175,14 +177,14 @@ class SearchPresenter(
                 val name = resourceItems[position]
                 when {
                     checkName(name, SearchSettings.RESOURCE_NEWS) -> {
-                        settings = settings.copy(
+                        argSettings = argSettings.copy(
                             resourceType = SearchSettings.RESOURCE_NEWS.first
                         )
                         viewState.setNewsMode()
                     }
 
                     checkName(name, SearchSettings.RESOURCE_FORUM) -> {
-                        settings = settings.copy(
+                        argSettings = argSettings.copy(
                             resourceType = SearchSettings.RESOURCE_FORUM.first
                         )
                         viewState.setForumMode()
@@ -194,11 +196,11 @@ class SearchPresenter(
                 val name = resultItems[position]
                 when {
                     checkName(name, SearchSettings.RESULT_TOPICS) -> {
-                        settings = settings.copy(result = SearchSettings.RESULT_TOPICS.first)
+                        argSettings = argSettings.copy(result = SearchSettings.RESULT_TOPICS.first)
                     }
 
                     checkName(name, SearchSettings.RESULT_POSTS) -> {
-                        settings = settings.copy(result = SearchSettings.RESULT_POSTS.first)
+                        argSettings = argSettings.copy(result = SearchSettings.RESULT_POSTS.first)
                     }
                 }
             }
@@ -207,15 +209,15 @@ class SearchPresenter(
                 val name = sortItems[position]
                 when {
                     checkName(name, SearchSettings.SORT_DA) -> {
-                        settings = settings.copy(sort = SearchSettings.SORT_DA.first)
+                        argSettings = argSettings.copy(sort = SearchSettings.SORT_DA.first)
                     }
 
                     checkName(name, SearchSettings.SORT_DD) -> {
-                        settings = settings.copy(sort = SearchSettings.SORT_DD.first)
+                        argSettings = argSettings.copy(sort = SearchSettings.SORT_DD.first)
                     }
 
                     checkName(name, SearchSettings.SORT_REL) -> {
-                        settings = settings.copy(sort = SearchSettings.SORT_REL.first)
+                        argSettings = argSettings.copy(sort = SearchSettings.SORT_REL.first)
                     }
                 }
             }
@@ -224,15 +226,15 @@ class SearchPresenter(
                 val name = sourceItems[position]
                 when {
                     checkName(name, SearchSettings.SOURCE_ALL) -> {
-                        settings = settings.copy(source = SearchSettings.SOURCE_ALL.first)
+                        argSettings = argSettings.copy(source = SearchSettings.SOURCE_ALL.first)
                     }
 
                     checkName(name, SearchSettings.SOURCE_TITLES) -> {
-                        settings = settings.copy(source = SearchSettings.SOURCE_TITLES.first)
+                        argSettings = argSettings.copy(source = SearchSettings.SOURCE_TITLES.first)
                     }
 
                     checkName(name, SearchSettings.SOURCE_CONTENT) -> {
-                        settings = settings.copy(source = SearchSettings.SOURCE_CONTENT.first)
+                        argSettings = argSettings.copy(source = SearchSettings.SOURCE_CONTENT.first)
                     }
                 }
             }
@@ -246,10 +248,10 @@ class SearchPresenter(
 
     fun saveSettings() {
         val saveSettings = SearchSettings.default().copy(
-            resourceType = settings.resourceType,
-            result = settings.result,
-            sort = settings.sort,
-            source = settings.source
+            resourceType = argSettings.resourceType,
+            result = argSettings.result,
+            sort = argSettings.sort,
+            source = argSettings.source
         )
         val saveUrl = saveSettings.toUrl()
         otherPreferencesHolder.searchSettings.set(saveUrl)
@@ -261,11 +263,11 @@ class SearchPresenter(
     }
 
     fun onItemLongClick(item: SearchItem) {
-        viewState.showItemDialogMenu(item, settings)
+        viewState.showItemDialogMenu(item, argSettings)
     }
 
     fun copyLink() {
-        utils.copyToClipBoard(settings.toUrl())
+        utils.copyToClipBoard(argSettings.toUrl())
     }
 
     fun copyLink(item: SearchItem) {
@@ -589,12 +591,15 @@ class SearchPresenter(
     fun openEditPostForm(postId: Int) {
         getPostById(postId)?.let {
             val title: String = it.title
-            router.navigateTo(Screen.EditPost().apply {
-                this.postId = it.post.id
-                topicId = it.post.topicId
-                st = settings.st
-                themeName = title
-            })
+            router.navigateTo(
+                Screen.EditPost.Existed(
+                    postId = it.post.id,
+                    topicId = it.post.topicId,
+                    forumId = -1,
+                    st = argSettings.st,
+                    themeName = title
+                )
+            )
         }
     }
 

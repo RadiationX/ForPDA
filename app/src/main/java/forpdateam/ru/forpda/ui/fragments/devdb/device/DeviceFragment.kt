@@ -351,7 +351,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
                 ImageViewerActivity.startActivity(
                     this@DeviceFragment.requireContext(),
                     fullUrls,
-                    position
+                    fullUrls.getOrNull(position)
                 )
             }
             container.addView(imageLayout, 0)

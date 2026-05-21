@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.presentation
 
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
+import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
+import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 
 sealed class Screen : com.github.terrakok.cicerone.Screen {
     companion object {
@@ -18,60 +20,61 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
 
     /* Activities */
 
-    class Main : Screen() {
-        var checkWebView = true
-    }
+    class Main : Screen()
 
-    class UpdateChecker : Screen() {
-        var jsonSource: String? = null
-    }
+    class UpdateChecker : Screen()
 
-    class ImageViewer : Screen() {
-        var urls: MutableList<String> = mutableListOf()
-        var selected: Int = NO_ID
-    }
+    class ImageViewer(
+        val urls: List<String>,
+        val selectedUrl: String? = null
+    ) : Screen()
 
-    class Settings : Screen() {
-        var fragment: String? = null
-    }
+    class Settings : Screen()
 
     /* Fragments */
     class Auth : Screen() {
         override var isAlone: Boolean = true
     }
 
-    class DevDbDevices : Screen() {
-        var brandId: String? = null
-        var categoryId: String? = null
-    }
+    class DevDbDevices(
+        val categoryId: String,
+        val brandId: String,
+    ) : Screen()
 
-    class DevDbBrands : Screen() {
+    class DevDbBrands(
+        val categoryId: String? = null
+    ) : Screen() {
         override var isAlone: Boolean = true
-        var categoryId: String? = null
     }
 
-    class DevDbDevice : Screen() {
-        var deviceId: String? = null
-    }
+    class DevDbDevice(
+        val deviceId: String
+    ) : Screen()
 
     class DevDbSearch : Screen()
 
-    class EditPost : Screen() {
-        var editPostForm: EditPostForm? = null
-        var postId: Int = NO_ID
-        var topicId: Int = NO_ID
-        var forumId: Int = NO_ID
-        var st: Int = 0
-        var themeName: String? = null
+    sealed class EditPost : Screen() {
+        class New(
+            val editPostForm: EditPostForm,
+            val themeName: String,
+        ) : EditPost()
+
+        class Existed(
+            val postId: Int,
+            val topicId: Int,
+            val forumId: Int,
+            val st: Int,
+            val themeName: String,
+        ) : EditPost()
     }
 
     class Favorites : Screen() {
         override var isAlone: Boolean = true
     }
 
-    class Forum : Screen() {
-        var forumId: Int = NO_ID
-    }
+    class Forum(
+        val forumId: Int = NO_ID
+    ) : Screen()
 
     class History : Screen() {
         override var isAlone: Boolean = true
@@ -85,24 +88,30 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         override var isAlone: Boolean = true
     }
 
-    class ArticleDetail : Screen() {
-        var articleId: Int = NO_ID
-        var commentId: Int = NO_ID
-        var articleTitle: String? = null
-        var articleAuthorNick: String? = null
-        var articleDate: String? = null
-        var articleImageUrl: String? = null
-        var articleCommentsCount: Int = 0
+    sealed class ArticleDetail : Screen() {
+        class FromLink(
+            val articleId: Int,
+            val commentId: Int?
+        ) : ArticleDetail()
+
+        class FromList(
+            val articleId: Int,
+            val articleTitle: String,
+            val articleAuthorNick: String,
+            val articleDate: String,
+            val articleImageUrl: String,
+            val articleCommentsCount: Int
+        ) : ArticleDetail()
     }
 
     class Notes : Screen() {
         override var isAlone: Boolean = true
     }
 
-    class Announce : Screen() {
-        var forumId: Int = NO_ID
-        var announceId: Int = NO_ID
-    }
+    class Announce(
+        val forumId: Int,
+        val announceId: Int
+    ) : Screen()
 
     class ForumRules : Screen() {
         override var isAlone: Boolean = true
@@ -117,26 +126,42 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
     }
 
     class QmsBlackList : Screen()
-    class QmsThemes : Screen() {
-        var userId: Int = NO_ID
-        var avatarUrl: String? = null
+
+    class QmsThemes(
+        val userId: Int,
+        val avatarUrl: String? = null
+    ) : Screen()
+
+    sealed class QmsChat : Screen() {
+        class Create : QmsChat()
+
+        class CreateWithUser(
+            val userId: Int,
+            val userNick: String,
+            val avatarUrl: String?
+        ) : QmsChat()
+
+        class FromLink(
+            val userId: Int,
+            val themeId: Int,
+        ) : QmsChat()
+
+        class FromList(
+            val userId: Int,
+            val themeId: Int,
+            val userNick: String,
+            val themeTitle: String,
+            val avatarUrl: String?
+        ) : QmsChat()
     }
 
-    class QmsChat : Screen() {
-        var userId: Int = NO_ID
-        var themeId: Int = NO_ID
-        var userNick: String? = null
-        var themeTitle: String? = null
-        var avatarUrl: String? = null
-    }
+    class Reputation(
+        val args: RepArgs
+    ) : Screen()
 
-    class Reputation : Screen() {
-        var reputationUrl: String? = null
-    }
-
-    class Search : Screen() {
-        var searchUrl: String? = null
-    }
+    class Search(
+        val settings: SearchSettings? = null
+    ) : Screen()
 
     class Theme : Screen() {
         companion object {
@@ -147,9 +172,9 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         var themeUrl: String? = null
     }
 
-    class Topics : Screen() {
-        var forumId: Int = NO_ID
-    }
+    class Topics(
+        val forumId: Int
+    ) : Screen()
 
     class OtherMenu : Screen() {
         override var fromMenu = true

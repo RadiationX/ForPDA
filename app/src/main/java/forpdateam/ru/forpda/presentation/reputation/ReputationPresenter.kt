@@ -5,7 +5,6 @@ import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.model.repository.reputation.ReputationRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
@@ -27,7 +26,7 @@ class ReputationPresenter(
     private val errorHandler: ErrorHandler
 ) : BasePresenter<ReputationView>() {
 
-    var currentArgs = RepArgs.empty()
+    lateinit var currentArgs: RepArgs
     var currentData: RepData? = null
 
     override fun onFirstViewAttach() {
@@ -93,10 +92,10 @@ class ReputationPresenter(
     }
 
     fun changeReputationMode() {
-        val mode = if (currentArgs.mode == ReputationApi.MODE_FROM) {
-            ReputationApi.MODE_TO
+        val mode = if (currentArgs.mode == RepArgs.MODE_FROM) {
+            RepArgs.MODE_TO
         } else {
-            ReputationApi.MODE_FROM
+            RepArgs.MODE_FROM
         }
         currentArgs = currentArgs.copy(mode = mode)
         loadReputation()

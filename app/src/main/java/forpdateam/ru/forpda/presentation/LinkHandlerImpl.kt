@@ -3,6 +3,8 @@ package forpdateam.ru.forpda.presentation
 import android.net.Uri
 import android.util.Log
 import forpdateam.ru.forpda.common.MimeTypeUtil
+import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
+import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.model.data.remote.api.common.LinkHandlerParser
 import java.net.URLDecoder
 import java.util.Locale
@@ -112,9 +114,7 @@ class LinkHandlerImpl @Inject constructor(
         }
 
         uri.getQueryParameter("showforum")?.also { param ->
-            navigateTo(Screen.Topics().apply {
-                forumId = param.toInt()
-            }, router, args)
+            navigateTo(Screen.Topics(forumId = param.toInt()), router, args)
             return true
         }
 
@@ -132,14 +132,14 @@ class LinkHandlerImpl @Inject constructor(
                         navigateTo(Screen.QmsContacts(), router, args)
                     } else {
                         if (qmsThemeId != null) {
-                            navigateTo(Screen.QmsChat().apply {
-                                userId = qmsUserId.toInt()
-                                themeId = qmsThemeId.toInt()
-                            }, router, args)
+                            navigateTo(
+                                Screen.QmsChat.FromLink(
+                                    userId = qmsUserId.toInt(),
+                                    themeId = qmsThemeId.toInt()
+                                ), router, args
+                            )
                         } else {
-                            navigateTo(Screen.QmsThemes().apply {
-                                userId = qmsUserId.toInt()
-                            }, router, args)
+                            navigateTo(Screen.QmsThemes(userId = qmsUserId.toInt()), router, args)
                         }
                     }
                     return true
@@ -151,28 +151,22 @@ class LinkHandlerImpl @Inject constructor(
                 }
 
                 "announce" -> {
-                    navigateTo(Screen.Announce().apply {
-                        uri.getQueryParameter("st")?.also {
-                            announceId = it.toInt()
-                        }
-                        uri.getQueryParameter("f")?.also {
-                            forumId = it.toInt()
-                        }
-                    }, router, args)
+                    navigateTo(
+                        Screen.Announce(
+                            forumId = requireNotNull(uri.getQueryParameter("f")).toInt(),
+                            announceId = requireNotNull(uri.getQueryParameter("st")).toInt()
+                        ), router, args
+                    )
                     return true
                 }
 
                 "search" -> {
-                    navigateTo(Screen.Search().apply {
-                        searchUrl = uri.toString()
-                    }, router, args)
+                    navigateTo(Screen.Search(settings = SearchSettings.parseSettings(uri.toString())), router, args)
                     return true
                 }
 
                 "rep" -> {
-                    navigateTo(Screen.Reputation().apply {
-                        reputationUrl = uri.toString()
-                    }, router, args)
+                    navigateTo(Screen.Reputation(args=RepArgs.fromUrl(uri.toString())), router, args)
                     return true
                 }
 
@@ -200,12 +194,12 @@ class LinkHandlerImpl @Inject constructor(
     private fun handleSite(uri: Uri, router: TabRouter?, args: Map<String, String?>): Boolean {
         val site = linkHandlerParser.site(uri.toString())
         if (site != null) {
-            navigateTo(Screen.ArticleDetail().apply {
-                articleId = site.articleId
-                if (site.commentId != null) {
+            navigateTo(
+                Screen.ArticleDetail.FromLink(
+                    articleId = site.articleId,
                     commentId = site.commentId
-                }
-            }, router, args)
+                ), router, args
+            )
             return true
         }
         if (!uri.pathSegments.isEmpty() && uri.pathSegments[0].contains("special")) {
@@ -242,24 +236,17 @@ class LinkHandlerImpl @Inject constructor(
         if (uri.pathSegments.size > 1) {
             if (uri.pathSegments[1].matches("phones|pad|ebook|smartwatch".toRegex())) {
                 if (uri.pathSegments.size > 2 && !uri.pathSegments[2].matches("new|select".toRegex())) {
-                    navigateTo(Screen.DevDbDevices().apply {
-                        categoryId = uri.pathSegments[1]
-                        brandId = uri.pathSegments[2]
-                    }, router, args)
+                    navigateTo(Screen.DevDbDevices(categoryId = uri.pathSegments[1], brandId = uri.pathSegments[2]), router, args)
                     return true
                 }
-                navigateTo(Screen.DevDbBrands().apply {
-                    categoryId = uri.pathSegments[1]
-                }, router, args)
+                navigateTo(Screen.DevDbBrands(categoryId = uri.pathSegments[1]), router, args)
                 return true
             } else {
-                navigateTo(Screen.DevDbDevice().apply {
-                    deviceId = uri.pathSegments[1]
-                }, router, args)
+                navigateTo(Screen.DevDbDevice(deviceId = uri.pathSegments[1]), router, args)
                 return true
             }
         } else {
-            navigateTo(Screen.DevDbBrands(), router, args)
+            navigateTo(Screen.DevDbBrands(categoryId = null), router, args)
             return true
         }
     }
@@ -269,18 +256,14 @@ class LinkHandlerImpl @Inject constructor(
         if (forumMedia != null) {
             val isImage = MimeTypeUtil.isImage(forumMedia.extension)
             if (isImage) {
-                navigateTo(Screen.ImageViewer().apply {
-                    urls.add(url)
-                }, router, args)
+                navigateTo(Screen.ImageViewer(urls = listOf(url)), router, args)
             } else {
                 handleDownload(url, forumMedia.fileName)
             }
             return true
         }
         if (linkHandlerParser.isSupportImage(url)) {
-            navigateTo(Screen.ImageViewer().apply {
-                urls.add(url)
-            }, router, args)
+            navigateTo(Screen.ImageViewer(urls = listOf(url)), router, args)
             return true
         }
         return false

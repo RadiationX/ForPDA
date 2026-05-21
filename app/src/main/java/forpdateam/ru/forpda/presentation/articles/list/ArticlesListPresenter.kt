@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
+import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
@@ -112,14 +113,16 @@ class ArticlesListPresenter(
     }
 
     fun onItemClick(item: NewsItem) {
-        router.navigateTo(Screen.ArticleDetail().apply {
-            articleId = item.id
-            articleTitle = item.title
-            articleAuthorNick = item.author
-            articleDate = item.date
-            articleImageUrl = item.imgUrl
-            articleCommentsCount = item.commentsCount
-        })
+        router.navigateTo(
+            Screen.ArticleDetail.FromList(
+                articleId = item.id,
+                articleTitle = item.title,
+                articleAuthorNick = item.author,
+                articleDate = item.date,
+                articleImageUrl = item.imgUrl,
+                articleCommentsCount = item.commentsCount,
+            )
+        )
     }
 
     fun onItemLongClick(item: NewsItem) {
@@ -144,9 +147,13 @@ class ArticlesListPresenter(
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.Search().apply {
-            searchUrl = "https://4pda.to/?s="
-        })
+        router.navigateTo(
+            Screen.Search(
+                SearchSettings.default().copy(
+                    resourceType = SearchSettings.RESOURCE_NEWS.first
+                )
+            )
+        )
     }
 
     private data class NewsUser(

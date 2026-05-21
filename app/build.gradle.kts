@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.appmetrica)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-parcelize")
 }
 
 fun getDateTime(): String {

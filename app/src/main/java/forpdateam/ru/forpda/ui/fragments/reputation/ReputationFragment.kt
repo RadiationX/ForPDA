@@ -16,11 +16,11 @@ import com.google.android.material.tabs.TabLayout
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
+import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
-import forpdateam.ru.forpda.model.data.remote.api.reputation.ReputationApi
 import forpdateam.ru.forpda.presentation.reputation.ReputationPresenter
 import forpdateam.ru.forpda.presentation.reputation.ReputationView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -36,6 +36,10 @@ import ru.radiationx.quill.inject
  */
 
 class ReputationFragment : RecyclerFragment(), ReputationView {
+
+    companion object {
+        const val ARG_REP_ARGS = "rep_args"
+    }
 
     private lateinit var adapter: ReputationAdapter
     private lateinit var paginationHelper: PaginationHelper
@@ -79,11 +83,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            getString(ARG_TAB)?.also {
-                presenter.currentArgs = ReputationApi.fromUrl(it)
-            }
-        }
+        presenter.currentArgs = requireArguments().getParcelable(ARG_REP_ARGS)!!
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -124,15 +124,15 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         subMenu.item
         subMenu.item.setIcon(R.drawable.ic_toolbar_sort)
         descSortMenuItem = subMenu.add(R.string.sorting_desc).setOnMenuItemClickListener {
-            presenter.setSort(ReputationApi.SORT_DESC)
+            presenter.setSort(RepArgs.SORT_DESC)
             false
         }
         ascSortMenuItem = subMenu.add(R.string.sorting_asc).setOnMenuItemClickListener {
-            presenter.setSort(ReputationApi.SORT_ASC)
+            presenter.setSort(RepArgs.SORT_ASC)
             false
         }
         repModeMenuItem =
-            menu.add(getString(if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to))
+            menu.add(getString(if (presenter.currentArgs.mode == RepArgs.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to))
                 .setOnMenuItemClickListener {
                     presenter.changeReputationMode()
                     false
@@ -165,7 +165,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
             ascSortMenuItem.isEnabled = true
             repModeMenuItem.isEnabled = true
             repModeMenuItem.title =
-                getString(if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to)
+                getString(if (presenter.currentArgs.mode == RepArgs.MODE_FROM) R.string.reputation_mode_from else R.string.reputation_mode_to)
             if (presenter.currentArgs.userId != authHolder.get().userId) {
                 upRepMenuItem.isEnabled = true
                 upRepMenuItem.isVisible = true
@@ -240,8 +240,8 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         paginationHelper.updatePagination(repData.pagination)
         refreshToolbarMenuItems(true)
         setSubtitle("${repData.positive - repData.negative} (+${repData.positive} / -${repData.negative})")
-        setTabTitle("Репутация ${repData.nick}${if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) ": кому изменял" else ""}")
-        setTitle("Репутация ${repData.nick}${if (presenter.currentArgs.mode == ReputationApi.MODE_FROM) ": кому изменял" else ""}")
+        setTabTitle("Репутация ${repData.nick}${if (presenter.currentArgs.mode == RepArgs.MODE_FROM) ": кому изменял" else ""}")
+        setTitle("Репутация ${repData.nick}${if (presenter.currentArgs.mode == RepArgs.MODE_FROM) ": кому изменял" else ""}")
         listScrollTop()
         toolbarImageView.setOnClickListener { presenter.navigateToProfile(repData.id) }
     }

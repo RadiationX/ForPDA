@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -17,7 +16,6 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.databinding.ActivityImgViewerBinding
 import forpdateam.ru.forpda.extensions.mutateWithTint
-import forpdateam.ru.forpda.extensions.transform
 import ru.radiationx.quill.inject
 
 /**
@@ -50,28 +48,11 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
             ?.mutateWithTint(Color.WHITE)
 
 
-        val extUrls = mutableListOf<String>()
-        if (intent != null && intent.extras != null && intent.extras!!.containsKey(IMAGE_URLS_KEY)) {
-            extUrls.addAll(intent.extras!!.getStringArrayList(IMAGE_URLS_KEY)!!)
-        } else if (savedInstanceState != null && savedInstanceState.containsKey(IMAGE_URLS_KEY)) {
-            extUrls.addAll(savedInstanceState.getStringArrayList(IMAGE_URLS_KEY)!!)
-        }
-
-        currentImages.addAll(extUrls)
+        val argUrls = intent?.getStringArrayListExtra(IMAGE_URLS_KEY).orEmpty()
+        val argSelectedUrl = intent?.getStringExtra(SELECTED_URL_KEY)
+        currentIndex = argUrls.indexOf(argSelectedUrl).coerceAtLeast(0)
+        currentImages.addAll(argUrls)
         names.addAll(currentImages.map { utils.getFileNameFromUrl(it) })
-
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_INDEX_KEY)) {
-            currentIndex = savedInstanceState.getInt(SELECTED_INDEX_KEY, 0)
-        } else if (intent != null && intent.extras != null && intent.extras!!.containsKey(
-                SELECTED_INDEX_KEY
-            )
-        ) {
-            currentIndex = intent.extras!!.getInt(SELECTED_INDEX_KEY, 0)
-        }
-        if (currentIndex < 0) {
-            currentIndex = 0
-        }
-
 
         binding.imgViewerPager.addOnPageChangeListener(object :
             ViewPager.SimpleOnPageChangeListener() {
@@ -133,27 +114,25 @@ class ImageViewerActivity : AppCompatActivity(R.layout.activity_img_viewer) {
 
     companion object {
         const val IMAGE_URLS_KEY = "IMAGE_URLS_KEY"
-        const val SELECTED_INDEX_KEY = "SELECTED_INDEX_KEY"
+        const val SELECTED_URL_KEY = "SELECTED_INDEX_KEY"
 
-        @JvmStatic
-        fun startActivity(context: Context, imageUrl: String) {
+        fun createIntent(context: Context, urls: List<String>, selectedUrl: String?): Intent {
             val intent = Intent(context, ImageViewerActivity::class.java)
-            val urls = ArrayList<String>()
-            urls.add(imageUrl)
-            intent.putExtra(IMAGE_URLS_KEY, urls)
+            intent.putExtra(IMAGE_URLS_KEY, ArrayList(urls))
+            intent.putExtra(SELECTED_URL_KEY, selectedUrl)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+            return intent
         }
 
         @JvmStatic
-        fun startActivity(context: Context, imageUrls: ArrayList<String>, selectedIndex: Int) {
-            val intent = Intent(context, ImageViewerActivity::class.java)
-            intent.putExtra(IMAGE_URLS_KEY, imageUrls)
-            intent.putExtra(SELECTED_INDEX_KEY, selectedIndex)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+        fun startActivity(context: Context, imageUrl: String) {
+            context.startActivity(createIntent(context, listOf(imageUrl), null))
+        }
+
+        @JvmStatic
+        fun startActivity(context: Context, imageUrls: List<String>, selectedUrl: String?) {
+            context.startActivity(createIntent(context, imageUrls, selectedUrl))
         }
     }
 }

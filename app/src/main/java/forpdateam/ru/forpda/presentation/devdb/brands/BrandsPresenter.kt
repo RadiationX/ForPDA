@@ -70,10 +70,12 @@ class BrandsPresenter(
 
     fun openBrand(item: Brands.Item) {
         currentData?.let {
-            router.navigateTo(Screen.DevDbDevices().apply {
-                categoryId = it.catId
-                brandId = item.id
-            })
+            router.navigateTo(
+                Screen.DevDbDevices(
+                    categoryId = it.catId,
+                    brandId = item.id
+                )
+            )
         }
     }
 

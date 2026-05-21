@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.entity.remote.search
 
+import android.os.Parcelable
 import forpdateam.ru.forpda.common.ApiRequest
+import kotlinx.parcelize.Parcelize
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.util.Locale
@@ -9,6 +11,7 @@ import java.util.regex.Pattern
 /**
  * Created by radiationx on 01.02.17.
  */
+@Parcelize
 data class SearchSettings(
     val resourceType: String,
     val result: String?,
@@ -21,7 +24,7 @@ data class SearchSettings(
     val st: Int,
     val forums: List<Int>,
     val topics: List<Int>
-) {
+) : Parcelable {
 
     fun toUrl(): String {
         return Companion.toUrl(this)

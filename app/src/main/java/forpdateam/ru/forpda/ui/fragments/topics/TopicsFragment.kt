@@ -64,9 +64,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.id = getInt(TOPICS_ID_ARG)
-        }
+        presenter.forumId = requireArguments().getInt(FORUM_ID_ARG)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -206,6 +204,6 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
     }
 
     companion object {
-        const val TOPICS_ID_ARG = "TOPICS_ID_ARG"
+        const val FORUM_ID_ARG = "TOPICS_ID_ARG"
     }
 }

@@ -102,11 +102,14 @@ class QmsContactsPresenter(
     }
 
     fun onItemClick(item: QmsContact) {
-        router.navigateTo(Screen.QmsThemes().apply {
-            screenTitle = item.user.nick
-            userId = item.user.id
-            avatarUrl = item.user.avatar
-        })
+        router.navigateTo(
+            Screen.QmsThemes(
+                userId = item.user.id,
+                avatarUrl = item.user.avatar
+            ).apply {
+                screenTitle = item.user.nick
+            }
+        )
     }
 
     fun onItemLongClick(item: QmsContact) {
@@ -127,6 +130,6 @@ class QmsContactsPresenter(
     }
 
     fun openChatCreator() {
-        router.navigateTo(Screen.QmsChat())
+        router.navigateTo(Screen.QmsChat.Create())
     }
 }

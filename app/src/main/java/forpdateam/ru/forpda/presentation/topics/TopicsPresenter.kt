@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.presentation.topics
 
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.extensions.coRunCatching
@@ -36,7 +37,7 @@ class TopicsPresenter(
     private val utils: Utils
 ) : BasePresenter<TopicsView>() {
 
-    var id = 0
+    var forumId = 0
     private var currentSt = 0
     var currentData: TopicsData? = null
 
@@ -55,7 +56,7 @@ class TopicsPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                topicsRepository.getTopics(id, currentSt)
+                topicsRepository.getTopics(forumId, currentSt)
             }.onSuccess {
                 currentData = it
                 viewState.showTopics(it)
@@ -103,7 +104,7 @@ class TopicsPresenter(
     fun markRead() {
         viewModelScope.launch {
             coRunCatching {
-                forumRepository.markRead(id)
+                forumRepository.markRead(forumId)
             }.onSuccess {
                 viewState.onMarkRead()
             }.onFailure {
@@ -124,15 +125,19 @@ class TopicsPresenter(
     }
 
     fun openForum() {
-        router.navigateTo(Screen.Forum().apply {
-            forumId = id
-        })
+        router.navigateTo(Screen.Forum(forumId = forumId))
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.Search().apply {
-            searchUrl = "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=$id"
-        })
+        router.navigateTo(
+            Screen.Search(
+                SearchSettings.default().copy(
+                    resourceType = SearchSettings.RESOURCE_FORUM.first,
+                    source = SearchSettings.SOURCE_ALL.first,
+                    forums = listOf(forumId)
+                )
+            )
+        )
     }
 
     fun openTopicForum() {

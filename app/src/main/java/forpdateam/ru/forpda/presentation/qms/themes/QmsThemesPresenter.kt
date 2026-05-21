@@ -102,11 +102,13 @@ class QmsThemesPresenter(
     fun openChat() {
         currentData?.let {
             Log.e("kokosina", "openChat")
-            router.replaceScreen(Screen.QmsChat().apply {
-                userId = it.user.id
-                userNick = it.user.nick
-                avatarUrl = this@QmsThemesPresenter.avatarUrl
-            })
+            router.replaceScreen(
+                Screen.QmsChat.CreateWithUser(
+                    userId = it.user.id,
+                    userNick = it.user.nick,
+                    avatarUrl = avatarUrl
+                )
+            )
         }
     }
 
@@ -126,14 +128,18 @@ class QmsThemesPresenter(
 
     fun onItemClick(item: QmsTheme) {
         currentData?.let {
-            router.navigateTo(Screen.QmsChat().apply {
-                screenTitle = item.name
-                screenSubTitle = it.user.nick
-                userId = it.user.id
-                avatarUrl = this@QmsThemesPresenter.avatarUrl
-                themeId = item.id
-                themeTitle = item.name
-            })
+            router.navigateTo(
+                Screen.QmsChat.FromList(
+                    userId = it.user.id,
+                    themeId = item.id,
+                    userNick = it.user.nick,
+                    avatarUrl = avatarUrl,
+                    themeTitle = item.name
+                ).apply {
+                    screenTitle = item.name
+                    screenSubTitle = it.user.nick
+                }
+            )
         }
     }
 

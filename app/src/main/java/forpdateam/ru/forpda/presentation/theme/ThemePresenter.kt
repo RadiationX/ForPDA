@@ -245,10 +245,12 @@ class ThemePresenter(
     fun openEditPostForm(message: String, attachments: List<AttachmentItem>) {
         currentPage?.let { page ->
             createEditPostForm(message, attachments)?.let {
-                router.navigateTo(Screen.EditPost().apply {
-                    editPostForm = it
-                    themeName = page.title
-                })
+                router.navigateTo(
+                    Screen.EditPost.New(
+                        editPostForm = it,
+                        themeName = page.title
+                    )
+                )
                 router.setResultListener(Screen.Theme.CODE_RESULT_SYNC, {
                     (it as? EditPostSyncData?)?.let {
                         if (it.topicId == page.id) {
@@ -268,13 +270,15 @@ class ThemePresenter(
 
     fun openEditPostForm(postId: Int) {
         currentPage?.let {
-            router.navigateTo(Screen.EditPost().apply {
-                this.postId = postId
-                topicId = it.id
-                forumId = it.forumId
-                st = it.st
-                themeName = it.title
-            })
+            router.navigateTo(
+                Screen.EditPost.Existed(
+                    postId = postId,
+                    topicId = it.id,
+                    forumId = it.forumId,
+                    st = it.st,
+                    themeName = it.title
+                )
+            )
             router.setResultListener(Screen.Theme.CODE_RESULT_PAGE, {
                 (it as? ThemePage?)?.let { onLoadData(it) }
             })
@@ -598,14 +602,12 @@ class ThemePresenter(
                     for (post in it.posts) {
                         for (image in post.attachImages) {
                             if (image.first.contains(url)) {
-                                val list = ArrayList<String>()
-                                for (attaches in post.attachImages) {
-                                    list.add(attaches.first)
-                                }
-                                router.navigateTo(Screen.ImageViewer().apply {
-                                    urls = list
-                                    selected = post.attachImages.indexOf(image)
-                                })
+                                router.navigateTo(
+                                    Screen.ImageViewer(
+                                        urls = post.attachImages.map { it.first },
+                                        selectedUrl = image.first
+                                    )
+                                )
                                 return
                             }
                         }

@@ -91,10 +91,13 @@ class QmsBlackListPresenter(
     }
 
     fun openDialogs(item: QmsContact) {
-        router.navigateTo(Screen.QmsThemes().apply {
-            screenTitle = item.user.nick
-            userId = item.user.id
-            avatarUrl = item.user.avatar
-        })
+        router.navigateTo(
+            Screen.QmsThemes(
+                userId = item.user.id,
+                avatarUrl = item.user.avatar
+            ).apply {
+                screenTitle = item.user.nick
+            }
+        )
     }
 }

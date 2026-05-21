@@ -171,10 +171,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.initSearchSettings(getString(ARG_TAB))
-
-        }
+        presenter.initSearchSettings(requireArguments().getParcelable(ARG_SETTINGS))
         dialogsHelper = ThemeDialogsHelper_V2(requireContext(), authHolder, otherPreferencesHolder)
     }
 
@@ -745,6 +742,8 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
 
     companion object {
         private val LOG_TAG = SearchFragment::class.java.simpleName
+
+        const val ARG_SETTINGS = "arg_settings"
     }
 
 }

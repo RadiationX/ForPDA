@@ -305,11 +305,14 @@ class QmsChatPresenter(
 
     fun openDialogs() {
         currentData?.let {
-            router.navigateTo(Screen.QmsThemes().apply {
-                screenTitle = it.user.nick
-                userId = it.user.id
-                avatarUrl = it.user.avatar
-            })
+            router.navigateTo(
+                Screen.QmsThemes(
+                    userId = it.user.id,
+                    avatarUrl = it.user.avatar
+                ).apply {
+                    screenTitle = it.user.nick
+                }
+            )
         }
     }
 

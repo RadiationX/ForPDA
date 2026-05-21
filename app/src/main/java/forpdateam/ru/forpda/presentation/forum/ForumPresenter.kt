@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.presentation.forum
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
+import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
@@ -119,15 +120,18 @@ class ForumPresenter(
     }
 
     fun navigateToForum(item: ForumItemFlat) {
-        router.navigateTo(Screen.Topics().apply {
-            forumId = item.id
-        })
+        router.navigateTo(Screen.Topics(forumId = item.id))
     }
 
     fun navigateToSearch(item: ForumItemFlat) {
-        router.navigateTo(Screen.Search().apply {
-            searchUrl =
-                "https://4pda.to/forum/index.php?act=search&source=all&forums%5B%5D=${item.id}"
-        })
+        router.navigateTo(
+            Screen.Search(
+                SearchSettings.default().copy(
+                    resourceType = SearchSettings.RESOURCE_FORUM.first,
+                    source = SearchSettings.SOURCE_ALL.first,
+                    forums = listOf(item.id)
+                )
+            )
+        )
     }
 }
