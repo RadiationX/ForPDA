@@ -40,7 +40,7 @@ class ThemeTemplate @Inject constructor(
 
             setVariableOpt("topic_title", ApiUtils.htmlEncode(page.title))
             setVariableOpt("topic_description", ApiUtils.htmlEncode(page.desc))
-            setVariableOpt("topic_url", page.url)
+            setVariableOpt("topic_url", page.url.toHttpUrl().toString())
 
             setVariableOpt("all_pages_int", page.pagination.all)
             setVariableOpt("posts_on_page_int", page.pagination.perPage)
@@ -49,7 +49,7 @@ class ThemeTemplate @Inject constructor(
             setVariableOpt("authorized_bool", authorized.toString())
             setVariableOpt("is_curator_bool", false.toString())
             setVariableOpt("member_id_int", memberId)
-            setVariableOpt("elem_to_scroll", page.anchor)
+            setVariableOpt("elem_to_scroll", page.anchor?.value)
             setVariableOpt("body_type", "topic")
 
             setVariableOpt(

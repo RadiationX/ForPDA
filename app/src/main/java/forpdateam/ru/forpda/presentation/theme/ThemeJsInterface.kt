@@ -62,10 +62,6 @@ class ThemeJsInterface(
         runInUiThread(Runnable { presenter.onVotePostClick(postId.toInt(), type) })
 
     @JavascriptInterface
-    fun setHistoryBody(index: String, body: String) =
-        runInUiThread(Runnable { presenter.setHistoryBody(index.toInt(), body) })
-
-    @JavascriptInterface
     fun copySelectedText(text: String) = runInUiThread(Runnable { presenter.copyText(text) })
 
     @JavascriptInterface

@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.presentation
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
+import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 
 sealed class Screen : com.github.terrakok.cicerone.Screen {
     companion object {
@@ -163,7 +164,9 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         val settings: SearchSettings? = null
     ) : Screen()
 
-    class Theme : Screen() {
+    class Theme(
+        val topicUrl: TopicUrl
+    ) : Screen() {
         companion object {
             const val CODE_RESULT_SYNC = "10"
             const val CODE_RESULT_PAGE = "11"

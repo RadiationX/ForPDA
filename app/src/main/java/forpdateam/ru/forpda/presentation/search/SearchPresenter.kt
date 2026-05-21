@@ -366,8 +366,6 @@ class SearchPresenter(
 
     override fun onHatHeaderClick(bValue: Boolean) = unavailableFunction()
 
-    override fun setHistoryBody(index: Int, body: String) = unavailableFunction()
-
     override fun shareText(text: String) {
         utils.shareText(text)
     }

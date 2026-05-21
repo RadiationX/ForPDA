@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
+import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
@@ -31,7 +32,11 @@ class ThemeParser @Inject constructor(
         var title = ""
         var desc = ""
         var favId: Int? = null
-        val anchors = parseAnchors(argUrl)
+        val pageUrl = TopicUrl.fromUrl(argUrl)
+
+        require(pageUrl is TopicUrl.ShowTopic.Page) {
+            "Required page url but given ${pageUrl?.let { it::class.simpleName }}"
+        }
 
         patternProvider
             .getRegexParser(scope.scope, scope.topic_id)
@@ -72,11 +77,11 @@ class ThemeParser @Inject constructor(
             pagination = pagination,
             poll = poll,
             html = null,
-            url = argUrl,
+            url = pageUrl,
             isHatOpen = hatOpen,
             isPollOpen = pollOpen,
             scrollY = 0,
-            anchors = anchors,
+            anchors = listOfNotNull(pageUrl.anchor),
         )
     }
 
@@ -178,13 +183,6 @@ class ThemeParser @Inject constructor(
                 questions = questions
             )
         }
-
-
-    fun parseAnchors(url: String): List<String> {
-        return patternProvider
-            .getRegexParser(scope.scope, scope.scroll_anchor)
-            .map(url) { it.require(1) }
-    }
 
     fun parseAttachedImages(text: String): List<Pair<String, String>> {
         return patternProvider

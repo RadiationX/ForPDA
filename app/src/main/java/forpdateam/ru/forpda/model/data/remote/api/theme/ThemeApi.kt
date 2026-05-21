@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.model.data.remote.api.theme
 
 import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import javax.inject.Inject
@@ -15,8 +16,8 @@ class ThemeApi @Inject constructor(
     private val authHolder: AuthHolder
 ) {
 
-    suspend fun getTheme(url: String, hatOpen: Boolean, pollOpen: Boolean): ThemePage {
-        val response = webClient.get(url)
+    suspend fun getTheme(url: TopicUrl, hatOpen: Boolean, pollOpen: Boolean): ThemePage {
+        val response = webClient.get(url.toHttpUrl().toString())
         val redirectUrl: String = response.redirect
         return themeParser.parsePage(response.body, redirectUrl, hatOpen, pollOpen)
     }

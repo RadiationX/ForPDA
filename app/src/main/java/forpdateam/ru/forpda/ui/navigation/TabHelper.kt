@@ -27,6 +27,7 @@ import forpdateam.ru.forpda.ui.fragments.qms.QmsThemesFragment
 import forpdateam.ru.forpda.ui.fragments.qms.chat.QmsChatFragment
 import forpdateam.ru.forpda.ui.fragments.reputation.ReputationFragment
 import forpdateam.ru.forpda.ui.fragments.search.SearchFragment
+import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragment
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
 import forpdateam.ru.forpda.ui.fragments.topics.TopicsFragment
 
@@ -184,7 +185,7 @@ object TabHelper {
 
             is Screen.Theme -> {
                 createFragment(ThemeFragmentWeb::class.java, args.apply {
-                    putString(TabFragment.ARG_TAB, screen.themeUrl)
+                    putParcelable(ThemeFragment.ARG_TOPIC_URL, screen.topicUrl)
                 })
             }
 

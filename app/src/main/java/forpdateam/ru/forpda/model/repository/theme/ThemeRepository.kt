@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.repository.theme
 
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.cache.history.HistoryCache
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
@@ -17,14 +18,14 @@ class ThemeRepository @Inject constructor(
 ) {
 
     suspend fun getTheme(
-        url: String,
+        url: TopicUrl,
         hatOpen: Boolean,
         pollOpen: Boolean
     ): ThemePage {
         return themeApi.getTheme(url, hatOpen, pollOpen).also {
             val forumUsers = it.posts.map { it.post.user }
             forumUsersCache.savePostUsers(forumUsers)
-            historyCache.add(it.id, it.url, it.title)
+            historyCache.add(it.id, it.url.toHttpUrl().toString(), it.title)
         }
     }
 

@@ -20,14 +20,14 @@ data class ThemePage(
     val pagination: Pagination,
     val poll: Poll?,
     val html: DeferredData<String>?,
-    val url: String,
+    val url: TopicUrl.ShowTopic.Page,
     val isHatOpen: Boolean,
     val isPollOpen: Boolean,
     val scrollY: Int,
-    val anchors: List<String>
+    val anchors: List<TopicUrl.Anchor>
 ) {
-    val anchor: String?
-        get() = if (anchors.isEmpty()) null else anchors[anchors.size - 1]
+    val anchor: TopicUrl.Anchor?
+        get() = anchors.lastOrNull()
 
     val st: Int
         get() = pagination.currentPage()

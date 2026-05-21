@@ -113,9 +113,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.themeUrl = getString(ARG_TAB, "")
-        }
+        presenter.argTopicUrl = requireArguments().getParcelable(ARG_TOPIC_URL)!!
         dialogsHelper = ThemeDialogsHelper_V2(requireContext(), authHolder, otherPreferencesHolder)
     }
 
@@ -682,5 +680,7 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     companion object {
         //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
         private val LOG_TAG = ThemeFragment::class.java.simpleName
+
+        const val ARG_TOPIC_URL = "arg_topic_url"
     }
 }

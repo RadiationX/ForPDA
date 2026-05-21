@@ -159,7 +159,6 @@ object ParserPatterns {
         const val already_in_fav = "already_in_fav"
         const val fav_id = "fav_id"
         const val topic_id = "topic_id"
-        const val scroll_anchor = "scroll_anchor"
         const val poll_main = "poll_main"
         const val poll_questions = "poll_questions"
         const val poll_question_item = "poll_question_item"

@@ -15,8 +15,8 @@ import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
+import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.extensions.replaceAt
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
@@ -41,7 +41,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
-import ru.radiationx.analytics.Analytics
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -71,10 +70,17 @@ class ThemePresenter(
     private val themeParser: ThemeParser
 ) : BasePresenter<ThemeView>(), IThemePresenter {
 
+    lateinit var argTopicUrl: TopicUrl
+
     var loadAction = ActionState.NORMAL
-    var currentPage: ThemePage? = null
-    var history = mutableListOf<ThemePage>()
-    var themeUrl: String = ""
+
+    val history = TopicHistory()
+
+    val currentPage: ThemePage?
+        get() = history.currentPage
+
+    val currentPageUrl: TopicUrl.ShowTopic.Page?
+        get() = currentPage?.url
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -120,7 +126,7 @@ class ThemePresenter(
                 handleEvent(it)
             }
             .launchIn(viewModelScope)
-        loadUrl(themeUrl)
+        loadUrl(argTopicUrl)
     }
 
     fun exit() {
@@ -158,14 +164,13 @@ class ThemePresenter(
 
     fun getId() = currentPage?.id ?: -1
 
-    private fun loadData(url: String, action: ActionState) {
+    private fun loadData(url: TopicUrl, action: ActionState) {
         var hatOpen = false
         var pollOpen = false
         currentPage?.let {
             hatOpen = it.isHatOpen
             pollOpen = it.isPollOpen
         }
-        themeUrl = url
         loadAction = action
         viewState.updateHistoryLastHtml()
         viewModelScope.launch {
@@ -189,14 +194,22 @@ class ThemePresenter(
                 crossScreenInteractor.onLoadTopic(page.id)
             }
         }
-        currentPage = page
-        viewState.onLoadData(page)
         if (loadAction === ActionState.NORMAL) {
-            saveToHistory()
+            history.add(page)
         }
         if (loadAction === ActionState.REFRESH) {
-            updateHistoryLast()
+            history.updateOrAdd { current ->
+                if (current == null) {
+                    page
+                } else {
+                    page.copy(
+                        scrollY = current.scrollY,
+                        anchors = page.anchors + current.anchors
+                    )
+                }
+            }
         }
+        viewState.onLoadData(page)
     }
 
     fun addTopicToFavorite(topicId: Int, subType: String) {
@@ -205,7 +218,7 @@ class ThemePresenter(
                 favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
             }.onSuccess {
                 if (it) {
-                    currentPage = currentPage?.copy(isInFavorite = true)
+                    history.updateExist { it.copy(isInFavorite = true) }
                 }
                 viewState.onAddToFavorite(it)
             }.onFailure {
@@ -220,7 +233,7 @@ class ThemePresenter(
                 favoritesRepository.editFavorites(FavoritesApi.ACTION_DELETE, favId, -1, null)
             }.onSuccess {
                 if (it) {
-                    currentPage = currentPage?.copy(isInFavorite = false)
+                    history.updateExist { it.copy(isInFavorite = false) }
                 }
                 viewState.onDeleteFromFavorite(it)
             }.onFailure {
@@ -330,84 +343,52 @@ class ThemePresenter(
         }
     }
 
-    fun loadUrl(url: String) {
+    private fun loadUrl(url: TopicUrl) {
         loadData(url, ActionState.NORMAL)
     }
 
     fun reload() {
-        loadData(themeUrl, ActionState.REFRESH)
+        loadData(currentPageUrl ?: argTopicUrl, ActionState.REFRESH)
     }
 
     fun loadNewPosts() {
-        currentPage?.let {
-            loadUrl("https://4pda.to/forum/index.php?showtopic=${it.id}&view=getnewpost")
-        }
+        val url = currentPageUrl ?: return
+        loadUrl(TopicUrl.ShowTopic.GetNewPost(url.topicId, url.showPollResults))
     }
 
     fun loadPage(page: Int) {
-        currentPage?.let {
-            var url = "https://4pda.to/forum/index.php?showtopic=${it.id}"
-            if (page != 0) {
-                url = "$url&st=$page"
-            }
-            loadUrl(url)
-        }
+        val url = currentPageUrl ?: return
+        loadUrl(url.copy(st = page))
     }
 
-    fun backPage() {
+    private fun backPage(): Boolean {
         if (history.size > 1) {
             loadAction = ActionState.BACK
-            history.removeAt(history.size - 1)
-            history.last().let {
-                currentPage = it
-                themeUrl = it.url.orEmpty()
-                viewState.updateView(it)
-            }
+            history.removeCurrent()
+            viewState.updateView(currentPage!!)
+            return true
         }
+        return false
     }
 
     override fun onPollResultsClick() {
-        val url = themeUrl
-            .replaceFirst("#[^&]*", "")
-            .replace("&mode=show", "")
-            .replace("&poll_open=true", "") + "&mode=show&poll_open=true"
+        val currentUrl = currentPage?.url ?: return
+        val url = currentUrl.copy(showPollResults = true, anchor = null)
         loadUrl(url)
     }
 
     override fun onPollClick() {
-        val url = themeUrl
-            .replaceFirst("#[^&]*", "")
-            .replace("&mode=show", "")
-            .replace("&poll_open=true", "") + "&poll_open=true"
+        val currentUrl = currentPage?.url ?: return
+        val url = currentUrl.copy(showPollResults = false, anchor = null)
         loadUrl(url)
     }
 
-    private fun saveToHistory() {
-        currentPage?.also { history.add(it) }
-    }
-
-    private fun updateHistoryLast() {
-        val page = currentPage ?: return
-        if (history.isNotEmpty()) {
-            val newPage = history.last().let {
-                page.copy(
-                    anchors = page.anchors + it.anchors,
-                    scrollY = it.scrollY
-                )
-            }
-            currentPage = newPage
-            history.replaceAt(history.lastIndex) { newPage }
-        }
-    }
-
     fun updateHistoryLastHtml(html: String, scrollY: Int) {
-        if (history.isNotEmpty()) {
-            history.replaceAt(history.lastIndex) {
-                it.copy(
-                    scrollY = scrollY,
-                    html = html.asDeferredData()
-                )
-            }
+        history.updateExist {
+            it.copy(
+                scrollY = scrollY,
+                html = html.asDeferredData()
+            )
         }
     }
 
@@ -523,15 +504,11 @@ class ThemePresenter(
     }
 
     override fun onPollHeaderClick(bValue: Boolean) {
-        currentPage = currentPage?.copy(isPollOpen = bValue)
+        history.updateExist { it.copy(isPollOpen = bValue) }
     }
 
     override fun onHatHeaderClick(bValue: Boolean) {
-        currentPage = currentPage?.copy(isHatOpen = bValue)
-    }
-
-    override fun setHistoryBody(index: Int, body: String) {
-        history[index] = history[index].copy(html = body.asDeferredData())
+        history.updateExist { it.copy(isHatOpen = bValue) }
     }
 
     override fun copyText(text: String) {
@@ -551,91 +528,69 @@ class ThemePresenter(
     fun handleNewUrl(uri: Uri) {
         Log.d(LOG_TAG, "handle $uri")
         val url = uri.toString()
-        try {
-            if (checkIsPoll(url)) {
+        if (checkIsPoll(url)) {
+            return
+        }
+        if (checkIsAttachment(url)) {
+            return
+        }
+        val oldUrl = currentPageUrl ?: return
+        val newUrl = TopicUrl.fromUrl(url)
+        if (newUrl == null) {
+            linkHandler.handle(url, router)
+            return
+        }
+        if (newUrl is TopicUrl.ShowTopic) {
+            if (oldUrl.topicId != newUrl.topicId) {
+                loadUrl(newUrl)
                 return
             }
-            if (uri.host != null && uri.host?.matches("4pda.to".toRegex()) == true) {
-                if (uri.pathSegments[0] == "forum") {
-                    var param: String? = uri.getQueryParameter("showtopic")
-                    Log.d(LOG_TAG, "param showtopic: $param")
-                    if (param != null && param != Uri.parse(themeUrl)
-                            .getQueryParameter("showtopic")
-                    ) {
-                        loadUrl(url)
-                        return
-                    }
-                    param = uri.getQueryParameter("act")
-                    if (param == null)
-                        param = uri.getQueryParameter("view")
-                    Log.d(LOG_TAG, "param act|view: $param")
-                    if (param != null && param == "findpost") {
-                        var postId: String? = uri.getQueryParameter("pid")
-                        if (postId == null)
-                            postId = uri.getQueryParameter("p")
-                        Log.d(LOG_TAG, "param pid|p: $postId")
-                        if (postId != null) {
-                            postId = postId.replace("[^\\d][\\s\\S]*?".toRegex(), "")
-                        }
-                        Log.d(LOG_TAG, "param postId: $postId")
-                        if (postId != null && getPostById(Integer.parseInt(postId.trim { it <= ' ' })) != null) {
-                            val elem = themeParser.parseAnchors(url).lastOrNull()
-                            val finalAnchor = (if (elem == null) "entry" else "") + (elem ?: postId)
-                            if (topicPreferencesHolder.anchorHistory.get()) {
-                                currentPage = currentPage?.let {
-                                    it.copy(anchors = it.anchors + finalAnchor)
-                                }
-                            }
-
-                            viewState.scrollToAnchor(finalAnchor)
-                            return
-                        } else {
-                            loadUrl(url)
-                            return
-                        }
-                    }
-                }
-            }
-
-            if (themeParser.parseAttachedImages(url).isNotEmpty()) {
-                currentPage?.let {
-                    for (post in it.posts) {
-                        for (image in post.attachImages) {
-                            if (image.first.contains(url)) {
-                                router.navigateTo(
-                                    Screen.ImageViewer(
-                                        urls = post.attachImages.map { it.first },
-                                        selectedUrl = image.first
-                                    )
-                                )
-                                return
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (ex: Exception) {
-            Analytics.reportError("${ex.message ?: ex.toString()}; uri $uri", ex)
         }
-        linkHandler.handle(url, router)
+        val anchor = when (newUrl) {
+            is TopicUrl.FindPost -> newUrl.anchor ?: TopicUrl.Anchor.Post(newUrl.postId)
+            is TopicUrl.ShowTopic -> when (newUrl) {
+                is TopicUrl.ShowTopic.Page -> newUrl.anchor
+                is TopicUrl.ShowTopic.FindPost -> newUrl.anchor ?: TopicUrl.Anchor.Post(newUrl.postId)
+                is TopicUrl.ShowTopic.GetLastPost,
+                is TopicUrl.ShowTopic.GetNewPost -> null
+            }
+        }
+        if (anchor != null && getPostById(anchor.postId) != null) {
+            if (topicPreferencesHolder.anchorHistory.get()) {
+                history.updateExist { it.copy(anchors = it.anchors + anchor) }
+            }
+            viewState.scrollToAnchor(anchor.value)
+            return
+        }
+        loadUrl(newUrl)
     }
 
-    private fun checkIsPoll(url: String): Boolean {
-        currentPage?.let {
-            val m = Pattern.compile("4pda.to.*?addpoll=1").matcher(url)
-            if (m.find()) {
-                var uri = Uri.parse(url)
-                uri = uri.buildUpon()
-                    .appendQueryParameter("showtopic", Integer.toString(it.id))
-                    .appendQueryParameter("st", "${it.pagination.currentPage()}")
-                    .build()
-                loadUrl(uri.toString())
+    private fun checkIsAttachment(url: String): Boolean {
+        if (themeParser.parseAttachedImages(url).isEmpty()) return false
+        val page = currentPage ?: return false
+        page.posts.forEach { post ->
+            post.attachImages.forEach { image ->
+                if (!image.first.contains(url)) return@forEach
+                val screen = Screen.ImageViewer(
+                    urls = post.attachImages.map { it.first },
+                    selectedUrl = image.first
+                )
+                router.navigateTo(screen)
                 return true
             }
         }
         return false
     }
 
+    // todo do something with sending poll
+    private fun checkIsPoll(newUrl: String): Boolean {
+        val m = Pattern.compile("4pda.to.*?addpoll=1").matcher(newUrl)
+        if (!m.find()) {
+            return false
+        }
+        reload()
+        return true
+    }
 
     fun onClickDeleteInFav() {
         currentPage?.let { viewState.showDeleteInFavDialog(it) }
@@ -647,22 +602,18 @@ class ThemePresenter(
 
     fun onBackPressed(): Boolean {
         if (topicPreferencesHolder.anchorHistory.get()) {
-            currentPage?.let {
-                if (it.anchors.size > 1) {
-                    val newAnchors = it.anchors.toMutableList()
+            currentPage?.let { oldPage ->
+                if (oldPage.anchors.size > 1) {
+                    val newAnchors = oldPage.anchors.toMutableList()
                     newAnchors.removeAt(newAnchors.lastIndex)
-                    val newPage = it.copy(anchors = newAnchors)
-                    currentPage = newPage
-                    viewState.scrollToAnchor(newPage.anchor)
+                    val newPage = oldPage.copy(anchors = newAnchors)
+                    history.update(newPage)
+                    viewState.scrollToAnchor(newPage.anchor?.value)
                     return true
                 }
             }
         }
-        if (history.size > 1) {
-            backPage()
-            return true
-        }
-        return false
+        return backPage()
     }
 
 

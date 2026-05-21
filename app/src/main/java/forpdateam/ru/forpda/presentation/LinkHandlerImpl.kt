@@ -5,6 +5,7 @@ import android.util.Log
 import forpdateam.ru.forpda.common.MimeTypeUtil
 import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
+import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.model.data.remote.api.common.LinkHandlerParser
 import java.net.URLDecoder
 import java.util.Locale
@@ -102,14 +103,12 @@ class LinkHandlerImpl @Inject constructor(
     }
 
     private fun handleForum(uri: Uri, router: TabRouter?, args: Map<String, String?>): Boolean {
-        uri.getQueryParameter("showuser")?.also { param ->
-            navigateTo(Screen.Profile(param.toInt()), router, args)
+        TopicUrl.fromUrl(uri.toString())?.also {
+            navigateTo(Screen.Theme(topicUrl = it), router, args)
             return true
         }
-        uri.getQueryParameter("showtopic")?.also { param ->
-            navigateTo(Screen.Theme().apply {
-                themeUrl = uri.toString()
-            }, router, args)
+        uri.getQueryParameter("showuser")?.also { param ->
+            navigateTo(Screen.Profile(param.toInt()), router, args)
             return true
         }
 
@@ -166,14 +165,7 @@ class LinkHandlerImpl @Inject constructor(
                 }
 
                 "rep" -> {
-                    navigateTo(Screen.Reputation(args=RepArgs.fromUrl(uri.toString())), router, args)
-                    return true
-                }
-
-                "findpost" -> {
-                    navigateTo(Screen.Theme().apply {
-                        themeUrl = uri.toString()
-                    }, router, args)
+                    navigateTo(Screen.Reputation(args = RepArgs.fromUrl(uri.toString())), router, args)
                     return true
                 }
 

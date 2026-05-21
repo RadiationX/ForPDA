@@ -21,8 +21,6 @@ interface IThemePresenter {
     fun onEditPostClick(postId: Int)
     fun onVotePostClick(postId: Int, type: Boolean)
 
-    fun setHistoryBody(index: Int, body: String)
-
     fun copyText(text: String)
     fun shareText(text: String)
     fun toast(text: String)
