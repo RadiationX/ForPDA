@@ -18,12 +18,7 @@ data class ArticleId(val id: Int) : CoreType
 data class CommentId(val id: Int) : CoreType
 
 @Parcelize
-enum class DevDbCategoryId(val id: String) : CoreType {
-    Phone("phones"),
-    Pad("pad"),
-    Ebook("ebook"),
-    Smartwatch("smartwatch"),
-}
+data class DevDbCategoryId(val id: String) : CoreType
 
 @Parcelize
 data class DevDbBrandId(val categoryId: DevDbCategoryId, val brandId: String) : CoreType

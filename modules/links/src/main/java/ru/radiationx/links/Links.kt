@@ -97,13 +97,20 @@ sealed interface Links : Parcelable {
         data object Categories : DevDb
 
         @Parcelize
-        data class Brands(val category: DevDbCategoryId, val letter: String?) : DevDb
+        data class Brands(val categoryId: DevDbCategoryId, val letter: String?) : DevDb
 
         @Parcelize
-        data class Brand(val brand: DevDbBrandId, val sort: Sort?) : DevDb {
+        data class Brand(val brandId: DevDbBrandId, val sort: Sort?) : DevDb {
 
             @Parcelize
-            data class Sort(val field: String, val order: String) : Parcelable
+            data class Sort(val field: String, val order: Order?) : Parcelable{
+
+                @Parcelize
+                enum class Order : Parcelable {
+                    Asc,
+                    Desc
+                }
+            }
         }
 
         @Parcelize
@@ -153,14 +160,12 @@ sealed interface Links : Parcelable {
             @Parcelize
             data class Page(val st: PageOffset, val type: Type, val sort: Sort) : Favorite
 
-
             @Parcelize
             enum class Type : Parcelable {
                 All,
                 Forums,
                 Topics
             }
-
 
             @Parcelize
             data class Sort(val key: Key, val order: Order) : Parcelable {
