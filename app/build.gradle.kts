@@ -134,6 +134,7 @@ appmetrica {
 
 dependencies {
     implementation(project(":modules:analytics"))
+    implementation(project(":modules:core-types"))
     implementation(project(":modules:links"))
 
     implementation(project(":lib:regexparser"))

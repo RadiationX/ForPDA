@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.radiationx.links"
+    namespace = "ru.radiationx.coretypes"
     compileSdk = libs.versions.app.compile.sdk.version.get().toInt()
     defaultConfig {
         minSdk = libs.versions.app.min.sdk.version.get().toInt()
@@ -16,7 +16,4 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":modules:core-types"))
-    implementation(platform(libs.okhttp.bom))
-    implementation(libs.okhttp)
 }

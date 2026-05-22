@@ -2,6 +2,19 @@ package ru.radiationx.links
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.radiationx.coretypes.AnnounceId
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.CommentId
+import ru.radiationx.coretypes.DevDbBrandId
+import ru.radiationx.coretypes.DevDbCategoryId
+import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PageNumber
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
 
 sealed interface Links : Parcelable {
 
@@ -28,10 +41,10 @@ sealed interface Links : Parcelable {
     sealed interface Site : Links {
 
         @Parcelize
-        data class Page(val page: Int, val paths: Paths?) : Site
+        data class Page(val page: PageNumber, val paths: Paths?) : Site
 
         @Parcelize
-        data class Details(val articleId: Int) : Site
+        data class Details(val articleId: ArticleId, val commentId: CommentId) : Site
 
         @Parcelize
         data class Search(val text: String, val paths: Paths.Category?) : Site
@@ -79,21 +92,22 @@ sealed interface Links : Parcelable {
     //https://4pda.to/devdb/xiaomi_mi_note_10_lite#prices
     //https://4pda.to/devdb/search?s=nothing
     sealed interface DevDb : Links {
-        @Parcelize
-        data object GetCategories : DevDb
 
         @Parcelize
-        data class GetBrands(val categoryId: String, val letter: String?) : DevDb
+        data object Categories : DevDb
 
         @Parcelize
-        data class GetBrand(val categoryId: String, val brandId: String, val sort: Sort?) : DevDb {
+        data class Brands(val category: DevDbCategoryId, val letter: String?) : DevDb
+
+        @Parcelize
+        data class Brand(val brand: DevDbBrandId, val sort: Sort?) : DevDb {
 
             @Parcelize
             data class Sort(val field: String, val order: String) : Parcelable
         }
 
         @Parcelize
-        data class GetDevice(val deviceId: String, val tab: String) : DevDb
+        data class Device(val deviceId: DevDbDeviceId, val tab: String?) : DevDb
 
         @Parcelize
         data class Search(val text: String) : DevDb
@@ -125,7 +139,7 @@ sealed interface Links : Parcelable {
         //https://4pda.to/forum/lofiversion/index.php?f956
         //https://4pda.to/forum/lofiversion/index.php?f956-150
         @Parcelize
-        data class Forum(val forumId: Int, val st: Int) : Board
+        data class Forum(val forumId: ForumId, val st: PageOffset) : Board
 
         //https://4pda.to/forum/index.php?act=fav
         //https://4pda.to/forum/index.php?act=fav&type=all
@@ -137,7 +151,7 @@ sealed interface Links : Parcelable {
         sealed interface Favorite : Board {
 
             @Parcelize
-            data class Page(val st: Int, val type: Type, val sort: Sort) : Favorite
+            data class Page(val st: PageOffset, val type: Type, val sort: Sort) : Favorite
 
 
             @Parcelize
@@ -169,17 +183,17 @@ sealed interface Links : Parcelable {
         sealed interface Mentions : Board {
 
             @Parcelize
-            data class Page(val st: Int) : Mentions
+            data class Page(val st: PageOffset) : Mentions
         }
 
 
         //https://4pda.to/forum/index.php?act=announce&f=283&st=239
         @Parcelize
-        data class Announce(val forumId: Int, val announceId: Int) : Board
+        data class Announce(val announceId: AnnounceId) : Board
 
         //https://4pda.to/forum/index.php?showuser=4575561
         @Parcelize
-        data class Profile(val userId: Int) : Board
+        data class Profile(val userId: UserId) : Board
 
         //https://4pda.to/forum/index.php?act=qms
         //https://4pda.to/forum/index.php?act=qms&mid=7898206
@@ -194,13 +208,13 @@ sealed interface Links : Parcelable {
             data object Contacts : Qms
 
             @Parcelize
-            data class Threads(val userId: Int) : Qms
+            data class Threads(val userId: UserId) : Qms
 
             @Parcelize
-            data class Thread(val userId: Int, val threadId: Int) : Qms
+            data class Chat(val chatId: QmsChatId) : Qms
 
             @Parcelize
-            data class CreateThread(val userId: Int?) : Qms
+            data class CreateThread(val userId: UserId?) : Qms
 
             @Parcelize
             data object GetBlackList : Qms
@@ -215,7 +229,7 @@ sealed interface Links : Parcelable {
         sealed interface Reputation : Board {
 
             @Parcelize
-            data class History(val userId: Int, val mode: Mode, val order: Order, val st: Int) : Reputation {
+            data class History(val userId: UserId, val mode: Mode, val order: Order, val st: Int) : Reputation {
 
                 @Parcelize
                 enum class Mode : Parcelable {
@@ -225,7 +239,7 @@ sealed interface Links : Parcelable {
             }
 
             @Parcelize
-            data class Rating(val order: Order, val st: Int) : Reputation
+            data class Rating(val order: Order, val st: PageOffset) : Reputation
 
             @Parcelize
             enum class Order : Parcelable {
@@ -250,17 +264,17 @@ sealed interface Links : Parcelable {
 
             @Parcelize
             data class FindPost(
-                val postId: Int,
+                val postId: PostId,
                 val anchor: Anchor?
             ) : Topic
 
             sealed interface ShowTopic : Topic {
 
-                val topicId: Int
+                val topicId: TopicId
 
                 @Parcelize
                 data class Page(
-                    override val topicId: Int,
+                    override val topicId: TopicId,
                     val showPollResults: Boolean,
                     val st: Int,
                     val anchor: Anchor?
@@ -268,29 +282,29 @@ sealed interface Links : Parcelable {
 
                 @Parcelize
                 data class FindPost(
-                    override val topicId: Int,
+                    override val topicId: TopicId,
                     val postId: Int,
                     val anchor: Anchor?
                 ) : ShowTopic
 
                 @Parcelize
                 data class GetNewPost(
-                    override val topicId: Int,
+                    override val topicId: TopicId,
                 ) : ShowTopic
 
                 @Parcelize
                 data class GetLastPost(
-                    override val topicId: Int,
+                    override val topicId: TopicId,
                 ) : ShowTopic
             }
 
             sealed interface Anchor : Parcelable {
 
                 @Parcelize
-                data class Post(val postId: Int) : Anchor
+                data class Post(val postId: PostId) : Anchor
 
                 @Parcelize
-                data class Node(val name: String, val postId: Int, val number: Int) : Anchor
+                data class Node(val name: String, val postId: PostId, val number: Int) : Anchor
             }
         }
 
@@ -298,7 +312,7 @@ sealed interface Links : Parcelable {
         //https://4pda.to/forum/index.php?act=search&query=kino&username=&forums%5B%5D=285&topics=1026049&source=pst&sort=rel&result=posts
         @Parcelize
         data class Search(
-            val st: Int,
+            val st: PageOffset,
             val query: String,
             val nick: String,
             val forums: Set<Forum>,
@@ -332,7 +346,7 @@ sealed interface Links : Parcelable {
                 data object All : Forum
 
                 @Parcelize
-                data class Id(val forumId: Int) : Forum
+                data class Id(val forumId: ForumId) : Forum
             }
         }
     }
