@@ -41,7 +41,7 @@ sealed interface Links : Parcelable {
     sealed interface Site : Links {
 
         @Parcelize
-        data class Page(val pageNumber: PageNumber?, val paths: Paths?) : Site
+        data class Page(val pageNumber: PageNumber, val paths: Paths?) : Site
 
         @Parcelize
         data class RelativePage(val timestampSec: Long, val type: Type) : Site {
@@ -57,7 +57,7 @@ sealed interface Links : Parcelable {
         data class Details(val articleId: ArticleId, val commentId: CommentId?, val paths: Paths.Date?) : Site
 
         @Parcelize
-        data class Search(val text: String, val pageNumber: PageNumber?) : Site
+        data class Search(val text: String, val pageNumber: PageNumber) : Site
 
         sealed interface Paths : Parcelable {
 
@@ -133,6 +133,10 @@ sealed interface Links : Parcelable {
     sealed interface Board : Links {
 
         //https://4pda.to/forum/index.php?act=auth
+        //https://4pda.to/forum/index.php?act=auth#auth
+        //https://4pda.to/forum/index.php?act=auth#reg
+        //https://4pda.to/forum/index.php?act=auth#lostpass
+        //https://4pda.to/forum/index.php?act=auth&action=registration#reg2
         sealed interface Auth : Board {
 
             @Parcelize
@@ -156,7 +160,7 @@ sealed interface Links : Parcelable {
         //https://4pda.to/forum/lofiversion/index.php?f956
         //https://4pda.to/forum/lofiversion/index.php?f956-150
         @Parcelize
-        data class Forum(val forumId: ForumId, val st: PageOffset) : Board
+        data class Forum(val forumId: ForumId, val offset: PageOffset) : Board
 
         //https://4pda.to/forum/index.php?act=fav
         //https://4pda.to/forum/index.php?act=fav&type=all
@@ -165,10 +169,8 @@ sealed interface Links : Parcelable {
         //https://4pda.to/forum/index.php?act=fav&st=30
         //https://4pda.to/forum/index.php?act=fav&sort_key=title&sort_by=A-Z
         //https://4pda.to/forum/index.php?act=fav&sort_key=last_post&sort_by=Z-A
-        sealed interface Favorite : Board {
-
-            @Parcelize
-            data class Page(val st: PageOffset, val type: Type, val sort: Sort) : Favorite
+        @Parcelize
+        data class Favorite(val offset: PageOffset, val type: Type, val sort: Sort) : Board {
 
             @Parcelize
             enum class Type : Parcelable {
@@ -195,11 +197,8 @@ sealed interface Links : Parcelable {
 
 
         //https://4pda.to/forum/index.php?act=mentions&st=0
-        sealed interface Mentions : Board {
-
-            @Parcelize
-            data class Page(val st: PageOffset) : Mentions
-        }
+        @Parcelize
+        data class Mentions(val offset: PageOffset) : Board
 
 
         //https://4pda.to/forum/index.php?act=announce&f=283&st=239
@@ -232,7 +231,7 @@ sealed interface Links : Parcelable {
             data class CreateThread(val userId: UserId?) : Qms
 
             @Parcelize
-            data object GetBlackList : Qms
+            data object BlackList : Qms
 
         }
 
@@ -244,7 +243,7 @@ sealed interface Links : Parcelable {
         sealed interface Reputation : Board {
 
             @Parcelize
-            data class History(val userId: UserId, val mode: Mode, val order: Order, val st: Int) : Reputation {
+            data class History(val userId: UserId, val mode: Mode, val order: Order, val offset: PageOffset) : Reputation {
 
                 @Parcelize
                 enum class Mode : Parcelable {
@@ -254,7 +253,7 @@ sealed interface Links : Parcelable {
             }
 
             @Parcelize
-            data class Rating(val order: Order, val st: PageOffset) : Reputation
+            data class Rating(val order: Order, val offset: PageOffset) : Reputation
 
             @Parcelize
             enum class Order : Parcelable {
@@ -291,7 +290,7 @@ sealed interface Links : Parcelable {
                 data class Page(
                     override val topicId: TopicId,
                     val showPollResults: Boolean,
-                    val st: Int,
+                    val offset: PageOffset,
                     val anchor: Anchor?
                 ) : ShowTopic
 
@@ -315,11 +314,13 @@ sealed interface Links : Parcelable {
 
             sealed interface Anchor : Parcelable {
 
-                @Parcelize
-                data class Post(val postId: PostId) : Anchor
+                val value: String
 
                 @Parcelize
-                data class Node(val name: String, val postId: PostId, val number: Int) : Anchor
+                data class Post(val postId: PostId, override val value: String) : Anchor
+
+                @Parcelize
+                data class Node(val name: String, val postId: PostId, val number: Int, override val value: String) : Anchor
             }
         }
 
@@ -327,15 +328,15 @@ sealed interface Links : Parcelable {
         //https://4pda.to/forum/index.php?act=search&query=kino&username=&forums%5B%5D=285&topics=1026049&source=pst&sort=rel&result=posts
         @Parcelize
         data class Search(
-            val st: PageOffset,
             val query: String,
             val nick: String,
             val forums: Set<Forum>,
             val subforums: Boolean,
-            val topics: Set<Int>,
+            val topics: Set<TopicId>,
             val source: Source,
             val sort: Sort,
-            val result: Result
+            val result: Result,
+            val offset: PageOffset
         ) : Links {
 
             enum class Result {

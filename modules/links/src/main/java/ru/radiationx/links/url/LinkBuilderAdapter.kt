@@ -8,6 +8,7 @@ interface LinkBuilderAdapter {
     fun segment(value: Long): LinkBuilderAdapter
     fun query(name: String, value: String): LinkBuilderAdapter
     fun query(name: String, value: Int): LinkBuilderAdapter
+    fun query(name: String, value: Boolean): LinkBuilderAdapter
     fun fragment(value: String): LinkBuilderAdapter
     fun build(): LinkUrlAdapter
 }

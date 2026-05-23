@@ -6,10 +6,18 @@ import kotlinx.parcelize.Parcelize
 interface CoreType : Parcelable
 
 @Parcelize
-data class PageNumber(val value: Int) : CoreType
+data class PageNumber(val value: Int) : CoreType {
+    companion object {
+        val default = PageNumber(1)
+    }
+}
 
 @Parcelize
-data class PageOffset(val value: Int) : CoreType
+data class PageOffset(val value: Int) : CoreType {
+    companion object {
+        val default = PageOffset(0)
+    }
+}
 
 @Parcelize
 data class ArticleId(val id: Int) : CoreType
