@@ -1,10 +1,9 @@
-package ru.radiationx.links.parser
+package ru.radiationx.links.parser.board
 
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import ru.radiationx.links.Links
 import ru.radiationx.links.url.LinkBuilderAdapter
 import ru.radiationx.links.url.LinkUrlAdapter
-
 
 class BoardLinkTransformer {
 

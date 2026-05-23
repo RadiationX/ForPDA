@@ -1,4 +1,4 @@
-package ru.radiationx.links.parser
+package ru.radiationx.links.parser.devdb
 
 import ru.radiationx.coretypes.DevDbBrandId
 import ru.radiationx.coretypes.DevDbCategoryId
@@ -6,7 +6,6 @@ import ru.radiationx.coretypes.DevDbDeviceId
 import ru.radiationx.links.Links
 import ru.radiationx.links.url.LinkBuilderAdapter
 import ru.radiationx.links.url.LinkUrlAdapter
-
 
 //https://4pda.to/devdb/
 //https://4pda.to/devdb/phones

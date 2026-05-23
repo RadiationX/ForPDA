@@ -1,4 +1,4 @@
-package ru.radiationx.links.parser
+package ru.radiationx.links.parser.board.parts
 
 import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.coretypes.PostId

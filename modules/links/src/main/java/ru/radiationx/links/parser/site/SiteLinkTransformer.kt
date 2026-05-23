@@ -1,4 +1,4 @@
-package ru.radiationx.links.parser
+package ru.radiationx.links.parser.site
 
 import ru.radiationx.coretypes.ArticleId
 import ru.radiationx.coretypes.CommentId
@@ -6,7 +6,6 @@ import ru.radiationx.coretypes.PageNumber
 import ru.radiationx.links.Links
 import ru.radiationx.links.url.LinkBuilderAdapter
 import ru.radiationx.links.url.LinkUrlAdapter
-
 
 //https://4pda.to/2025/page/13/
 //https://4pda.to/2025/5/page/13/
@@ -18,7 +17,6 @@ import ru.radiationx.links.url.LinkUrlAdapter
 //https://4pda.to/reviews/smartphones/page/2
 //https://4pda.to/honor/page/2/
 //https://4pda.to/2026/05/index.php/page/2
-
 //https://4pda.to/2026/05/21/456675/obzor_oppo_find_x9_ultra_vozmozhno_glavnyj_fotoflagman_goda/
 //https://4pda.to/2026/05/21/456675
 //https://4pda.to/2026/05/21/456675#comment10592113
@@ -27,11 +25,9 @@ import ru.radiationx.links.url.LinkUrlAdapter
 //https://4pda.to/index.php?p=456764
 //https://4pda.to/index.php?p=456764#comment10592113
 //https://4pda.to/2026/05/22/456764/i_vsyo_taki_on_suschestvuet_trump_mobile_t1_raspakovali_na_kameru_video/#comment10592113
-
 //https://4pda.to/news/newer/1757418300/
 //https://4pda.to/news/older/1757418300/
 //https://4pda.to/news/older/1757418300/
-
 //https://4pda.to/?s=%FC%E1%FC%E1
 //https://4pda.to/page/1/?s=xiaomi
 //https://4pda.to/?s=xiaomi
