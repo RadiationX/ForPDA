@@ -1,8 +1,10 @@
 package ru.radiationx.links.parser.board.parts
 
-import ru.radiationx.coretypes.ForumId
-import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.links.Links
+import ru.radiationx.links.parser.helpers.ForumIdCase
+import ru.radiationx.links.parser.helpers.parseForumId
+import ru.radiationx.links.parser.helpers.parsePageOffset
+import ru.radiationx.links.parser.helpers.query
 import ru.radiationx.links.url.LinkUrl
 import ru.radiationx.links.url.LinkUrlBuilder
 
@@ -12,15 +14,15 @@ internal object ForumLinkTransformer {
 
     fun build(builder: LinkUrlBuilder, link: Links.Board.Forum): LinkUrl {
         with(builder) {
-            query("showforum", link.forumId.id)
-            query("st", link.offset.value)
+            query(link.forumId, ForumIdCase.ShowForum)
+            query(link.offset)
         }
         return builder.build()
     }
 
     fun parse(url: LinkUrl): Links.Board.Forum? {
-        val forumId = url.query("showforum")?.toIntOrNull()?.let { ForumId(it) } ?: return null
-        val offset = url.query("st")?.toIntOrNull()?.let { PageOffset(it) } ?: PageOffset.default
+        val forumId = url.parseForumId(ForumIdCase.ShowForum) ?: return null
+        val offset = url.parsePageOffset()
         return Links.Board.Forum(forumId = forumId, offset = offset)
     }
 

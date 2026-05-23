@@ -1,7 +1,8 @@
 package ru.radiationx.links.parser.board.parts
 
-import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.links.Links
+import ru.radiationx.links.parser.helpers.query
+import ru.radiationx.links.parser.helpers.parsePageOffset
 import ru.radiationx.links.url.LinkUrlBuilder
 import ru.radiationx.links.url.LinkUrl
 
@@ -17,7 +18,7 @@ internal object  FavoriteLinkTransformer {
     fun build(builder: LinkUrlBuilder, link: Links.Board.Favorite): LinkUrl {
         with(builder) {
             query("act", "fav")
-            query("st", link.offset.value)
+            query(link.offset)
 
             val type = when (link.type) {
                 Links.Board.Favorite.Type.All -> "all"
@@ -43,7 +44,7 @@ internal object  FavoriteLinkTransformer {
 
     fun parse(url: LinkUrl): Links.Board.Favorite? {
         if (url.query("act") != "fav") return null
-        val pageOffset = url.query("st")?.toIntOrNull()?.let { PageOffset(it) } ?: PageOffset.default
+        val pageOffset = url.parsePageOffset()
         val type = when (url.query("type")) {
             "all" -> Links.Board.Favorite.Type.All
             "topics" -> Links.Board.Favorite.Type.Topics

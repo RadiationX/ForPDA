@@ -1,15 +1,19 @@
 package ru.radiationx.links.parser.board.parts
 
-import ru.radiationx.coretypes.ForumId
-import ru.radiationx.coretypes.PageOffset
-import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.parser.helpers.ForumIdCase
+import ru.radiationx.links.parser.helpers.TopicIdCase
+import ru.radiationx.links.parser.helpers.parseForumId
+import ru.radiationx.links.parser.helpers.parsePageOffset
+import ru.radiationx.links.parser.helpers.parseTopicId
+import ru.radiationx.links.parser.helpers.query
 import ru.radiationx.links.url.LinkUrl
+import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.query
 
 //https://4pda.to/forum/index.php?forums=285&topics=1026049&act=search&source=pst&query=kino
 //https://4pda.to/forum/index.php?act=search&query=kino&username=&forums%5B%5D=285&topics=1026049&source=pst&sort=rel&result=posts
-internal object  SearchLinkTransformer {
+internal object SearchLinkTransformer {
 
     fun build(builder: LinkUrlBuilder, link: Links.Board.Search): LinkUrl {
         with(builder) {
@@ -18,13 +22,13 @@ internal object  SearchLinkTransformer {
             query("username", link.nick)
             link.forums.forEach {
                 when (it) {
-                    Links.Board.Search.Forum.All -> query("forums[]", "all")
-                    is Links.Board.Search.Forum.Id -> query("forums[]", it.forumId.id)
+                    Links.Board.Search.Forum.All -> query(ForumIdCase.SearchArray.value, "all")
+                    is Links.Board.Search.Forum.Id -> query(it.forumId, ForumIdCase.SearchArray)
                 }
             }
             query("subforums", link.subforums)
             link.topics.forEach {
-                query("topics[]", it.id)
+                query(it, TopicIdCase.SearchArray)
             }
             val source = when (link.source) {
                 Links.Board.Search.Source.All -> "all"
@@ -46,7 +50,7 @@ internal object  SearchLinkTransformer {
             }
             query("result", result)
 
-            query("st", link.offset.value)
+            query(link.offset)
         }
         return builder.build()
     }
@@ -56,17 +60,17 @@ internal object  SearchLinkTransformer {
 
         val query = url.query("query").orEmpty()
         val nick = url.query("username").orEmpty()
-        val forums = parseMultipleQuery(url, "forums").mapNotNull { value ->
+        val forums = parseMultipleQuery(url, ForumIdCase.Search.value, ForumIdCase.SearchArray.value).mapNotNull { value ->
             if (value == "all") {
                 Links.Board.Search.Forum.All
             } else {
-                val forumId = value.toIntOrNull()?.let { ForumId(it) } ?: return@mapNotNull null
+                val forumId = value.parseForumId() ?: return@mapNotNull null
                 Links.Board.Search.Forum.Id(forumId = forumId)
             }
         }.toSet()
         val subforums = url.query("subforums") == "1"
-        val topics = parseMultipleQuery(url, "topics").mapNotNull { value ->
-            value.toIntOrNull()?.let { TopicId(it) }
+        val topics = parseMultipleQuery(url, TopicIdCase.Search.value, TopicIdCase.SearchArray.value).mapNotNull { value ->
+            value.parseTopicId()
         }.toSet()
         val source = when (url.query("source")) {
             "pst" -> Links.Board.Search.Source.Post
@@ -85,7 +89,7 @@ internal object  SearchLinkTransformer {
             "topics" -> Links.Board.Search.Result.Topics
             else -> Links.Board.Search.Result.Posts
         }
-        val offset = url.query("st")?.toIntOrNull()?.let { PageOffset(it) } ?: PageOffset.default
+        val offset = url.parsePageOffset()
         return Links.Board.Search(
             query = query,
             nick = nick,
@@ -99,10 +103,11 @@ internal object  SearchLinkTransformer {
         )
     }
 
-    private fun parseMultipleQuery(url: LinkUrl, name: String): List<String> {
+    private fun parseMultipleQuery(url: LinkUrl, vararg name: String): List<String> {
         return buildList {
-            addAll(url.queries(name))
-            addAll(url.queries("${name}[]"))
+            name.forEach {
+                addAll(url.queries(it))
+            }
         }
     }
 

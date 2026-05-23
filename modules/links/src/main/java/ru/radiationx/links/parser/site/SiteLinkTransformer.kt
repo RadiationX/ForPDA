@@ -6,6 +6,8 @@ import ru.radiationx.coretypes.PageNumber
 import ru.radiationx.links.Links
 import ru.radiationx.links.url.LinkUrl
 import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.query
+import ru.radiationx.links.url.segment
 
 //https://4pda.to/2025/page/13/
 //https://4pda.to/2025/5/page/13/

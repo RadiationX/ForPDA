@@ -1,11 +1,14 @@
 package ru.radiationx.links.parser.board.parts
 
-import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.coretypes.PostId
-import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Links
+import ru.radiationx.links.parser.helpers.TopicIdCase
+import ru.radiationx.links.parser.helpers.parsePageOffset
+import ru.radiationx.links.parser.helpers.parseTopicId
+import ru.radiationx.links.parser.helpers.query
 import ru.radiationx.links.url.LinkUrl
 import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.query
 
 //https://4pda.to/forum/index.php?act=findpost&pid=115499851&anchor=Spoil-115499851-1 - копирование спойлера
 //https://4pda.to/forum/index.php?act=findpost&pid=115499851&anchor=entry115493099 - копирование спойлера
@@ -31,26 +34,26 @@ internal object TopicLinkTransformer {
             when (link) {
                 is Links.Board.Topic.FindPost -> {
                     query("act", "findpost")
-                    query("pid", link.postId.id)
-                    link.anchor?.value?.also { query("anchor", it) }
+                    query(link.postId, PostIdCase.FindPost)
+                    query(link.anchor)
                 }
 
                 is Links.Board.Topic.ShowTopic -> {
-                    query("showtopic", link.topicId.id)
+                    query(link.topicId, TopicIdCase.ShowTopic)
 
                     when (link) {
                         is Links.Board.Topic.ShowTopic.Page -> {
-                            query("st", link.offset.value)
+                            query(link.offset)
                             if (link.showPollResults) {
                                 query("mode", "show")
                             }
-                            link.anchor?.value?.also { fragment(it) }
+                            fragment(link.anchor)
                         }
 
                         is Links.Board.Topic.ShowTopic.FindPost -> {
                             query("view", "findpost")
-                            query("p", link.postId)
-                            link.anchor?.value?.also { query("anchor", it) }
+                            query(link.postId, PostIdCase.FindPostInTopic)
+                            query(link.anchor)
                         }
 
                         is Links.Board.Topic.ShowTopic.GetLastPost -> {
@@ -67,10 +70,20 @@ internal object TopicLinkTransformer {
         return builder.build()
     }
 
+    private fun LinkUrlBuilder.query(anchor: Links.Board.Topic.Anchor?) {
+        if (anchor == null) return
+        query("anchor", anchor.value)
+    }
+
+    private fun LinkUrlBuilder.fragment(anchor: Links.Board.Topic.Anchor?) {
+        if (anchor == null) return
+        fragment(anchor.value)
+    }
+
     fun parse(url: LinkUrl): Links.Board.Topic? {
         if (url.query("act") == "findpost") {
-            val postId = url.query("pid")?.toIntOrNull()?.let { PostId(it) } ?: return null
-            val anchor = parseAnchor(url)
+            val postId = url.parsePostId(PostIdCase.FindPost) ?: return null
+            val anchor = url.parseAnchor()
             return Links.Board.Topic.FindPost(postId = postId, anchor = anchor)
         }
         return parseView(url)
@@ -78,11 +91,11 @@ internal object TopicLinkTransformer {
 
 
     private fun parseView(url: LinkUrl): Links.Board.Topic.ShowTopic? {
-        val topicId = url.query("showtopic")?.toIntOrNull()?.let { TopicId(it) } ?: return null
+        val topicId = url.parseTopicId(TopicIdCase.ShowTopic) ?: return null
         val showPollResults = url.query("mode") == "show"
         val queryView = url.query("view")
-        val offset = url.query("st")?.toIntOrNull()?.let { PageOffset(it) } ?: PageOffset.default
-        val anchor = parseAnchor(url)
+        val offset = url.parsePageOffset()
+        val anchor = url.parseAnchor()
 
         val topicByView = when (queryView) {
             "getnewpost" -> {
@@ -98,7 +111,7 @@ internal object TopicLinkTransformer {
             }
 
             "findpost" -> {
-                url.query("p")?.toIntOrNull()?.let { postId ->
+                url.parsePostId(PostIdCase.FindPostInTopic)?.let { postId ->
                     Links.Board.Topic.ShowTopic.FindPost(
                         topicId = topicId,
                         postId = postId,
@@ -122,23 +135,40 @@ internal object TopicLinkTransformer {
         )
     }
 
-    private fun parseAnchor(url: LinkUrl): Links.Board.Topic.Anchor? {
-        val fragmentAnchor = url.fragment?.let { parseAnchor(it) }
+    private fun LinkUrl.parseAnchor(): Links.Board.Topic.Anchor? {
+        val fragmentAnchor = fragment?.parseAnchor()
         if (fragmentAnchor != null) return fragmentAnchor
-        return url.query("anchor")?.let { parseAnchor(it) }
+        return query("anchor")?.parseAnchor()
     }
 
-    private fun parseAnchor(value: String): Links.Board.Topic.Anchor? {
-        entryRegex.find(value)?.also {
-            val postId = it.groupValues[1].toIntOrNull()?.let { PostId(it) } ?: return@also
-            return Links.Board.Topic.Anchor.Post(postId = postId, value = value)
+    private fun String.parseAnchor(): Links.Board.Topic.Anchor? {
+        entryRegex.find(this)?.also {
+            val postId = it.groupValues[1].parsePostId() ?: return@also
+            return Links.Board.Topic.Anchor.Post(postId = postId, value = this)
         }
-        nodeRegex.find(value)?.also {
+        nodeRegex.find(this)?.also {
             val name = it.groupValues[1]
-            val postId = it.groupValues[2].toIntOrNull()?.let { PostId(it) } ?: return@also
+            val postId = it.groupValues[2].parsePostId() ?: return@also
             val number = it.groupValues[3].toIntOrNull() ?: return@also
-            return Links.Board.Topic.Anchor.Node(name = name, postId = postId, number = number, value = value)
+            return Links.Board.Topic.Anchor.Node(name = name, postId = postId, number = number, value = this)
         }
         return null
+    }
+
+    private fun String.parsePostId(): PostId? {
+        return toIntOrNull()?.let { PostId(it) }
+    }
+
+    private fun LinkUrl.parsePostId(case: PostIdCase): PostId? {
+        return query(case.value)?.parsePostId()
+    }
+
+    private fun LinkUrlBuilder.query(postId: PostId, case: PostIdCase) {
+        query(case.value, postId.id)
+    }
+
+    private enum class PostIdCase(val value: String) {
+        FindPost("pid"),
+        FindPostInTopic("p"),
     }
 }

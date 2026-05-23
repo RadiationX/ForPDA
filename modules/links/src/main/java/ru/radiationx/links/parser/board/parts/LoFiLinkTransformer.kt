@@ -1,9 +1,9 @@
 package ru.radiationx.links.parser.board.parts
 
-import ru.radiationx.coretypes.ForumId
-import ru.radiationx.coretypes.PageOffset
-import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Links
+import ru.radiationx.links.parser.helpers.parseForumId
+import ru.radiationx.links.parser.helpers.parsePageOffset
+import ru.radiationx.links.parser.helpers.parseTopicId
 import ru.radiationx.links.url.LinkUrl
 
 //https://4pda.to/forum/lofiversion/index.php?f956.html
@@ -20,22 +20,19 @@ internal object LoFiLinkTransformer {
         if (url.segment(1) != "lofiversion") return null
         val match = queryRegex.find(url.fullQuery().orEmpty()) ?: return null
         val type = match.groupValues[1]
-        val id = match.groupValues[2].toIntOrNull() ?: return null
-        val offset = match.groupValues.getOrNull(3)
-            ?.toIntOrNull()
-            ?.let { PageOffset(it) }
-            ?: PageOffset.default
+        val idStr = match.groupValues[2]
+        val offset = match.groupValues.getOrNull(3).parsePageOffset()
 
         return when (type) {
             "t" -> Links.Board.Topic.ShowTopic.Page(
-                topicId = TopicId(id = id),
+                topicId = idStr.parseTopicId() ?: return null,
                 showPollResults = false,
                 offset = offset,
                 anchor = null
             )
 
             "f" -> Links.Board.Forum(
-                forumId = ForumId(id = id),
+                forumId = idStr.parseForumId() ?: return null,
                 offset = offset
             )
 

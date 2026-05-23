@@ -297,7 +297,7 @@ sealed interface Links : Parcelable {
                 @Parcelize
                 data class FindPost(
                     override val topicId: TopicId,
-                    val postId: Int,
+                    val postId: PostId,
                     val anchor: Anchor?
                 ) : ShowTopic
 
