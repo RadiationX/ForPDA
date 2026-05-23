@@ -41,13 +41,23 @@ sealed interface Links : Parcelable {
     sealed interface Site : Links {
 
         @Parcelize
-        data class Page(val page: PageNumber, val paths: Paths?) : Site
+        data class Page(val pageNumber: PageNumber?, val paths: Paths?) : Site
 
         @Parcelize
-        data class Details(val articleId: ArticleId, val commentId: CommentId) : Site
+        data class RelativePage(val timestampSec: Long, val type: Type) : Site {
+
+            @Parcelize
+            enum class Type : Parcelable {
+                Newer,
+                Older
+            }
+        }
 
         @Parcelize
-        data class Search(val text: String, val paths: Paths.Category?) : Site
+        data class Details(val articleId: ArticleId, val commentId: CommentId?, val paths: Paths.Date?) : Site
+
+        @Parcelize
+        data class Search(val text: String, val pageNumber: PageNumber?) : Site
 
         sealed interface Paths : Parcelable {
 
@@ -103,7 +113,7 @@ sealed interface Links : Parcelable {
         data class Brand(val brandId: DevDbBrandId, val sort: Sort?) : DevDb {
 
             @Parcelize
-            data class Sort(val field: String, val order: Order?) : Parcelable{
+            data class Sort(val field: String, val order: Order?) : Parcelable {
 
                 @Parcelize
                 enum class Order : Parcelable {
