@@ -4,14 +4,14 @@ import ru.radiationx.coretypes.ForumId
 import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkBuilderAdapter
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.LinkUrl
 
 //https://4pda.to/forum/index.php?forums=285&topics=1026049&act=search&source=pst&query=kino
 //https://4pda.to/forum/index.php?act=search&query=kino&username=&forums%5B%5D=285&topics=1026049&source=pst&sort=rel&result=posts
-class SearchLinkTransformer {
+internal object  SearchLinkTransformer {
 
-    fun build(builder: LinkBuilderAdapter, link: Links.Board.Search): LinkUrlAdapter {
+    fun build(builder: LinkUrlBuilder, link: Links.Board.Search): LinkUrl {
         with(builder) {
             query("act", "search")
             query("query", link.query)
@@ -51,7 +51,7 @@ class SearchLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrlAdapter): Links.Board.Search? {
+    fun parse(url: LinkUrl): Links.Board.Search? {
         if (url.query("act") != "search") return null
 
         val query = url.query("query").orEmpty()
@@ -99,7 +99,7 @@ class SearchLinkTransformer {
         )
     }
 
-    private fun parseMultipleQuery(url: LinkUrlAdapter, name: String): List<String> {
+    private fun parseMultipleQuery(url: LinkUrl, name: String): List<String> {
         return buildList {
             addAll(url.queries(name))
             addAll(url.queries("${name}[]"))

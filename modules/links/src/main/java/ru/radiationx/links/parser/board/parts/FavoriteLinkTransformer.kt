@@ -2,8 +2,8 @@ package ru.radiationx.links.parser.board.parts
 
 import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkBuilderAdapter
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.LinkUrl
 
 //https://4pda.to/forum/index.php?act=fav
 //https://4pda.to/forum/index.php?act=fav&type=all
@@ -12,12 +12,9 @@ import ru.radiationx.links.url.LinkUrlAdapter
 //https://4pda.to/forum/index.php?act=fav&st=30
 //https://4pda.to/forum/index.php?act=fav&sort_key=title&sort_by=A-Z
 //https://4pda.to/forum/index.php?act=fav&sort_key=last_post&sort_by=Z-A
-class FavoriteLinkTransformer {
+internal object  FavoriteLinkTransformer {
 
-    private companion object {
-    }
-
-    fun build(builder: LinkBuilderAdapter, link: Links.Board.Favorite): LinkUrlAdapter {
+    fun build(builder: LinkUrlBuilder, link: Links.Board.Favorite): LinkUrl {
         with(builder) {
             query("act", "fav")
             query("st", link.offset.value)
@@ -44,7 +41,7 @@ class FavoriteLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrlAdapter): Links.Board.Favorite? {
+    fun parse(url: LinkUrl): Links.Board.Favorite? {
         if (url.query("act") != "fav") return null
         val pageOffset = url.query("st")?.toIntOrNull()?.let { PageOffset(it) } ?: PageOffset.default
         val type = when (url.query("type")) {

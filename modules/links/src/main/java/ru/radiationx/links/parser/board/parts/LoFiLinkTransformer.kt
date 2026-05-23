@@ -4,7 +4,7 @@ import ru.radiationx.coretypes.ForumId
 import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrl
 
 //https://4pda.to/forum/lofiversion/index.php?f956.html
 //https://4pda.to/forum/lofiversion/index.php?f956-150.html
@@ -12,13 +12,11 @@ import ru.radiationx.links.url.LinkUrlAdapter
 //https://4pda.to/forum/lofiversion/index.php?f956-150
 //https://4pda.to/forum/lofiversion/index.php?t956-150
 //https://4pda.to/forum/lofiversion/index.php?t956
-class LoFiLinkTransformer {
+internal object LoFiLinkTransformer {
 
-    private companion object {
-        private val queryRegex = Regex("([tf])(\\d+)(?:-(\\d+))?")
-    }
+    private val queryRegex = Regex("([tf])(\\d+)(?:-(\\d+))?")
 
-    fun parse(url: LinkUrlAdapter): Links.Board? {
+    fun parse(url: LinkUrl): Links.Board? {
         if (url.segment(1) != "lofiversion") return null
         val match = queryRegex.find(url.fullQuery().orEmpty()) ?: return null
         val type = match.groupValues[1]

@@ -2,17 +2,14 @@ package ru.radiationx.links.parser.board.parts
 
 import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkBuilderAdapter
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.LinkUrl
 
 //https://4pda.to/forum/index.php?act=mentions
 //https://4pda.to/forum/index.php?act=mentions&st=0
-class MentionsLinkTransformer {
+internal object  MentionsLinkTransformer {
 
-    private companion object {
-    }
-
-    fun build(builder: LinkBuilderAdapter, link: Links.Board.Mentions): LinkUrlAdapter {
+    fun build(builder: LinkUrlBuilder, link: Links.Board.Mentions): LinkUrl {
         with(builder) {
             query("act", "mentions")
             query("st", link.offset.value)
@@ -20,7 +17,7 @@ class MentionsLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrlAdapter): Links.Board.Mentions? {
+    fun parse(url: LinkUrl): Links.Board.Mentions? {
         if (url.query("act") != "mentions") return null
         val pageOffset = url.query("st")?.toIntOrNull()?.let { PageOffset(value = it) } ?: PageOffset.default
         return Links.Board.Mentions(offset = pageOffset)

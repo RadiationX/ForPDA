@@ -3,16 +3,16 @@ package ru.radiationx.links.parser.board.parts
 import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.coretypes.UserId
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkBuilderAdapter
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.LinkUrl
 
 //https://4pda.to/forum/index.php?act=rep&view=history&mid=7898206&mode=to&order=asc
 //https://4pda.to/forum/index.php?act=rep&view=history&mid=7898206&mode=from&order=desc&st=5000
 //https://4pda.to/forum/index.php?act=rep&order=asc&st=5000
 //https://4pda.to/forum/index.php?act=rep&view=rating&order=asc
-class ReputationLinkTransformer {
+internal object  ReputationLinkTransformer {
 
-    fun build(builder: LinkBuilderAdapter, link: Links.Board.Reputation): LinkUrlAdapter {
+    fun build(builder: LinkUrlBuilder, link: Links.Board.Reputation): LinkUrl {
         with(builder) {
             query("act", "rep")
             when (link) {
@@ -38,11 +38,11 @@ class ReputationLinkTransformer {
         return builder.build()
     }
 
-    private fun LinkBuilderAdapter.fillOffset(offset: PageOffset) {
+    private fun LinkUrlBuilder.fillOffset(offset: PageOffset) {
         query("st", offset.value)
     }
 
-    private fun LinkBuilderAdapter.fillOrder(order: Links.Board.Reputation.Order) {
+    private fun LinkUrlBuilder.fillOrder(order: Links.Board.Reputation.Order) {
         val orderValue = when (order) {
             Links.Board.Reputation.Order.Asc -> "asc"
             Links.Board.Reputation.Order.Desc -> "desc"
@@ -50,7 +50,7 @@ class ReputationLinkTransformer {
         query("order", orderValue)
     }
 
-    fun parse(url: LinkUrlAdapter): Links.Board.Reputation? {
+    fun parse(url: LinkUrl): Links.Board.Reputation? {
         if (url.query("act") != "rep") return null
 
         parseHistory(url)?.also {
@@ -63,7 +63,7 @@ class ReputationLinkTransformer {
         return null
     }
 
-    private fun parseHistory(url: LinkUrlAdapter): Links.Board.Reputation.History? {
+    private fun parseHistory(url: LinkUrl): Links.Board.Reputation.History? {
         val userId = url.query("mid")?.toIntOrNull()?.let { UserId(it) } ?: return null
         val mode = when (url.query("mode")) {
             "from" -> Links.Board.Reputation.History.Mode.From
@@ -80,7 +80,7 @@ class ReputationLinkTransformer {
         )
     }
 
-    private fun parseRating(url: LinkUrlAdapter): Links.Board.Reputation.Rating? {
+    private fun parseRating(url: LinkUrl): Links.Board.Reputation.Rating? {
         val view = url.query("view")
         if (view != null && view != "rating") return null
         val offset = parseOffset(url)
@@ -88,11 +88,11 @@ class ReputationLinkTransformer {
         return Links.Board.Reputation.Rating(order = order, offset = offset)
     }
 
-    private fun parseOffset(url: LinkUrlAdapter): PageOffset {
+    private fun parseOffset(url: LinkUrl): PageOffset {
         return url.query("st")?.toIntOrNull()?.let { PageOffset(it) } ?: PageOffset.default
     }
 
-    private fun parseOrder(url: LinkUrlAdapter): Links.Board.Reputation.Order {
+    private fun parseOrder(url: LinkUrl): Links.Board.Reputation.Order {
         return when (url.query("order")) {
             "asc" -> Links.Board.Reputation.Order.Asc
             "desc" -> Links.Board.Reputation.Order.Desc

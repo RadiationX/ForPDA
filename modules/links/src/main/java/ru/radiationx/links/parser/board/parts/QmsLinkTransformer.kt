@@ -4,8 +4,8 @@ import ru.radiationx.coretypes.QmsChatId
 import ru.radiationx.coretypes.QmsThreadId
 import ru.radiationx.coretypes.UserId
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkBuilderAdapter
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrlBuilder
+import ru.radiationx.links.url.LinkUrl
 
 //https://4pda.to/forum/index.php?act=qms
 //https://4pda.to/forum/index.php?act=qms&mid=7898206
@@ -15,9 +15,9 @@ import ru.radiationx.links.url.LinkUrlAdapter
 //https://4pda.to/forum/index.php?act=qms&settings=blacklist
 //unsupported
 //https://4pda.to/forum/index.php?act=qms&search=неофициальный
-class QmsLinkTransformer {
+internal object  QmsLinkTransformer {
 
-    fun build(builder: LinkBuilderAdapter, link: Links.Board.Qms): LinkUrlAdapter {
+    fun build(builder: LinkUrlBuilder, link: Links.Board.Qms): LinkUrl {
         with(builder) {
             query("act", "qms")
             when (link) {
@@ -44,7 +44,7 @@ class QmsLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrlAdapter): Links.Board.Qms? {
+    fun parse(url: LinkUrl): Links.Board.Qms? {
         if (url.query("act") != "qms") return null
 
         if (url.query("settings") == "blacklist") {

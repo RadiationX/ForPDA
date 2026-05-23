@@ -337,7 +337,7 @@ sealed interface Links : Parcelable {
             val sort: Sort,
             val result: Result,
             val offset: PageOffset
-        ) : Links {
+        ) : Board {
 
             enum class Result {
                 Topics,

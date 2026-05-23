@@ -4,8 +4,8 @@ import ru.radiationx.coretypes.PageOffset
 import ru.radiationx.coretypes.PostId
 import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkBuilderAdapter
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrl
+import ru.radiationx.links.url.LinkUrlBuilder
 
 //https://4pda.to/forum/index.php?act=findpost&pid=115499851&anchor=Spoil-115499851-1 - копирование спойлера
 //https://4pda.to/forum/index.php?act=findpost&pid=115499851&anchor=entry115493099 - копирование спойлера
@@ -20,14 +20,13 @@ import ru.radiationx.links.url.LinkUrlAdapter
 //https://4pda.to/forum/index.php?showtopic=1045802&mode=show&st=0 - показать результаты опроса
 //https://4pda.to/forum/index.php?showtopic=208182&view=getnewpost
 //https://4pda.to/forum/index.php?showtopic=208182&view=getlastpost#Spoil-115499851-1
-class TopicLinkTransformer {
+internal object TopicLinkTransformer {
 
-    private companion object {
-        private val entryRegex = Regex("entry(\\d+)")
-        private val nodeRegex = Regex("(\\w+)-(\\d+)-(\\d+)")
-    }
+    private val entryRegex = Regex("entry(\\d+)")
 
-    fun build(builder: LinkBuilderAdapter, link: Links.Board.Topic): LinkUrlAdapter {
+    private val nodeRegex = Regex("(\\w+)-(\\d+)-(\\d+)")
+
+    fun build(builder: LinkUrlBuilder, link: Links.Board.Topic): LinkUrl {
         with(builder) {
             when (link) {
                 is Links.Board.Topic.FindPost -> {
@@ -68,7 +67,7 @@ class TopicLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrlAdapter): Links.Board.Topic? {
+    fun parse(url: LinkUrl): Links.Board.Topic? {
         if (url.query("act") == "findpost") {
             val postId = url.query("pid")?.toIntOrNull()?.let { PostId(it) } ?: return null
             val anchor = parseAnchor(url)
@@ -78,7 +77,7 @@ class TopicLinkTransformer {
     }
 
 
-    private fun parseView(url: LinkUrlAdapter): Links.Board.Topic.ShowTopic? {
+    private fun parseView(url: LinkUrl): Links.Board.Topic.ShowTopic? {
         val topicId = url.query("showtopic")?.toIntOrNull()?.let { TopicId(it) } ?: return null
         val showPollResults = url.query("mode") == "show"
         val queryView = url.query("view")
@@ -123,7 +122,7 @@ class TopicLinkTransformer {
         )
     }
 
-    private fun parseAnchor(url: LinkUrlAdapter): Links.Board.Topic.Anchor? {
+    private fun parseAnchor(url: LinkUrl): Links.Board.Topic.Anchor? {
         val fragmentAnchor = url.fragment?.let { parseAnchor(it) }
         if (fragmentAnchor != null) return fragmentAnchor
         return url.query("anchor")?.let { parseAnchor(it) }

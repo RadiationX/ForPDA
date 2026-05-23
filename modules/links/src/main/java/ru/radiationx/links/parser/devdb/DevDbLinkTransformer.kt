@@ -4,8 +4,8 @@ import ru.radiationx.coretypes.DevDbBrandId
 import ru.radiationx.coretypes.DevDbCategoryId
 import ru.radiationx.coretypes.DevDbDeviceId
 import ru.radiationx.links.Links
-import ru.radiationx.links.url.LinkBuilderAdapter
-import ru.radiationx.links.url.LinkUrlAdapter
+import ru.radiationx.links.url.LinkUrl
+import ru.radiationx.links.url.LinkUrlBuilder
 
 //https://4pda.to/devdb/
 //https://4pda.to/devdb/phones
@@ -36,16 +36,14 @@ import ru.radiationx.links.url.LinkUrlAdapter
 //https://4pda.to/devdb/xiaomi_mi_note_10_lite#firmware
 //https://4pda.to/devdb/xiaomi_mi_note_10_lite#prices
 //https://4pda.to/devdb/search?s=nothing
-class DevDbLinkTransformer {
+internal object DevDbLinkTransformer {
 
-    private companion object {
-        private val categoryIds = setOf("phones", "pad", "ebook", "smartwatch")
-        private val letterRegex = Regex("letter-(\\w)")
-        private val forbiddenBrandId = setOf("all", "select")
-        private val sortFields = setOf("year", "rating", "title")
-    }
+    private val categoryIds = setOf("phones", "pad", "ebook", "smartwatch")
+    private val letterRegex = Regex("letter-(\\w)")
+    private val forbiddenBrandId = setOf("all", "select")
+    private val sortFields = setOf("year", "rating", "title")
 
-    fun build(builder: LinkBuilderAdapter, link: Links.DevDb): LinkUrlAdapter {
+    fun build(builder: LinkUrlBuilder, link: Links.DevDb): LinkUrl {
         with(builder) {
             segment("devdb")
             when (link) {
@@ -89,7 +87,7 @@ class DevDbLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrlAdapter): Links.DevDb? {
+    fun parse(url: LinkUrl): Links.DevDb? {
         if (url.segment(0) != "devdb") {
             return null
         }
@@ -108,7 +106,7 @@ class DevDbLinkTransformer {
         return parseDevice(url, segment1)
     }
 
-    private fun parseWithCategory(url: LinkUrlAdapter, segment1: String): Links.DevDb? {
+    private fun parseWithCategory(url: LinkUrl, segment1: String): Links.DevDb? {
         if (segment1 !in categoryIds) return null
         val categoryId = DevDbCategoryId(segment1)
         val brand = parseBrand(url, categoryId)
@@ -118,14 +116,14 @@ class DevDbLinkTransformer {
         return parseBrands(url, categoryId)
     }
 
-    private fun parseBrands(url: LinkUrlAdapter, categoryId: DevDbCategoryId): Links.DevDb.Brands {
+    private fun parseBrands(url: LinkUrl, categoryId: DevDbCategoryId): Links.DevDb.Brands {
         val letter = url.fragment?.let {
             letterRegex.find(it)?.groupValues[1]
         }
         return Links.DevDb.Brands(categoryId = categoryId, letter)
     }
 
-    private fun parseBrand(url: LinkUrlAdapter, categoryId: DevDbCategoryId): Links.DevDb.Brand? {
+    private fun parseBrand(url: LinkUrl, categoryId: DevDbCategoryId): Links.DevDb.Brand? {
         val segment2 = url.segment(2) ?: return null
         if (segment2 in forbiddenBrandId) return null
         val brandId = DevDbBrandId(categoryId = categoryId, brandId = segment2)
@@ -142,12 +140,12 @@ class DevDbLinkTransformer {
         return Links.DevDb.Brand(brandId = brandId, sort = sort)
     }
 
-    private fun parseSearch(url: LinkUrlAdapter, segment1: String): Links.DevDb.Search? {
+    private fun parseSearch(url: LinkUrl, segment1: String): Links.DevDb.Search? {
         if (segment1 != "search") return null
         return Links.DevDb.Search(text = url.query("s").orEmpty())
     }
 
-    private fun parseDevice(url: LinkUrlAdapter, segment1: String): Links.DevDb.Device {
+    private fun parseDevice(url: LinkUrl, segment1: String): Links.DevDb.Device {
         return Links.DevDb.Device(deviceId = DevDbDeviceId(id = segment1), tab = url.fragment)
     }
 }
