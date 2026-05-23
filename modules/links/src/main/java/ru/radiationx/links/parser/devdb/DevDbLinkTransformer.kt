@@ -3,7 +3,7 @@ package ru.radiationx.links.parser.devdb
 import ru.radiationx.coretypes.DevDbBrandId
 import ru.radiationx.coretypes.DevDbCategoryId
 import ru.radiationx.coretypes.DevDbDeviceId
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.url.LinkUrl
 import ru.radiationx.links.url.LinkUrlBuilder
 
@@ -43,55 +43,55 @@ internal object DevDbLinkTransformer {
     private val forbiddenBrandId = setOf("all", "select")
     private val sortFields = setOf("year", "rating", "title")
 
-    fun build(builder: LinkUrlBuilder, link: Links.DevDb): LinkUrl {
+    fun build(builder: LinkUrlBuilder, link: Link.DevDb): LinkUrl {
         with(builder) {
             segment("devdb")
             when (link) {
-                is Links.DevDb.Brands -> {
+                is Link.DevDb.Brands -> {
                     segment(link.categoryId.id)
                     if (link.letter != null) {
                         fragment("letter-${link.letter}")
                     }
                 }
 
-                is Links.DevDb.Brand -> {
+                is Link.DevDb.Devices -> {
                     segment(link.brandId.categoryId.id)
-                    segment(link.brandId.brandId)
+                    segment(link.brandId.brand)
                     if (link.sort != null) {
                         query("sort", link.sort.field)
                         if (link.sort.order != null) {
                             val order = when (link.sort.order) {
-                                Links.DevDb.Brand.Sort.Order.Asc -> "asc"
-                                Links.DevDb.Brand.Sort.Order.Desc -> "desc"
+                                Link.DevDb.Devices.Sort.Order.Asc -> "asc"
+                                Link.DevDb.Devices.Sort.Order.Desc -> "desc"
                             }
                             query("sort-${link.sort.field}", order)
                         }
                     }
                 }
 
-                is Links.DevDb.Device -> {
+                is Link.DevDb.Device -> {
                     segment(link.deviceId.id)
                     if (link.tab != null) {
                         fragment(link.tab)
                     }
                 }
 
-                is Links.DevDb.Search -> {
+                is Link.DevDb.Search -> {
                     segment("search")
                     query("s", link.text)
                 }
 
-                Links.DevDb.Categories -> Unit
+                Link.DevDb.Categories -> Unit
             }
         }
         return builder.build()
     }
 
-    fun parse(url: LinkUrl): Links.DevDb? {
+    fun parse(url: LinkUrl): Link.DevDb? {
         if (url.segment(0) != "devdb") {
             return null
         }
-        val segment1 = url.segment(1) ?: return Links.DevDb.Categories
+        val segment1 = url.segment(1) ?: return Link.DevDb.Categories
 
         val withCategory = parseWithCategory(url, segment1)
         if (withCategory != null) {
@@ -106,46 +106,46 @@ internal object DevDbLinkTransformer {
         return parseDevice(url, segment1)
     }
 
-    private fun parseWithCategory(url: LinkUrl, segment1: String): Links.DevDb? {
+    private fun parseWithCategory(url: LinkUrl, segment1: String): Link.DevDb? {
         if (segment1 !in categoryIds) return null
         val categoryId = DevDbCategoryId(segment1)
-        val brand = parseBrand(url, categoryId)
+        val brand = parseDevices(url, categoryId)
         if (brand != null) {
             return brand
         }
         return parseBrands(url, categoryId)
     }
 
-    private fun parseBrands(url: LinkUrl, categoryId: DevDbCategoryId): Links.DevDb.Brands {
+    private fun parseBrands(url: LinkUrl, categoryId: DevDbCategoryId): Link.DevDb.Brands {
         val letter = url.fragment?.let {
             letterRegex.find(it)?.groupValues[1]
         }
-        return Links.DevDb.Brands(categoryId = categoryId, letter)
+        return Link.DevDb.Brands(categoryId = categoryId, letter)
     }
 
-    private fun parseBrand(url: LinkUrl, categoryId: DevDbCategoryId): Links.DevDb.Brand? {
+    private fun parseDevices(url: LinkUrl, categoryId: DevDbCategoryId): Link.DevDb.Devices? {
         val segment2 = url.segment(2) ?: return null
         if (segment2 in forbiddenBrandId) return null
-        val brandId = DevDbBrandId(categoryId = categoryId, brandId = segment2)
+        val brandId = DevDbBrandId(categoryId = categoryId, brand = segment2)
         val querySortField = url.query("sort").takeIf { it in sortFields }
         val sort = querySortField?.let {
             val querySortOrder = url.query("sort-$it")
             val order = when (querySortOrder) {
-                "asc" -> Links.DevDb.Brand.Sort.Order.Asc
-                "desc" -> Links.DevDb.Brand.Sort.Order.Desc
+                "asc" -> Link.DevDb.Devices.Sort.Order.Asc
+                "desc" -> Link.DevDb.Devices.Sort.Order.Desc
                 else -> null
             }
-            Links.DevDb.Brand.Sort(field = it, order = order)
+            Link.DevDb.Devices.Sort(field = it, order = order)
         }
-        return Links.DevDb.Brand(brandId = brandId, sort = sort)
+        return Link.DevDb.Devices(brandId = brandId, sort = sort)
     }
 
-    private fun parseSearch(url: LinkUrl, segment1: String): Links.DevDb.Search? {
+    private fun parseSearch(url: LinkUrl, segment1: String): Link.DevDb.Search? {
         if (segment1 != "search") return null
-        return Links.DevDb.Search(text = url.query("s").orEmpty())
+        return Link.DevDb.Search(text = url.query("s").orEmpty())
     }
 
-    private fun parseDevice(url: LinkUrl, segment1: String): Links.DevDb.Device {
-        return Links.DevDb.Device(deviceId = DevDbDeviceId(id = segment1), tab = url.fragment)
+    private fun parseDevice(url: LinkUrl, segment1: String): Link.DevDb.Device {
+        return Link.DevDb.Device(deviceId = DevDbDeviceId(id = segment1), tab = url.fragment)
     }
 }

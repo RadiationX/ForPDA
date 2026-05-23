@@ -1,6 +1,6 @@
 package ru.radiationx.links.parser.board
 
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.parser.board.parts.AnnounceLinkTransformer
 import ru.radiationx.links.parser.board.parts.AuthLinkTransformer
 import ru.radiationx.links.parser.board.parts.FavoriteLinkTransformer
@@ -20,25 +20,25 @@ import ru.radiationx.links.url.LinkUrlBuilder
 internal object BoardLinkTransformer {
 
 
-    fun build(builder: LinkUrlBuilder, link: Links.Board): LinkUrl {
+    fun build(builder: LinkUrlBuilder, link: Link.Board): LinkUrl {
         builder.segment("forum")
         return when (link) {
-            is Links.Board.Root -> RootLinkTransformer.build(builder, link)
-            is Links.Board.Announce -> AnnounceLinkTransformer.build(builder, link)
-            is Links.Board.Auth -> AuthLinkTransformer.build(builder, link)
-            is Links.Board.Favorite -> FavoriteLinkTransformer.build(builder, link)
-            is Links.Board.Forum -> ForumLinkTransformer.build(builder, link)
-            is Links.Board.Mentions -> MentionsLinkTransformer.build(builder, link)
-            is Links.Board.Profile -> ProfileLinkTransformer.build(builder, link)
-            is Links.Board.Qms -> QmsLinkTransformer.build(builder, link)
-            is Links.Board.Reputation -> ReputationLinkTransformer.build(builder, link)
-            is Links.Board.Rules -> RulesLinkTransformer.build(builder, link)
-            is Links.Board.Topic -> TopicLinkTransformer.build(builder, link)
-            is Links.Board.Search -> SearchLinkTransformer.build(builder, link)
+            is Link.Board.Root -> RootLinkTransformer.build(builder, link)
+            is Link.Board.Announce -> AnnounceLinkTransformer.build(builder, link)
+            is Link.Board.Auth -> AuthLinkTransformer.build(builder, link)
+            is Link.Board.Favorite -> FavoriteLinkTransformer.build(builder, link)
+            is Link.Board.Forum -> ForumLinkTransformer.build(builder, link)
+            is Link.Board.Mentions -> MentionsLinkTransformer.build(builder, link)
+            is Link.Board.Profile -> ProfileLinkTransformer.build(builder, link)
+            is Link.Board.Qms -> QmsLinkTransformer.build(builder, link)
+            is Link.Board.Reputation -> ReputationLinkTransformer.build(builder, link)
+            is Link.Board.Rules -> RulesLinkTransformer.build(builder, link)
+            is Link.Board.Topic -> TopicLinkTransformer.build(builder, link)
+            is Link.Board.Search -> SearchLinkTransformer.build(builder, link)
         }
     }
 
-    fun parse(url: LinkUrl): Links.Board? {
+    fun parse(url: LinkUrl): Link.Board? {
         if (url.segment(0) != "forum") return null
         AnnounceLinkTransformer.parse(url)?.also { return it }
         AuthLinkTransformer.parse(url)?.also { return it }

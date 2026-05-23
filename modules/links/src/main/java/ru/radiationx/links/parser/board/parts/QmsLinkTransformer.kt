@@ -2,7 +2,7 @@ package ru.radiationx.links.parser.board.parts
 
 import ru.radiationx.coretypes.QmsChatId
 import ru.radiationx.coretypes.QmsThreadId
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.parser.helpers.UserIdCase
 import ru.radiationx.links.parser.helpers.parseUserId
 import ru.radiationx.links.parser.helpers.query
@@ -20,27 +20,27 @@ import ru.radiationx.links.url.query
 //https://4pda.to/forum/index.php?act=qms&search=неофициальный
 internal object QmsLinkTransformer {
 
-    fun build(builder: LinkUrlBuilder, link: Links.Board.Qms): LinkUrl {
+    fun build(builder: LinkUrlBuilder, link: Link.Board.Qms): LinkUrl {
         with(builder) {
             query("act", "qms")
             when (link) {
-                Links.Board.Qms.Contacts -> Unit
-                is Links.Board.Qms.Threads -> {
+                Link.Board.Qms.Contacts -> Unit
+                is Link.Board.Qms.Threads -> {
                     query(link.userId, UserIdCase.Qms)
                 }
 
-                is Links.Board.Qms.Chat -> {
+                is Link.Board.Qms.Chat -> {
                     query(link.chatId)
                 }
 
-                is Links.Board.Qms.CreateThread -> {
+                is Link.Board.Qms.CreateThread -> {
                     query("action", "create-thread")
                     link.userId?.also {
                         query(it, UserIdCase.Qms)
                     }
                 }
 
-                Links.Board.Qms.BlackList -> {
+                Link.Board.Qms.BlackList -> {
                     query("settings", "blacklist")
                 }
             }
@@ -48,29 +48,29 @@ internal object QmsLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrl): Links.Board.Qms? {
+    fun parse(url: LinkUrl): Link.Board.Qms? {
         if (url.query("act") != "qms") return null
 
         if (url.query("settings") == "blacklist") {
-            return Links.Board.Qms.BlackList
+            return Link.Board.Qms.BlackList
         }
 
         val userId = url.parseUserId(UserIdCase.Qms)
         if (url.query("action") == "create-thread") {
-            return Links.Board.Qms.CreateThread(userId = userId)
+            return Link.Board.Qms.CreateThread(userId = userId)
         }
 
         val threadId = url.parseQmsThreadId()
 
         if (userId != null && threadId != null) {
-            return Links.Board.Qms.Chat(chatId = QmsChatId(userId, threadId))
+            return Link.Board.Qms.Chat(chatId = QmsChatId(userId, threadId))
         }
 
         if (userId != null) {
-            return Links.Board.Qms.Threads(userId = userId)
+            return Link.Board.Qms.Threads(userId = userId)
         }
 
-        return Links.Board.Qms.Contacts
+        return Link.Board.Qms.Contacts
     }
 
 

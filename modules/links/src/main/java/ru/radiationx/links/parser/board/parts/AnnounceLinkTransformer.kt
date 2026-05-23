@@ -1,7 +1,7 @@
 package ru.radiationx.links.parser.board.parts
 
 import ru.radiationx.coretypes.AnnounceId
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.parser.helpers.ForumIdCase
 import ru.radiationx.links.parser.helpers.parseForumId
 import ru.radiationx.links.parser.helpers.query
@@ -12,7 +12,7 @@ import ru.radiationx.links.url.query
 //https://4pda.to/forum/index.php?act=announce&f=283&st=239
 internal object AnnounceLinkTransformer {
 
-    fun build(builder: LinkUrlBuilder, link: Links.Board.Announce): LinkUrl {
+    fun build(builder: LinkUrlBuilder, link: Link.Board.Announce): LinkUrl {
         with(builder) {
             query("act", "announce")
             query(link.announceId)
@@ -20,10 +20,10 @@ internal object AnnounceLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrl): Links.Board.Announce? {
+    fun parse(url: LinkUrl): Link.Board.Announce? {
         if (url.query("act") != "announce") return null
         val announceId = url.parseAnnounceId() ?: return null
-        return Links.Board.Announce(announceId = announceId)
+        return Link.Board.Announce(announceId = announceId)
     }
 
 

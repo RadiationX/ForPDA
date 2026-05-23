@@ -1,7 +1,7 @@
 package ru.radiationx.links.parser.board.parts
 
 import ru.radiationx.coretypes.PostId
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.parser.helpers.TopicIdCase
 import ru.radiationx.links.parser.helpers.parsePageOffset
 import ru.radiationx.links.parser.helpers.parseTopicId
@@ -29,20 +29,20 @@ internal object TopicLinkTransformer {
 
     private val nodeRegex = Regex("(\\w+)-(\\d+)-(\\d+)")
 
-    fun build(builder: LinkUrlBuilder, link: Links.Board.Topic): LinkUrl {
+    fun build(builder: LinkUrlBuilder, link: Link.Board.Topic): LinkUrl {
         with(builder) {
             when (link) {
-                is Links.Board.Topic.FindPost -> {
+                is Link.Board.Topic.FindPost -> {
                     query("act", "findpost")
                     query(link.postId, PostIdCase.FindPost)
                     query(link.anchor)
                 }
 
-                is Links.Board.Topic.ShowTopic -> {
+                is Link.Board.Topic.ShowTopic -> {
                     query(link.topicId, TopicIdCase.ShowTopic)
 
                     when (link) {
-                        is Links.Board.Topic.ShowTopic.Page -> {
+                        is Link.Board.Topic.ShowTopic.Page -> {
                             query(link.offset)
                             if (link.showPollResults) {
                                 query("mode", "show")
@@ -50,17 +50,17 @@ internal object TopicLinkTransformer {
                             fragment(link.anchor)
                         }
 
-                        is Links.Board.Topic.ShowTopic.FindPost -> {
+                        is Link.Board.Topic.ShowTopic.FindPost -> {
                             query("view", "findpost")
                             query(link.postId, PostIdCase.FindPostInTopic)
                             query(link.anchor)
                         }
 
-                        is Links.Board.Topic.ShowTopic.GetLastPost -> {
+                        is Link.Board.Topic.ShowTopic.GetLastPost -> {
                             query("view", "getlastpost")
                         }
 
-                        is Links.Board.Topic.ShowTopic.GetNewPost -> {
+                        is Link.Board.Topic.ShowTopic.GetNewPost -> {
                             query("view", "getnewpost")
                         }
                     }
@@ -70,27 +70,27 @@ internal object TopicLinkTransformer {
         return builder.build()
     }
 
-    private fun LinkUrlBuilder.query(anchor: Links.Board.Topic.Anchor?) {
+    private fun LinkUrlBuilder.query(anchor: Link.Board.Topic.Anchor?) {
         if (anchor == null) return
         query("anchor", anchor.value)
     }
 
-    private fun LinkUrlBuilder.fragment(anchor: Links.Board.Topic.Anchor?) {
+    private fun LinkUrlBuilder.fragment(anchor: Link.Board.Topic.Anchor?) {
         if (anchor == null) return
         fragment(anchor.value)
     }
 
-    fun parse(url: LinkUrl): Links.Board.Topic? {
+    fun parse(url: LinkUrl): Link.Board.Topic? {
         if (url.query("act") == "findpost") {
             val postId = url.parsePostId(PostIdCase.FindPost) ?: return null
             val anchor = url.parseAnchor()
-            return Links.Board.Topic.FindPost(postId = postId, anchor = anchor)
+            return Link.Board.Topic.FindPost(postId = postId, anchor = anchor)
         }
         return parseView(url)
     }
 
 
-    private fun parseView(url: LinkUrl): Links.Board.Topic.ShowTopic? {
+    private fun parseView(url: LinkUrl): Link.Board.Topic.ShowTopic? {
         val topicId = url.parseTopicId(TopicIdCase.ShowTopic) ?: return null
         val showPollResults = url.query("mode") == "show"
         val queryView = url.query("view")
@@ -99,20 +99,20 @@ internal object TopicLinkTransformer {
 
         val topicByView = when (queryView) {
             "getnewpost" -> {
-                Links.Board.Topic.ShowTopic.GetNewPost(
+                Link.Board.Topic.ShowTopic.GetNewPost(
                     topicId = topicId,
                 )
             }
 
             "getlastpost" -> {
-                Links.Board.Topic.ShowTopic.GetLastPost(
+                Link.Board.Topic.ShowTopic.GetLastPost(
                     topicId = topicId,
                 )
             }
 
             "findpost" -> {
                 url.parsePostId(PostIdCase.FindPostInTopic)?.let { postId ->
-                    Links.Board.Topic.ShowTopic.FindPost(
+                    Link.Board.Topic.ShowTopic.FindPost(
                         topicId = topicId,
                         postId = postId,
                         anchor = anchor
@@ -127,7 +127,7 @@ internal object TopicLinkTransformer {
         if (topicByView != null) {
             return topicByView
         }
-        return Links.Board.Topic.ShowTopic.Page(
+        return Link.Board.Topic.ShowTopic.Page(
             topicId = topicId,
             showPollResults = showPollResults,
             offset = offset,
@@ -135,22 +135,22 @@ internal object TopicLinkTransformer {
         )
     }
 
-    private fun LinkUrl.parseAnchor(): Links.Board.Topic.Anchor? {
+    private fun LinkUrl.parseAnchor(): Link.Board.Topic.Anchor? {
         val fragmentAnchor = fragment?.parseAnchor()
         if (fragmentAnchor != null) return fragmentAnchor
         return query("anchor")?.parseAnchor()
     }
 
-    private fun String.parseAnchor(): Links.Board.Topic.Anchor? {
+    private fun String.parseAnchor(): Link.Board.Topic.Anchor? {
         entryRegex.find(this)?.also {
             val postId = it.groupValues[1].parsePostId() ?: return@also
-            return Links.Board.Topic.Anchor.Post(postId = postId, value = this)
+            return Link.Board.Topic.Anchor.Post(postId = postId, value = this)
         }
         nodeRegex.find(this)?.also {
             val name = it.groupValues[1]
             val postId = it.groupValues[2].parsePostId() ?: return@also
             val number = it.groupValues[3].toIntOrNull() ?: return@also
-            return Links.Board.Topic.Anchor.Node(name = name, postId = postId, number = number, value = this)
+            return Link.Board.Topic.Anchor.Node(name = name, postId = postId, number = number, value = this)
         }
         return null
     }

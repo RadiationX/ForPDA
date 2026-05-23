@@ -29,7 +29,7 @@ data class CommentId(val id: Int) : CoreType
 data class DevDbCategoryId(val id: String) : CoreType
 
 @Parcelize
-data class DevDbBrandId(val categoryId: DevDbCategoryId, val brandId: String) : CoreType
+data class DevDbBrandId(val categoryId: DevDbCategoryId, val brand: String) : CoreType
 
 @Parcelize
 data class DevDbDeviceId(val id: String) : CoreType

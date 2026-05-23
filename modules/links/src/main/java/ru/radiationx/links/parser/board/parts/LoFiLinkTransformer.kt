@@ -1,6 +1,6 @@
 package ru.radiationx.links.parser.board.parts
 
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.parser.helpers.parseForumId
 import ru.radiationx.links.parser.helpers.parsePageOffset
 import ru.radiationx.links.parser.helpers.parseTopicId
@@ -16,7 +16,7 @@ internal object LoFiLinkTransformer {
 
     private val queryRegex = Regex("([tf])(\\d+)(?:-(\\d+))?")
 
-    fun parse(url: LinkUrl): Links.Board? {
+    fun parse(url: LinkUrl): Link.Board? {
         if (url.segment(1) != "lofiversion") return null
         val match = queryRegex.find(url.fullQuery().orEmpty()) ?: return null
         val type = match.groupValues[1]
@@ -24,14 +24,14 @@ internal object LoFiLinkTransformer {
         val offset = match.groupValues.getOrNull(3).parsePageOffset()
 
         return when (type) {
-            "t" -> Links.Board.Topic.ShowTopic.Page(
+            "t" -> Link.Board.Topic.ShowTopic.Page(
                 topicId = idStr.parseTopicId() ?: return null,
                 showPollResults = false,
                 offset = offset,
                 anchor = null
             )
 
-            "f" -> Links.Board.Forum(
+            "f" -> Link.Board.Forum(
                 forumId = idStr.parseForumId() ?: return null,
                 offset = offset
             )

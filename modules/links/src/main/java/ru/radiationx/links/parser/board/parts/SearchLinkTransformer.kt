@@ -1,6 +1,6 @@
 package ru.radiationx.links.parser.board.parts
 
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.parser.helpers.ForumIdCase
 import ru.radiationx.links.parser.helpers.TopicIdCase
 import ru.radiationx.links.parser.helpers.parseForumId
@@ -15,15 +15,15 @@ import ru.radiationx.links.url.query
 //https://4pda.to/forum/index.php?act=search&query=kino&username=&forums%5B%5D=285&topics=1026049&source=pst&sort=rel&result=posts
 internal object SearchLinkTransformer {
 
-    fun build(builder: LinkUrlBuilder, link: Links.Board.Search): LinkUrl {
+    fun build(builder: LinkUrlBuilder, link: Link.Board.Search): LinkUrl {
         with(builder) {
             query("act", "search")
             query("query", link.query)
             query("username", link.nick)
             link.forums.forEach {
                 when (it) {
-                    Links.Board.Search.Forum.All -> query(ForumIdCase.SearchArray.value, "all")
-                    is Links.Board.Search.Forum.Id -> query(it.forumId, ForumIdCase.SearchArray)
+                    Link.Board.Search.Forum.All -> query(ForumIdCase.SearchArray.value, "all")
+                    is Link.Board.Search.Forum.Id -> query(it.forumId, ForumIdCase.SearchArray)
                 }
             }
             query("subforums", link.subforums)
@@ -31,22 +31,22 @@ internal object SearchLinkTransformer {
                 query(it, TopicIdCase.SearchArray)
             }
             val source = when (link.source) {
-                Links.Board.Search.Source.All -> "all"
-                Links.Board.Search.Source.Title -> "top"
-                Links.Board.Search.Source.Post -> "pst"
+                Link.Board.Search.Source.All -> "all"
+                Link.Board.Search.Source.Title -> "top"
+                Link.Board.Search.Source.Post -> "pst"
             }
             query("source", source)
 
             val sort = when (link.sort) {
-                Links.Board.Search.Sort.Relevancy -> "rel"
-                Links.Board.Search.Sort.DateAsc -> "da"
-                Links.Board.Search.Sort.DateDesc -> "dd"
+                Link.Board.Search.Sort.Relevancy -> "rel"
+                Link.Board.Search.Sort.DateAsc -> "da"
+                Link.Board.Search.Sort.DateDesc -> "dd"
             }
             query("sort", sort)
 
             val result = when (link.result) {
-                Links.Board.Search.Result.Topics -> "topics"
-                Links.Board.Search.Result.Posts -> "posts"
+                Link.Board.Search.Result.Topics -> "topics"
+                Link.Board.Search.Result.Posts -> "posts"
             }
             query("result", result)
 
@@ -55,17 +55,17 @@ internal object SearchLinkTransformer {
         return builder.build()
     }
 
-    fun parse(url: LinkUrl): Links.Board.Search? {
+    fun parse(url: LinkUrl): Link.Board.Search? {
         if (url.query("act") != "search") return null
 
         val query = url.query("query").orEmpty()
         val nick = url.query("username").orEmpty()
         val forums = parseMultipleQuery(url, ForumIdCase.Search.value, ForumIdCase.SearchArray.value).mapNotNull { value ->
             if (value == "all") {
-                Links.Board.Search.Forum.All
+                Link.Board.Search.Forum.All
             } else {
                 val forumId = value.parseForumId() ?: return@mapNotNull null
-                Links.Board.Search.Forum.Id(forumId = forumId)
+                Link.Board.Search.Forum.Id(forumId = forumId)
             }
         }.toSet()
         val subforums = url.query("subforums") == "1"
@@ -73,24 +73,24 @@ internal object SearchLinkTransformer {
             value.parseTopicId()
         }.toSet()
         val source = when (url.query("source")) {
-            "pst" -> Links.Board.Search.Source.Post
-            "top" -> Links.Board.Search.Source.Title
-            "all" -> Links.Board.Search.Source.All
-            else -> Links.Board.Search.Source.All
+            "pst" -> Link.Board.Search.Source.Post
+            "top" -> Link.Board.Search.Source.Title
+            "all" -> Link.Board.Search.Source.All
+            else -> Link.Board.Search.Source.All
         }
         val sort = when (url.query("sort")) {
-            "rel" -> Links.Board.Search.Sort.Relevancy
-            "da" -> Links.Board.Search.Sort.DateAsc
-            "dd" -> Links.Board.Search.Sort.DateDesc
-            else -> Links.Board.Search.Sort.Relevancy
+            "rel" -> Link.Board.Search.Sort.Relevancy
+            "da" -> Link.Board.Search.Sort.DateAsc
+            "dd" -> Link.Board.Search.Sort.DateDesc
+            else -> Link.Board.Search.Sort.Relevancy
         }
         val result = when (url.query("result")) {
-            "posts" -> Links.Board.Search.Result.Posts
-            "topics" -> Links.Board.Search.Result.Topics
-            else -> Links.Board.Search.Result.Posts
+            "posts" -> Link.Board.Search.Result.Posts
+            "topics" -> Link.Board.Search.Result.Topics
+            else -> Link.Board.Search.Result.Posts
         }
         val offset = url.parsePageOffset()
-        return Links.Board.Search(
+        return Link.Board.Search(
             query = query,
             nick = nick,
             forums = forums,

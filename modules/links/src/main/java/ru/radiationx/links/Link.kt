@@ -16,7 +16,7 @@ import ru.radiationx.coretypes.QmsChatId
 import ru.radiationx.coretypes.TopicId
 import ru.radiationx.coretypes.UserId
 
-sealed interface Links : Parcelable {
+sealed interface Link : Parcelable {
 
 
     //https://4pda.to/2025/page/13/
@@ -38,7 +38,7 @@ sealed interface Links : Parcelable {
     //https://4pda.to/?s=%FC%E1%FC%E1
     //https://4pda.to/reviews/smartphones/?s=nothing
     //https://4pda.to/reviews/smartphones/index.php?s=nothing
-    sealed interface Site : Links {
+    sealed interface Site : Link {
 
         @Parcelize
         data class Page(val pageNumber: PageNumber, val paths: Paths?) : Site
@@ -101,7 +101,7 @@ sealed interface Links : Parcelable {
     //https://4pda.to/devdb/xiaomi_mi_note_10_lite#firmware
     //https://4pda.to/devdb/xiaomi_mi_note_10_lite#prices
     //https://4pda.to/devdb/search?s=nothing
-    sealed interface DevDb : Links {
+    sealed interface DevDb : Link {
 
         @Parcelize
         data object Categories : DevDb
@@ -110,7 +110,7 @@ sealed interface Links : Parcelable {
         data class Brands(val categoryId: DevDbCategoryId, val letter: String?) : DevDb
 
         @Parcelize
-        data class Brand(val brandId: DevDbBrandId, val sort: Sort?) : DevDb {
+        data class Devices(val brandId: DevDbBrandId, val sort: Sort?) : DevDb {
 
             @Parcelize
             data class Sort(val field: String, val order: Order?) : Parcelable {
@@ -130,7 +130,7 @@ sealed interface Links : Parcelable {
         data class Search(val text: String) : DevDb
     }
 
-    sealed interface Board : Links {
+    sealed interface Board : Link {
 
         //https://4pda.to/forum/index.php?act=auth
         //https://4pda.to/forum/index.php?act=auth#auth

@@ -3,7 +3,7 @@ package ru.radiationx.links.parser.site
 import ru.radiationx.coretypes.ArticleId
 import ru.radiationx.coretypes.CommentId
 import ru.radiationx.coretypes.PageNumber
-import ru.radiationx.links.Links
+import ru.radiationx.links.Link
 import ru.radiationx.links.url.LinkUrl
 import ru.radiationx.links.url.LinkUrlBuilder
 import ru.radiationx.links.url.query
@@ -42,30 +42,30 @@ internal object SiteLinkTransformer {
     private val relativeSegments = setOf("newer", "older")
     private val forbiddenCategories = relativeSegments + setOf("page", "index.php")
 
-    fun build(builder: LinkUrlBuilder, link: Links.Site): LinkUrl {
+    fun build(builder: LinkUrlBuilder, link: Link.Site): LinkUrl {
         with(builder) {
             when (link) {
-                is Links.Site.Page -> {
+                is Link.Site.Page -> {
                     fillPaths(link.paths)
                     fillPageNumber(link.pageNumber)
                 }
 
-                is Links.Site.Details -> {
+                is Link.Site.Details -> {
                     fillPaths(link.paths)
                     query("p", link.articleId.id)
                     link.commentId?.also { fragment("comment${it.id}") }
                 }
 
-                is Links.Site.RelativePage -> {
+                is Link.Site.RelativePage -> {
                     segment("news")
                     when (link.type) {
-                        Links.Site.RelativePage.Type.Newer -> segment("newer")
-                        Links.Site.RelativePage.Type.Older -> segment("older")
+                        Link.Site.RelativePage.Type.Newer -> segment("newer")
+                        Link.Site.RelativePage.Type.Older -> segment("older")
                     }
                     segment(link.timestampSec)
                 }
 
-                is Links.Site.Search -> {
+                is Link.Site.Search -> {
                     fillPageNumber(link.pageNumber)
                     query("s", link.text)
                 }
@@ -74,20 +74,20 @@ internal object SiteLinkTransformer {
         return builder.build()
     }
 
-    private fun LinkUrlBuilder.fillPaths(paths: Links.Site.Paths?) {
+    private fun LinkUrlBuilder.fillPaths(paths: Link.Site.Paths?) {
         when (paths) {
-            is Links.Site.Paths.Date -> {
+            is Link.Site.Paths.Date -> {
                 segment(paths.year)
                 paths.month?.also { segment(it) }
                 paths.day?.also { segment(it) }
             }
 
-            is Links.Site.Paths.Tag -> {
+            is Link.Site.Paths.Tag -> {
                 segment("tag")
                 segment(paths.tag)
             }
 
-            is Links.Site.Paths.Category -> {
+            is Link.Site.Paths.Category -> {
                 segment(paths.category)
                 paths.subCategory?.also { segment(it) }
             }
@@ -102,7 +102,7 @@ internal object SiteLinkTransformer {
         segment(pageNumber.value)
     }
 
-    fun parse(url: LinkUrl): Links.Site? {
+    fun parse(url: LinkUrl): Link.Site? {
         val details = parseDetailsQuery(url)
         if (details != null) return details
 
@@ -124,70 +124,70 @@ internal object SiteLinkTransformer {
         return null
     }
 
-    private fun parseDetailsQuery(url: LinkUrl): Links.Site.Details? {
+    private fun parseDetailsQuery(url: LinkUrl): Link.Site.Details? {
         val articleId = url.query("p")?.toIntOrNull()?.let { ArticleId(id = it) } ?: return null
         val commentId = parseCommentId(url)
-        return Links.Site.Details(articleId = articleId, commentId = commentId, paths = null)
+        return Link.Site.Details(articleId = articleId, commentId = commentId, paths = null)
     }
 
-    private fun parseSearchQuery(url: LinkUrl): Links.Site.Search? {
+    private fun parseSearchQuery(url: LinkUrl): Link.Site.Search? {
         val querySearch = url.query("s") ?: return null
         val paths = parseCategoryPaths(url)
         val pageNumber = parsePageNumberAfter(url, paths)
-        return Links.Site.Search(text = querySearch, pageNumber = pageNumber)
+        return Link.Site.Search(text = querySearch, pageNumber = pageNumber)
     }
 
-    private fun parseRelative(url: LinkUrl): Links.Site.RelativePage? {
+    private fun parseRelative(url: LinkUrl): Link.Site.RelativePage? {
         if (url.segment(0) != "news") return null
         val type = when (url.segment(1)) {
-            "newer" -> Links.Site.RelativePage.Type.Newer
-            "older" -> Links.Site.RelativePage.Type.Older
+            "newer" -> Link.Site.RelativePage.Type.Newer
+            "older" -> Link.Site.RelativePage.Type.Older
             else -> return null
         }
         val timestampSec = tryParseSegmentNumber(url, 2) ?: return null
-        return Links.Site.RelativePage(timestampSec = timestampSec, type = type)
+        return Link.Site.RelativePage(timestampSec = timestampSec, type = type)
     }
 
-    private fun parseWithDate(url: LinkUrl, paths: Links.Site.Paths.Date): Links.Site? {
+    private fun parseWithDate(url: LinkUrl, paths: Link.Site.Paths.Date): Link.Site? {
         if (paths.lastIndex() == 2) {
             val articleId = tryParseSegmentNumber(url, 3)?.toInt()?.let { ArticleId(it) }
             if (articleId != null) {
                 val commentId = parseCommentId(url)
-                return Links.Site.Details(articleId = articleId, commentId = commentId, paths = paths)
+                return Link.Site.Details(articleId = articleId, commentId = commentId, paths = paths)
             }
         }
 
         val pageNumber = parsePageNumberAfter(url, paths)
-        return Links.Site.Page(pageNumber, paths)
+        return Link.Site.Page(pageNumber, paths)
     }
 
-    private fun parseWithTag(url: LinkUrl, paths: Links.Site.Paths.Tag): Links.Site.Page {
+    private fun parseWithTag(url: LinkUrl, paths: Link.Site.Paths.Tag): Link.Site.Page {
         val pageNumber = parsePageNumberAfter(url, paths)
-        return Links.Site.Page(pageNumber, paths)
+        return Link.Site.Page(pageNumber, paths)
     }
 
-    private fun parseWithCategory(url: LinkUrl, paths: Links.Site.Paths.Category): Links.Site.Page {
+    private fun parseWithCategory(url: LinkUrl, paths: Link.Site.Paths.Category): Link.Site.Page {
         val pageNumber = parsePageNumberAfter(url, paths)
-        return Links.Site.Page(pageNumber, paths)
+        return Link.Site.Page(pageNumber, paths)
     }
 
-    private fun parseDatePaths(url: LinkUrl): Links.Site.Paths.Date? {
+    private fun parseDatePaths(url: LinkUrl): Link.Site.Paths.Date? {
         val year = tryParseSegmentNumber(url, 0)?.toInt() ?: return null
         val month = tryParseSegmentNumber(url, 1)?.toInt()
         val day = tryParseSegmentNumber(url, 2)?.toInt()
-        return Links.Site.Paths.Date(year = year, month = month, day = day)
+        return Link.Site.Paths.Date(year = year, month = month, day = day)
     }
 
-    private fun parseTagPaths(url: LinkUrl): Links.Site.Paths.Tag? {
+    private fun parseTagPaths(url: LinkUrl): Link.Site.Paths.Tag? {
         if (url.segment(0) != "tag") return null
         val tag = url.segment(1) ?: return null
-        return Links.Site.Paths.Tag(tag = tag)
+        return Link.Site.Paths.Tag(tag = tag)
     }
 
-    private fun parseCategoryPaths(url: LinkUrl): Links.Site.Paths.Category? {
+    private fun parseCategoryPaths(url: LinkUrl): Link.Site.Paths.Category? {
         val category = url.segment(0)?.takeIf { it !in forbiddenCategories } ?: return null
         val subCategory = url.segment(1)?.takeIf { it !in forbiddenCategories }
-        return Links.Site.Paths.Category(category, subCategory)
+        return Link.Site.Paths.Category(category, subCategory)
     }
 
     private fun tryParseSegmentNumber(url: LinkUrl, index: Int): Long? {
@@ -196,7 +196,7 @@ internal object SiteLinkTransformer {
         return segment1.toLongOrNull()
     }
 
-    private fun parsePageNumberAfter(url: LinkUrl, paths: Links.Site.Paths?): PageNumber {
+    private fun parsePageNumberAfter(url: LinkUrl, paths: Link.Site.Paths?): PageNumber {
         val pageSegmentIndex = (paths?.lastIndex() ?: -1) + 1
         if (url.segment(pageSegmentIndex) != "page") return PageNumber.default
         val pageNumberIndex = pageSegmentIndex + 1
@@ -210,16 +210,16 @@ internal object SiteLinkTransformer {
         return CommentId(id = id)
     }
 
-    private fun Links.Site.Paths.lastIndex(): Int {
+    private fun Link.Site.Paths.lastIndex(): Int {
         return when (this) {
-            is Links.Site.Paths.Date -> when {
+            is Link.Site.Paths.Date -> when {
                 day != null -> 2
                 month != null -> 1
                 else -> 0
             }
 
-            is Links.Site.Paths.Tag -> 1
-            is Links.Site.Paths.Category -> when {
+            is Link.Site.Paths.Tag -> 1
+            is Link.Site.Paths.Category -> when {
                 subCategory != null -> 1
                 else -> 0
             }
