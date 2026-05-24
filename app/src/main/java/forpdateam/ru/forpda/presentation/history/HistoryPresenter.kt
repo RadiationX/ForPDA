@@ -69,7 +69,7 @@ class HistoryPresenter(
 
     fun onItemClick(item: HistoryItem) {
         linkHandler.handle(
-            item.url, router, mapOf(
+            item.url, mapOf(
                 Screen.ARG_TITLE to item.title
             )
         )

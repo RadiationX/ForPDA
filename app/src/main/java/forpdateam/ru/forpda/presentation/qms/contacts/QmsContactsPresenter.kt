@@ -122,7 +122,7 @@ class QmsContactsPresenter(
     }
 
     fun openProfile(item: QmsContact) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}")
     }
 
     fun openBlackList() {
@@ -130,6 +130,6 @@ class QmsContactsPresenter(
     }
 
     fun openChatCreator() {
-        router.navigateTo(Screen.QmsChat.Create())
+        router.navigateTo(Screen.QmsChat.Create(link))
     }
 }

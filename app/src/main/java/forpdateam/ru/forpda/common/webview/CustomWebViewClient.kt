@@ -109,7 +109,7 @@ open class CustomWebViewClient @Inject constructor(
     }
 
     open fun handleUri(uri: Uri): Boolean {
-        linkHandler.handle(uri.toString(), null)
+        linkHandler.handle(uri.toString())
         return true
     }
 

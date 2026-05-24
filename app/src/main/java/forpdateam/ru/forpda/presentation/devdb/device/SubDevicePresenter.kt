@@ -18,7 +18,7 @@ class SubDevicePresenter(
 ) : BasePresenter<SubDeviceView>() {
 
     fun onCommentClick(item: Device.Comment) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}")
     }
 
     fun onPostClick(item: Device.PostItem, source: Int) {
@@ -27,7 +27,7 @@ class SubDevicePresenter(
         } else {
             "https://4pda.to/forum/index.php?showtopic=${item.id}"
         }
-        linkHandler.handle(url, router)
+        linkHandler.handle(url)
     }
 
 }

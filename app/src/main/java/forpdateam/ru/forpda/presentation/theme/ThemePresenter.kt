@@ -405,8 +405,7 @@ class ThemePresenter(
     fun openSearch() {
         currentPage?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts",
-                router
+                "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts"
             )
         }
     }
@@ -423,14 +422,14 @@ class ThemePresenter(
                     e.printStackTrace()
                 }
 
-                linkHandler.handle(url, router)
+                linkHandler.handle(url)
             }
         }
     }
 
     fun openForum() {
         currentPage?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.forumId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.forumId}")
         }
     }
 
@@ -537,7 +536,7 @@ class ThemePresenter(
         val oldUrl = currentPageUrl ?: return
         val newUrl = TopicUrl.fromUrl(url)
         if (newUrl == null) {
-            linkHandler.handle(url, router)
+            linkHandler.handle(url)
             return
         }
         if (newUrl is TopicUrl.ShowTopic) {
@@ -619,15 +618,14 @@ class ThemePresenter(
 
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id}")
         }
     }
 
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.user.id}",
-                router
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.user.id}"
             )
         }
     }
@@ -639,8 +637,7 @@ class ThemePresenter(
                     source = SearchSettings.SOURCE_ALL.first,
                     nick = it.user.nick,
                     result = SearchSettings.RESULT_TOPICS.first
-                ).toUrl(),
-                router
+                ).toUrl()
             )
         }
     }
@@ -656,8 +653,7 @@ class ThemePresenter(
                     nick = post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
-                ).toUrl(),
-                router
+                ).toUrl()
             )
         }
     }
@@ -670,8 +666,7 @@ class ThemePresenter(
                     nick = it.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
-                ).toUrl(),
-                router
+                ).toUrl()
             )
         }
     }
@@ -711,8 +706,7 @@ class ThemePresenter(
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.user.id}",
-                router
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.user.id}"
             )
         }
     }

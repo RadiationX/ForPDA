@@ -64,7 +64,7 @@ class MentionsPresenter(
 
     fun onItemClick(item: MentionItem) {
         linkHandler.handle(
-            item.link, router, mapOf(
+            item.link, mapOf(
                 Screen.ARG_TITLE to item.title.orEmpty()
             )
         )

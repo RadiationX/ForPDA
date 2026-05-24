@@ -54,7 +54,7 @@ class DevicesPresenter(
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.DevDbSearch())
+        router.navigateTo(Screen.DevDbSearch(link))
     }
 
     fun copyLink(item: Brand.DeviceItem) {

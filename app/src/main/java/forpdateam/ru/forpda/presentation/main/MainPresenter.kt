@@ -37,7 +37,7 @@ class MainPresenter(
             otherPreferencesHolder.appFirstStart.set(false)
         }
 
-        val linkHandled = linkHandler.handle(startLink, router)
+        val linkHandled = linkHandler.handle(startLink)
 
         if (!isRestored && !linkHandled) {
             val authState = authHolder.get().state
@@ -46,9 +46,9 @@ class MainPresenter(
             } else {
                 val lastMenuId = menuRepository.getLastOpened()
                 val screen: Screen = if (menuRepository.menuItemContains(lastMenuId)) {
-                    menuRepository.getMenuItem(lastMenuId).screen ?: Screen.ArticleList()
+                    menuRepository.getMenuItem(lastMenuId).screen ?: Screen.ArticleList(link)
                 } else {
-                    Screen.ArticleList()
+                    Screen.ArticleList(link)
                 }
                 router.navigateTo(screen)
             }
@@ -65,6 +65,6 @@ class MainPresenter(
 
 
     fun openLink(url: String) {
-        linkHandler.handle(url, router)
+        linkHandler.handle(url)
     }
 }

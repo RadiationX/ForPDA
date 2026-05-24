@@ -212,7 +212,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
     }
 
     override fun onLinkClick(url: String?) {
-        linkHandler.handle(url, null)
+        linkHandler.handle(url)
     }
 
     override fun onSaveNote(success: Boolean) {
@@ -235,7 +235,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
         if (data.sign != null) {
             sign.text = data.sign
             sign.visibility = View.VISIBLE
-            sign.movementMethod = LinkMovementMethod { url -> linkHandler.handle(url, null) }
+            sign.movementMethod = LinkMovementMethod { url -> linkHandler.handle(url) }
         }
 
         if (data.contacts.isNotEmpty()) {

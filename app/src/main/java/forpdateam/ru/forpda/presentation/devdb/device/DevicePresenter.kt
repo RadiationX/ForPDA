@@ -49,7 +49,7 @@ class DevicePresenter(
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.DevDbSearch())
+        router.navigateTo(Screen.DevDbSearch(link))
     }
 
     fun copyLink() {
@@ -74,13 +74,13 @@ class DevicePresenter(
 
     fun openDevices() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/devdb/${it.catId}/${it.brandId}", router)
+            linkHandler.handle("https://4pda.to/devdb/${it.catId}/${it.brandId}")
         }
     }
 
     fun openBrands() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/devdb/${it.catId}", router)
+            linkHandler.handle("https://4pda.to/devdb/${it.catId}")
         }
     }
 }

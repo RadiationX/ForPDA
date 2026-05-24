@@ -80,7 +80,7 @@ class BrandsPresenter(
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.DevDbSearch())
+        router.navigateTo(Screen.DevDbSearch(link))
     }
 
 }

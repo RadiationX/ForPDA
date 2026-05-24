@@ -156,7 +156,7 @@ object TabHelper {
                         putString(QmsChatFragment.USER_AVATAR_ARG, screen.avatarUrl)
                     })
 
-                    is Screen.QmsChat.FromLink -> createFragment(QmsChatFragment::class.java, args.apply {
+                    is Screen.QmsChat.Created -> createFragment(QmsChatFragment::class.java, args.apply {
                         putInt(QmsChatFragment.THEME_ID_ARG, screen.themeId)
                         putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
                     })

@@ -65,15 +65,15 @@ class ProfilePresenter(
     }
 
     fun onContactClick(item: ProfileModel.Contact) {
-        linkHandler.handle(item.url, router)
+        linkHandler.handle(item.url)
     }
 
     fun onDeviceClick(item: ProfileModel.Device) {
-        linkHandler.handle(item.url, router)
+        linkHandler.handle(item.url)
     }
 
     fun onStatClick(item: ProfileModel.Stat) {
-        linkHandler.handle(item.url, router)
+        linkHandler.handle(item.url)
     }
 
     fun copyUrl() {
@@ -82,7 +82,7 @@ class ProfilePresenter(
 
     fun navigateToQms() {
         currentData?.let {
-            linkHandler.handle(it.contacts[0].url, router)
+            linkHandler.handle(it.contacts[0].url)
         }
     }
 

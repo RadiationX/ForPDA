@@ -138,7 +138,7 @@ class ArticlesListPresenter(
     }
 
     fun openProfile(item: NewsItem) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.authorId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.authorId}")
     }
 
     fun createNote(item: NewsItem) {

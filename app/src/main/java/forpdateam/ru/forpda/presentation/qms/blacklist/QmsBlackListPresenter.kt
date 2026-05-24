@@ -87,7 +87,7 @@ class QmsBlackListPresenter(
     }
 
     fun openProfile(item: QmsContact) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}")
     }
 
     fun openDialogs(item: QmsContact) {

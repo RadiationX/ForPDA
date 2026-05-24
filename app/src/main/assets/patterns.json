@@ -57,24 +57,12 @@
       "scope": "link_handler",
       "patterns": [
         {
-          "key": "basic",
-          "value": "(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)[\\s\\S]*"
-        },
-        {
           "key": "forum_media",
           "value": "https?:\\/\\/4pda\\.(?:ru|to)\\/forum\\/dl\\/post\\/\\d+\\/([\\s\\S]*\\.([\\s\\S]*))"
         },
         {
           "key": "support_images",
           "value": "\\/\\/.*?(4pda\\.to|4pda\\.(?:ru|to)|ggpht\\.com|googleusercontent\\.com|windowsphone\\.com|mzstatic\\.com|savepic\\.net|savepice\\.ru|savepic\\.ru|.*?\\.ibb\\.com?)\\/[\\s\\S]*?\\.(png|jpg|jpeg|gif)"
-        },
-        {
-          "key": "forum_lofi",
-          "value": "(?:http?s?:)?\\/\\/[\\s\\S]*?4pda\\.(?:ru|to)\\/forum\\/lofiversion\\/[^\\?]*?\\?(t|f)(\\d+)(?:-(\\d+))?"
-        },
-        {
-          "key": "site",
-          "value": "https?:\\/\\/4pda\\.(?:ru|to)\\/(?:.+?p=|\\d+\\/\\d+\\/\\d+\\/|[\\w\\/]*?\\/?(newer|older)\\/)(\\d+)(?:\\/#comment(\\d+))?"
         }
       ]
     },

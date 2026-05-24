@@ -28,11 +28,8 @@ object ParserPatterns {
 
     object LinkHandler {
         const val scope = "link_handler"
-        const val basic = "basic"
         const val forum_media = "forum_media"
         const val support_images = "support_images"
-        const val forum_lofi = "forum_lofi"
-        const val site = "site"
     }
 
     object Captcha {

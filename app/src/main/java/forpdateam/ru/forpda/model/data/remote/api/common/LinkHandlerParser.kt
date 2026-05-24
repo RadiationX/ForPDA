@@ -12,13 +12,6 @@ class LinkHandlerParser @Inject constructor(
 
     private val scope = ParserPatterns.LinkHandler
 
-    fun basicMatches(url: String): Boolean {
-        return patternProvider
-            .getPattern(scope.scope, scope.basic)
-            .matcher(url)
-            .matches()
-    }
-
     fun forumMedia(url: String): ForumMedia? {
         return patternProvider
             .getRegexParser(scope.scope, scope.forum_media)
@@ -44,43 +37,9 @@ class LinkHandlerParser @Inject constructor(
             ?: false
     }
 
-    fun forumLoFi(url: String): ForumLoFi? {
-        return patternProvider
-            .getRegexParser(scope.scope, scope.forum_lofi)
-            .mapOnce(url) {
-                ForumLoFi(
-                    type = it.require(1),
-                    id = it.require(2),
-                    st = it.get(3)
-                )
-            }
-    }
-
-    fun site(url: String): Site? {
-        return patternProvider
-            .getRegexParser(scope.scope, scope.site)
-            .mapOnce(url) {
-                Site(
-                    articleId = it.require(2).toInt(),
-                    commentId = it.get(3)?.toInt()
-                )
-            }
-
-    }
 
     data class ForumMedia(
         val fileName: String,
         val extension: String
-    )
-
-    data class ForumLoFi(
-        val type: String,
-        val id: String,
-        val st: String?
-    )
-
-    data class Site(
-        val articleId: Int,
-        val commentId: Int?
     )
 }

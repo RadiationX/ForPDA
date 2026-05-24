@@ -36,8 +36,7 @@ class DialogsHelper(
             openNewTab
         ) { context1: Context?, data: Pair<String, String> ->
             linkHandler.handle(
-                data.second,
-                router
+                data.second
             )
         }
         dynamicDialogMenu.addItem(
@@ -65,8 +64,7 @@ class DialogsHelper(
             saveImage
         ) { context1: Context?, data: Pair<String, String> ->
             systemLinkHandler.handleDownload(
-                data.second,
-                null
+                data.second
             )
         }
         dynamicDialogMenu.addItem(

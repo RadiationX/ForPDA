@@ -126,7 +126,7 @@ class FavoritesPresenter(
             is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId + "&view=getnewpost"
             is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId
         }
-        linkHandler.handle(url, router, args)
+        linkHandler.handle(url, args)
     }
 
     fun onItemLongClick(item: Favorite) {
@@ -146,8 +146,7 @@ class FavoritesPresenter(
             return
         }
         linkHandler.handle(
-            "https://4pda.to/forum/index.php?act=attach&code=showtopic&tid=" + item.topicId,
-            router
+            "https://4pda.to/forum/index.php?act=attach&code=showtopic&tid=" + item.topicId
         )
     }
 
@@ -155,7 +154,7 @@ class FavoritesPresenter(
         if (item !is Favorite.Topic) {
             return
         }
-        linkHandler.handle("https://4pda.to/forum/index.php?showforum=" + item.forumId, router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showforum=" + item.forumId)
     }
 
     fun changeFav(action: Int, type: String?, favId: Int) {

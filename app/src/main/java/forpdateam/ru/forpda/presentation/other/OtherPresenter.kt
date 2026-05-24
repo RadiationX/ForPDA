@@ -123,17 +123,16 @@ class OtherPresenter(
         } else {
             when (item.id) {
                 MenuRepository.item_link_forum_author -> {
-                    linkHandler.handle("https://4pda.to/forum/index.php?showuser=2556269", router)
+                    linkHandler.handle("https://4pda.to/forum/index.php?showuser=2556269")
                 }
 
                 MenuRepository.item_link_forum_topic -> {
-                    linkHandler.handle("https://4pda.to/forum/index.php?showtopic=820313", router)
+                    linkHandler.handle("https://4pda.to/forum/index.php?showtopic=820313")
                 }
 
                 MenuRepository.item_link_forum_faq -> {
                     linkHandler.handle(
-                        "http://4pda.to/forum/index.php?s=&showtopic=820313&view=findpost&p=64077514",
-                        router
+                        "http://4pda.to/forum/index.php?s=&showtopic=820313&view=findpost&p=64077514"
                     )
                 }
 

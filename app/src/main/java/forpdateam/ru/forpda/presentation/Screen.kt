@@ -1,9 +1,7 @@
 package forpdateam.ru.forpda.presentation
 
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
-import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
-import forpdateam.ru.forpda.entity.remote.search.SearchSettings
-import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
+import ru.radiationx.links.Link
 
 sealed class Screen : com.github.terrakok.cicerone.Screen {
     companion object {
@@ -37,22 +35,15 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         override var isAlone: Boolean = true
     }
 
-    class DevDbDevices(
-        val categoryId: String,
-        val brandId: String,
-    ) : Screen()
+    class DevDbDevices(val link: Link.DevDb.Devices) : Screen()
 
-    class DevDbBrands(
-        val categoryId: String? = null
-    ) : Screen() {
+    class DevDbBrands(val link: Link.DevDb.Brands?) : Screen() {
         override var isAlone: Boolean = true
     }
 
-    class DevDbDevice(
-        val deviceId: String
-    ) : Screen()
+    class DevDbDevice(val link: Link.DevDb.Device) : Screen()
 
-    class DevDbSearch : Screen()
+    class DevDbSearch(val link: Link.DevDb.Search) : Screen()
 
     sealed class EditPost : Screen() {
         class New(
@@ -69,7 +60,7 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         ) : EditPost()
     }
 
-    class Favorites : Screen() {
+    class Favorites(val link: Link.Board.Favorite) : Screen() {
         override var isAlone: Boolean = true
     }
 
@@ -81,19 +72,16 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         override var isAlone: Boolean = true
     }
 
-    class Mentions : Screen() {
+    class Mentions(val link: Link.Board.Mentions) : Screen() {
         override var isAlone: Boolean = true
     }
 
-    class ArticleList : Screen() {
+    class ArticleList(val link: Link.Site.Page) : Screen() {
         override var isAlone: Boolean = true
     }
 
     sealed class ArticleDetail : Screen() {
-        class FromLink(
-            val articleId: Int,
-            val commentId: Int?
-        ) : ArticleDetail()
+        class FromLink(val link: Link.Site.Details) : ArticleDetail()
 
         class FromList(
             val articleId: Int,
@@ -109,10 +97,7 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         override var isAlone: Boolean = true
     }
 
-    class Announce(
-        val forumId: Int,
-        val announceId: Int
-    ) : Screen()
+    class Announce(val link: Link.Board.Announce) : Screen()
 
     class ForumRules : Screen() {
         override var isAlone: Boolean = true
@@ -120,7 +105,7 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
 
     class GoogleCaptcha : Screen()
 
-    class Profile(val userId: Int) : Screen()
+    class Profile(val link: Link.Board.Profile) : Screen()
 
     class QmsContacts : Screen() {
         override var isAlone: Boolean = true
@@ -128,56 +113,33 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
 
     class QmsBlackList : Screen()
 
-    class QmsThemes(
-        val userId: Int,
-        val avatarUrl: String? = null
-    ) : Screen()
+    class QmsThemes(val link: Link.Board.Qms.Threads) : Screen()
 
     sealed class QmsChat : Screen() {
-        class Create : QmsChat()
+        class Create(val link: Link.Board.Qms.CreateThread) : QmsChat()
 
-        class CreateWithUser(
-            val userId: Int,
-            val userNick: String,
-            val avatarUrl: String?
-        ) : QmsChat()
-
-        class FromLink(
-            val userId: Int,
-            val themeId: Int,
-        ) : QmsChat()
-
-        class FromList(
-            val userId: Int,
-            val themeId: Int,
-            val userNick: String,
-            val themeTitle: String,
-            val avatarUrl: String?
-        ) : QmsChat()
+        class Created(val link: Link.Board.Qms.Chat) : QmsChat()
     }
 
     class Reputation(
-        val args: RepArgs
+        val link: Link.Board.Reputation
     ) : Screen()
 
-    class Search(
-        val settings: SearchSettings? = null
-    ) : Screen()
+    sealed class Search : Screen() {
+        class Site(val link: Link.Site.Search?) : Search()
+        class Forum(val link: Link.Board.Search?) : Search()
+    }
 
     class Theme(
-        val topicUrl: TopicUrl
+        val link: Link.Board.Topic
     ) : Screen() {
         companion object {
             const val CODE_RESULT_SYNC = "10"
             const val CODE_RESULT_PAGE = "11"
         }
-
-        var themeUrl: String? = null
     }
 
-    class Topics(
-        val forumId: Int
-    ) : Screen()
+    class Topics(val link: Link.Board.Forum) : Screen()
 
     class OtherMenu : Screen() {
         override var fromMenu = true

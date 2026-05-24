@@ -110,10 +110,10 @@ class ReputationPresenter(
     }
 
     fun navigateToProfile(userId: Int) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=$userId", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=$userId")
     }
 
     fun navigateToMessage(item: RepItem) {
-        linkHandler.handle(item.sourceUrl, router)
+        linkHandler.handle(item.sourceUrl)
     }
 }

@@ -299,7 +299,7 @@ class QmsChatPresenter(
 
     fun openProfile() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id}")
         }
     }
 

@@ -142,22 +142,22 @@ class TopicsPresenter(
 
     fun openTopicForum() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.id}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.id}")
         }
     }
 
     fun onItemClick(item: TopicItem) {
         when (item) {
             is TopicItem.Announce -> {
-                linkHandler.handle(getItemLink(item), router, mapOf(Screen.ARG_TITLE to item.title))
+                linkHandler.handle(getItemLink(item), mapOf(Screen.ARG_TITLE to item.title))
             }
 
             is TopicItem.Forum -> {
-                linkHandler.handle(getItemLink(item), router)
+                linkHandler.handle(getItemLink(item))
             }
 
             is TopicItem.Topic -> {
-                linkHandler.handle(getItemLink(item), router, mapOf(Screen.ARG_TITLE to item.title))
+                linkHandler.handle(getItemLink(item), mapOf(Screen.ARG_TITLE to item.title))
             }
         }
     }

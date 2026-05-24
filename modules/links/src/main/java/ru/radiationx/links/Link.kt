@@ -366,4 +366,10 @@ sealed interface Link : Parcelable {
             }
         }
     }
+
+    sealed interface Other : Link {
+
+        @Parcelize
+        data class ExternalLink(val url: String, val e: String?) : Other
+    }
 }

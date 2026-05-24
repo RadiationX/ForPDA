@@ -121,7 +121,7 @@ class NotesPresenter(
     }
 
     fun onItemClick(item: NoteItem) {
-        linkHandler.handle(item.link, router)
+        linkHandler.handle(item.link)
     }
 
     fun onInfoClick(info: CloseableInfo) {

@@ -259,7 +259,7 @@ class SearchPresenter(
 
     fun onItemClick(item: SearchItem) {
         val url = getItemUrl(item)
-        linkHandler.handle(url, router)
+        linkHandler.handle(url)
     }
 
     fun onItemLongClick(item: SearchItem) {
@@ -289,7 +289,7 @@ class SearchPresenter(
             is SearchItem.Topic -> item.topicId
             is SearchItem.News -> return
         }
-        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${topicId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showtopic=${topicId}")
     }
 
     fun openTopicNew(item: SearchItem) {
@@ -299,8 +299,7 @@ class SearchPresenter(
             is SearchItem.News -> return
         }
         linkHandler.handle(
-            "https://4pda.to/forum/index.php?showtopic=${topicId}&view=getnewpost",
-            router
+            "https://4pda.to/forum/index.php?showtopic=${topicId}&view=getnewpost"
         )
     }
 
@@ -311,8 +310,7 @@ class SearchPresenter(
             is SearchItem.News -> return
         }
         linkHandler.handle(
-            "https://4pda.to/forum/index.php?showtopic=${topicId}&view=getlastpost",
-            router
+            "https://4pda.to/forum/index.php?showtopic=${topicId}&view=getlastpost"
         )
     }
 
@@ -322,7 +320,7 @@ class SearchPresenter(
             is SearchItem.Post -> return
             is SearchItem.News -> return
         }
-        linkHandler.handle("https://4pda.to/forum/index.php?showforum=${forumId}", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showforum=${forumId}")
     }
 
     fun onClickAddInFav(item: SearchItem) {
@@ -438,8 +436,7 @@ class SearchPresenter(
     override fun openProfile(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?showuser=${it.post.user.id}",
-                router
+                "https://4pda.to/forum/index.php?showuser=${it.post.user.id}"
             )
         }
     }
@@ -447,8 +444,7 @@ class SearchPresenter(
     override fun openQms(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.post.user.id}",
-                router
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.post.user.id}"
             )
         }
     }
@@ -460,8 +456,7 @@ class SearchPresenter(
                     source = SearchSettings.SOURCE_ALL.first,
                     nick = it.post.user.nick,
                     result = SearchSettings.RESULT_TOPICS.first
-                ).toUrl(),
-                router
+                ).toUrl()
             )
         }
     }
@@ -475,8 +470,7 @@ class SearchPresenter(
                     nick = it.post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
-                ).toUrl(),
-                router
+                ).toUrl()
             )
         }
     }
@@ -489,8 +483,7 @@ class SearchPresenter(
                     nick = it.post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
                     subforums = SearchSettings.SUB_FORUMS_FALSE
-                ).toUrl(),
-                router
+                ).toUrl()
             )
         }
     }
@@ -535,8 +528,7 @@ class SearchPresenter(
     override fun openReputationHistory(postId: Int) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.post.user.nick}",
-                router
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.post.user.nick}"
             )
         }
     }

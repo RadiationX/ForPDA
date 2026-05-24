@@ -96,7 +96,7 @@ class QmsThemesPresenter(
     }
 
     fun openProfile(userId: Int) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=$userId", router)
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=$userId")
     }
 
     fun openChat() {

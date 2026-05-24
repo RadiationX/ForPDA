@@ -56,7 +56,7 @@ class ArticleDetailPresenter(
 
     fun openAuthorProfile() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.authorId}", router)
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.authorId}")
         }
     }
 

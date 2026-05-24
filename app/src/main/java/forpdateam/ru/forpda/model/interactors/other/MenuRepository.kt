@@ -80,11 +80,11 @@ class MenuRepository @Inject constructor(
 
     private val allItems = listOf(
         //AppMenuItem(item_auth, Screen.Auth()),
-        AppMenuItem(item_article_list, Screen.ArticleList()),
-        AppMenuItem(item_favorites, Screen.Favorites()),
+        AppMenuItem(item_article_list, Screen.ArticleList(link)),
+        AppMenuItem(item_favorites, Screen.Favorites(link)),
         AppMenuItem(item_qms_contacts, Screen.QmsContacts()),
-        AppMenuItem(item_mentions, Screen.Mentions()),
-        AppMenuItem(item_dev_db, Screen.DevDbBrands()),
+        AppMenuItem(item_mentions, Screen.Mentions(link)),
+        AppMenuItem(item_dev_db, Screen.DevDbBrands(link)),
         AppMenuItem(item_forum, Screen.Forum()),
         AppMenuItem(item_search, Screen.Search()),
         AppMenuItem(item_history, Screen.History()),

@@ -50,7 +50,7 @@ class SystemLinkHandlerImpl @Inject constructor(
         }
     }
 
-    override fun handleDownload(url: String, inputFileName: String?) {
+    override fun handleDownload(url: String) {
         val fileName = utils.getFileNameFromUrl(url)
         val activity = App.getActivity()
         if (activity != null) {
