@@ -199,8 +199,8 @@ open class TabFragment(
         }
 
         arguments?.also {
-            titleText = it.getString(ARG_TITLE)
-            subtitleText = it.getString(ARG_SUBTITLE)
+            titleText = it.getString(ARG_TAB_TITLE)
+            subtitleText = it.getString(ARG_TAB_SUBTITLE)
         }
         setHasOptionsMenu(true)
     }
@@ -447,8 +447,7 @@ open class TabFragment(
         private val BUNDLE_CONFIG_MENU = CONFIG_PREFIX + "menu"
         private val BUNDLE_CONFIG_ALONE = CONFIG_PREFIX + "alone"
 
-        const val ARG_TITLE = "TAB_TITLE"
-        const val ARG_SUBTITLE = "TAB_SUBTITLE"
-        const val ARG_TAB = "TAB_URL"
+        const val ARG_TAB_TITLE = "TAB_TITLE"
+        const val ARG_TAB_SUBTITLE = "TAB_SUBTITLE"
     }
 }

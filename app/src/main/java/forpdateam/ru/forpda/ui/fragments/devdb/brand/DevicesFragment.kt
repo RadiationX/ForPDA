@@ -14,6 +14,7 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesView
@@ -26,6 +27,7 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
+import ru.radiationx.coretypes.DevDbDevicesId
 
 /**
  * Created by radiationx on 08.08.17.
@@ -33,6 +35,13 @@ import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
 
 class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
     BaseAdapter.OnItemClickListener<Brand.DeviceItem>, TabTopScroller {
+
+    companion object {
+        private const val ARG_ID = "arg_id"
+        fun newInstance(devicesId: DevDbDevicesId) = DevicesFragment().putExtra {
+            putParcelable(ARG_ID, devicesId)
+        }
+    }
 
     private val binding by tabBinding(FragmentBrandBinding::bind)
 
@@ -217,10 +226,5 @@ class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
                 }
             }
         }
-    }
-
-    companion object {
-        const val ARG_CATEGORY_ID = "CATEGORY_ID"
-        const val ARG_BRAND_ID = "BRAND_ID"
     }
 }

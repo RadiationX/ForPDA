@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.presentation.reputation.ReputationPresenter
@@ -29,6 +30,7 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import ru.radiationx.links.Link
 import ru.radiationx.quill.inject
 
 /**
@@ -38,7 +40,10 @@ import ru.radiationx.quill.inject
 class ReputationFragment : RecyclerFragment(), ReputationView {
 
     companion object {
-        const val ARG_REP_ARGS = "rep_args"
+        private const val ARG_LINK = "arg_link"
+        fun newInstance(link: Link.Board.Reputation.History?) = ReputationFragment().putExtra {
+            putParcelable(ARG_LINK, link)
+        }
     }
 
     private lateinit var adapter: ReputationAdapter

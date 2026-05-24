@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.fragments.settings
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
@@ -79,7 +78,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference<Preference>("about.check_update")?.apply {
             setOnPreferenceClickListener {
-                startActivity(Intent(activity, UpdateCheckerActivity::class.java))
+                startActivity(UpdateCheckerActivity.newIntent(context))
                 false
             }
         }
@@ -127,11 +126,7 @@ class SettingsFragment : BaseSettingFragment() {
 
         findPreference<Preference>("open_notifications")?.apply {
             setOnPreferenceClickListener {
-                val intent = Intent(activity, SettingsActivity::class.java)
-                intent.putExtra(
-                    SettingsActivity.ARG_NEW_PREFERENCE_SCREEN,
-                    NotificationsSettingsFragment.PREFERENCE_SCREEN_NAME
-                )
+                val intent = SettingsActivity.newIntent(requireContext(), NotificationsSettingsFragment.PREFERENCE_SCREEN_NAME)
                 startActivity(intent)
                 true
             }

@@ -38,6 +38,21 @@ import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
 
 class FavoritesFragment : RecyclerFragment(), FavoritesView {
 
+    companion object {
+        fun getSubNames(context: Context): Array<String> {
+            return arrayOf(
+                context.getString(R.string.fav_subscribe_none),
+                context.getString(R.string.fav_subscribe_delayed),
+                context.getString(R.string.fav_subscribe_immediate),
+                context.getString(R.string.fav_subscribe_daily),
+                context.getString(R.string.fav_subscribe_weekly),
+                context.getString(R.string.fav_subscribe_pinned)
+            )
+        }
+
+        fun newInstance() = FavoritesFragment()
+    }
+
     private lateinit var dialogMenu: DynamicDialogMenu<FavoritesFragment, Favorite>
     private lateinit var adapter: FavoritesAdapter
 
@@ -287,19 +302,6 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
             changeTitle(3, getSubText(subTypeIndex))
 
             show(requireContext(), this@FavoritesFragment, item)
-        }
-    }
-
-    companion object {
-        fun getSubNames(context: Context): Array<String> {
-            return arrayOf(
-                context.getString(R.string.fav_subscribe_none),
-                context.getString(R.string.fav_subscribe_delayed),
-                context.getString(R.string.fav_subscribe_immediate),
-                context.getString(R.string.fav_subscribe_daily),
-                context.getString(R.string.fav_subscribe_weekly),
-                context.getString(R.string.fav_subscribe_pinned)
-            )
         }
     }
 }

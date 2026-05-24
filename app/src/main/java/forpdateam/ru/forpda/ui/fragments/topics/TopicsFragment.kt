@@ -11,6 +11,7 @@ import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -21,6 +22,7 @@ import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import ru.radiationx.links.Link
 import ru.radiationx.quill.inject
 
 /**
@@ -28,6 +30,13 @@ import ru.radiationx.quill.inject
  */
 
 class TopicsFragment : RecyclerFragment(), TopicsView {
+
+    companion object {
+        private const val ARG_LINK = "arg_link"
+        fun newInstance(link: Link.Board.Forum) = TopicsFragment().putExtra {
+            putParcelable(ARG_LINK, link)
+        }
+    }
 
     private lateinit var adapter: TopicsAdapter
     private lateinit var paginationHelper: PaginationHelper
@@ -201,9 +210,5 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
             }
             show(requireContext(), this@TopicsFragment, item)
         }
-    }
-
-    companion object {
-        const val FORUM_ID_ARG = "TOPICS_ID_ARG"
     }
 }

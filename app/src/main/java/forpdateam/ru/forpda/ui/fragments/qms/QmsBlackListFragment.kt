@@ -30,6 +30,10 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 class QmsBlackListFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsContact>,
     QmsBlackListView {
 
+    companion object {
+        fun newInstance() = QmsBlackListFragment()
+    }
+
     private val toolbarBinding by tabToolbarBinding(ToolbarQmsBlackListBinding::bind)
 
     private val nickField: AppCompatAutoCompleteTextView

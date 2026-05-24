@@ -24,6 +24,10 @@ import forpdateam.ru.forpda.ui.views.drawers.adapters.DrawerMenuItem
  */
 class OtherFragment : TabFragment(R.layout.fragment_other), OtherView {
 
+    companion object {
+        fun newInstance() = OtherFragment()
+    }
+
     private val binding by tabBinding(FragmentOtherBinding::bind)
 
     private val recyclerView: RecyclerView

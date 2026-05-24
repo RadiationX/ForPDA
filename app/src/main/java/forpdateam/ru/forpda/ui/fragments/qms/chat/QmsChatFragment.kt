@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
@@ -23,6 +22,7 @@ import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.asRegular
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.repository.temp.TempHelper
@@ -42,6 +42,8 @@ import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel.HeightChangeListener
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.UserId
 import ru.radiationx.quill.inject
 
 /**
@@ -50,6 +52,21 @@ import ru.radiationx.quill.inject
 class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     ChatThemeCreator.ThemeCreatorInterface,
     ExtendedWebView.JsLifeCycleListener, QmsChatView, TabTopScroller {
+
+    companion object {
+        private val LOG_TAG = QmsChatFragment::class.java.simpleName
+        private const val JS_INTERFACE = "IChat"
+        private const val ARG_USER_ID = "arg_user_id"
+        private const val ARG_CHAT_ID = "arg_chat_id"
+
+        fun newInstanceCreate(userId: UserId?) = QmsChatFragment().putExtra {
+            putParcelable(ARG_USER_ID, userId)
+        }
+
+        fun newInstanceExisted(chatId: QmsChatId) = QmsChatFragment().putExtra {
+            putParcelable(ARG_CHAT_ID, chatId)
+        }
+    }
 
     private val binding by tabBinding(FragmentQmsChatBinding::bind)
     private val toolbarBinding by tabToolbarBinding(ToolbarQmsNewThemeBinding::bind)
@@ -359,15 +376,5 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     override fun hideKeyboard() {
         super.hideKeyboard()
         messagePanel.hidePopupWindows()
-    }
-
-    companion object {
-        private val LOG_TAG = QmsChatFragment::class.java.simpleName
-        private val JS_INTERFACE = "IChat"
-        const val USER_ID_ARG = "USER_ID_ARG"
-        const val USER_NICK_ARG = "USER_NICK_ARG"
-        const val USER_AVATAR_ARG = "USER_AVATAR_ARG"
-        const val THEME_ID_ARG = "THEME_ID_ARG"
-        const val THEME_TITLE_ARG = "THEME_TITLE_ARG"
     }
 }

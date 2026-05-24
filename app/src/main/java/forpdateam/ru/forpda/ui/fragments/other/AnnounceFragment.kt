@@ -20,6 +20,7 @@ import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandler
@@ -30,6 +31,7 @@ import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.TabTopScroller
 import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
+import ru.radiationx.coretypes.AnnounceId
 import ru.radiationx.quill.inject
 
 /**
@@ -37,6 +39,14 @@ import ru.radiationx.quill.inject
  */
 
 class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
+
+    companion object {
+        private const val JS_INTERFACE = "IAnnounce"
+        private const val ARG_ID = "arg_id"
+        fun newInstance(announceId: AnnounceId) = AnnounceFragment().putExtra {
+            putParcelable(ARG_ID, announceId)
+        }
+    }
 
     private var searchViewTag = 0
     private lateinit var webView: ExtendedWebView
@@ -176,11 +186,5 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
     override fun onDestroyView() {
         super.onDestroyView()
         webView.endWork()
-    }
-
-    companion object {
-        const val ARG_ANNOUNCE_ID = "ARG_ANNOUNCE_ID"
-        const val ARG_FORUM_ID = "ARG_FORUM_ID"
-        const val JS_INTERFACE = "IAnnounce"
     }
 }

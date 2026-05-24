@@ -10,6 +10,7 @@ import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.presentation.editpost.EditPostPresenter
@@ -23,6 +24,37 @@ import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
  */
 
 class EditPostFragment : TabFragment(), EditPostView {
+
+
+    companion object {
+        private const val ARG_THEME_NAME = "theme_name"
+        private const val ARG_ATTACHMENTS = "attachments"
+        private const val ARG_MESSAGE = "message"
+        private const val ARG_FORUM_ID = "forumId"
+        private const val ARG_TOPIC_ID = "topicId"
+        private const val ARG_POST_ID = "postId"
+        private const val ARG_ST = "st"
+
+        fun newInstanceCreate(form: EditPostForm, themeName: String) = EditPostFragment().putExtra {
+            putString(ARG_THEME_NAME, themeName)
+            putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_NEW_POST)
+            putParcelableArrayList(ARG_ATTACHMENTS, form.attachments)
+            putString(ARG_MESSAGE, form.message)
+            putInt(ARG_FORUM_ID, form.forumId)
+            putInt(ARG_TOPIC_ID, form.topicId)
+            putInt(ARG_POST_ID, form.postId)
+            putInt(ARG_ST, form.st)
+        }
+
+        fun newInstanceEdit(postId: Int, topicId: Int, forumId: Int, st: Int, themeName: String?) = EditPostFragment().putExtra {
+            putString(ARG_THEME_NAME, themeName)
+            putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_EDIT_POST)
+            putInt(ARG_FORUM_ID, forumId)
+            putInt(ARG_TOPIC_ID, topicId)
+            putInt(ARG_POST_ID, postId)
+            putInt(ARG_ST, st)
+        }
+    }
 
     private var formType = 0
 
@@ -221,47 +253,6 @@ class EditPostFragment : TabFragment(), EditPostView {
                 }
             }
             .show()
-    }
-
-    companion object {
-        const val ARG_THEME_NAME = "theme_name"
-        const val ARG_ATTACHMENTS = "attachments"
-        const val ARG_MESSAGE = "message"
-        const val ARG_FORUM_ID = "forumId"
-        const val ARG_TOPIC_ID = "topicId"
-        const val ARG_POST_ID = "postId"
-        const val ARG_ST = "st"
-
-        fun fillArguments(
-            args: Bundle,
-            postId: Int,
-            topicId: Int,
-            forumId: Int,
-            st: Int,
-            themeName: String?
-        ): Bundle {
-            if (themeName != null)
-                args.putString(ARG_THEME_NAME, themeName)
-            args.putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_EDIT_POST)
-            args.putInt(ARG_FORUM_ID, forumId)
-            args.putInt(ARG_TOPIC_ID, topicId)
-            args.putInt(ARG_POST_ID, postId)
-            args.putInt(ARG_ST, st)
-            return args
-        }
-
-        fun fillArguments(args: Bundle, form: EditPostForm, themeName: String?): Bundle {
-            if (themeName != null)
-                args.putString(ARG_THEME_NAME, themeName)
-            args.putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_NEW_POST)
-            args.putParcelableArrayList(ARG_ATTACHMENTS, form.attachments)
-            args.putString(ARG_MESSAGE, form.message)
-            args.putInt(ARG_FORUM_ID, form.forumId)
-            args.putInt(ARG_TOPIC_ID, form.topicId)
-            args.putInt(ARG_POST_ID, form.postId)
-            args.putInt(ARG_ST, form.st)
-            return args
-        }
     }
 
 }

@@ -33,6 +33,11 @@ import ru.radiationx.quill.inject
  */
 
 class GoogleCaptchaFragment : TabFragment() {
+
+    companion object {
+        fun newInstance() = GoogleCaptchaFragment()
+    }
+
     private lateinit var webView: ExtendedWebView
     private var content = ""
 

@@ -16,6 +16,7 @@ import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.search.SearchDevicesView
@@ -35,6 +36,13 @@ import forpdateam.ru.forpda.ui.views.messagepanel.AutoFitRecyclerView
 
 class DevDbSearchFragment : TabFragment(R.layout.fragment_brand), SearchDevicesView,
     BaseAdapter.OnItemClickListener<Brand.DeviceItem> {
+
+    companion object {
+        private const val ARG_TEXT = "arg_text"
+        fun newInstance(text: String?) = DevDbSearchFragment().putExtra {
+            putString(ARG_TEXT, text)
+        }
+    }
 
     private val binding by tabBinding(FragmentBrandBinding::bind)
 

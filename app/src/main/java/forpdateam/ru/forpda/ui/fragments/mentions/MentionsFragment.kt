@@ -29,6 +29,10 @@ import ru.radiationx.quill.inject
 
 class MentionsFragment : RecyclerFragment(), MentionsView {
 
+    companion object {
+        fun newInstance() = MentionsFragment()
+    }
+
     private lateinit var dialogMenu: DynamicDialogMenu<MentionsFragment, MentionItem>
     private lateinit var adapter: MentionsAdapter
     private lateinit var paginationHelper: PaginationHelper

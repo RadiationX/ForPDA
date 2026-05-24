@@ -22,6 +22,10 @@ import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 
 class NewsMainFragment : RecyclerFragment(), NewsListAdapter.ItemClickListener, ArticlesListView {
 
+    companion object {
+        fun newInstance() = NewsMainFragment()
+    }
+
     private lateinit var adapter: NewsListAdapter
     private val dialogMenu = DynamicDialogMenu<NewsMainFragment, NewsItem>()
 

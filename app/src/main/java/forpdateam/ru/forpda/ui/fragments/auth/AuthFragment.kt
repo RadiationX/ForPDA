@@ -39,6 +39,10 @@ import forpdateam.ru.forpda.ui.fragments.tabBinding
  */
 class AuthFragment : TabFragment(R.layout.fragment_auth), AuthView {
 
+    companion object {
+        fun newInstance(): AuthFragment = AuthFragment()
+    }
+
     private val binding by tabBinding(FragmentAuthBinding::bind)
 
     private val nick: EditText

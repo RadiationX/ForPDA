@@ -273,8 +273,12 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView {
         val LOG_TAG = MainActivity::class.java.simpleName
         val DEF_TITLE = "ForPDA"
 
+        fun newIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
+
         fun restartApplication(activity: Activity) {
-            val mStartActivity = Intent(activity, MainActivity::class.java)
+            val mStartActivity = newIntent(activity)
             val mPendingIntentId = 123456
             val mPendingIntent = PendingIntent.getActivity(
                 activity, mPendingIntentId, mStartActivity,

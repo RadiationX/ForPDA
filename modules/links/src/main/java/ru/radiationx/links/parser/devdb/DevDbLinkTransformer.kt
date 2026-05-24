@@ -3,6 +3,7 @@ package ru.radiationx.links.parser.devdb
 import ru.radiationx.coretypes.DevDbBrandId
 import ru.radiationx.coretypes.DevDbCategoryId
 import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.DevDbDevicesId
 import ru.radiationx.links.Link
 import ru.radiationx.links.url.LinkUrl
 import ru.radiationx.links.url.LinkUrlBuilder
@@ -55,8 +56,8 @@ internal object DevDbLinkTransformer {
                 }
 
                 is Link.DevDb.Devices -> {
-                    segment(link.brandId.categoryId.id)
-                    segment(link.brandId.brand)
+                    segment(link.devicesId.categoryId.id)
+                    segment(link.devicesId.brandId.id)
                     if (link.sort != null) {
                         query("sort", link.sort.field)
                         if (link.sort.order != null) {
@@ -126,7 +127,8 @@ internal object DevDbLinkTransformer {
     private fun parseDevices(url: LinkUrl, categoryId: DevDbCategoryId): Link.DevDb.Devices? {
         val segment2 = url.segment(2) ?: return null
         if (segment2 in forbiddenBrandId) return null
-        val brandId = DevDbBrandId(categoryId = categoryId, brand = segment2)
+        val brandId = DevDbBrandId(segment2)
+        val devicesId = DevDbDevicesId(categoryId = categoryId, brandId = brandId)
         val querySortField = url.query("sort").takeIf { it in sortFields }
         val sort = querySortField?.let {
             val querySortOrder = url.query("sort-$it")
@@ -137,7 +139,7 @@ internal object DevDbLinkTransformer {
             }
             Link.DevDb.Devices.Sort(field = it, order = order)
         }
-        return Link.DevDb.Devices(brandId = brandId, sort = sort)
+        return Link.DevDb.Devices(devicesId = devicesId, sort = sort)
     }
 
     private fun parseSearch(url: LinkUrl, segment1: String): Link.DevDb.Search? {

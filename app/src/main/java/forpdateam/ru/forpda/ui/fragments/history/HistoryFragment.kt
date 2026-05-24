@@ -21,6 +21,10 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 
 class HistoryFragment : RecyclerFragment(), HistoryView {
 
+    companion object {
+        fun newInstance() = HistoryFragment()
+    }
+
     private lateinit var adapter: HistoryAdapter
     private lateinit var dialogMenu: DynamicDialogMenu<HistoryFragment, HistoryItem>
 

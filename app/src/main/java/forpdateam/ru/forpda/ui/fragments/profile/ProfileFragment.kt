@@ -26,6 +26,7 @@ import forpdateam.ru.forpda.databinding.ToolbarProfileBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.mutateWithTint
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.presentation.LinkHandler
@@ -40,6 +41,7 @@ import forpdateam.ru.forpda.ui.views.ScrimHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.radiationx.coretypes.UserId
 import ru.radiationx.quill.inject
 
 /**
@@ -49,7 +51,10 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
     ProfileView {
 
     companion object {
-        const val ARG_USER_ID = "user_id"
+        private const val ARG_ID = "arg_id"
+        fun newInstance(userId: UserId) = ProfileFragment().putExtra {
+            putParcelable(ARG_ID, userId)
+        }
     }
 
     private val binding by tabBinding(FragmentProfileBinding::bind)

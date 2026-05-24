@@ -9,11 +9,13 @@ import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsPresenter
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
+import ru.radiationx.coretypes.DevDbCategoryId
 
 /**
  * Created by radiationx on 08.08.17.
@@ -21,6 +23,13 @@ import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 
 class BrandsFragment : RecyclerFragment(), BrandsView,
     OnItemClickListener<Brands.Item> {
+
+    companion object {
+        private const val ARG_ID = "arg_id"
+        fun newInstance(categoryId: DevDbCategoryId?) = BrandsFragment().putExtra {
+            putParcelable(ARG_ID, categoryId)
+        }
+    }
 
     private lateinit var adapter: BrandsAdapter
 
@@ -112,9 +121,5 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
             BrandsPresenter.CATEGORY_SMARTWATCH -> getString(R.string.brands_category_smartwatch)
             else -> null
         }
-    }
-
-    companion object {
-        const val ARG_CATEGORY_ID = "CATEGORY_ID"
     }
 }

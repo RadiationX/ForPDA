@@ -10,6 +10,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.qms.themes.QmsThemesPresenter
 import forpdateam.ru.forpda.presentation.qms.themes.QmsThemesView
@@ -18,12 +19,20 @@ import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.fragments.qms.adapters.QmsThemesAdapter
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
+import ru.radiationx.coretypes.UserId
 
 /**
  * Created by radiationx on 25.08.16.
  */
 class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsTheme>,
     QmsThemesView {
+
+    companion object {
+        private const val ARG_ID = "arg_id"
+        fun newInstance(userId: UserId) = QmsThemesFragment().putExtra {
+            putParcelable(ARG_ID, userId)
+        }
+    }
 
     private lateinit var blackListMenuItem: MenuItem
     private lateinit var noteMenuItem: MenuItem
@@ -153,10 +162,5 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     override fun onItemLongClick(item: QmsTheme): Boolean {
         presenter.onItemLongClick(item)
         return false
-    }
-
-    companion object {
-        const val USER_ID_ARG = "USER_ID_ARG"
-        const val USER_AVATAR_ARG = "USER_AVATAR_ARG"
     }
 }

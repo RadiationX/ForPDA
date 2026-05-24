@@ -92,8 +92,9 @@ class SimpleUpdateChecker(
         mBuilder.setChannelId(channelId)
 
 
-        val notifyIntent = Intent(context, UpdateCheckerActivity::class.java)
-        notifyIntent.action = Intent.ACTION_VIEW
+        val notifyIntent = UpdateCheckerActivity.newIntent(context).apply {
+            action = Intent.ACTION_VIEW
+        }
         val notifyPendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, immutableFlag())
         mBuilder.setContentIntent(notifyPendingIntent)
 

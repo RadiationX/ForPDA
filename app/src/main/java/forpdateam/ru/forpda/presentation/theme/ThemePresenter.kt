@@ -259,7 +259,7 @@ class ThemePresenter(
         currentPage?.let { page ->
             createEditPostForm(message, attachments)?.let {
                 router.navigateTo(
-                    Screen.EditPost.New(
+                    Screen.EditPost.Create(
                         editPostForm = it,
                         themeName = page.title
                     )
@@ -284,7 +284,7 @@ class ThemePresenter(
     fun openEditPostForm(postId: Int) {
         currentPage?.let {
             router.navigateTo(
-                Screen.EditPost.Existed(
+                Screen.EditPost.Edit(
                     postId = postId,
                     topicId = it.id,
                     forumId = it.forumId,

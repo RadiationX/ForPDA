@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 import ru.radiationx.coretypes.AnnounceId
 import ru.radiationx.coretypes.ArticleId
 import ru.radiationx.coretypes.CommentId
-import ru.radiationx.coretypes.DevDbBrandId
+import ru.radiationx.coretypes.DevDbDevicesId
 import ru.radiationx.coretypes.DevDbCategoryId
 import ru.radiationx.coretypes.DevDbDeviceId
 import ru.radiationx.coretypes.ForumId
@@ -110,7 +110,7 @@ sealed interface Link : Parcelable {
         data class Brands(val categoryId: DevDbCategoryId, val letter: String?) : DevDb
 
         @Parcelize
-        data class Devices(val brandId: DevDbBrandId, val sort: Sort?) : DevDb {
+        data class Devices(val devicesId: DevDbDevicesId, val sort: Sort?) : DevDb {
 
             @Parcelize
             data class Sort(val field: String, val order: Order?) : Parcelable {

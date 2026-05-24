@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.ui.fragments.news.details
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -22,6 +21,7 @@ import forpdateam.ru.forpda.databinding.ToolbarNewsDetailsBinding
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.mutateWithTint
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailPresenter
@@ -34,6 +34,8 @@ import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.ScrimHelper
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.links.Link
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.quillModule
@@ -44,6 +46,37 @@ import ru.radiationx.quill.quillModule
 
 class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetailView,
     TabTopScroller {
+
+    companion object {
+        private const val ARG_ID = "arg_id"
+        private const val ARG_COMMENT_ID = "arg_comment_id"
+        private const val ARG_TITLE = "arg_title"
+        private const val ARG_AUTHOR_NICK = "arg_author_nick"
+        private const val ARG_DATE = "arg_date"
+        private const val ARG_IMAGE_URL = "arg_image_url"
+        private const val ARG_COMMENT_COUNT = "arg_comment_count"
+
+        fun newInstanceLink(link: Link.Site.Details) = NewsDetailsFragment().putExtra {
+            putParcelable(ARG_ID, link.articleId)
+            putParcelable(ARG_COMMENT_ID, link.commentId)
+        }
+
+        fun newInstanceList(
+            articleId: ArticleId,
+            title: String,
+            authorNick: String,
+            date: String,
+            imageUrl: String,
+            commentCount: Int
+        ) = NewsDetailsFragment().putExtra {
+            putParcelable(ARG_ID, articleId)
+            putString(ARG_TITLE, title)
+            putString(ARG_AUTHOR_NICK, authorNick)
+            putString(ARG_DATE, date)
+            putString(ARG_IMAGE_URL, imageUrl)
+            putInt(ARG_COMMENT_COUNT, commentCount)
+        }
+    }
 
     private val binding by tabBinding(FragmentArticleBinding::bind)
     private val toolbarBinding by tabToolbarBinding(ToolbarNewsDetailsBinding::bind)
@@ -277,18 +310,6 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
         override fun getPageTitle(position: Int): CharSequence {
             return titles[position]
         }
-    }
-
-    companion object {
-        const val ARG_NEWS_ID = "ARG_NEWS_ID"
-        const val ARG_NEWS_COMMENT_ID = "ARG_NEWS_COMMENT_ID"
-        const val ARG_NEWS_TITLE = "ARG_NEWS_TITLE"
-        const val ARG_NEWS_AUTHOR_NICK = "ARG_NEWS_AUTHOR_NICK"
-
-        //const val ARG_NEWS_AUTHOR_ID = "ARG_NEWS_AUTHOR_ID"
-        const val ARG_NEWS_COMMENTS_COUNT = "ARG_NEWS_COMMENTS_COUNT"
-        const val ARG_NEWS_DATE = "ARG_NEWS_DATE"
-        const val ARG_NEWS_IMAGE = "ARG_NEWS_IMAGE"
     }
 
 }

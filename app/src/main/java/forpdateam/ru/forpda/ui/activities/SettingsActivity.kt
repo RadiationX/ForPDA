@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.ui.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +15,15 @@ import forpdateam.ru.forpda.ui.fragments.settings.SettingsFragment
  */
 
 class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
+
+    companion object {
+        private const val ARG_NEW_PREFERENCE_SCREEN = "new_preference_screen"
+        fun newIntent(context: Context, screenName: String? = null): Intent {
+            return Intent(context, SettingsActivity::class.java).apply {
+                putExtra(ARG_NEW_PREFERENCE_SCREEN, screenName)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightPreferenceTheme)
@@ -52,9 +63,5 @@ class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
         if (item.itemId == android.R.id.home)
             finish()
         return true
-    }
-
-    companion object {
-        const val ARG_NEW_PREFERENCE_SCREEN = "new_preference_screen"
     }
 }

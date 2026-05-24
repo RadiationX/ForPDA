@@ -19,6 +19,7 @@ import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandler
@@ -30,6 +31,7 @@ import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import kotlinx.coroutines.launch
+import ru.radiationx.links.Link
 import ru.radiationx.quill.inject
 import java.util.regex.Pattern
 
@@ -38,6 +40,16 @@ import java.util.regex.Pattern
  */
 
 class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, TabTopScroller {
+
+    companion object {
+        private val LOG_TAG = ThemeFragmentWeb::class.java.simpleName
+        const val JS_INTERFACE = "IThemePresenter"
+
+        fun newInstance(link: Link.Board.Topic) = ThemeFragmentWeb().putExtra {
+            putParcelable(ARG_LINK, link)
+        }
+    }
+
     private lateinit var webView: ExtendedWebView
     private lateinit var webViewClient: WebViewClient
     private lateinit var chromeClient: WebChromeClient
@@ -304,11 +316,6 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
                 webView.evalJs("onProgressChanged()")
             }
         }
-    }
-
-    companion object {
-        private val LOG_TAG = ThemeFragmentWeb::class.java.simpleName
-        const val JS_INTERFACE = "IThemePresenter"
     }
 
 }

@@ -13,11 +13,9 @@ import com.github.terrakok.cicerone.Command
 import com.github.terrakok.cicerone.Forward
 import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.androidx.ActivityScreen
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import forpdateam.ru.forpda.presentation.Screen
-import forpdateam.ru.forpda.ui.activities.MainActivity
-import forpdateam.ru.forpda.ui.activities.SettingsActivity
-import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
-import forpdateam.ru.forpda.ui.activities.updatechecker.UpdateCheckerActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -185,10 +183,15 @@ class TabNavigator(
 
     private fun forward(command: Forward) {
         val newScreen = command.screen as Screen
-        createActivityIntent(activity, newScreen)?.also {
-            checkAndStartActivity(it)
+
+        if (newScreen is ActivityScreen) {
+            val intent = createActivityIntent(activity, newScreen)
+            checkAndStartActivity(intent)
+            activity.finish()
             return
         }
+
+        if (newScreen !is FragmentScreen) return
 
         tabController.findAlone(newScreen)?.also {
             tabController.setCurrent(it.tag)
@@ -228,12 +231,15 @@ class TabNavigator(
 
     private fun replace(command: Replace) {
         val newScreen = command.screen as Screen
-        createActivityIntent(activity, newScreen)?.also {
-            checkAndStartActivity(it)
+
+        if (newScreen is ActivityScreen) {
+            val intent = createActivityIntent(activity, newScreen)
+            checkAndStartActivity(intent)
             activity.finish()
             return
         }
 
+        if (newScreen !is FragmentScreen) return
 
         tabController.findAlone(newScreen)?.also {
             val currentTag = tabController.getCurrent()?.tag.orEmpty()
@@ -292,29 +298,8 @@ class TabNavigator(
         Toast.makeText(activity, text, Toast.LENGTH_SHORT).show()
     }
 
-    private fun createActivityIntent(context: Context, screen: Screen): Intent? {
-        when (screen) {
-            is Screen.Main -> {
-                return Intent(context, MainActivity::class.java)
-            }
-
-            is Screen.UpdateChecker -> {
-                return Intent(context, UpdateCheckerActivity::class.java)
-            }
-
-            is Screen.ImageViewer -> {
-                return ImageViewerActivity.createIntent(context, screen.urls, screen.selectedUrl)
-            }
-
-            is Screen.Settings -> {
-                return Intent(context, SettingsActivity::class.java)
-            }
-
-            else -> {
-                // do nothing
-            }
-        }
-        return null
+    private fun createActivityIntent(context: Context, screen: ActivityScreen): Intent {
+        return screen.createIntent(context)
     }
 
     private fun checkAndStartActivity(activityIntent: Intent) {
@@ -323,7 +308,9 @@ class TabNavigator(
         }
     }
 
-    private fun createFragment(screen: Screen): Fragment {
-        return TabHelper.createTab(screen)
+    private fun createFragment(screen: FragmentScreen): Fragment {
+        val fragment = screen.createFragment(fragmentManager.fragmentFactory)
+        TabHelper.fillTabInfo(screen, fragment)
+        return fragment
     }
 }

@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.ui.activities.updatechecker
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
@@ -28,6 +30,9 @@ class UpdateCheckerActivity : MvpAppCompatActivity(R.layout.activity_updater), C
 
     companion object {
         const val ARG_FORCE = "force"
+        fun newIntent(context: Context): Intent {
+            return Intent(context, UpdateCheckerActivity::class.java)
+        }
     }
 
     private val binding by viewBinding<ActivityUpdaterBinding>()

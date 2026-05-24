@@ -114,9 +114,10 @@ class NotificationEventSender @Inject constructor(
         builder.setStyle(bigTextStyle)
 
 
-        val notifyIntent = Intent(context, MainActivity::class.java)
-        notifyIntent.setData(params.intentUrl.toUri())
-        notifyIntent.setAction(Intent.ACTION_VIEW)
+        val notifyIntent = MainActivity.newIntent(context).apply {
+            setData(params.intentUrl.toUri())
+            setAction(Intent.ACTION_VIEW)
+        }
         val notifyPendingIntent = PendingIntent.getActivity(
             context,
             0,

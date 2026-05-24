@@ -582,7 +582,7 @@ class SearchPresenter(
         getPostById(postId)?.let {
             val title: String = it.title
             router.navigateTo(
-                Screen.EditPost.Existed(
+                Screen.EditPost.Edit(
                     postId = it.post.id,
                     topicId = it.post.topicId,
                     forumId = -1,

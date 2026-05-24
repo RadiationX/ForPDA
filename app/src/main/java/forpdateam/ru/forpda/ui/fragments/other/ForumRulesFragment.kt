@@ -41,6 +41,11 @@ import ru.radiationx.quill.inject
 
 class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
 
+    companion object {
+        private const val JS_INTERFACE = "IRules"
+        fun newInstance() = ForumRulesFragment()
+    }
+
     private var searchViewTag = 0
     private lateinit var webView: ExtendedWebView
     private lateinit var topScroller: WebViewTopScroller
@@ -193,9 +198,5 @@ class ForumRulesFragment : TabFragment(), ForumRulesView, TabTopScroller {
     override fun onDestroyView() {
         super.onDestroyView()
         webView.endWork()
-    }
-
-    companion object {
-        const val JS_INTERFACE = "IRules"
     }
 }

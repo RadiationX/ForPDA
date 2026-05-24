@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -17,6 +18,7 @@ import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
 import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
+import ru.radiationx.coretypes.ForumId
 import ru.radiationx.quill.inject
 
 /**
@@ -24,6 +26,13 @@ import ru.radiationx.quill.inject
  */
 
 class ForumFragment : RecyclerFragment(), ForumView {
+
+    companion object {
+        private const val ARG_ID = "arg_id"
+        fun newInstance(forumId: ForumId?) = ForumFragment().putExtra {
+            putParcelable(ARG_ID, forumId)
+        }
+    }
 
     private lateinit var dialogMenu: DynamicDialogMenu<ForumFragment, ForumItemFlat>
     private val authHolder by inject<AuthHolder>()
@@ -163,9 +172,5 @@ class ForumFragment : RecyclerFragment(), ForumView {
     override fun scrollToForum(id: Int) {
         adapter.expand(id)
         recyclerView.scrollToPosition(adapter.getItemPosition(id))
-    }
-
-    companion object {
-        const val ARG_FORUM_ID = "ARG_FORUM_ID"
     }
 }

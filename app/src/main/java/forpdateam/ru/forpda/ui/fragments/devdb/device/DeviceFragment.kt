@@ -33,6 +33,7 @@ import forpdateam.ru.forpda.databinding.ToolbarDeviceBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.extensions.setBackgroundAttr
 import forpdateam.ru.forpda.extensions.setBackgroundTintColor
@@ -51,6 +52,7 @@ import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import ru.radiationx.coretypes.DevDbDeviceId
 import ru.radiationx.quill.inject
 
 /**
@@ -58,6 +60,13 @@ import ru.radiationx.quill.inject
  */
 
 class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
+
+    companion object {
+        private const val ARG_ID = "arg_id"
+        fun newInstance(deviceId: DevDbDeviceId) = DeviceFragment().putExtra {
+            putParcelable(ARG_ID, deviceId)
+        }
+    }
 
     private val binding by tabBinding(FragmentDeviceBinding::bind)
     private val toolbarBinding by tabToolbarBinding(ToolbarDeviceBinding::bind)
@@ -398,10 +407,6 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
                 })
 
         }
-    }
-
-    companion object {
-        const val ARG_DEVICE_ID = "DEVICE_ID"
     }
 
 }

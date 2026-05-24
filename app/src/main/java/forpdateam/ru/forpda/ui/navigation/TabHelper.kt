@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.ui.navigation
 
-import android.os.Bundle
+import androidx.fragment.app.Fragment
+import com.github.terrakok.cicerone.androidx.FragmentScreen
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.auth.AuthFragment
@@ -27,182 +29,19 @@ import forpdateam.ru.forpda.ui.fragments.qms.QmsThemesFragment
 import forpdateam.ru.forpda.ui.fragments.qms.chat.QmsChatFragment
 import forpdateam.ru.forpda.ui.fragments.reputation.ReputationFragment
 import forpdateam.ru.forpda.ui.fragments.search.SearchFragment
-import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragment
 import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
 import forpdateam.ru.forpda.ui.fragments.topics.TopicsFragment
 
 object TabHelper {
 
-    private fun createFragment(
-        tabClass: Class<out TabFragment>,
-        args: Bundle? = null
-    ): TabFragment {
-        return tabClass.newInstance().apply {
-            args?.let { arguments = it }
+    fun fillTabInfo(screen: FragmentScreen, fragment: Fragment) {
+        if (screen !is Screen) return
+        if (fragment !is TabFragment) return
+        fragment.putExtra {
+            putString(TabFragment.ARG_TAB_TITLE, screen.screenTitle)
+            putString(TabFragment.ARG_TAB_SUBTITLE, screen.screenSubTitle)
         }
-    }
-
-    fun createTab(screen: Screen): TabFragment {
-        val args = Bundle().apply {
-            screen.screenTitle?.let {
-                putString(TabFragment.ARG_TITLE, it)
-            }
-            screen.screenSubTitle?.let {
-                putString(TabFragment.ARG_SUBTITLE, it)
-            }
-        }
-        return when (screen) {
-            is Screen.Auth -> createFragment(AuthFragment::class.java, args)
-            is Screen.DevDbDevices -> {
-                createFragment(DevicesFragment::class.java, args.apply {
-                    putString(DevicesFragment.ARG_CATEGORY_ID, screen.categoryId)
-                    putString(DevicesFragment.ARG_BRAND_ID, screen.brandId)
-                })
-            }
-
-            is Screen.DevDbBrands -> createFragment(BrandsFragment::class.java, args.apply {
-                putString(BrandsFragment.ARG_CATEGORY_ID, screen.categoryId)
-            })
-
-            is Screen.DevDbDevice -> {
-                createFragment(DeviceFragment::class.java, args.apply {
-                    putString(DeviceFragment.ARG_DEVICE_ID, screen.deviceId)
-                })
-            }
-
-            is Screen.DevDbSearch -> createFragment(DevDbSearchFragment::class.java, args)
-            is Screen.EditPost -> {
-                val arguments = when (screen) {
-                    is Screen.EditPost.Existed -> EditPostFragment.fillArguments(
-                        args = args,
-                        postId = screen.postId,
-                        topicId = screen.topicId,
-                        forumId = screen.forumId,
-                        st = screen.st,
-                        themeName = screen.themeName
-                    )
-
-                    is Screen.EditPost.New -> EditPostFragment.fillArguments(
-                        args = args,
-                        form = screen.editPostForm,
-                        themeName = screen.themeName
-                    )
-                }
-                createFragment(EditPostFragment::class.java, arguments)
-            }
-
-            is Screen.Favorites -> createFragment(FavoritesFragment::class.java, args)
-            is Screen.Forum -> {
-                createFragment(ForumFragment::class.java, args.apply {
-                    putInt(ForumFragment.ARG_FORUM_ID, screen.forumId)
-                })
-            }
-
-            is Screen.History -> createFragment(HistoryFragment::class.java, args)
-            is Screen.Mentions -> createFragment(MentionsFragment::class.java, args)
-            is Screen.ArticleList -> createFragment(NewsMainFragment::class.java, args)
-            is Screen.ArticleDetail -> {
-                when (screen) {
-                    is Screen.ArticleDetail.FromLink -> createFragment(NewsDetailsFragment::class.java, args.apply {
-                        putInt(NewsDetailsFragment.ARG_NEWS_ID, screen.articleId)
-                        screen.commentId?.let {
-                            putInt(NewsDetailsFragment.ARG_NEWS_COMMENT_ID, it)
-                        }
-                    })
-
-                    is Screen.ArticleDetail.FromList -> createFragment(NewsDetailsFragment::class.java, args.apply {
-                        putInt(NewsDetailsFragment.ARG_NEWS_ID, screen.articleId)
-                        putString(NewsDetailsFragment.ARG_NEWS_TITLE, screen.articleTitle)
-                        putString(NewsDetailsFragment.ARG_NEWS_AUTHOR_NICK, screen.articleAuthorNick)
-                        putString(NewsDetailsFragment.ARG_NEWS_DATE, screen.articleDate)
-                        putString(NewsDetailsFragment.ARG_NEWS_IMAGE, screen.articleImageUrl)
-                        putInt(NewsDetailsFragment.ARG_NEWS_COMMENTS_COUNT, screen.articleCommentsCount)
-                    })
-                }
-            }
-
-            is Screen.Notes -> createFragment(NotesFragment::class.java, args)
-            is Screen.Announce -> {
-                createFragment(AnnounceFragment::class.java, args.apply {
-                    putInt(AnnounceFragment.ARG_ANNOUNCE_ID, screen.announceId)
-                    putInt(AnnounceFragment.ARG_FORUM_ID, screen.forumId)
-                })
-            }
-
-            is Screen.ForumRules -> createFragment(ForumRulesFragment::class.java, args)
-            is Screen.GoogleCaptcha -> createFragment(GoogleCaptchaFragment::class.java, args)
-            is Screen.Profile -> {
-                createFragment(ProfileFragment::class.java, args.apply {
-                    putInt(ProfileFragment.ARG_USER_ID, screen.userId)
-                })
-            }
-
-            is Screen.QmsContacts -> createFragment(QmsContactsFragment::class.java, args)
-            is Screen.QmsBlackList -> createFragment(QmsBlackListFragment::class.java, args)
-            is Screen.QmsThemes -> {
-                createFragment(QmsThemesFragment::class.java, args.apply {
-                    putInt(QmsThemesFragment.USER_ID_ARG, screen.userId)
-                    putString(QmsThemesFragment.USER_AVATAR_ARG, screen.avatarUrl)
-                })
-            }
-
-            is Screen.QmsChat -> {
-                when (screen) {
-                    is Screen.QmsChat.Create -> createFragment(QmsChatFragment::class.java)
-
-                    is Screen.QmsChat.CreateWithUser -> createFragment(QmsChatFragment::class.java, args.apply {
-                        putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
-                        putString(QmsChatFragment.USER_NICK_ARG, screen.userNick)
-                        putString(QmsChatFragment.USER_AVATAR_ARG, screen.avatarUrl)
-                    })
-
-                    is Screen.QmsChat.Created -> createFragment(QmsChatFragment::class.java, args.apply {
-                        putInt(QmsChatFragment.THEME_ID_ARG, screen.themeId)
-                        putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
-                    })
-
-                    is Screen.QmsChat.FromList -> createFragment(QmsChatFragment::class.java, args.apply {
-                        putInt(QmsChatFragment.THEME_ID_ARG, screen.themeId)
-                        putInt(QmsChatFragment.USER_ID_ARG, screen.userId)
-                        putString(QmsChatFragment.USER_NICK_ARG, screen.userNick)
-                        putString(QmsChatFragment.USER_AVATAR_ARG, screen.avatarUrl)
-                        putString(QmsChatFragment.THEME_TITLE_ARG, screen.themeTitle)
-                    })
-                }
-            }
-
-            is Screen.Reputation -> {
-                createFragment(ReputationFragment::class.java, args.apply {
-                    putParcelable(ReputationFragment.ARG_REP_ARGS, screen.args)
-                })
-            }
-
-            is Screen.Search -> {
-                createFragment(SearchFragment::class.java, args.apply {
-                    putParcelable(SearchFragment.ARG_SETTINGS, screen.settings)
-                })
-            }
-
-            is Screen.Theme -> {
-                createFragment(ThemeFragmentWeb::class.java, args.apply {
-                    putParcelable(ThemeFragment.ARG_TOPIC_URL, screen.topicUrl)
-                })
-            }
-
-            is Screen.Topics -> {
-                createFragment(TopicsFragment::class.java, args.apply {
-                    putInt(TopicsFragment.FORUM_ID_ARG, screen.forumId)
-                })
-            }
-
-            is Screen.OtherMenu -> {
-                createFragment(OtherFragment::class.java)
-            }
-
-            else -> {
-                throw Exception("What is screen: \"$screen\" bro? I don't know this screen. Look at this beautiful exception ))0)")
-            }
-        }.apply {
+        fragment.apply {
             configuration.isMenu = screen.fromMenu
             configuration.isAlone = screen.isAlone
         }

@@ -27,6 +27,10 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 class QmsContactsFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<QmsContact>,
     QmsContactsView {
 
+    companion object {
+        fun newInstance() = QmsContactsFragment()
+    }
+
     private lateinit var adapter: QmsContactsAdapter
     private val dialogMenu = DynamicDialogMenu<QmsContactsFragment, QmsContact>()
 

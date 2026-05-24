@@ -38,6 +38,7 @@ import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -64,6 +65,7 @@ import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.PauseOnScrollListener
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import ru.radiationx.links.Link
 import ru.radiationx.quill.inject
 
 /**
@@ -73,6 +75,22 @@ import ru.radiationx.quill.inject
 class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     ExtendedWebView.JsLifeCycleListener,
     BaseAdapter.OnItemClickListener<SearchItem> {
+
+    companion object {
+        private val LOG_TAG = SearchFragment::class.java.simpleName
+        private const val ARG_SITE_LINK = "arg_site_link"
+        private const val ARG_BOARD_LINK = "arg_board_link"
+
+        fun newInstance() = SearchFragment()
+
+        fun newInstanceSite(link: Link.Site.Search) = SearchFragment().putExtra {
+            putParcelable(ARG_SITE_LINK, link)
+        }
+
+        fun newInstanceBoard(link: Link.Board.Search) = SearchFragment().putExtra {
+            putParcelable(ARG_BOARD_LINK, link)
+        }
+    }
 
     private val binding by tabBinding(FragmentSearchBinding::bind)
 
@@ -738,12 +756,6 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
 
     override fun editPost(post: SearchItem.Post) {
         presenter.openEditPostForm(post.post.id)
-    }
-
-    companion object {
-        private val LOG_TAG = SearchFragment::class.java.simpleName
-
-        const val ARG_SETTINGS = "arg_settings"
     }
 
 }

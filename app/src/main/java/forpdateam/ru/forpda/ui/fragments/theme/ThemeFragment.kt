@@ -57,6 +57,13 @@ import ru.radiationx.quill.inject
 
 abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
+
+    companion object {
+        //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
+        private val LOG_TAG = ThemeFragment::class.java.simpleName
+        protected const val ARG_LINK = "arg_link"
+    }
+
     private val binding by tabBinding(FragmentThemeBinding::bind)
 
     protected val refreshLayout: SwipeRefreshLayout
@@ -675,12 +682,5 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
             return
         }
         dialogsHelper.changeReputation(presenter, post, type)
-    }
-
-    companion object {
-        //Указывают на произведенное действие: переход назад, обновление, обычный переход по ссылке
-        private val LOG_TAG = ThemeFragment::class.java.simpleName
-
-        const val ARG_TOPIC_URL = "arg_topic_url"
     }
 }

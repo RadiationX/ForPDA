@@ -1,6 +1,50 @@
 package forpdateam.ru.forpda.presentation
 
+import android.content.Context
+import android.content.Intent
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
+import com.github.terrakok.cicerone.androidx.ActivityScreen
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
+import forpdateam.ru.forpda.ui.activities.MainActivity
+import forpdateam.ru.forpda.ui.activities.SettingsActivity
+import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
+import forpdateam.ru.forpda.ui.activities.updatechecker.UpdateCheckerActivity
+import forpdateam.ru.forpda.ui.fragments.auth.AuthFragment
+import forpdateam.ru.forpda.ui.fragments.devdb.brand.DevicesFragment
+import forpdateam.ru.forpda.ui.fragments.devdb.brands.BrandsFragment
+import forpdateam.ru.forpda.ui.fragments.devdb.device.DeviceFragment
+import forpdateam.ru.forpda.ui.fragments.devdb.search.DevDbSearchFragment
+import forpdateam.ru.forpda.ui.fragments.editpost.EditPostFragment
+import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
+import forpdateam.ru.forpda.ui.fragments.forum.ForumFragment
+import forpdateam.ru.forpda.ui.fragments.history.HistoryFragment
+import forpdateam.ru.forpda.ui.fragments.mentions.MentionsFragment
+import forpdateam.ru.forpda.ui.fragments.news.details.NewsDetailsFragment
+import forpdateam.ru.forpda.ui.fragments.news.main.NewsMainFragment
+import forpdateam.ru.forpda.ui.fragments.notes.NotesFragment
+import forpdateam.ru.forpda.ui.fragments.other.AnnounceFragment
+import forpdateam.ru.forpda.ui.fragments.other.ForumRulesFragment
+import forpdateam.ru.forpda.ui.fragments.other.GoogleCaptchaFragment
+import forpdateam.ru.forpda.ui.fragments.other.OtherFragment
+import forpdateam.ru.forpda.ui.fragments.profile.ProfileFragment
+import forpdateam.ru.forpda.ui.fragments.qms.QmsBlackListFragment
+import forpdateam.ru.forpda.ui.fragments.qms.QmsContactsFragment
+import forpdateam.ru.forpda.ui.fragments.qms.QmsThemesFragment
+import forpdateam.ru.forpda.ui.fragments.qms.chat.QmsChatFragment
+import forpdateam.ru.forpda.ui.fragments.reputation.ReputationFragment
+import forpdateam.ru.forpda.ui.fragments.search.SearchFragment
+import forpdateam.ru.forpda.ui.fragments.theme.ThemeFragmentWeb
+import forpdateam.ru.forpda.ui.fragments.topics.TopicsFragment
+import ru.radiationx.coretypes.AnnounceId
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.DevDbCategoryId
+import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.DevDbDevicesId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.UserId
 import ru.radiationx.links.Link
 
 sealed class Screen : com.github.terrakok.cicerone.Screen {
@@ -19,131 +63,290 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
 
     /* Activities */
 
-    class Main : Screen()
+    class Main : Screen(), ActivityScreen {
+        override fun createIntent(context: Context): Intent {
+            return MainActivity.newIntent(context)
+        }
+    }
 
-    class UpdateChecker : Screen()
+    class UpdateChecker : Screen(), ActivityScreen {
+        override fun createIntent(context: Context): Intent {
+            return UpdateCheckerActivity.newIntent(context)
+        }
+    }
 
     class ImageViewer(
-        val urls: List<String>,
-        val selectedUrl: String? = null
-    ) : Screen()
+        private val urls: List<String>,
+        private val selectedUrl: String? = null
+    ) : Screen(), ActivityScreen {
+        override fun createIntent(context: Context): Intent {
+            return ImageViewerActivity.createIntent(context, urls, selectedUrl)
+        }
+    }
 
-    class Settings : Screen()
+    class Settings : Screen(), ActivityScreen {
+        override fun createIntent(context: Context): Intent {
+            return SettingsActivity.newIntent(context)
+        }
+    }
 
     /* Fragments */
-    class Auth : Screen() {
+    class Auth : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return AuthFragment.newInstance()
+        }
     }
 
-    class DevDbDevices(val link: Link.DevDb.Devices) : Screen()
-
-    class DevDbBrands(val link: Link.DevDb.Brands?) : Screen() {
+    class DevDbBrands(
+        private val categoryId: DevDbCategoryId?
+    ) : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return BrandsFragment.newInstance(categoryId)
+        }
     }
 
-    class DevDbDevice(val link: Link.DevDb.Device) : Screen()
-
-    class DevDbSearch(val link: Link.DevDb.Search) : Screen()
-
-    sealed class EditPost : Screen() {
-        class New(
-            val editPostForm: EditPostForm,
-            val themeName: String,
-        ) : EditPost()
-
-        class Existed(
-            val postId: Int,
-            val topicId: Int,
-            val forumId: Int,
-            val st: Int,
-            val themeName: String,
-        ) : EditPost()
+    class DevDbDevices(
+        private val devicesId: DevDbDevicesId
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return DevicesFragment.newInstance(devicesId)
+        }
     }
 
-    class Favorites(val link: Link.Board.Favorite) : Screen() {
+    class DevDbDevice(
+        private val deviceId: DevDbDeviceId
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return DeviceFragment.newInstance(deviceId)
+        }
+    }
+
+    class DevDbSearch(
+        private val text: String
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return DevDbSearchFragment.newInstance(text)
+        }
+    }
+
+    sealed class EditPost : Screen(), FragmentScreen {
+        class Create(
+            private val editPostForm: EditPostForm,
+            private val themeName: String,
+        ) : EditPost() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return EditPostFragment.newInstanceCreate(editPostForm, themeName)
+            }
+        }
+
+        class Edit(
+            private val postId: Int,
+            private val topicId: Int,
+            private val forumId: Int,
+            private val st: Int,
+            private val themeName: String,
+        ) : EditPost() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return EditPostFragment.newInstanceEdit(postId, topicId, forumId, st, themeName)
+            }
+        }
+    }
+
+    class Favorites : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return FavoritesFragment.newInstance()
+        }
     }
 
     class Forum(
-        val forumId: Int = NO_ID
-    ) : Screen()
-
-    class History : Screen() {
-        override var isAlone: Boolean = true
+        private val forumId: ForumId?
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return ForumFragment.newInstance(forumId)
+        }
     }
 
-    class Mentions(val link: Link.Board.Mentions) : Screen() {
+    class History : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return HistoryFragment.newInstance()
+        }
     }
 
-    class ArticleList(val link: Link.Site.Page) : Screen() {
+    class Mentions : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return MentionsFragment.newInstance()
+        }
     }
 
-    sealed class ArticleDetail : Screen() {
-        class FromLink(val link: Link.Site.Details) : ArticleDetail()
+    class ArticleList : Screen(), FragmentScreen {
+        override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return NewsMainFragment.newInstance()
+        }
+    }
+
+    sealed class ArticleDetail : Screen(), FragmentScreen {
+        class FromLink(
+            private val link: Link.Site.Details
+        ) : ArticleDetail() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return NewsDetailsFragment.newInstanceLink(link)
+            }
+        }
 
         class FromList(
-            val articleId: Int,
-            val articleTitle: String,
-            val articleAuthorNick: String,
-            val articleDate: String,
-            val articleImageUrl: String,
-            val articleCommentsCount: Int
-        ) : ArticleDetail()
+            private val articleId: ArticleId,
+            private val title: String,
+            private val authorNick: String,
+            private val date: String,
+            private val imageUrl: String,
+            private val commentCount: Int
+        ) : ArticleDetail() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return NewsDetailsFragment.newInstanceList(articleId, title, authorNick, date, imageUrl, commentCount)
+            }
+        }
     }
 
-    class Notes : Screen() {
+    class Notes : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return NotesFragment.newInstance()
+        }
     }
 
-    class Announce(val link: Link.Board.Announce) : Screen()
+    class Announce(
+        private val announceId: AnnounceId
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return AnnounceFragment.newInstance(announceId)
+        }
+    }
 
-    class ForumRules : Screen() {
+    class ForumRules : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return ForumRulesFragment.newInstance()
+        }
     }
 
-    class GoogleCaptcha : Screen()
+    class GoogleCaptcha : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return GoogleCaptchaFragment.newInstance()
+        }
+    }
 
-    class Profile(val link: Link.Board.Profile) : Screen()
+    class Profile(
+        private val userId: UserId
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return ProfileFragment.newInstance(userId)
+        }
+    }
 
-    class QmsContacts : Screen() {
+    class QmsContacts : Screen(), FragmentScreen {
         override var isAlone: Boolean = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return QmsContactsFragment.newInstance()
+        }
     }
 
-    class QmsBlackList : Screen()
+    class QmsBlackList : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return QmsBlackListFragment.newInstance()
+        }
+    }
 
-    class QmsThemes(val link: Link.Board.Qms.Threads) : Screen()
+    class QmsThemes(
+        private val userId: UserId
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return QmsThemesFragment.newInstance(userId)
+        }
+    }
 
-    sealed class QmsChat : Screen() {
-        class Create(val link: Link.Board.Qms.CreateThread) : QmsChat()
+    sealed class QmsChat : Screen(), FragmentScreen {
+        class Create(
+            private val userId: UserId?
+        ) : QmsChat() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return QmsChatFragment.newInstanceCreate(userId)
+            }
+        }
 
-        class Created(val link: Link.Board.Qms.Chat) : QmsChat()
+        class Existed(
+            private val chatId: QmsChatId
+        ) : QmsChat() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return QmsChatFragment.newInstanceExisted(chatId)
+            }
+        }
     }
 
     class Reputation(
-        val link: Link.Board.Reputation
-    ) : Screen()
+        private val link: Link.Board.Reputation.History
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return ReputationFragment.newInstance(link)
+        }
+    }
 
-    sealed class Search : Screen() {
-        class Site(val link: Link.Site.Search?) : Search()
-        class Forum(val link: Link.Board.Search?) : Search()
+    sealed class Search : Screen(), FragmentScreen {
+        class Default : Search() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return SearchFragment.newInstance()
+            }
+        }
+
+        class Site(
+            private val link: Link.Site.Search
+        ) : Search() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return SearchFragment.newInstanceSite(link)
+            }
+        }
+
+        class Forum(
+            private val link: Link.Board.Search
+        ) : Search() {
+            override fun createFragment(factory: FragmentFactory): Fragment {
+                return SearchFragment.newInstanceBoard(link)
+            }
+        }
     }
 
     class Theme(
-        val link: Link.Board.Topic
-    ) : Screen() {
+        private val link: Link.Board.Topic
+    ) : Screen(), FragmentScreen {
         companion object {
             const val CODE_RESULT_SYNC = "10"
             const val CODE_RESULT_PAGE = "11"
         }
+
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return ThemeFragmentWeb.newInstance(link)
+        }
     }
 
-    class Topics(val link: Link.Board.Forum) : Screen()
+    class Topics(
+        private val link: Link.Board.Forum
+    ) : Screen(), FragmentScreen {
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return TopicsFragment.newInstance(link)
+        }
+    }
 
-    class OtherMenu : Screen() {
+    class OtherMenu : Screen(), FragmentScreen {
         override var fromMenu = true
         override var isAlone = true
+        override fun createFragment(factory: FragmentFactory): Fragment {
+            return OtherFragment.newInstance()
+        }
     }
 
 }

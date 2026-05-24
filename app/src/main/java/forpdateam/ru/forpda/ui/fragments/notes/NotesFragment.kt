@@ -28,6 +28,10 @@ import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 
 class NotesFragment : RecyclerFragment(), NotesView, BaseAdapter.OnItemClickListener<NoteItem> {
 
+    companion object{
+        fun newInstance() = NotesFragment()
+    }
+
     private lateinit var adapter: NotesAdapter
     private val dialogMenu = DynamicDialogMenu<NotesFragment, NoteItem>()
 
