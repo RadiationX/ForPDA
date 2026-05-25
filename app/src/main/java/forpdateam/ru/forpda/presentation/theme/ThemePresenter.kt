@@ -41,6 +41,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.links.Link
+import ru.radiationx.quill.QuillExtra
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.regex.Pattern
@@ -49,6 +51,10 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * Created by radiationx on 15.03.18.
  */
+data class ThemeExtra(
+    val link: Link.Board.Topic
+): QuillExtra
+
 @InjectViewState
 class ThemePresenter(
     private val context: Context,
@@ -69,8 +75,6 @@ class ThemePresenter(
     private val utils: Utils,
     private val themeParser: ThemeParser
 ) : BasePresenter<ThemeView>(), IThemePresenter {
-
-    lateinit var argTopicUrl: TopicUrl
 
     var loadAction = ActionState.NORMAL
 

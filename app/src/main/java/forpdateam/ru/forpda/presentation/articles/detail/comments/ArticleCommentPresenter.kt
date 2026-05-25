@@ -35,7 +35,7 @@ class ArticleCommentPresenter(
             .onEach {
                 viewState.showComments(it)
                 if (firstShow) {
-                    val targetCommentId = articleInteractor.initData.commentId
+                    val targetCommentId = articleInteractor.argExtra.commentId
                     val index = it.indexOfFirst { it.id == targetCommentId }
                     viewState.scrollToComment(index)
                     firstShow = false

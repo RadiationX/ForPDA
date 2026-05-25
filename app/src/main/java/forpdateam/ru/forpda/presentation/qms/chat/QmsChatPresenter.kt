@@ -22,13 +22,22 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.UserId
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 11.11.17.
  */
 
+sealed interface QmsChatExtra : QuillExtra {
+    data class Create(val userId: UserId?) : QmsChatExtra
+    data class Existed(val chatId: QmsChatId) : QmsChatExtra
+}
+
 @InjectViewState
 class QmsChatPresenter(
+    private val argExtra: QmsChatExtra,
     private val qmsInteractor: QmsInteractor,
     private val avatarRepository: AvatarRepository,
     private val webSocketEventsRepository: WebSocketEventsRepository,
@@ -44,6 +53,7 @@ class QmsChatPresenter(
         const val MODE_CREATING = "creating"
     }
 
+    @Deprecated("", level = DeprecationLevel.ERROR)
     var themeId = 0
     var userId = 0
     var title: String? = null
@@ -306,10 +316,7 @@ class QmsChatPresenter(
     fun openDialogs() {
         currentData?.let {
             router.navigateTo(
-                Screen.QmsThemes(
-                    userId = it.user.id,
-                    avatarUrl = it.user.avatar
-                ).apply {
+                Screen.QmsThemes(userId = UserId(it.user.id)).apply {
                     screenTitle = it.user.nick
                 }
             )

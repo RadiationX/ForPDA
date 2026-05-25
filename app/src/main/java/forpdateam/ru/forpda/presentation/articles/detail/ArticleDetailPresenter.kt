@@ -12,10 +12,18 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.CommentId
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 11.11.17.
  */
+
+data class ArticleDetailExtra(
+    val articleId: ArticleId,
+    val commentId: CommentId?
+): QuillExtra
 
 @InjectViewState
 class ArticleDetailPresenter(

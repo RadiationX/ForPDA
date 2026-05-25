@@ -9,8 +9,10 @@ import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
+import forpdateam.ru.forpda.extensions.getExtra
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.presentation.devdb.brands.BrandsExtra
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsPresenter
 import forpdateam.ru.forpda.presentation.devdb.brands.BrandsView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -33,19 +35,12 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
 
     private lateinit var adapter: BrandsAdapter
 
-    private val presenter by quillMoxyPresenter<BrandsPresenter>()
+    private val presenter by quillMoxyPresenter<BrandsPresenter> {
+        BrandsExtra(getExtra(ARG_ID))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_brands)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            getString(ARG_CATEGORY_ID)?.also {
-                presenter.initCategory(it)
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,7 +64,6 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
                 id: Long
             ) {
                 presenter.selectCategory(position)
-                presenter.loadBrands()
             }
 
             override fun onNothingSelected(arg0: AdapterView<*>) {}

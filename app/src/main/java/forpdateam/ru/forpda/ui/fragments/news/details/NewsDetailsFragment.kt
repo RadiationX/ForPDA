@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.ui.fragments.news.details
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.ImageView
@@ -20,10 +19,13 @@ import forpdateam.ru.forpda.databinding.FragmentArticleBinding
 import forpdateam.ru.forpda.databinding.ToolbarNewsDetailsBinding
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.getExtra
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.mutateWithTint
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.interactors.news.ArticleInteractor
+import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailExtra
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailPresenter
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailView
 import forpdateam.ru.forpda.ui.activities.MainActivity
@@ -54,7 +56,7 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
         private const val ARG_AUTHOR_NICK = "arg_author_nick"
         private const val ARG_DATE = "arg_date"
         private const val ARG_IMAGE_URL = "arg_image_url"
-        private const val ARG_COMMENT_COUNT = "arg_comment_count"
+        private const val ARG_COMMENTS_COUNT = "arg_comments_count"
 
         fun newInstanceLink(link: Link.Site.Details) = NewsDetailsFragment().putExtra {
             putParcelable(ARG_ID, link.articleId)
@@ -67,14 +69,14 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
             authorNick: String,
             date: String,
             imageUrl: String,
-            commentCount: Int
+            commentsCount: Int
         ) = NewsDetailsFragment().putExtra {
             putParcelable(ARG_ID, articleId)
             putString(ARG_TITLE, title)
             putString(ARG_AUTHOR_NICK, authorNick)
             putString(ARG_DATE, date)
             putString(ARG_IMAGE_URL, imageUrl)
-            putInt(ARG_COMMENT_COUNT, commentCount)
+            putInt(ARG_COMMENTS_COUNT, commentsCount)
         }
     }
 
@@ -121,14 +123,13 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installModules(quillModule {
-            instance(ArticleInteractor.InitData())
+            val argExtra = ArticleDetailExtra(
+                articleId = getExtraNotNull(ARG_ID),
+                commentId = getExtra(ARG_COMMENT_ID)
+            )
+            instance(argExtra)
             single<ArticleInteractor>()
         })
-        Log.e("lalala", "onCreate " + this + " : " + arguments)
-        arguments?.apply {
-            interactor.initData.newsId = getInt(ARG_NEWS_ID, 0)
-            interactor.initData.commentId = getInt(ARG_NEWS_COMMENT_ID, 0)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -156,11 +157,11 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
 
 
         arguments?.apply {
-            val newsTitle = getString(ARG_NEWS_TITLE)
-            val newsNick = getString(ARG_NEWS_AUTHOR_NICK)
-            val newsDate = getString(ARG_NEWS_DATE)
-            val newsImageUrl = getString(ARG_NEWS_IMAGE)
-            val newsCount = getInt(ARG_NEWS_COMMENTS_COUNT, -1)
+            val newsTitle = getString(ARG_TITLE)
+            val newsNick = getString(ARG_AUTHOR_NICK)
+            val newsDate = getString(ARG_DATE)
+            val newsImageUrl = getString(ARG_IMAGE_URL)
+            val newsCount = getInt(ARG_COMMENTS_COUNT, -1)
             if (newsTitle != null) {
                 setTitle(newsTitle)
                 setTabTitle(getString(R.string.fragment_tab_title_article, newsTitle))
@@ -252,13 +253,11 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
         detailsDate.text = data.date
         detailsCount.text = data.commentsCount.toString()
 
-        data.imgUrl?.also {
-            showArticleImage(it)
-        }
+        showArticleImage(data.imgUrl)
 
         val pagerAdapter = FragmentPagerAdapter(childFragmentManager)
         fragmentsPager.adapter = pagerAdapter
-        if (interactor.initData.commentId > 0) {
+        if (interactor.argExtra.commentId != null) {
             appBarLayout.setExpanded(false, true)
             fragmentsPager.setCurrentItem(1, true)
         }

@@ -16,27 +16,33 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.UserId
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 11.11.17.
  */
+data class QmsThemesExtra(
+    val userId: UserId
+) : QuillExtra
 
 @InjectViewState
 class QmsThemesPresenter(
+    private val argExtra: QmsThemesExtra,
     private val qmsInteractor: QmsInteractor,
     private val router: TabRouter,
     private val linkHandler: LinkHandler,
     private val errorHandler: ErrorHandler
 ) : BasePresenter<QmsThemesView>() {
 
-    var userId: Int = 0
-    var avatarUrl: String? = null
     var currentData: QmsThemes? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         qmsInteractor
-            .observeThemes(userId)
+            .observeThemes(argExtra.userId)
             .filterNotNull()
             .onEach {
                 currentData = it
@@ -45,7 +51,7 @@ class QmsThemesPresenter(
             .launchIn(viewModelScope)
 
         qmsInteractor
-            .observeContact(userId)
+            .observeContact(argExtra.userId)
             .mapNotNull { it?.user?.avatar ?: avatarUrl }
             .onEach { viewState.showAvatar(it) }
             .launchIn(viewModelScope)
@@ -55,7 +61,7 @@ class QmsThemesPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                qmsInteractor.getThemesList(userId)
+                qmsInteractor.getThemesList(argExtra.userId)
             }.onSuccess {
                 currentData = it
                 if (it.themes.isEmpty()) {
@@ -95,18 +101,16 @@ class QmsThemesPresenter(
         }
     }
 
-    fun openProfile(userId: Int) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=$userId")
+    fun openProfile() {
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${argExtra.userId.id}")
     }
 
     fun openChat() {
         currentData?.let {
             Log.e("kokosina", "openChat")
             router.replaceScreen(
-                Screen.QmsChat.CreateWithUser(
-                    userId = it.user.id,
-                    userNick = it.user.nick,
-                    avatarUrl = avatarUrl
+                Screen.QmsChat.Create(
+                    userId = UserId(it.user.id),
                 )
             )
         }
@@ -129,13 +133,7 @@ class QmsThemesPresenter(
     fun onItemClick(item: QmsTheme) {
         currentData?.let {
             router.navigateTo(
-                Screen.QmsChat.FromList(
-                    userId = it.user.id,
-                    themeId = item.id,
-                    userNick = it.user.nick,
-                    avatarUrl = avatarUrl,
-                    themeTitle = item.name
-                ).apply {
+                Screen.QmsChat.Existed(chatId = QmsChatId(UserId(it.user.id), QmsThreadId(item.id))).apply {
                     screenTitle = item.name
                     screenSubTitle = it.user.nick
                 }

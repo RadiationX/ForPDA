@@ -20,11 +20,13 @@ import forpdateam.ru.forpda.common.webview.DialogsHelper
 import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
+import forpdateam.ru.forpda.presentation.announce.AnnounceExtra
 import forpdateam.ru.forpda.presentation.announce.AnnouncePresenter
 import forpdateam.ru.forpda.presentation.announce.AnnounceView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -57,18 +59,12 @@ class AnnounceFragment : TabFragment(), AnnounceView, TabTopScroller {
     private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val webViewClient by inject<CustomWebViewClient>()
-    private val presenter by quillMoxyPresenter<AnnouncePresenter>()
+    private val presenter by quillMoxyPresenter<AnnouncePresenter> {
+        AnnounceExtra(getExtraNotNull(ARG_ID))
+    }
 
     init {
         configuration.defaultTitle = "Объявление"
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.id = getInt(ARG_ANNOUNCE_ID)
-            presenter.forumId = getInt(ARG_FORUM_ID)
-        }
     }
 
     @SuppressLint("JavascriptInterface")

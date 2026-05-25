@@ -6,6 +6,7 @@ import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.repository.news.NewsRepository
+import forpdateam.ru.forpda.presentation.articles.detail.ArticleDetailExtra
 import forpdateam.ru.forpda.presentation.articles.detail.ArticleTemplate
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ArticleInteractor @Inject constructor(
-    val initData: InitData,
+    val argExtra: ArticleDetailExtra,
     private val newsRepository: NewsRepository,
     private val articleTemplate: ArticleTemplate
 ) {
@@ -28,12 +29,12 @@ class ArticleInteractor @Inject constructor(
     fun observeComments(): Flow<List<Comment>> = commentsState.filterNotNull()
 
     suspend fun loadArticle(): DetailsPage {
-        val details = newsRepository.getDetails(initData.newsId)
+        val details = newsRepository.getDetails(argExtra.articleId)
         return articleTemplate.mapEntity(details)
     }
 
     suspend fun likeComment(commentId: Int) {
-        newsRepository.likeComment(initData.newsId, commentId)
+        newsRepository.likeComment(argExtra.articleId, commentId)
         updateComments { comments ->
             comments.replace(
                 condition = { it.id == commentId },
@@ -56,13 +57,12 @@ class ArticleInteractor @Inject constructor(
 
     suspend fun replyComment(commentId: Int, comment: String): DetailsPage {
         return newsRepository
-            .replyComment(initData.newsId, commentId, comment)
+            .replyComment(argExtra.articleId, commentId, comment)
             .let { articleTemplate.mapEntity(it) }
             .also { updateData(it) }
     }
 
     private fun updateData(article: DetailsPage) {
-        initData.newsId = article.id
         dataState.value = article
         parseComments(article)
     }
@@ -84,9 +84,4 @@ class ArticleInteractor @Inject constructor(
             }
         }
     }
-
-    data class InitData(
-        var newsId: Int = -1,
-        var commentId: Int = -1
-    )
 }

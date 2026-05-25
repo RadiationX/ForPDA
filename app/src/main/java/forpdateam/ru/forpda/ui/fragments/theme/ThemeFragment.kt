@@ -33,12 +33,14 @@ import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.extensions.getDimenPx
 import forpdateam.ru.forpda.extensions.getDrawableResAttr
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
+import forpdateam.ru.forpda.presentation.theme.ThemeExtra
 import forpdateam.ru.forpda.presentation.theme.ThemePresenter
 import forpdateam.ru.forpda.presentation.theme.ThemeView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
@@ -102,7 +104,9 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
     private val otherPreferencesHolder by inject<OtherPreferencesHolder>()
     private val utils by inject<Utils>()
 
-    protected val presenter by quillMoxyPresenter<ThemePresenter>()
+    protected val presenter by quillMoxyPresenter<ThemePresenter> {
+        ThemeExtra(getExtraNotNull(ARG_LINK))
+    }
 
     private val filesPicker = registerFilesPicker {
         uploadFiles(it)
@@ -120,7 +124,6 @@ abstract class ThemeFragment : TabFragment(R.layout.fragment_theme), ThemeView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.argTopicUrl = requireArguments().getParcelable(ARG_TOPIC_URL)!!
         dialogsHelper = ThemeDialogsHelper_V2(requireContext(), authHolder, otherPreferencesHolder)
     }
 

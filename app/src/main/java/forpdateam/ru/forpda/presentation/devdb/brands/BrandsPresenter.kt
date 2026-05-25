@@ -9,13 +9,21 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.DevDbBrandId
+import ru.radiationx.coretypes.DevDbCategoryId
+import ru.radiationx.coretypes.DevDbDevicesId
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 11.11.17.
  */
+data class BrandsExtra(
+    val categoryId: DevDbCategoryId?
+) : QuillExtra
 
 @InjectViewState
 class BrandsPresenter(
+    private val argExtra: BrandsExtra,
     private val devDbRepository: DevDbRepository,
     private val router: TabRouter,
     private val errorHandler: ErrorHandler
@@ -34,17 +42,15 @@ class BrandsPresenter(
         CATEGORY_EBOOK,
         CATEGORY_SMARTWATCH
     )
-    private var currentCategory = categories[0]
-    private var currentData: Brands? = null
+    private var currentCategory = argExtra.categoryId?.let { id ->
+        categories.firstOrNull { it == id.id }
+    } ?: categories.first()
 
-    fun initCategory(categoryId: String) {
-        categories.firstOrNull { it == categoryId }?.let {
-            currentCategory = it
-        }
-    }
+    private var currentData: Brands? = null
 
     fun selectCategory(position: Int) {
         currentCategory = categories[position]
+        loadBrands()
     }
 
     override fun onFirstViewAttach() {
@@ -69,18 +75,13 @@ class BrandsPresenter(
     }
 
     fun openBrand(item: Brands.Item) {
-        currentData?.let {
-            router.navigateTo(
-                Screen.DevDbDevices(
-                    categoryId = it.catId,
-                    brandId = item.id
-                )
-            )
-        }
+        val data = currentData ?: return
+        val id = DevDbDevicesId(DevDbCategoryId(data.catId), DevDbBrandId(item.id))
+        router.navigateTo(Screen.DevDbDevices(devicesId = id))
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.DevDbSearch(link))
+        router.navigateTo(Screen.DevDbSearch(text = null))
     }
 
 }

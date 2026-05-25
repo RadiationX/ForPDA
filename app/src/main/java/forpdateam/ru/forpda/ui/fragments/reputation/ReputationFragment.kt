@@ -19,9 +19,12 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
+import forpdateam.ru.forpda.extensions.getExtra
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
+import forpdateam.ru.forpda.presentation.reputation.ReputationExtra
 import forpdateam.ru.forpda.presentation.reputation.ReputationPresenter
 import forpdateam.ru.forpda.presentation.reputation.ReputationView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -41,7 +44,7 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
 
     companion object {
         private const val ARG_LINK = "arg_link"
-        fun newInstance(link: Link.Board.Reputation.History?) = ReputationFragment().putExtra {
+        fun newInstance(link: Link.Board.Reputation.History) = ReputationFragment().putExtra {
             putParcelable(ARG_LINK, link)
         }
     }
@@ -80,15 +83,12 @@ class ReputationFragment : RecyclerFragment(), ReputationView {
         }
     }
 
-    private val presenter by quillMoxyPresenter<ReputationPresenter>()
+    private val presenter by quillMoxyPresenter<ReputationPresenter>{
+        ReputationExtra(getExtraNotNull(ARG_LINK))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_reputation)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.currentArgs = requireArguments().getParcelable(ARG_REP_ARGS)!!
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

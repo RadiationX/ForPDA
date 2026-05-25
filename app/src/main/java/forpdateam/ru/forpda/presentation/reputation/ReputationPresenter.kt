@@ -12,13 +12,19 @@ import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.links.Link
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 03.01.18.
  */
+data class ReputationExtra(
+    val link: Link.Board.Reputation.History
+): QuillExtra
 
 @InjectViewState
 class ReputationPresenter(
+    private val argExtra: ReputationExtra,
     private val reputationRepository: ReputationRepository,
     private val avatarRepository: AvatarRepository,
     private val router: TabRouter,
@@ -31,7 +37,7 @@ class ReputationPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        loadReputation(currentArgs.initialSt)
+        loadReputation()
     }
 
     fun loadReputation(page: Int? = null) {
@@ -114,6 +120,6 @@ class ReputationPresenter(
     }
 
     fun navigateToMessage(item: RepItem) {
-        linkHandler.handle(item.sourceUrl)
+        item.sourceUrl?.also { linkHandler.handle(it) }
     }
 }

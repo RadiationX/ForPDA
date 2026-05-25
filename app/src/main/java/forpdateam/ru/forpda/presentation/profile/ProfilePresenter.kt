@@ -14,13 +14,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import moxy.InjectViewState
+import ru.radiationx.coretypes.UserId
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 02.01.18.
  */
+data class ProfileExtra(
+    val userId: UserId
+) : QuillExtra
 
 @InjectViewState
 class ProfilePresenter(
+    private val argExtra: ProfileExtra,
     private val profileRepository: ProfileRepository,
     private val router: TabRouter,
     private val linkHandler: LinkHandler,
@@ -28,7 +34,6 @@ class ProfilePresenter(
     private val utils: Utils
 ) : BasePresenter<ProfileView>() {
 
-    var argUserId: Int = 0
     private var currentData: ProfileModel? = null
 
     override fun onFirstViewAttach() {
@@ -40,7 +45,7 @@ class ProfilePresenter(
         viewState.setRefreshing(true)
         viewModelScope.launch {
             coRunCatching {
-                profileRepository.loadProfile(argUserId)
+                profileRepository.loadProfile(argExtra.userId)
             }.onSuccess { profileModel ->
                 currentData = profileModel
                 loadAvatar(profileModel)
@@ -73,11 +78,11 @@ class ProfilePresenter(
     }
 
     fun onStatClick(item: ProfileModel.Stat) {
-        linkHandler.handle(item.url)
+        item.url?.also { linkHandler.handle(it) }
     }
 
     fun copyUrl() {
-        utils.copyToClipBoard(ApiRequest.Forum.Profile.Load(argUserId))
+        utils.copyToClipBoard(ApiRequest.Forum.Profile.Load(argExtra.userId))
     }
 
     fun navigateToQms() {

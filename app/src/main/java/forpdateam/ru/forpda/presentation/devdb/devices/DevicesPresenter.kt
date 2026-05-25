@@ -10,21 +10,27 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.DevDbDevicesId
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 11.11.17.
  */
 
+data class DevicesExtra(
+    val devicesId: DevDbDevicesId
+): QuillExtra
+
 @InjectViewState
 class DevicesPresenter(
+    private val argExtra: DevicesExtra,
     private val devDbRepository: DevDbRepository,
     private val router: TabRouter,
     private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<DevicesView>() {
 
-    var categoryId: String? = null
-    var brandId: String? = null
     var currentData: Brand? = null
 
     override fun onFirstViewAttach() {
@@ -36,7 +42,7 @@ class DevicesPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                devDbRepository.getBrand(categoryId.orEmpty(), brandId.orEmpty())
+                devDbRepository.getBrand(argExtra.devicesId)
             }.onSuccess {
                 currentData = it
                 viewState.showData(it)
@@ -48,13 +54,11 @@ class DevicesPresenter(
     }
 
     fun openDevice(item: Brand.DeviceItem) {
-        currentData?.let {
-            router.navigateTo(Screen.DevDbDevice(deviceId = item.id))
-        }
+        router.navigateTo(Screen.DevDbDevice(deviceId = DevDbDeviceId(item.id)))
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.DevDbSearch(link))
+        router.navigateTo(Screen.DevDbSearch(text = null))
     }
 
     fun copyLink(item: Brand.DeviceItem) {

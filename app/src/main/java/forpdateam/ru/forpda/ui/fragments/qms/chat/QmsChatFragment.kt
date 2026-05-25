@@ -22,6 +22,7 @@ import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.entity.remote.qms.QmsChatModel
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.asRegular
+import forpdateam.ru.forpda.extensions.getExtra
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
@@ -29,6 +30,7 @@ import forpdateam.ru.forpda.model.repository.temp.TempHelper
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
+import forpdateam.ru.forpda.presentation.qms.chat.QmsChatExtra
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatPresenter
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatTemplate
 import forpdateam.ru.forpda.presentation.qms.chat.QmsChatView
@@ -94,7 +96,11 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val webViewClient by inject<CustomWebViewClient>()
-    private val presenter by quillMoxyPresenter<QmsChatPresenter>()
+    private val presenter by quillMoxyPresenter<QmsChatPresenter> {
+        getExtra<QmsChatId>(ARG_CHAT_ID)
+            ?.let { QmsChatExtra.Existed(it) }
+            ?: QmsChatExtra.Create(getExtra(ARG_USER_ID))
+    }
 
     private val filesPicker = registerFilesPicker {
         uploadFiles(it)
@@ -102,17 +108,6 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_chat)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.userId = getInt(USER_ID_ARG, QmsChatModel.NOT_CREATED)
-            presenter.themeId = getInt(THEME_ID_ARG, QmsChatModel.NOT_CREATED)
-            presenter.title = getString(THEME_TITLE_ARG)
-            presenter.avatarUrl = getString(USER_AVATAR_ARG)
-            presenter.nick = getString(USER_NICK_ARG)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

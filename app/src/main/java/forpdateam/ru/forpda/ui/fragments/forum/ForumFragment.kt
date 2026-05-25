@@ -8,10 +8,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
+import forpdateam.ru.forpda.extensions.getExtra
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
+import forpdateam.ru.forpda.presentation.forum.ForumExtra
 import forpdateam.ru.forpda.presentation.forum.ForumPresenter
 import forpdateam.ru.forpda.presentation.forum.ForumView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -63,17 +65,12 @@ class ForumFragment : RecyclerFragment(), ForumView {
         }
     }
 
-    private val presenter by quillMoxyPresenter<ForumPresenter>()
+    private val presenter by quillMoxyPresenter<ForumPresenter> {
+        ForumExtra(getExtra(ARG_ID))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_forum)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.targetForumId = getInt(ARG_FORUM_ID, -1)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

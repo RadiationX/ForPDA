@@ -11,10 +11,12 @@ import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
+import forpdateam.ru.forpda.presentation.topics.TopicsExtra
 import forpdateam.ru.forpda.presentation.topics.TopicsPresenter
 import forpdateam.ru.forpda.presentation.topics.TopicsView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -65,15 +67,12 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
         }
     }
 
-    private val presenter by quillMoxyPresenter<TopicsPresenter>()
+    private val presenter by quillMoxyPresenter<TopicsPresenter> {
+        TopicsExtra(getExtraNotNull(ARG_LINK))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_topics)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.forumId = requireArguments().getInt(FORUM_ID_ARG)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

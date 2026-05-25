@@ -5,7 +5,6 @@ import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.asDeferredData
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
-import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
 import forpdateam.ru.forpda.model.AuthHolder
@@ -19,6 +18,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.links.Link
 
 /**
  * Created by radiationx on 11.11.17.
@@ -115,12 +116,12 @@ class ArticlesListPresenter(
     fun onItemClick(item: NewsItem) {
         router.navigateTo(
             Screen.ArticleDetail.FromList(
-                articleId = item.id,
-                articleTitle = item.title,
-                articleAuthorNick = item.author,
-                articleDate = item.date,
-                articleImageUrl = item.imgUrl,
-                articleCommentsCount = item.commentsCount,
+                articleId = ArticleId(item.id),
+                title = item.title,
+                authorNick = item.author,
+                date = item.date,
+                imageUrl = item.imgUrl,
+                commentsCount = item.commentsCount,
             )
         )
     }
@@ -148,11 +149,7 @@ class ArticlesListPresenter(
 
     fun openSearch() {
         router.navigateTo(
-            Screen.Search(
-                SearchSettings.default().copy(
-                    resourceType = SearchSettings.RESOURCE_NEWS.first
-                )
-            )
+            Screen.Search.Site(link = Link.Site.Search.default)
         )
     }
 

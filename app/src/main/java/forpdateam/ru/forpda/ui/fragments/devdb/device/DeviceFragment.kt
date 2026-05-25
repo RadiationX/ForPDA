@@ -33,12 +33,14 @@ import forpdateam.ru.forpda.databinding.ToolbarDeviceBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.extensions.getColorFromAttr
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.extensions.setBackgroundAttr
 import forpdateam.ru.forpda.extensions.setBackgroundTintColor
 import forpdateam.ru.forpda.presentation.devdb.device.DevicePresenter
 import forpdateam.ru.forpda.presentation.devdb.device.DeviceView
+import forpdateam.ru.forpda.presentation.devdb.devices.DevicesExtra
 import forpdateam.ru.forpda.ui.DimensionHelper
 import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
@@ -92,7 +94,9 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
     private var appBarOffset = 0
 
-    private val presenter by quillMoxyPresenter<DevicePresenter>()
+    private val presenter by quillMoxyPresenter<DevicePresenter> {
+        DevicesExtra(getExtraNotNull(ARG_ID))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_device)
@@ -100,9 +104,6 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.deviceId = getString(ARG_DEVICE_ID, null)
-        }
 
         val transaction = childFragmentManager.beginTransaction()
         for (fragment in childFragmentManager.fragments) {

@@ -10,8 +10,10 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.presentation.qms.themes.QmsThemesExtra
 import forpdateam.ru.forpda.presentation.qms.themes.QmsThemesPresenter
 import forpdateam.ru.forpda.presentation.qms.themes.QmsThemesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerFragment
@@ -39,18 +41,12 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     private lateinit var adapter: QmsThemesAdapter
     private val dialogMenu = DynamicDialogMenu<QmsThemesFragment, QmsTheme>()
 
-    private val presenter by quillMoxyPresenter<QmsThemesPresenter>()
+    private val presenter by quillMoxyPresenter<QmsThemesPresenter> {
+        QmsThemesExtra(getExtraNotNull(ARG_ID))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_dialogs)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.userId = getInt(USER_ID_ARG)
-            presenter.avatarUrl = getString(USER_AVATAR_ARG)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -129,7 +125,7 @@ class QmsThemesFragment : RecyclerFragment(), BaseAdapter.OnItemClickListener<Qm
     override fun showAvatar(avatarUrl: String) {
         ImageLoader.getInstance().displayImage(avatarUrl, toolbarImageView)
         toolbarImageView.visibility = View.VISIBLE
-        toolbarImageView.setOnClickListener { presenter.openProfile(presenter.userId) }
+        toolbarImageView.setOnClickListener { presenter.openProfile() }
         toolbarImageView.contentDescription = getString(R.string.user_avatar)
     }
 

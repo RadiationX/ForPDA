@@ -25,11 +25,13 @@ import forpdateam.ru.forpda.databinding.FragmentProfileBinding
 import forpdateam.ru.forpda.databinding.ToolbarProfileBinding
 import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.extensions.coRunCatching
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.mutateWithTint
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.presentation.LinkHandler
+import forpdateam.ru.forpda.presentation.profile.ProfileExtra
 import forpdateam.ru.forpda.presentation.profile.ProfilePresenter
 import forpdateam.ru.forpda.presentation.profile.ProfileView
 import forpdateam.ru.forpda.ui.activities.MainActivity
@@ -89,15 +91,12 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
     private var lastBlurWidth = 0
     private var lastBlurHeight = 0
 
-    private val presenter by quillMoxyPresenter<ProfilePresenter>()
+    private val presenter by quillMoxyPresenter<ProfilePresenter>{
+        ProfileExtra(getExtraNotNull(ARG_ID))
+    }
 
     init {
         configuration.isFitSystemWindow = true
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.argUserId = requireArguments().getInt(ARG_USER_ID)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -217,7 +216,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
     }
 
     override fun onLinkClick(url: String?) {
-        linkHandler.handle(url)
+        url?.let { linkHandler.handle(it) }
     }
 
     override fun onSaveNote(success: Boolean) {

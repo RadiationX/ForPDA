@@ -46,9 +46,9 @@ class MainPresenter(
             } else {
                 val lastMenuId = menuRepository.getLastOpened()
                 val screen: Screen = if (menuRepository.menuItemContains(lastMenuId)) {
-                    menuRepository.getMenuItem(lastMenuId).screen ?: Screen.ArticleList(link)
+                    menuRepository.getMenuItem(lastMenuId).screen ?: Screen.ArticleList()
                 } else {
-                    Screen.ArticleList(link)
+                    Screen.ArticleList()
                 }
                 router.navigateTo(screen)
             }

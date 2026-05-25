@@ -26,9 +26,17 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.links.Link
+import ru.radiationx.quill.QuillExtra
+
+data class SearchExtra(
+    val siteLink: Link.Site.Search?,
+    val board: Link.Board.Search?
+) : QuillExtra
 
 @InjectViewState
 class SearchPresenter(
+    private val argExtra: SearchExtra,
     private val context: Context,
     private val searchRepository: SearchRepository,
     private val favoritesRepository: FavoritesRepository,
@@ -79,15 +87,43 @@ class SearchPresenter(
     private var currentData: SearchResult? = null
 
     init {
-        val settings = otherPreferencesHolder.searchSettings.get()?.let {
+        val siteSettings = argExtra.siteLink?.let {
+            SearchSettings.default().copy(
+                resourceType = SearchSettings.RESOURCE_NEWS.first,
+                query = it.text,
+                st = it.pageNumber.value
+            )
+        }
+        val boardSettings = argExtra.board?.let {
+            SearchSettings.default().copy(
+                query = it.query,
+                nick = it.nick,
+                forums = it.forums.filterIsInstance<Link.Board.Search.Forum.Id>().map { it.forumId.id },
+                subforums = if (it.subforums) SearchSettings.SUB_FORUMS_TRUE else SearchSettings.SUB_FORUMS_FALSE,
+                topics = it.topics.map { it.id },
+                source = when (it.source) {
+                    Link.Board.Search.Source.All -> SearchSettings.SOURCE_ALL.first
+                    Link.Board.Search.Source.Title -> SearchSettings.SOURCE_TITLES.first
+                    Link.Board.Search.Source.Post -> SearchSettings.SOURCE_CONTENT.first
+                },
+                sort = when (it.sort) {
+                    Link.Board.Search.Sort.Relevancy -> SearchSettings.SORT_REL.first
+                    Link.Board.Search.Sort.DateAsc -> SearchSettings.SORT_DA.first
+                    Link.Board.Search.Sort.DateDesc -> SearchSettings.SORT_DD.first
+                },
+                result = when (it.result) {
+                    Link.Board.Search.Result.Topics -> SearchSettings.RESULT_TOPICS.first
+                    Link.Board.Search.Result.Posts -> SearchSettings.RESULT_POSTS.first
+                },
+                st = it.offset.value
+            )
+        }
+        val savedSettings = otherPreferencesHolder.searchSettings.get()?.let {
             SearchSettings.parseSettings(it)
         }
-        initSearchSettings(settings)
-    }
-
-    fun initSearchSettings(settings: SearchSettings?) {
-        if (settings == null) return
-        argSettings = settings
+        (siteSettings ?: boardSettings ?: savedSettings)?.also {
+            argSettings = it
+        }
     }
 
     override fun onFirstViewAttach() {

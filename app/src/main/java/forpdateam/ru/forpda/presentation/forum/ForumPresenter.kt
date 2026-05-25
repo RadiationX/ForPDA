@@ -3,7 +3,6 @@ package forpdateam.ru.forpda.presentation.forum
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
-import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
@@ -13,13 +12,21 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.links.Link
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 03.01.18.
  */
 
+data class ForumExtra(
+    val forumId: ForumId?
+): QuillExtra
+
 @InjectViewState
 class ForumPresenter(
+    private val argExtra: ForumExtra,
     private val forumRepository: ForumRepository,
     private val favoritesRepository: FavoritesRepository,
     private val router: TabRouter,
@@ -27,7 +34,7 @@ class ForumPresenter(
     private val utils: Utils
 ) : BasePresenter<ForumView>() {
 
-    var targetForumId = -1
+    private var targetForumId: ForumId? = argExtra.forumId
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -68,10 +75,9 @@ class ForumPresenter(
     }
 
     private fun scrollToTarget() {
-        if (targetForumId != -1) {
-            viewState.scrollToForum(targetForumId)
-            targetForumId = -1
-        }
+        val forumId = targetForumId ?: return
+        viewState.scrollToForum(forumId.id)
+        targetForumId = null
     }
 
     fun markRead(id: Int) {
@@ -120,18 +126,11 @@ class ForumPresenter(
     }
 
     fun navigateToForum(item: ForumItemFlat) {
-        router.navigateTo(Screen.Topics(forumId = item.id))
+        router.navigateTo(Screen.Topics(link = Link.Board.Forum.default(ForumId(item.id))))
     }
 
     fun navigateToSearch(item: ForumItemFlat) {
-        router.navigateTo(
-            Screen.Search(
-                SearchSettings.default().copy(
-                    resourceType = SearchSettings.RESOURCE_FORUM.first,
-                    source = SearchSettings.SOURCE_ALL.first,
-                    forums = listOf(item.id)
-                )
-            )
-        )
+        val link = Link.Board.Search.default.copy(forums = setOf(Link.Board.Search.Forum.Id(forumId = ForumId(item.id))))
+        router.navigateTo(Screen.Search.Forum(link = link))
     }
 }

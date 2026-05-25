@@ -9,6 +9,7 @@ import java.util.regex.Pattern
 /**
  * Created by radiationx on 20.03.17.
  */
+@Deprecated("", level = DeprecationLevel.ERROR)
 @Parcelize
 data class RepArgs(
     val userId: Int,

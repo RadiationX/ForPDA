@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.UserId
 import java.util.Locale
 
 /**
@@ -103,10 +104,7 @@ class QmsContactsPresenter(
 
     fun onItemClick(item: QmsContact) {
         router.navigateTo(
-            Screen.QmsThemes(
-                userId = item.user.id,
-                avatarUrl = item.user.avatar
-            ).apply {
+            Screen.QmsThemes(userId = UserId(item.user.id)).apply {
                 screenTitle = item.user.nick
             }
         )

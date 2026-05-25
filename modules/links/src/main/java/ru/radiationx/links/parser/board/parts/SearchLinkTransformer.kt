@@ -68,7 +68,7 @@ internal object SearchLinkTransformer {
                 Link.Board.Search.Forum.Id(forumId = forumId)
             }
         }.toSet()
-        val subforums = url.query("subforums") == "1"
+        val subforums = url.query("subforums")?.let { it == "1" }
         val topics = parseMultipleQuery(url, TopicIdCase.Search.value, TopicIdCase.SearchArray.value).mapNotNull { value ->
             value.parseTopicId()
         }.toSet()
@@ -76,29 +76,29 @@ internal object SearchLinkTransformer {
             "pst" -> Link.Board.Search.Source.Post
             "top" -> Link.Board.Search.Source.Title
             "all" -> Link.Board.Search.Source.All
-            else -> Link.Board.Search.Source.All
+            else -> null
         }
         val sort = when (url.query("sort")) {
             "rel" -> Link.Board.Search.Sort.Relevancy
             "da" -> Link.Board.Search.Sort.DateAsc
             "dd" -> Link.Board.Search.Sort.DateDesc
-            else -> Link.Board.Search.Sort.Relevancy
+            else -> null
         }
         val result = when (url.query("result")) {
             "posts" -> Link.Board.Search.Result.Posts
             "topics" -> Link.Board.Search.Result.Topics
-            else -> Link.Board.Search.Result.Posts
+            else -> null
         }
         val offset = url.parsePageOffset()
         return Link.Board.Search(
             query = query,
             nick = nick,
             forums = forums,
-            subforums = subforums,
+            subforums = subforums ?: Link.Board.Search.default.subforums,
             topics = topics,
-            source = source,
-            sort = sort,
-            result = result,
+            source = source ?: Link.Board.Search.default.source,
+            sort = sort ?: Link.Board.Search.default.sort,
+            result = result ?: Link.Board.Search.default.result,
             offset = offset
         )
     }

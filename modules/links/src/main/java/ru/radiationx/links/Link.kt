@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 import ru.radiationx.coretypes.AnnounceId
 import ru.radiationx.coretypes.ArticleId
 import ru.radiationx.coretypes.CommentId
-import ru.radiationx.coretypes.DevDbDevicesId
 import ru.radiationx.coretypes.DevDbCategoryId
 import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.DevDbDevicesId
 import ru.radiationx.coretypes.ForumId
 import ru.radiationx.coretypes.PageNumber
 import ru.radiationx.coretypes.PageOffset
@@ -57,7 +57,14 @@ sealed interface Link : Parcelable {
         data class Details(val articleId: ArticleId, val commentId: CommentId?, val paths: Paths.Date?) : Site
 
         @Parcelize
-        data class Search(val text: String, val pageNumber: PageNumber) : Site
+        data class Search(val text: String, val pageNumber: PageNumber) : Site {
+            companion object {
+                val default = Search(
+                    text = "",
+                    pageNumber = PageNumber.default
+                )
+            }
+        }
 
         sealed interface Paths : Parcelable {
 
@@ -160,7 +167,14 @@ sealed interface Link : Parcelable {
         //https://4pda.to/forum/lofiversion/index.php?f956
         //https://4pda.to/forum/lofiversion/index.php?f956-150
         @Parcelize
-        data class Forum(val forumId: ForumId, val offset: PageOffset) : Board
+        data class Forum(val forumId: ForumId, val offset: PageOffset) : Board {
+            companion object {
+                fun default(forumId: ForumId) = Forum(
+                    forumId = forumId,
+                    offset = PageOffset.default
+                )
+            }
+        }
 
         //https://4pda.to/forum/index.php?act=fav
         //https://4pda.to/forum/index.php?act=fav&type=all
@@ -338,6 +352,20 @@ sealed interface Link : Parcelable {
             val result: Result,
             val offset: PageOffset
         ) : Board {
+
+            companion object {
+                val default = Search(
+                    query = "",
+                    nick = "",
+                    forums = setOf(),
+                    subforums = true,
+                    topics = setOf(),
+                    source = Source.All,
+                    sort = Sort.Relevancy,
+                    result = Result.Posts,
+                    offset = PageOffset.default
+                )
+            }
 
             enum class Result {
                 Topics,

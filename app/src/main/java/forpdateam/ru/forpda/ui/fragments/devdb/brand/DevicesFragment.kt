@@ -14,8 +14,10 @@ import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.databinding.FragmentBrandBinding
 import forpdateam.ru.forpda.entity.remote.devdb.Brand
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
+import forpdateam.ru.forpda.presentation.devdb.devices.DevicesExtra
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesPresenter
 import forpdateam.ru.forpda.presentation.devdb.devices.DevicesView
 import forpdateam.ru.forpda.ui.fragments.RecyclerTopScroller
@@ -59,18 +61,12 @@ class DevicesFragment : TabFragment(R.layout.fragment_brand), DevicesView,
     private lateinit var topScroller: RecyclerTopScroller
 
 
-    private val presenter by quillMoxyPresenter<DevicesPresenter>()
+    private val presenter by quillMoxyPresenter<DevicesPresenter> {
+        DevicesExtra(getExtraNotNull(ARG_ID))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_brand)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            presenter.categoryId = getString(ARG_CATEGORY_ID, null)
-            presenter.brandId = getString(ARG_BRAND_ID, null)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

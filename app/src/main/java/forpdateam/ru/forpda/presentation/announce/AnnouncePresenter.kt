@@ -9,21 +9,24 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.AnnounceId
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 02.01.18.
  */
+data class AnnounceExtra(
+    val announceId: AnnounceId
+) : QuillExtra
 
 @InjectViewState
 class AnnouncePresenter(
+    private val argExtra: AnnounceExtra,
     private val forumRepository: ForumRepository,
     private val announceTemplate: AnnounceTemplate,
     private val templateManager: TemplateManager,
     private val errorHandler: ErrorHandler
 ) : BasePresenter<AnnounceView>() {
-
-    var id = 0
-    var forumId = 0
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -40,7 +43,7 @@ class AnnouncePresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                forumRepository.getAnnounce(id, forumId)
+                forumRepository.getAnnounce(argExtra.announceId)
             }.map {
                 announceTemplate.mapEntity(it)
             }.onSuccess {

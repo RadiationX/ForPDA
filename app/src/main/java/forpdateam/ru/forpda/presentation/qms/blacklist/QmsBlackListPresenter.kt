@@ -10,6 +10,7 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.UserId
 
 /**
  * Created by radiationx on 11.11.17.
@@ -92,10 +93,7 @@ class QmsBlackListPresenter(
 
     fun openDialogs(item: QmsContact) {
         router.navigateTo(
-            Screen.QmsThemes(
-                userId = item.user.id,
-                avatarUrl = item.user.avatar
-            ).apply {
+            Screen.QmsThemes(userId = UserId(item.user.id)).apply {
                 screenTitle = item.user.nick
             }
         )

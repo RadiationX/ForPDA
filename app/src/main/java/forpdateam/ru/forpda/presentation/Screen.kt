@@ -124,7 +124,7 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
     }
 
     class DevDbSearch(
-        private val text: String
+        private val text: String?
     ) : Screen(), FragmentScreen {
         override fun createFragment(factory: FragmentFactory): Fragment {
             return DevDbSearchFragment.newInstance(text)
@@ -205,10 +205,10 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
             private val authorNick: String,
             private val date: String,
             private val imageUrl: String,
-            private val commentCount: Int
+            private val commentsCount: Int
         ) : ArticleDetail() {
             override fun createFragment(factory: FragmentFactory): Fragment {
-                return NewsDetailsFragment.newInstanceList(articleId, title, authorNick, date, imageUrl, commentCount)
+                return NewsDetailsFragment.newInstanceList(articleId, title, authorNick, date, imageUrl, commentsCount)
             }
         }
     }

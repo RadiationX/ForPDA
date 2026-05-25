@@ -38,6 +38,7 @@ import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.getDimenPx
+import forpdateam.ru.forpda.extensions.getExtra
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.AuthHolder
@@ -47,6 +48,7 @@ import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.SystemLinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
+import forpdateam.ru.forpda.presentation.search.SearchExtra
 import forpdateam.ru.forpda.presentation.search.SearchPresenter
 import forpdateam.ru.forpda.presentation.search.SearchSiteView
 import forpdateam.ru.forpda.presentation.theme.ThemeJsInterface
@@ -160,7 +162,9 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     private val systemLinkHandler by inject<SystemLinkHandler>()
     private val router by inject<TabRouter>()
     private val webViewClient by inject<CustomWebViewClient>()
-    private val presenter by quillMoxyPresenter<SearchPresenter>()
+    private val presenter by quillMoxyPresenter<SearchPresenter> {
+        SearchExtra(getExtra(ARG_SITE_LINK), getExtra(ARG_BOARD_LINK))
+    }
 
     init {
         configuration.defaultTitle = getString(R.string.fragment_title_search)
@@ -189,7 +193,6 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.initSearchSettings(requireArguments().getParcelable(ARG_SETTINGS))
         dialogsHelper = ThemeDialogsHelper_V2(requireContext(), authHolder, otherPreferencesHolder)
     }
 

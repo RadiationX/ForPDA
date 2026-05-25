@@ -11,6 +11,7 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.DevDbDeviceId
 
 /**
  * Created by radiationx on 11.11.17.
@@ -50,13 +51,11 @@ class SearchDevicesPresenter(
     }
 
     fun openDevice(item: Brand.DeviceItem) {
-        currentData?.let {
-            router.navigateTo(Screen.DevDbDevice(deviceId = item.id))
-        }
+        router.navigateTo(Screen.DevDbDevice(deviceId = DevDbDeviceId(item.id)))
     }
 
     fun openSearch() {
-        router.navigateTo(Screen.DevDbSearch(link))
+        router.navigateTo(Screen.DevDbSearch(text = null))
     }
 
     fun copyLink(item: Brand.DeviceItem) {

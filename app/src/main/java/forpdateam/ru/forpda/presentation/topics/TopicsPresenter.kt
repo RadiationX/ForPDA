@@ -2,7 +2,6 @@ package forpdateam.ru.forpda.presentation.topics
 
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.extensions.coRunCatching
@@ -20,13 +19,20 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.links.Link
+import ru.radiationx.quill.QuillExtra
 
 /**
  * Created by radiationx on 03.01.18.
  */
+data class TopicsExtra(
+    val link: Link.Board.Forum
+) : QuillExtra
 
 @InjectViewState
 class TopicsPresenter(
+    private val argExtra: TopicsExtra,
     private val topicsRepository: TopicsRepository,
     private val forumRepository: ForumRepository,
     private val favoritesRepository: FavoritesRepository,
@@ -37,8 +43,7 @@ class TopicsPresenter(
     private val utils: Utils
 ) : BasePresenter<TopicsView>() {
 
-    var forumId = 0
-    private var currentSt = 0
+    private var currentSt = argExtra.link.offset.value
     var currentData: TopicsData? = null
 
     override fun onFirstViewAttach() {
@@ -56,7 +61,7 @@ class TopicsPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                topicsRepository.getTopics(forumId, currentSt)
+                topicsRepository.getTopics(argExtra.link.forumId, currentSt)
             }.onSuccess {
                 currentData = it
                 viewState.showTopics(it)
@@ -125,19 +130,12 @@ class TopicsPresenter(
     }
 
     fun openForum() {
-        router.navigateTo(Screen.Forum(forumId = forumId))
+        router.navigateTo(Screen.Forum(forumId = ForumId(forumId)))
     }
 
     fun openSearch() {
-        router.navigateTo(
-            Screen.Search(
-                SearchSettings.default().copy(
-                    resourceType = SearchSettings.RESOURCE_FORUM.first,
-                    source = SearchSettings.SOURCE_ALL.first,
-                    forums = listOf(forumId)
-                )
-            )
-        )
+        val link = Link.Board.Search.default.copy(forums = setOf(Link.Board.Search.Forum.Id(ForumId(forumId))))
+        router.navigateTo(Screen.Search.Forum(link))
     }
 
     fun openTopicForum() {
