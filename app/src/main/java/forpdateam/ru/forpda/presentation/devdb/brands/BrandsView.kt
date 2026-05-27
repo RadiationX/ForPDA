@@ -4,6 +4,7 @@ import forpdateam.ru.forpda.common.mvp.IBaseView
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import ru.radiationx.coretypes.DevDbCategoryId
 
 /**
  * Created by radiationx on 01.01.18.
@@ -12,5 +13,5 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface BrandsView : IBaseView {
     fun showData(data: Brands)
-    fun initCategories(categories: Array<String>, position: Int)
+    fun initCategories(categories: Array<DevDbCategoryId>, position: Int)
 }

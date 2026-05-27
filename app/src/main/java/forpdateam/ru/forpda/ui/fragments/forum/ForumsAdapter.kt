@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.ui.views.adapters.tree.ExpandableTree
 import forpdateam.ru.forpda.ui.views.adapters.tree.ListToTreeTransformer
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ForumListItem
 import forpdateam.ru.forpda.ui.views.drawers.adapters.ListItem
+import ru.radiationx.coretypes.ForumId
 
 class ForumsAdapter(
     private val clickListener: OnItemClickListener<ForumItemFlat>
@@ -26,9 +27,9 @@ class ForumsAdapter(
         }
     }
 
-    private val expandableTree = ExpandableTree<Int, ForumItemFlat>()
+    private val expandableTree = ExpandableTree<ForumId, ForumItemFlat>()
 
-    private val transformer = ListToTreeTransformer<Int, ForumItemFlat>(
+    private val transformer = ListToTreeTransformer<ForumId, ForumItemFlat>(
         keyGetter = { it.id },
         parentKeyGetter = { it.parentId }
     )
@@ -40,20 +41,20 @@ class ForumsAdapter(
     }
 
     fun bindItems(data: List<ForumItemFlat>) {
-        val tree = transformer.transform(data, -1)
+        val tree = transformer.transform(data, ForumId(-1))
         expandableTree.setRoot(tree)
         updateItems()
     }
 
-    fun expand(id: Int) {
+    fun expand(id: ForumId) {
         setExpanded(id, true)
     }
 
-    fun getItemPosition(id: Int): Int {
+    fun getItemPosition(id: ForumId): Int {
         return items?.indexOfFirst { (it as? ForumListItem)?.item?.id == id } ?: -1
     }
 
-    private fun setExpanded(id: Int, state: Boolean) {
+    private fun setExpanded(id: ForumId, state: Boolean) {
         expandableTree.setExpanded(id, state)
         updateItems()
     }

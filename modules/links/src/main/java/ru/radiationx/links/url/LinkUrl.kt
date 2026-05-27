@@ -9,4 +9,5 @@ interface LinkUrl {
     fun queries(name: String): List<String>
     fun fullQuery(): String?
     val fragment: String?
+    override fun toString(): String
 }

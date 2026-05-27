@@ -1,6 +1,7 @@
 package forpdateam.ru.forpda.model.repository.avatar
 
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 /**
@@ -11,7 +12,7 @@ class AvatarRepository @Inject constructor(
     private val forumUsersCache: ForumUsersCache
 ) {
 
-    suspend fun getAvatar(id: Int): String {
+    suspend fun getAvatar(id: UserId): String {
         return forumUsersCache.getUserById(id)?.avatar
             ?: throw NullPointerException("No avatar/user by id: $id")
     }
@@ -21,7 +22,7 @@ class AvatarRepository @Inject constructor(
             ?: throw NullPointerException("No avatar/user by nick: $nick")
     }
 
-    suspend fun getAvatar(id: Int, nick: String): String {
+    suspend fun getAvatar(id: UserId, nick: String): String {
         val avatar = forumUsersCache.getUserById(id)?.avatar
             ?: forumUsersCache.getUserByNick(nick)?.avatar
             ?: throw NullPointerException("No avatar/user by id: $id")

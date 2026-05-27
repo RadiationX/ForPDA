@@ -46,9 +46,7 @@ import forpdateam.ru.forpda.ui.DimensionsProvider
 import forpdateam.ru.forpda.ui.activities.imageviewer.ImageViewerActivity
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.fragments.devdb.DevDbHelper
-import forpdateam.ru.forpda.ui.fragments.devdb.device.comments.CommentsFragment
-import forpdateam.ru.forpda.ui.fragments.devdb.device.posts.PostsFragment
-import forpdateam.ru.forpda.ui.fragments.devdb.device.specs.SpecsFragment
+import forpdateam.ru.forpda.ui.fragments.devdb.device.di.DeviceSharedData
 import forpdateam.ru.forpda.ui.fragments.notes.NotesAddPopup
 import forpdateam.ru.forpda.ui.fragments.tabBinding
 import forpdateam.ru.forpda.ui.fragments.tabToolbarBinding
@@ -56,6 +54,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.coretypes.DevDbDeviceId
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
+import ru.radiationx.quill.quillModule
 
 /**
  * Created by radiationx on 08.08.17.
@@ -104,6 +104,9 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installModules(quillModule {
+            single<DeviceSharedData>()
+        })
 
         val transaction = childFragmentManager.beginTransaction()
         for (fragment in childFragmentManager.fragments) {
@@ -256,14 +259,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
         setTabTitle("${data.catTitle} ${data.brandTitle}: ${data.title}")
         setSubtitle("${data.catTitle} ${data.brandTitle}")
 
-
-        val urls = ArrayList<String>()
-        val fullUrls = ArrayList<String>()
-        for (pair in data.images) {
-            urls.add(pair.first)
-            fullUrls.add(pair.second)
-        }
-        val imagesAdapter = ImagesAdapter(requireContext(), urls, fullUrls)
+        val imagesAdapter = ImagesAdapter(requireContext(), data.images)
         imagesPager.setAdapter(imagesAdapter)
 
         val pagerAdapter = FragmentPagerAdapter(childFragmentManager, data)
@@ -297,32 +293,26 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
         init {
             if (!this.device.specs.isEmpty()) {
-                fragments.add(SpecsFragment().setDevice(this.device))
+                fragments.add(SubDeviceFragment.newInstance(SubDeviceType.Specs))
                 titles.add(getString(R.string.device_page_specs))
             }
             if (!this.device.comments.isEmpty()) {
-                fragments.add(CommentsFragment().setDevice(this.device))
+                fragments.add(SubDeviceFragment.newInstance(SubDeviceType.Comments))
                 val title = getString(R.string.device_page_comments, this.device.comments.size)
                 titles.add(title)
             }
             if (!this.device.discussions.isEmpty()) {
-                fragments.add(
-                    PostsFragment().setSource(PostsFragment.SRC_DISCUSSIONS).setDevice(this.device)
-                )
+                fragments.add(SubDeviceFragment.newInstance(SubDeviceType.Discussions))
                 val title = getString(R.string.device_page_discussions, this.device.discussions.size)
                 titles.add(title)
             }
             if (!this.device.news.isEmpty()) {
-                fragments.add(
-                    PostsFragment().setSource(PostsFragment.SRC_NEWS).setDevice(this.device)
-                )
+                fragments.add(SubDeviceFragment.newInstance(SubDeviceType.Articles))
                 val title = getString(R.string.device_page_news, this.device.news.size)
                 titles.add(title)
             }
             if (!this.device.firmwares.isEmpty()) {
-                fragments.add(
-                    PostsFragment().setSource(PostsFragment.SRC_FIRMWARES).setDevice(this.device)
-                )
+                fragments.add(SubDeviceFragment.newInstance(SubDeviceType.Firmwares))
                 val title = getString(R.string.device_page_firmwares, this.device.firmwares.size)
                 titles.add(title)
             }
@@ -344,20 +334,20 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
 
     inner class ImagesAdapter(
         context: Context,
-        private val urls: ArrayList<String>,
-        private var fullUrls: ArrayList<String>
+        private val images: List<Device.Image>
     ) : PagerAdapter() {
         //private SparseArray<View> views = new SparseArray<>();
         private val inflater: LayoutInflater = LayoutInflater.from(context)
 
 
         override fun getCount(): Int {
-            return urls.size
+            return images.size
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val imageLayout = inflater.inflate(R.layout.device_image_page, container, false)
             imageLayout.setOnClickListener {
+                val fullUrls = images.map { it.fullUrl }
                 ImageViewerActivity.startActivity(
                     this@DeviceFragment.requireContext(),
                     fullUrls,
@@ -381,7 +371,7 @@ class DeviceFragment : TabFragment(R.layout.fragment_device), DeviceView {
             val imageView = imageLayout.findViewById<View>(R.id.image_view) as ImageView
             val progressBar = imageLayout.findViewById<View>(R.id.progress_bar) as ProgressBar
             ImageLoader.getInstance()
-                .displayImage(urls[position], imageView, object : SimpleImageLoadingListener() {
+                .displayImage(images[position].url, imageView, object : SimpleImageLoadingListener() {
                     override fun onLoadingStarted(imageUri: String?, view: View?) {
                         progressBar.visibility = View.VISIBLE
                     }

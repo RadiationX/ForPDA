@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import ru.radiationx.coretypes.ForumId
 
 /**
  * Created by radiationx on 03.01.18.
@@ -14,7 +15,7 @@ import moxy.viewstate.strategy.StateStrategyType
 interface ForumView : IBaseView {
     fun showForums(forums: List<ForumItemFlat>)
 
-    fun scrollToForum(id: Int)
+    fun scrollToForum(forumId: ForumId)
 
     @StateStrategyType(SkipStrategy::class)
     fun onMarkRead()

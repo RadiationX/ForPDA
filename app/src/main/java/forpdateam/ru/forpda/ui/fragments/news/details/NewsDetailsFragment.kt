@@ -249,7 +249,7 @@ class NewsDetailsFragment : TabFragment(R.layout.fragment_article), ArticleDetai
         setTitle(data.title)
         setTabTitle(getString(R.string.fragment_tab_title_article, data.title))
         detailsTitle.text = data.title
-        detailsNick.text = data.author
+        detailsNick.text = data.author.nick
         detailsDate.text = data.date
         detailsCount.text = data.commentsCount.toString()
 

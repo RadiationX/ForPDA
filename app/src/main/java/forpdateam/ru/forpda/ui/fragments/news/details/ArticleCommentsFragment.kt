@@ -171,7 +171,7 @@ class ArticleCommentsFragment : MvpAppCompatFragment(R.layout.article_comments),
     }
 
     private fun sendComment() {
-        val commentId = currentReplyComment?.id ?: 0
+        val commentId = currentReplyComment?.id
         presenter.replyComment(commentId, messageField.text.toString())
     }
 

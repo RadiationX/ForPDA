@@ -25,7 +25,7 @@ class SearchTemplate @Inject constructor(
     private fun mapString(page: SearchResult): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_SEARCH)
 
-        val authData = authHolder.get()
+        val authState = authHolder.get()
         template.apply {
             templateManager.fillStaticStrings(template)
             val prevDisabled = !page.pagination.hasPrev()
@@ -36,8 +36,8 @@ class SearchTemplate @Inject constructor(
             setVariableOpt("all_pages_int", page.pagination.all)
             setVariableOpt("posts_on_page_int", page.pagination.perPage)
             setVariableOpt("current_page_int", page.pagination.current)
-            setVariableOpt("authorized_bool", java.lang.Boolean.toString(authData.isAuth()))
-            setVariableOpt("member_id_int", authData.userId)
+            setVariableOpt("authorized_bool", java.lang.Boolean.toString(authState.isAuth()))
+            setVariableOpt("member_id_int", authState.asAuth()?.userId?.id ?: 0)
 
 
             setVariableOpt("body_type", "search")
@@ -62,12 +62,12 @@ class SearchTemplate @Inject constructor(
             var letterMatcher: Matcher? = null
             for (searchPost in page.items.filterIsInstance<SearchItem.Post>()) {
                 val post = searchPost.post
-                setVariableOpt("topic_id", post.topicId)
+                setVariableOpt("topic_id", post.topicId.id)
                 setVariableOpt("post_title", searchPost.title)
 
                 setVariableOpt("user_online", if (post.isOnline) "online" else "")
-                setVariableOpt("post_id", post.id)
-                setVariableOpt("user_id", post.user.id)
+                setVariableOpt("post_id", post.id.id)
+                setVariableOpt("user_id", post.user.id.id)
 
                 //Post header
                 setVariableOpt("avatar", post.user.avatar)

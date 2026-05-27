@@ -40,8 +40,8 @@ abstract class BaseAdapter<E, VH : BaseViewHolder<*>> : RecyclerView.Adapter<VH>
         return items[position]
     }
 
-    protected fun inflateLayout(parent: ViewGroup, @LayoutRes id: Int): View {
-        return LayoutInflater.from(parent.context).inflate(id, parent, false)
+    protected fun inflateLayout(parent: ViewGroup, @LayoutRes layoutRes: Int): View {
+        return LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
     }
 
     interface OnItemClickListener<T> {

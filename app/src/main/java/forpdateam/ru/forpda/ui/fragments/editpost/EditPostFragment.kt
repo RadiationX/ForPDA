@@ -10,6 +10,8 @@ import forpdateam.ru.forpda.common.filepicker.registerFilesPicker
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
+import forpdateam.ru.forpda.extensions.getExtra
+import forpdateam.ru.forpda.extensions.getExtraNotNull
 import forpdateam.ru.forpda.extensions.putExtra
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
@@ -18,6 +20,10 @@ import forpdateam.ru.forpda.presentation.editpost.EditPostView
 import forpdateam.ru.forpda.ui.fragments.TabFragment
 import forpdateam.ru.forpda.ui.views.messagepanel.MessagePanel
 import forpdateam.ru.forpda.ui.views.messagepanel.attachments.AttachmentsPopup
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.TopicId
 
 /**
  * Created by radiationx on 14.01.17.
@@ -40,20 +46,21 @@ class EditPostFragment : TabFragment(), EditPostView {
             putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_NEW_POST)
             putParcelableArrayList(ARG_ATTACHMENTS, form.attachments)
             putString(ARG_MESSAGE, form.message)
-            putInt(ARG_FORUM_ID, form.forumId)
-            putInt(ARG_TOPIC_ID, form.topicId)
-            putInt(ARG_POST_ID, form.postId)
-            putInt(ARG_ST, form.st)
+            putParcelable(ARG_FORUM_ID, form.forumId)
+            putParcelable(ARG_TOPIC_ID, form.topicId)
+            putParcelable(ARG_POST_ID, form.postId)
+            putParcelable(ARG_ST, form.st)
         }
 
-        fun newInstanceEdit(postId: Int, topicId: Int, forumId: Int, st: Int, themeName: String?) = EditPostFragment().putExtra {
-            putString(ARG_THEME_NAME, themeName)
-            putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_EDIT_POST)
-            putInt(ARG_FORUM_ID, forumId)
-            putInt(ARG_TOPIC_ID, topicId)
-            putInt(ARG_POST_ID, postId)
-            putInt(ARG_ST, st)
-        }
+        fun newInstanceEdit(postId: PostId, topicId: TopicId, forumId: ForumId, offset: PageOffset, themeName: String?) =
+            EditPostFragment().putExtra {
+                putString(ARG_THEME_NAME, themeName)
+                putInt(EditPostForm.ARG_TYPE, EditPostForm.TYPE_EDIT_POST)
+                putParcelable(ARG_FORUM_ID, forumId)
+                putParcelable(ARG_TOPIC_ID, topicId)
+                putParcelable(ARG_POST_ID, postId)
+                putParcelable(ARG_ST, offset)
+            }
     }
 
     private var formType = 0
@@ -78,10 +85,10 @@ class EditPostFragment : TabFragment(), EditPostView {
                 postForm.attachments.addAll(it)
             }
             postForm.message = getString(ARG_MESSAGE, "")
-            postForm.forumId = getInt(ARG_FORUM_ID)
-            postForm.topicId = getInt(ARG_TOPIC_ID)
-            postForm.postId = getInt(ARG_POST_ID)
-            postForm.st = getInt(ARG_ST)
+            postForm.forumId = getExtraNotNull(ARG_FORUM_ID)
+            postForm.topicId = getExtraNotNull(ARG_TOPIC_ID)
+            postForm.postId = getExtra(ARG_POST_ID)
+            postForm.st = getExtraNotNull(ARG_ST)
             presenter.initPostForm(postForm)
         }
     }

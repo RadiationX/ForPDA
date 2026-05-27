@@ -4,7 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import forpdateam.ru.forpda.entity.db.UserDb
 import forpdateam.ru.forpda.entity.remote.others.user.User
+import ru.radiationx.coretypes.UserId
 
 @Entity(tableName = "favorite_topics")
 data class FavoriteTopicDb(
@@ -21,8 +23,8 @@ data class FavoriteTopicDb(
     @ColumnInfo("desc") val desc: String?,
     @ColumnInfo("forum_id") val forumId: Int,
     @ColumnInfo("forum_title") val forumTitle: String,
-    @Embedded("author_") val author: User,
-    @Embedded("last_user_") val lastUser: User,
+    @Embedded("author_") val author: UserDb,
+    @Embedded("last_user_") val lastUser: UserDb,
     @ColumnInfo("last_date") val date: String,
-    @Embedded("curator_") val curator: User?,
+    @Embedded("curator_") val curator: UserDb?,
 )

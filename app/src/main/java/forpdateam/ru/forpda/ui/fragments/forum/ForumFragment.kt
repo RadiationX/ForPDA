@@ -121,7 +121,7 @@ class ForumFragment : RecyclerFragment(), ForumView {
         adapter.bindItems(forums)
     }
 
-    private fun openAddToFavoriteDialog(forumId: Int) {
+    private fun openAddToFavoriteDialog(forumId: ForumId) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
@@ -166,8 +166,8 @@ class ForumFragment : RecyclerFragment(), ForumView {
         ).show()
     }
 
-    override fun scrollToForum(id: Int) {
-        adapter.expand(id)
-        recyclerView.scrollToPosition(adapter.getItemPosition(id))
+    override fun scrollToForum(forumId: ForumId) {
+        adapter.expand(forumId)
+        recyclerView.scrollToPosition(adapter.getItemPosition(forumId))
     }
 }

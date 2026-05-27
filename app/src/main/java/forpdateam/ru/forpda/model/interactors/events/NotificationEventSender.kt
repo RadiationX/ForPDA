@@ -263,7 +263,7 @@ class NotificationEventSender @Inject constructor(
     private fun NotificationEvent.toIntentUrl(): String = when (this) {
         is NotificationEvent.Favorite -> "https://4pda.to/forum/index.php?showtopic=${id.topicId}&view=getnewpost"
         is NotificationEvent.Forum -> "https://4pda.to/forum/index.php?showforum=${id.forumId}"
-        is NotificationEvent.Qms -> "https://4pda.to/forum/index.php?act=qms&mid=${data.user.id}&t=${id.themeId}"
+        is NotificationEvent.Qms -> "https://4pda.to/forum/index.php?act=qms&mid=${data.user.id.id}&t=${id.themeId}"
         is NotificationEvent.SiteMention -> "https://4pda.to/index.php?p=${id.articleId}/#comment$commentId"
         is NotificationEvent.TopicMention -> "https://4pda.to/forum/index.php?showtopic=${id.topicId}&view=findpost&p=$postId"
     }

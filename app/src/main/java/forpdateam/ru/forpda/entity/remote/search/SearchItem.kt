@@ -2,6 +2,9 @@ package forpdateam.ru.forpda.entity.remote.search
 
 import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.others.user.User
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.TopicId
 
 /**
  * Created by radiationx on 01.02.17.
@@ -10,7 +13,7 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 sealed interface SearchItem {
 
     data class News(
-        val id: Int,
+        val id: ArticleId,
         val imageUrl: String,
         val date: String,
         val user: User,
@@ -19,10 +22,10 @@ sealed interface SearchItem {
     ) : SearchItem
 
     data class Topic(
-        val topicId: Int,
+        val topicId: TopicId,
         val title: String,
         val desc: String,
-        val forumId: Int,
+        val forumId: ForumId,
         val user: User,
         val date: String,
     ) : SearchItem

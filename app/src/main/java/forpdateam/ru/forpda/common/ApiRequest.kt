@@ -9,19 +9,47 @@ import forpdateam.ru.forpda.entity.remote.search.SearchSettings.Companion.RESOUR
 import forpdateam.ru.forpda.model.data.remote.api.NetworkRequest
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import okhttp3.HttpUrl
+import ru.radiationx.coretypes.AnnounceId
+import ru.radiationx.coretypes.ArticleAnswerId
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.ArticlePollId
+import ru.radiationx.coretypes.AttachmentId
+import ru.radiationx.coretypes.AttachmentRelation
+import ru.radiationx.coretypes.CommentId
+import ru.radiationx.coretypes.DevDbCategoryId
+import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.DevDbDevicesId
+import ru.radiationx.coretypes.FavoriteId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PageNumber
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.QmsMessageId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
 
 sealed class ApiRequest {
 
     private val pathSegments = mutableListOf<String>()
-    private val queryMap = mutableMapOf<String, String>()
+    private val queryMap = mutableListOf<Pair<String, String>>()
     private val requestBuilder = NetworkRequest.Builder()
 
     protected fun path(segment: String) {
         pathSegments.add(segment)
     }
 
+    protected fun path(segment: Int) {
+        path(segment.toString())
+    }
+
     protected fun query(key: String, value: String) {
-        queryMap[key] = value
+        queryMap.add(key to value)
+    }
+
+    protected fun query(key: String, value: Int) {
+        query(key, value.toString())
     }
 
     protected fun xhr() {
@@ -34,6 +62,14 @@ sealed class ApiRequest {
 
     protected fun form(key: String, value: String) {
         requestBuilder.formHeader(key, value)
+    }
+
+    protected fun form(key: String, value: Int) {
+        form(key, value.toString())
+    }
+
+    protected fun form(key: String, value: Long) {
+        form(key, value.toString())
     }
 
     protected fun file(key: String, file: NetworkRequest.File) {
@@ -68,48 +104,50 @@ sealed class ApiRequest {
 
     sealed class Site : ApiRequest() {
 
-        data class GetArticles(val page: Int) : Site() {
+        data class GetArticles(val page: PageNumber) : Site() {
             init {
-                path(page.toString())
+                path(page.value)
             }
         }
 
-        data class GetArticle(val articleId: Int) : Site() {
+        data class GetArticle(val articleId: ArticleId) : Site() {
             init {
-                query("p", articleId.toString())
+                query("p", articleId.id)
             }
         }
 
-        data class LikeComment(val articleId: Int, val commentId: Int) : Site() {
+        data class LikeComment(val articleId: ArticleId, val commentId: CommentId) : Site() {
             init {
                 path("pages")
                 path("karma")
-                query("p", articleId.toString())
+                query("p", articleId.id)
+                query("c", commentId.id)
+                query("v", "1")
                 xhr()
             }
         }
 
-        data class SendComment(val articleId: Int, val commentId: Int, val text: String) : Site() {
+        data class SendComment(val articleId: ArticleId, val commentId: CommentId?, val text: String) : Site() {
             init {
                 path("wp-comments-post.php")
-                form("comment_post_ID", articleId.toString())
-                form("comment_reply_ID", commentId.toString())
-                form("comment_reply_dp", if (commentId == 0) "0" else "1")
+                form("comment_post_ID", articleId.id)
+                form("comment_reply_ID", commentId?.id ?: 0)
+                form("comment_reply_dp", if (commentId == null) "0" else "1")
                 form("comment", text)
             }
         }
 
-        data class SendPoll(val pollId: Int, val answers: List<Int>, val fromUrl: String) : Site() {
+        data class SendPoll(val pollId: ArticlePollId, val answers: List<ArticleAnswerId>, val fromUrl: String) : Site() {
             init {
                 path("pages")
                 path("poll")
                 query("act", "vote")
-                query("poll_id", pollId.toString())
+                query("poll_id", pollId.id)
                 multipart()
                 xhr()
                 form("from", fromUrl)
                 answers.forEach {
-                    form("answer[]", it.toString())
+                    form("answer[]", it.id)
                 }
             }
         }
@@ -121,24 +159,24 @@ sealed class ApiRequest {
             path("devdb")
         }
 
-        data class GetBrands(val categoryId: String) : DevDb() {
+        data class GetBrands(val categoryId: DevDbCategoryId) : DevDb() {
             init {
-                path(categoryId)
+                path(categoryId.id)
                 path("all")
             }
         }
 
-        data class GetBrand(val categoryId: String, val brandId: String) : DevDb() {
+        data class GetDevices(val devicesId: DevDbDevicesId) : DevDb() {
             init {
-                path(categoryId)
-                path(brandId)
+                path(devicesId.categoryId.id)
+                path(devicesId.brandId.id)
                 path("all")
             }
         }
 
-        data class GetDevice(val deviceId: String) : DevDb() {
+        data class GetDevice(val deviceId: DevDbDeviceId) : DevDb() {
             init {
-                path(deviceId)
+                path(deviceId.id)
             }
         }
 
@@ -163,24 +201,19 @@ sealed class ApiRequest {
                 query("act", "attach")
             }
 
-            data class Delete(val attachmentId: Int, val relId: Int, val relType: String?) : Attachments() {
+            data class Delete(val attachmentId: AttachmentId, val relation: AttachmentRelation) : Attachments() {
                 init {
                     xhr()
                     form("index", "1")
                     form("maxSize", "134217728")
                     form("allowExt", "")
                     form("code", "remove")
-                    form("id", attachmentId.toString())
-                    if (relId != -1) {
-                        form("relId", relId.toString())
-                    }
-                    if (relType != null) {
-                        form("relType", relType)
-                    }
+                    form("id", attachmentId.id)
+                    form(relation)
                 }
             }
 
-            data class GetExisted(val relId: Int, val md5: String, val size: Long, val name: String) : Attachments() {
+            data class GetExisted(val relation: AttachmentRelation, val md5: String, val size: Long, val name: String) : Attachments() {
                 init {
                     xhr()
                     form("index", "1")
@@ -189,15 +222,13 @@ sealed class ApiRequest {
                     form("forum-attach-files", "")
                     form("code", "check")
                     form("md5", md5)
-                    form("size", size.toString())
+                    form("size", size)
                     form("name", name)
-                    if (relId != -1) {
-                        form("relId", relId.toString())
-                    }
+                    form(relation)
                 }
             }
 
-            data class Upload(val relId: Int, val relType: String?, val file: NetworkRequest.File) : Attachments() {
+            data class Upload(val relation: AttachmentRelation, val file: NetworkRequest.File) : Attachments() {
                 init {
                     xhr()
                     form("index", "1")
@@ -206,24 +237,32 @@ sealed class ApiRequest {
                     form("forum-attach-files", "")
                     form("code", "upload")
                     file("FILE_UPLOAD[]", file)
-
-                    if (relId != -1) {
-                        form("relId", relId.toString())
-                    }
-                    if (relType != null) {
-                        form("relType", relType)
-                    }
+                    form(relation)
                 }
             }
 
-            data class GetAttachedToPost(val postId: Int) : Attachments() {
+            data class GetAttachedToPost(val postId: PostId) : Attachments() {
                 init {
                     query("index", "1")
-                    query("relId", postId.toString())
+                    query("relId", postId.id)
                     query("maxSize", "134217728")
                     query("allowExt", "")
                     query("code", "init")
                     query("unliked", "")
+                }
+            }
+
+            protected fun form(relation: AttachmentRelation) {
+                when (relation) {
+                    is AttachmentRelation.Post -> {
+                        val relId = relation.postId?.id ?: 0
+                        form("relId", relId)
+                    }
+
+                    AttachmentRelation.Qms -> {
+                        form("relId", 0)
+                        form("relType", "MSG")
+                    }
                 }
             }
         }
@@ -260,12 +299,12 @@ sealed class ApiRequest {
 
         sealed class Post : Forum() {
 
-            data class Edit(val postId: Int) : Post() {
+            data class Edit(val postId: PostId) : Post() {
                 init {
                     path("index.php")
                     query("act", "post")
                     query("do", "edit")
-                    query("p", postId.toString())
+                    query("p", postId.id)
                 }
             }
 
@@ -275,13 +314,13 @@ sealed class ApiRequest {
                     multipart()
                     form("act", "Post")
                     form("CODE", if (form.type == EditPostForm.TYPE_NEW_POST) "03" else "9")
-                    form("f", form.forumId.toString())
-                    form("t", form.topicId.toString())
+                    form("f", form.forumId.id)
+                    form("t", form.topicId.id)
                     form("auth_key", authKey.orEmpty())
                     form("Post", form.message)
                     form("enablesig", "yes")
                     form("enableemo", "yes")
-                    form("st", form.st.toString())
+                    form("st", form.st.value)
                     form("removeattachid", "0")
                     form("MAX_FILE_SIZE", "0")
                     form("parent_id", "0")
@@ -305,10 +344,10 @@ sealed class ApiRequest {
                         form("post_edit_reason", form.editReason)
                     }
 
-                    form("file-list", form.attachments.joinToString(separator = ","))
+                    form("file-list", form.attachments.joinToString(separator = ",") { it.id.id.toString() })
 
-                    if (form.postId != 0) {
-                        form("p", form.postId.toString())
+                    form.postId?.id?.also {
+                        form("p", it)
                     }
                 }
 
@@ -317,33 +356,33 @@ sealed class ApiRequest {
                 }
             }
 
-            data class Delete(val postId: Int, val authKey: String?) : Post() {
+            data class Delete(val postId: PostId, val authKey: String?) : Post() {
                 init {
                     path("index.php")
                     query("act", "zmod")
                     query("auth_key", authKey.orEmpty())
                     query("code", "postchoice")
                     query("tact", "delete")
-                    query("selectedpids", postId.toString())
+                    query("selectedpids", postId.id)
                     xhr()
                 }
             }
 
-            data class Report(val topicId: Int, val postId: Int, val message: String) : Post() {
+            data class Report(val topicId: TopicId, val postId: PostId, val message: String) : Post() {
                 init {
                     path("index.php")
                     query("act", "report")
                     query("send", "1")
-                    query("t", topicId.toString())
-                    query("p", postId.toString())
+                    query("t", topicId.id)
+                    query("p", postId.id)
                     form("message", message)
                 }
             }
 
-            data class Vote(val postId: Int, val value: String) : Post() {
+            data class Vote(val postId: PostId, val value: String) : Post() {
                 init {
                     path("zka.php")
-                    query("i", postId.toString())
+                    query("i", postId.id)
                     query("v", value)
                 }
             }
@@ -355,10 +394,10 @@ sealed class ApiRequest {
                 query("act", "fav")
             }
 
-            data class GetList(val st: Int, val sorting: Sorting) : Favorite() {
+            data class GetList(val offset: PageOffset, val sorting: Sorting) : Favorite() {
                 init {
                     query("type", "all")
-                    query("st", st.toString())
+                    query("st", offset.value)
                     query(Sorting.Key.HEADER, sorting.key)
                     query(Sorting.Order.HEADER, sorting.order)
                 }
@@ -370,41 +409,41 @@ sealed class ApiRequest {
                     query("track_type", trackType)
                 }
 
-                data class Topic(val topicId: Int, val trackType: String) : Add(trackType) {
+                data class Topic(val topicId: TopicId, val trackType: String) : Add(trackType) {
                     init {
-                        query("t", topicId.toString())
+                        query("t", topicId.id)
                     }
                 }
 
-                data class Forum(val forumId: Int, val trackType: String) : Add(trackType) {
+                data class Forum(val forumId: ForumId, val trackType: String) : Add(trackType) {
                     init {
-                        query("f", forumId.toString())
+                        query("f", forumId.id)
                     }
                 }
             }
 
-            data class Delete(val favId: Int) : Favorite() {
+            data class Delete(val favoriteId: FavoriteId) : Favorite() {
                 init {
                     xhr()
-                    form("selectedtids", favId.toString())
+                    form("selectedtids", favoriteId.id)
                     form("tact", "delete")
                 }
             }
 
-            data class EditTrackType(val favId: Int, val trackType: String) : Favorite() {
+            data class EditTrackType(val favoriteId: FavoriteId, val trackType: String) : Favorite() {
                 init {
                     query("sort_key", "")
                     query("sort_by", "")
                     query("type", "all")
                     query("st", "0")
                     query("tact", trackType)
-                    query("selectedtids", favId.toString())
+                    query("selectedtids", favoriteId.id)
                 }
             }
 
-            data class EditPinState(val favId: Int, val state: String) : Favorite() {
+            data class EditPinState(val favoriteId: FavoriteId, val state: String) : Favorite() {
                 init {
-                    form("selectedtids", favId.toString())
+                    form("selectedtids", favoriteId.id)
                     form("tact", state)
                 }
             }
@@ -415,11 +454,11 @@ sealed class ApiRequest {
                 path("index.php")
             }
 
-            data class GetAnnounce(val forumId: Int, val announceId: Int) : Forums() {
+            data class GetAnnounce(val announceId: AnnounceId) : Forums() {
                 init {
                     query("act", "announce")
-                    query("f", forumId.toString())
-                    query("st", announceId.toString())
+                    query("f", announceId.forumId.id)
+                    query("st", announceId.st)
                 }
             }
 
@@ -443,20 +482,20 @@ sealed class ApiRequest {
                 }
             }
 
-            data class MarkRead(val forumId: Int) : Forums() {
+            data class MarkRead(val forumId: ForumId) : Forums() {
                 init {
                     query("act", "auth")
                     query("action", "markforum")
-                    query("f", forumId.toString())
-                    query("fromforum", forumId.toString())
+                    query("f", forumId.id)
+                    query("fromforum", forumId.id)
                     withoutBody()
                 }
             }
 
-            data class GetTopics(val forumId: Int, val st: Int) : Forums() {
+            data class GetTopics(val forumId: ForumId, val offset: PageOffset) : Forums() {
                 init {
-                    query("showforum", forumId.toString())
-                    query("st", st.toString())
+                    query("showforum", forumId.id)
+                    query("st", offset.value)
                 }
             }
         }
@@ -478,10 +517,10 @@ sealed class ApiRequest {
                 path("index.php")
             }
 
-            data class LoadPage(val st: Int) : Mentions() {
+            data class LoadPage(val offset: PageOffset) : Mentions() {
                 init {
                     query("act", "mentions")
-                    query("st", st.toString())
+                    query("st", offset.value)
                 }
             }
         }
@@ -491,9 +530,9 @@ sealed class ApiRequest {
                 path("index.php")
             }
 
-            data class Load(val userId: Int) : Profile() {
+            data class Load(val userId: UserId) : Profile() {
                 init {
-                    query("showuser", userId.toString())
+                    query("showuser", userId.id)
                 }
             }
 
@@ -522,23 +561,25 @@ sealed class ApiRequest {
                 }
             }
 
-            data class DeleteThreads(val userId: Int) : Qms() {
+            data class DeleteThreads(val userId: UserId) : Qms() {
                 init {
                     form("act", "qms-xhr")
                     form("action", "del-member")
-                    form("del-mid", userId.toString())
+                    form("del-mid", userId.id)
                 }
             }
 
-            data class DeleteThread(val userId: Int, val threadId: Int) : Qms() {
+            data class DeleteThread(val chatId: QmsChatId) : Qms() {
                 init {
                     query("act", "qms")
-                    query("mid", userId.toString())
+                    query("mid", chatId.userId.id)
                     query("xhr", "body")
                     query("do", "1")
                     form("xhr", "body")
                     form("action", "delete-threads")
-                    form("thread-id[$threadId]", threadId.toString())
+                    chatId.threadId.id.also {
+                        form("thread-id[$it]", it)
+                    }
                 }
             }
 
@@ -559,11 +600,11 @@ sealed class ApiRequest {
                 }
             }
 
-            data class GetChat(val userId: Int, val threadId: Int) : Qms() {
+            data class GetChat(val chatId: QmsChatId) : Qms() {
                 init {
                     query("act", "qms")
-                    query("mid", userId.toString())
-                    query("t", threadId.toString())
+                    query("mid", chatId.userId.id)
+                    query("t", chatId.threadId.id)
                     form("xhr", "body")
                 }
             }
@@ -575,46 +616,48 @@ sealed class ApiRequest {
                 }
             }
 
-            data class GetMessagesAfter(val userId: Int, val threadId: Int, val lastMessageId: Int) : Qms() {
+            data class GetMessagesAfter(val chatId: QmsChatId, val lastMessageId: QmsMessageId?) : Qms() {
                 init {
                     query("act", "qms-xhr")
                     xhr()
                     form("action", "get-thread-messages")
-                    form("mid", userId.toString())
-                    form("t", threadId.toString())
-                    form("after-message", lastMessageId.toString())
+                    form("mid", chatId.userId.id)
+                    form("t", chatId.threadId.id)
+                    lastMessageId?.id?.also {
+                        form("after-message", it)
+                    }
                 }
             }
 
-            data class GetMessageInfo(val threadId: Int, val messageId: Int, val lastMessageId: Int) : Qms() {
+            data class GetMessageInfo(val threadId: QmsThreadId, val messageId: QmsMessageId) : Qms() {
                 init {
                     query("act", "qms-xhr")
                     form("action", "message-info")
-                    form("t", threadId.toString())
-                    form("msg-id", messageId.toString())
+                    form("t", threadId.id)
+                    form("msg-id", messageId.id)
                 }
             }
 
-            data class GetThreads(val userId: Int) : Qms() {
+            data class GetThreads(val userId: UserId) : Qms() {
                 init {
                     query("act", "qms")
-                    query("mid", userId.toString())
+                    query("mid", userId.id)
                     form("xhr", "body")
                 }
             }
 
-            data class SendMessage(val userId: Int, val threadId: Int, val text: String, val attachmentIds: List<Int>) : Qms() {
+            data class SendMessage(val chatId: QmsChatId, val text: String, val attachmentIds: List<AttachmentId>) : Qms() {
                 init {
                     form("act", "qms-xhr")
                     form("action", "send-message")
                     form("message", text)
-                    form("mid", Integer.toString(userId))
-                    form("t", Integer.toString(threadId))
-                    form("attaches", attachmentIds.joinToString())
+                    form("mid", chatId.userId.id)
+                    form("t", chatId.threadId.id)
+                    form("attaches", attachmentIds.joinToString { it.id.toString() })
                 }
             }
 
-            data class CreateThread(val nick: String, val title: String, val text: String, val attachmentIds: List<Int>) : Qms() {
+            data class CreateThread(val nick: String, val title: String, val text: String, val attachmentIds: List<AttachmentId>) : Qms() {
                 init {
                     query("act", "qms")
                     query("action", "action=create-thread")
@@ -623,18 +666,20 @@ sealed class ApiRequest {
                     form("username", nick)
                     form("title", title)
                     form("message", text)
-                    form("attaches", attachmentIds.joinToString())
+                    form("attaches", attachmentIds.joinToString { it.id.toString() })
                 }
             }
 
-            data class UnblockUser(val userId: Int) : Qms() {
+            data class UnblockUser(val userId: UserId) : Qms() {
                 init {
                     query("act", "qms")
                     query("settings", "blacklist")
                     query("xhr", "blacklist-form")
                     query("do", "1")
                     form("action", "delete-users")
-                    form("user-id[$userId]", userId.toString())
+                    userId.id.also {
+                        form("user-id[$it]", it)
+                    }
                 }
             }
         }
@@ -644,26 +689,26 @@ sealed class ApiRequest {
                 path("index.php")
             }
 
-            data class Edit(val postId: Int, val userId: Int, val type: String, val message: String) : Reputation() {
+            data class Edit(val postId: PostId?, val userId: UserId, val type: String, val message: String) : Reputation() {
                 init {
                     form("act", "rep")
-                    form("mid", userId.toString())
+                    form("mid", userId.id)
                     form("type", type)
                     form("message", message)
-                    if (postId > 0) {
-                        form("p", postId.toString())
+                    if (postId != null) {
+                        form("p", postId.id)
                     }
                 }
             }
 
-            data class GetPage(val userId: Int, val mode: String, val order: String, val st: Int) : Reputation() {
+            data class GetPage(val userId: UserId, val mode: String, val order: String, val offset: PageOffset) : Reputation() {
                 init {
                     query("act", "rep")
                     query("view", "history")
-                    query("mid", userId.toString())
+                    query("mid", userId.id)
                     query("mode", mode)
                     query("order", order)
-                    query("st", st.toString())
+                    query("st", offset.value)
                 }
             }
         }
@@ -674,7 +719,7 @@ sealed class ApiRequest {
         init {
             if (settings.resourceType == RESOURCE_NEWS.first) {
                 path("page")
-                path(settings.st.toString())
+                path(settings.st)
                 query("s", settings.query.orEmpty())
             } else {
                 path("forum")
@@ -686,17 +731,17 @@ sealed class ApiRequest {
                 query("query", settings.query.orEmpty())
                 query("username", settings.nick.orEmpty())
                 settings.forums.forEach {
-                    query("forums[]", it.toString())
+                    query("forums[]", it)
                 }
                 settings.topics.forEach {
-                    query("topics[]", it.toString())
+                    query("topics[]", it)
                 }
                 settings.subforums?.also {
                     query("subforums", it)
                 }
                 query("noform", "1")
-                query("st", settings.st.toString())
-                query(ARG_EXCLUDE_TRASH, settings.excludeTrash.toString())
+                query("st", settings.st)
+                query(ARG_EXCLUDE_TRASH, settings.excludeTrash)
             }
         }
     }

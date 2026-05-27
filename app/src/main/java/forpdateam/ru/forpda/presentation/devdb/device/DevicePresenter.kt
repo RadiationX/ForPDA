@@ -9,6 +9,7 @@ import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
+import forpdateam.ru.forpda.ui.fragments.devdb.device.di.DeviceSharedData
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.coretypes.DevDbDeviceId
@@ -19,11 +20,12 @@ import ru.radiationx.quill.QuillExtra
  */
 data class DeviceExtra(
     val deviceId: DevDbDeviceId
-): QuillExtra
+) : QuillExtra
 
 @InjectViewState
 class DevicePresenter(
     private val argExtra: DeviceExtra,
+    private val deviceSharedData: DeviceSharedData,
     private val devDbRepository: DevDbRepository,
     private val router: TabRouter,
     private val linkHandler: LinkHandler,
@@ -46,6 +48,7 @@ class DevicePresenter(
             }.onSuccess {
                 currentData = it
                 viewState.showData(it)
+                deviceSharedData.deviceFlow.value = it
             }.onFailure {
                 errorHandler.handle(it)
             }
@@ -59,33 +62,33 @@ class DevicePresenter(
 
     fun copyLink() {
         currentData?.let {
-            utils.copyToClipBoard("https://4pda.to/index.php?p=${it.id}")
+            utils.copyToClipBoard("https://4pda.to/devdb/${it.id.id}")
         }
     }
 
     fun shareLink() {
         currentData?.let {
-            utils.shareText("https://4pda.to/devdb/${it.id}")
+            utils.shareText("https://4pda.to/devdb/${it.id.id}")
         }
     }
 
     fun createNote() {
         currentData?.let {
             val title = "DevDb: ${it.brandTitle} ${it.title}"
-            val url = "https://4pda.to/devdb/${it.id}"
+            val url = "https://4pda.to/devdb/${it.id.id}"
             viewState.showCreateNote(title, url)
         }
     }
 
     fun openDevices() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/devdb/${it.catId}/${it.brandId}")
+            linkHandler.handle("https://4pda.to/devdb/${it.devicesId.categoryId.id}/${it.devicesId.brandId.id}")
         }
     }
 
     fun openBrands() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/devdb/${it.catId}")
+            linkHandler.handle("https://4pda.to/devdb/${it.devicesId.categoryId.id}")
         }
     }
 }

@@ -1,6 +1,8 @@
 package forpdateam.ru.forpda.entity.remote.topics
 
 import forpdateam.ru.forpda.entity.remote.others.user.User
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.TopicId
 
 /**
  * Created by radiationx on 01.03.17.
@@ -13,12 +15,12 @@ sealed interface TopicItem {
     ) : TopicItem
 
     data class Forum(
-        val id: Int,
+        val id: ForumId,
         val title: String
     ) : TopicItem
 
     data class Topic(
-        val id: Int,
+        val id: TopicId,
         val title: String,
         val desc: String?,
         val date: String,

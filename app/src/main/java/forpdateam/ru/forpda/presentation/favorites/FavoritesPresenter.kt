@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.presentation.favorites
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.TopicId
 
 /**
  * Created by radiationx on 11.11.17.
@@ -33,7 +36,7 @@ class FavoritesPresenter(
 ) : BasePresenter<FavoritesView>() {
 
 
-    private var currentSt = 0
+    private var currentSt = PageOffset.default
     private var loadAll = listsPreferencesHolder.favLoadAll.get()
     private var sorting: Sorting = Sorting(
         listsPreferencesHolder.favSortingKey.get().orEmpty(),
@@ -90,11 +93,11 @@ class FavoritesPresenter(
     }
 
     fun refresh() {
-        loadFavorites(0)
+        loadFavorites(PageOffset.default)
     }
 
-    fun loadFavorites(pageNum: Int) {
-        currentSt = pageNum
+    fun loadFavorites(pageOffset: PageOffset) {
+        currentSt = pageOffset
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
@@ -108,7 +111,7 @@ class FavoritesPresenter(
         }
     }
 
-    private fun markRead(topicId: Int) {
+    private fun markRead(topicId: TopicId) {
         viewModelScope.launch {
             coRunCatching {
                 favoritesRepository.markRead(topicId)
@@ -123,8 +126,8 @@ class FavoritesPresenter(
             Screen.ARG_TITLE to item.title
         )
         val url = when (item) {
-            is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId + "&view=getnewpost"
-            is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId
+            is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId.id + "&view=getnewpost"
+            is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId.id
         }
         linkHandler.handle(url, args)
     }
@@ -135,8 +138,8 @@ class FavoritesPresenter(
 
     fun copyLink(item: Favorite) {
         val url = when (item) {
-            is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId
-            is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId
+            is Favorite.Topic -> "https://4pda.to/forum/index.php?showtopic=" + item.topicId.id
+            is Favorite.Forum -> "https://4pda.to/forum/index.php?showforum=" + item.forumId.id
         }
         utils.copyToClipBoard(url)
     }
@@ -146,7 +149,7 @@ class FavoritesPresenter(
             return
         }
         linkHandler.handle(
-            "https://4pda.to/forum/index.php?act=attach&code=showtopic&tid=" + item.topicId
+            "https://4pda.to/forum/index.php?act=attach&code=showtopic&tid=" + item.topicId.id
         )
     }
 
@@ -154,13 +157,13 @@ class FavoritesPresenter(
         if (item !is Favorite.Topic) {
             return
         }
-        linkHandler.handle("https://4pda.to/forum/index.php?showforum=" + item.forumId)
+        linkHandler.handle("https://4pda.to/forum/index.php?showforum=" + item.forumId.id)
     }
 
-    fun changeFav(action: Int, type: String?, favId: Int) {
+    fun changeFav(action: FavoriteAction) {
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(action, favId, favId, type)
+                favoritesRepository.editFavorites(action)
             }.onSuccess {
                 viewState.onChangeFav(it)
                 loadFavorites(currentSt)

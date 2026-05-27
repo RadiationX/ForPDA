@@ -7,43 +7,52 @@ import forpdateam.ru.forpda.entity.remote.theme.PollQuestion
 import forpdateam.ru.forpda.entity.remote.theme.PollQuestionItem
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
-import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.FavoriteId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
+import ru.radiationx.links.Link
+import ru.radiationx.links.parser.LinkTransformer
 import javax.inject.Inject
 
 class ThemeParser @Inject constructor(
     private val patternProvider: PatternProvider,
-    private val paginationParser: PaginationParser
+    private val paginationParser: PaginationParser,
+    private val linkTransformer: LinkTransformer
 ) : BaseParser() {
 
     private val scope = ParserPatterns.Topic
 
     fun parsePage(
         response: String,
-        argUrl: String,
+        redirectUrl: String,
         hatOpen: Boolean = false,
         pollOpen: Boolean = false
     ): ThemePage {
-        var forumId = 0
-        var id = 0
+        var forumId: ForumId? = null
+        var topicId: TopicId? = null
         var title = ""
         var desc = ""
-        var favId: Int? = null
-        val pageUrl = TopicUrl.fromUrl(argUrl)
+        var favId: FavoriteId? = null
+        val pageUrl = linkTransformer.parse(redirectUrl)
 
-        require(pageUrl is TopicUrl.ShowTopic.Page) {
+        require(pageUrl is Link.Board.Topic.ShowTopic.Page) {
             "Required page url but given ${pageUrl?.let { it::class.simpleName }}"
         }
 
         patternProvider
             .getRegexParser(scope.scope, scope.topic_id)
             .requireOnce(response) {
-                forumId = it.require(1).toInt()
-                id = it.require(2).toInt()
+                forumId = ForumId(it.require(1).toInt())
+                topicId = TopicId(it.require(2).toInt())
             }
+        requireNotNull(topicId) { "topicId" }
+        requireNotNull(forumId) { "forumId" }
 
         patternProvider
             .getRegexParser(scope.scope, scope.title)
@@ -55,10 +64,10 @@ class ThemeParser @Inject constructor(
         patternProvider
             .getRegexParser(scope.scope, scope.fav_id)
             .findOnce(response) {
-                favId = it.require(1).toInt()
+                favId = FavoriteId(it.require(1).toInt())
             }
 
-        val posts = parsePosts(response, id, forumId)
+        val posts = parsePosts(response, topicId, forumId)
         val canQuote = posts.any { it.post.canQuote }
 
         val poll = parsePoll(response)
@@ -66,7 +75,7 @@ class ThemeParser @Inject constructor(
         val pagination = paginationParser.parseForum(response)
 
         return ThemePage(
-            id = id,
+            id = topicId,
             title = title,
             desc = desc,
             forumId = forumId,
@@ -77,7 +86,7 @@ class ThemeParser @Inject constructor(
             pagination = pagination,
             poll = poll,
             html = null,
-            url = pageUrl,
+            link = pageUrl,
             isHatOpen = hatOpen,
             isPollOpen = pollOpen,
             scrollY = 0,
@@ -87,8 +96,8 @@ class ThemeParser @Inject constructor(
 
     private fun parsePosts(
         response: String,
-        id: Int,
-        forumId: Int
+        topicId: TopicId,
+        forumId: ForumId
     ) = patternProvider
         .getRegexParser(scope.scope, scope.posts)
         .map(response) { matcher ->
@@ -96,12 +105,12 @@ class ThemeParser @Inject constructor(
             val body = matcher.require(21)
             val attachImages = parseAttachedImages(body)
             val forumPost = ForumPost(
-                topicId = id,
-                id = matcher.require(1).toInt(),
+                topicId = topicId,
+                id = PostId(matcher.require(1).toInt()),
                 date = matcher.require(5),
                 isOnline = matcher.require(7).contains("green"),
-                user = ForumPostUser.required(
-                    id = matcher.require(10).toInt(),
+                user = ForumPostUser(
+                    id = UserId(matcher.require(10).toInt()),
                     nick = matcher.require(9).fromHtml(),
                     avatar = matcher.require(8).let {
                         if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null

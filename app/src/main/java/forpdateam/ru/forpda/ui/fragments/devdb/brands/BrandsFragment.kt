@@ -85,7 +85,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
             .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 
-    override fun initCategories(categories: Array<String>, position: Int) {
+    override fun initCategories(categories: Array<DevDbCategoryId>, position: Int) {
         val spinnerTitles = categories.map { getCategoryTitle(it) }
         val spinnerAdapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spinnerTitles)
@@ -95,7 +95,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
     }
 
     override fun showData(data: Brands) {
-        setTitle(data.catTitle)
+        setTitle(data.title)
         adapter.bindItems(data)
     }
 
@@ -107,7 +107,7 @@ class BrandsFragment : RecyclerFragment(), BrandsView,
         return false
     }
 
-    private fun getCategoryTitle(category: String): String? {
+    private fun getCategoryTitle(category: DevDbCategoryId): String? {
         return when (category) {
             BrandsPresenter.CATEGORY_PHONES -> getString(R.string.brands_category_phones)
             BrandsPresenter.CATEGORY_PAD -> getString(R.string.brands_category_tabs)

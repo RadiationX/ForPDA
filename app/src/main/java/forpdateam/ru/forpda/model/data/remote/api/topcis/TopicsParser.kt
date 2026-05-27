@@ -8,6 +8,9 @@ import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class TopicsParser @Inject constructor(
@@ -17,13 +20,13 @@ class TopicsParser @Inject constructor(
 
     private val scope = ParserPatterns.Topics
 
-    fun parse(response: String, argId: Int): TopicsData {
+    fun parse(response: String, argId: ForumId): TopicsData {
         var id = argId
         var title: String? = null
         patternProvider
             .getRegexParser(scope.scope, scope.title)
             .requireOnce(response) {
-                id = it.require(1).toInt()
+                id = ForumId(it.require(1).toInt())
                 title = it.require(2).fromHtml()
             }
 
@@ -52,22 +55,22 @@ class TopicsParser @Inject constructor(
                     isClosed = flagsGroup?.contains("Х") == true,
                 )
                 TopicItem.Topic(
-                    id = matcher.require(1).toInt(),
+                    id = TopicId(matcher.require(1).toInt()),
                     flags = flags,
                     title = matcher.require(4).fromHtml(),
                     desc = matcher.get(5)?.fromHtml(),
-                    author = User.required(
-                        id = matcher.require(6).toInt(),
+                    author = User(
+                        id = UserId(matcher.require(6).toInt()),
                         nick = matcher.require(7).fromHtml()
                     ),
-                    lastUser = User.required(
-                        id = matcher.require(8).toInt(),
+                    lastUser = User(
+                        id = UserId(matcher.require(8).toInt()),
                         nick = matcher.require(9).fromHtml()
                     ),
                     date = matcher.require(10),
                     curator = matcher.get(11)?.let {
-                        User.required(
-                            id = it.toInt(),
+                        User(
+                            id = UserId(it.toInt()),
                             nick = matcher.require(12).fromHtml()
                         )
                     }
@@ -79,7 +82,7 @@ class TopicsParser @Inject constructor(
             .getRegexParser(scope.scope, scope.forum)
             .map(response) { matcher ->
                 TopicItem.Forum(
-                    id = matcher.require(1).toInt(),
+                    id = ForumId(matcher.require(1).toInt()),
                     title = matcher.require(2).fromHtml()
                 )
             }

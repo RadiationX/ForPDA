@@ -4,7 +4,7 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.CountersHolder
-import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
+import forpdateam.ru.forpda.model.repository.qms.QmsRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
@@ -22,7 +22,7 @@ import java.util.Locale
 
 @InjectViewState
 class QmsContactsPresenter(
-    private val qmsInteractor: QmsInteractor,
+    private val qmsRepository: QmsRepository,
     private val router: TabRouter,
     private val linkHandler: LinkHandler,
     private val countersHolder: CountersHolder,
@@ -34,7 +34,7 @@ class QmsContactsPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        qmsInteractor
+        qmsRepository
             .observeContacts()
             .onEach {
                 localItems.clear()
@@ -66,7 +66,7 @@ class QmsContactsPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                qmsInteractor.getContactList()
+                qmsRepository.getContactList()
             }.onFailure {
                 errorHandler.handle(it)
             }
@@ -74,11 +74,11 @@ class QmsContactsPresenter(
         }
     }
 
-    fun deleteDialog(id: Int) {
+    fun deleteDialog(userId: UserId) {
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                qmsInteractor.deleteDialog(id)
+                qmsRepository.deleteDialog(userId)
             }.onSuccess {
                 loadContacts()
             }.onFailure {
@@ -91,7 +91,7 @@ class QmsContactsPresenter(
     fun blockUser(item: QmsContact) {
         viewModelScope.launch {
             coRunCatching {
-                qmsInteractor.blockUser(item.user.nick)
+                qmsRepository.blockUser(item.user.nick)
             }.map {
                 it.firstOrNull { it.user.nick == item.user.nick } != null
             }.onSuccess {
@@ -104,7 +104,7 @@ class QmsContactsPresenter(
 
     fun onItemClick(item: QmsContact) {
         router.navigateTo(
-            Screen.QmsThemes(userId = UserId(item.user.id)).apply {
+            Screen.QmsThemes(userId = item.user.id).apply {
                 screenTitle = item.user.nick
             }
         )
@@ -115,12 +115,12 @@ class QmsContactsPresenter(
     }
 
     fun createNote(item: QmsContact) {
-        val url = "https://4pda.to/forum/index.php?act=qms&mid=${item.user.id}"
+        val url = "https://4pda.to/forum/index.php?act=qms&mid=${item.user.id.id}"
         viewState.showCreateNote(item.user.nick, url)
     }
 
     fun openProfile(item: QmsContact) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}")
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id.id}")
     }
 
     fun openBlackList() {
@@ -128,6 +128,6 @@ class QmsContactsPresenter(
     }
 
     fun openChatCreator() {
-        router.navigateTo(Screen.QmsChat.Create(link))
+        router.navigateTo(Screen.QmsChat.Create(userId = null))
     }
 }

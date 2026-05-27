@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.radiationx.coretypes.ArticleAnswerId
+import ru.radiationx.coretypes.ArticlePollId
+import ru.radiationx.coretypes.CommentId
 import javax.inject.Inject
 
 class ArticleInteractor @Inject constructor(
@@ -33,7 +36,7 @@ class ArticleInteractor @Inject constructor(
         return articleTemplate.mapEntity(details)
     }
 
-    suspend fun likeComment(commentId: Int) {
+    suspend fun likeComment(commentId: CommentId) {
         newsRepository.likeComment(argExtra.articleId, commentId)
         updateComments { comments ->
             comments.replace(
@@ -51,11 +54,11 @@ class ArticleInteractor @Inject constructor(
         }
     }
 
-    suspend fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
-        return newsRepository.sendPoll(from, pollId, answersId)
+    suspend fun sendPoll(from: String, pollId: ArticlePollId, answersIds: List<ArticleAnswerId>): DetailsPage {
+        return newsRepository.sendPoll(from, pollId, answersIds)
     }
 
-    suspend fun replyComment(commentId: Int, comment: String): DetailsPage {
+    suspend fun replyComment(commentId: CommentId?, comment: String): DetailsPage {
         return newsRepository
             .replyComment(argExtra.articleId, commentId, comment)
             .let { articleTemplate.mapEntity(it) }

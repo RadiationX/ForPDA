@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.CommentId
 
 /**
  * Created by radiationx on 11.11.17.
@@ -61,7 +62,7 @@ class ArticleCommentPresenter(
         }
     }
 
-    fun replyComment(commentId: Int, text: String) {
+    fun replyComment(commentId: CommentId?, text: String) {
         viewModelScope.launch {
             viewState.setSendRefreshing(true)
             coRunCatching {
@@ -75,7 +76,7 @@ class ArticleCommentPresenter(
         }
     }
 
-    fun likeComment(commentId: Int) {
+    fun likeComment(commentId: CommentId) {
         viewModelScope.launch {
             coRunCatching {
                 articleInteractor.likeComment(commentId)
@@ -86,7 +87,7 @@ class ArticleCommentPresenter(
     }
 
     fun openProfile(comment: Comment) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${comment.user.id}")
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${comment.user.id.id}")
     }
 
 }

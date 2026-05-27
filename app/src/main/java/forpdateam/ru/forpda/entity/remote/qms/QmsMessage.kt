@@ -1,5 +1,7 @@
 package forpdateam.ru.forpda.entity.remote.qms
 
+import ru.radiationx.coretypes.QmsMessageId
+
 /**
  * Created by radiationx on 03.08.16.
  */
@@ -9,8 +11,8 @@ sealed interface QmsMessage {
     ) : QmsMessage
 
     data class Regular(
+        val id: QmsMessageId,
         val isMyMessage: Boolean,
-        val id: Int,
         val readStatus: Boolean,
         val time: String,
         val avatar: String,

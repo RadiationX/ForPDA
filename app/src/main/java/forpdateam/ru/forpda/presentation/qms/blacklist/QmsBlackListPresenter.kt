@@ -3,7 +3,7 @@ package forpdateam.ru.forpda.presentation.qms.blacklist
 import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
+import forpdateam.ru.forpda.model.repository.qms.QmsRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
@@ -18,7 +18,7 @@ import ru.radiationx.coretypes.UserId
 
 @InjectViewState
 class QmsBlackListPresenter(
-    private val qmsInteractor: QmsInteractor,
+    private val qmsRepository: QmsRepository,
     private val router: TabRouter,
     private val linkHandler: LinkHandler,
     private val errorHandler: ErrorHandler
@@ -35,7 +35,7 @@ class QmsBlackListPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                qmsInteractor.getBlackList()
+                qmsRepository.getBlackList()
             }.onSuccess {
                 viewState.showContacts(it)
             }.onFailure {
@@ -48,7 +48,7 @@ class QmsBlackListPresenter(
     fun blockUser(nick: String) {
         viewModelScope.launch {
             coRunCatching {
-                qmsInteractor.blockUser(nick)
+                qmsRepository.blockUser(nick)
             }.onSuccess {
                 viewState.showContacts(it)
                 viewState.clearNickField()
@@ -58,10 +58,10 @@ class QmsBlackListPresenter(
         }
     }
 
-    fun unBlockUser(id: Int) {
+    fun unBlockUser(userId: UserId) {
         viewModelScope.launch {
             coRunCatching {
-                qmsInteractor.unBlockUsers(id)
+                qmsRepository.unBlockUsers(userId)
             }.onSuccess {
                 viewState.showContacts(it)
                 viewState.clearNickField()
@@ -74,7 +74,7 @@ class QmsBlackListPresenter(
     fun searchUser(nick: String) {
         viewModelScope.launch {
             coRunCatching {
-                qmsInteractor.findUser(nick)
+                qmsRepository.findUser(nick)
             }.onSuccess {
                 viewState.showFoundUsers(it)
             }.onFailure {
@@ -88,12 +88,12 @@ class QmsBlackListPresenter(
     }
 
     fun openProfile(item: QmsContact) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id}")
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.user.id.id}")
     }
 
     fun openDialogs(item: QmsContact) {
         router.navigateTo(
-            Screen.QmsThemes(userId = UserId(item.user.id)).apply {
+            Screen.QmsThemes(userId = item.user.id).apply {
                 screenTitle = item.user.nick
             }
         )

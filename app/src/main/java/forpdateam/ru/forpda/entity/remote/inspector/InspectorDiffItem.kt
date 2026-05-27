@@ -1,13 +1,16 @@
 package forpdateam.ru.forpda.entity.remote.inspector
 
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.TopicId
 
-sealed class InspectorDiff<T : InspectorItem>(
+
+sealed class InspectorDiff<T : InspectorItem<ID>, ID>(
     open val loadedItems: List<T>,
     open val savedItems: List<T>
 ) {
 
-    val diff by lazy<List<Item<T>>> {
-        val result = mutableListOf<Item<T>>()
+    val diff by lazy<List<Item<T, ID>>> {
+        val result = mutableListOf<Item<T, ID>>()
 
         val loadedMap = loadedItems.associateBy { it.baseId }
         val savedMap = savedItems.associateBy { it.baseId }
@@ -42,22 +45,22 @@ sealed class InspectorDiff<T : InspectorItem>(
     data class Favorites(
         override val loadedItems: List<InspectorItem.Favorite>,
         override val savedItems: List<InspectorItem.Favorite>
-    ) : InspectorDiff<InspectorItem.Favorite>(loadedItems, savedItems)
+    ) : InspectorDiff<InspectorItem.Favorite, TopicId>(loadedItems, savedItems)
 
     data class Qms(
         override val loadedItems: List<InspectorItem.Qms>,
         override val savedItems: List<InspectorItem.Qms>
-    ) : InspectorDiff<InspectorItem.Qms>(loadedItems, savedItems)
+    ) : InspectorDiff<InspectorItem.Qms, QmsThreadId>(loadedItems, savedItems)
 
-    sealed interface Item<T : InspectorItem> {
+    sealed interface Item<T : InspectorItem<ID>, ID> {
 
         val item: T
 
-        class New<T : InspectorItem>(override val item: T) : Item<T>
+        class New<T : InspectorItem<ID>, ID>(override val item: T) : Item<T, ID>
 
-        class Same<T : InspectorItem>(override val item: T) : Item<T>
+        class Same<T : InspectorItem<ID>, ID>(override val item: T) : Item<T, ID>
 
-        class Read<T : InspectorItem>(override val item: T) : Item<T>
+        class Read<T : InspectorItem<ID>, ID>(override val item: T) : Item<T, ID>
     }
 }
 

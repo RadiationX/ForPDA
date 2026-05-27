@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.view.isVisible
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.simple.SimpleTextWatcher
 import forpdateam.ru.forpda.databinding.ToolbarQmsNewThemeBinding
@@ -24,17 +25,21 @@ class ChatThemeCreator internal constructor(
     private val titleField: AppCompatEditText
         get() = toolbarBinding.qmsThemeTitleField
 
-    private var userNick: String?
-    private var themeTitle: String?
+    private var userNick: String? = null
+    private var themeTitle: String? = null
 
     init {
-        this.userNick = presenter.nick
-        this.themeTitle = presenter.title
         initCreatorViews()
     }
 
     private fun searchUser(nick: String) {
         presenter.findUser(nick)
+    }
+
+    fun initNick(nick: String) {
+        userNick = nick
+        nickField.isVisible = false
+        fragment.setSubtitle(userNick)
     }
 
     fun onShowSearchRes(res: List<ForumUser>) {
@@ -52,17 +57,13 @@ class ChatThemeCreator internal constructor(
     }
 
     private fun initCreatorViews() {
-        if (userNick != null) {
-            nickField.visibility = View.GONE
-        } else {
-            nickField.addTextChangedListener(object : SimpleTextWatcher() {
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    userNick = s.toString()
-                    searchUser(userNick!!)
-                    fragment.setSubtitle(userNick)
-                }
-            })
-        }
+        nickField.addTextChangedListener(object : SimpleTextWatcher() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                userNick = s.toString()
+                searchUser(userNick!!)
+                fragment.setSubtitle(userNick)
+            }
+        })
         titleField.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 themeTitle = s.toString()

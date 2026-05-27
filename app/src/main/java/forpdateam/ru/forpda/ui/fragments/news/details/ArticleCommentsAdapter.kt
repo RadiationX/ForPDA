@@ -77,7 +77,7 @@ class ArticleCommentsAdapter(
         fun bind(item: Comment) {
             val karma = item.karma
             binding.commentContent.text = item.content
-            val authData = authHolder.get()
+            val authState = authHolder.get()
             if (item.isDeleted) {
                 binding.root.isClickable = false
                 binding.commentLikeImage.visibility = View.GONE
@@ -117,7 +117,7 @@ class ArticleCommentsAdapter(
                     Karma.NOT_LIKED -> {
                         binding.commentLikeImage.setImageResource(R.drawable.ic_heart_outline)
                         binding.commentLikeImage.imageTintList = null
-                        binding.commentLikeImage.isClickable = authData.userId != item.user.id
+                        binding.commentLikeImage.isClickable = authState.asAuth()?.let { it.userId != item.user.id } ?: false
                     }
                 }
             }

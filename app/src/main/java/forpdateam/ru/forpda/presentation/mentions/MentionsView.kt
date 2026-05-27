@@ -6,6 +6,7 @@ import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import ru.radiationx.coretypes.TopicId
 
 /**
  * Created by radiationx on 01.01.18.
@@ -19,7 +20,7 @@ interface MentionsView : IBaseView {
     fun showItemDialogMenu(item: MentionItem)
 
     @StateStrategyType(SkipStrategy::class)
-    fun showAddFavoritesDialog(id: Int)
+    fun showAddFavoritesDialog(topicId: TopicId)
 
     @StateStrategyType(SkipStrategy::class)
     fun onAddToFavorite(result: Boolean)

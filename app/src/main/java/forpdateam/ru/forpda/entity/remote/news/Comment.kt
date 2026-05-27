@@ -1,13 +1,14 @@
 package forpdateam.ru.forpda.entity.remote.news
 
 import forpdateam.ru.forpda.entity.remote.others.user.User
+import ru.radiationx.coretypes.CommentId
 
 /**
  * Created by radiationx on 02.09.17.
  */
 
 data class Comment(
-    val id: Int,
+    val id: CommentId,
     val user: User,
     val date: String?,
     val content: String?,

@@ -22,6 +22,8 @@ import forpdateam.ru.forpda.ui.fragments.WebViewTopScroller
 import forpdateam.ru.forpda.ui.views.ExtendedWebView
 import kotlinx.coroutines.launch
 import moxy.MvpAppCompatFragment
+import ru.radiationx.coretypes.ArticleAnswerId
+import ru.radiationx.coretypes.ArticlePollId
 import ru.radiationx.quill.inject
 
 /**
@@ -104,13 +106,11 @@ class ArticleContentFragment : MvpAppCompatFragment(), ArticleContentView, TabTo
     @JavascriptInterface
     fun sendPoll(id: String, answer: String, from: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val pollId = Integer.parseInt(id)
-            val answers = answer.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val answersId = IntArray(answers.size)
-            for (i in answers.indices) {
-                answersId[i] = Integer.parseInt(answers[i])
-            }
-            presenter.sendPoll(from, pollId, answersId)
+            val pollId = ArticlePollId(id.toInt())
+            val answerIds = answer.split(",".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .map { ArticleAnswerId(it.toInt()) }
+            presenter.sendPoll(from, pollId, answerIds)
         }
     }
 

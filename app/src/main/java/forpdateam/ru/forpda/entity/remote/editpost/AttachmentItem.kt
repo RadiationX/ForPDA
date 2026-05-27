@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.Log
 import forpdateam.ru.forpda.model.data.remote.WebClient
+import ru.radiationx.coretypes.AttachmentId
 import java.util.regex.Pattern
 
 /**
@@ -14,7 +15,7 @@ class AttachmentItem : Parcelable {
     var isSelected: Boolean = false
         private set
 
-    var id: Int = -1
+    var id: AttachmentId = AttachmentId(-1)
     var typeFile: Int = TYPE_FILE
     var loadState: Int = STATE_LOADING
     var status: Int = STATUS_READY
@@ -58,7 +59,7 @@ class AttachmentItem : Parcelable {
         Log.d("FORPDA_LOG", "writeToParcel")
         parcel.writeByte((if (isError) 1 else 0).toByte())
         parcel.writeByte((if (isSelected) 1 else 0).toByte())
-        parcel.writeInt(id)
+        parcel.writeInt(id.id)
         parcel.writeInt(typeFile)
         parcel.writeInt(loadState)
         parcel.writeInt(status)
@@ -73,7 +74,7 @@ class AttachmentItem : Parcelable {
     private constructor(parcel: Parcel) {
         isError = parcel.readByte().toInt() != 0
         isSelected = parcel.readByte().toInt() != 0
-        id = parcel.readInt()
+        id = AttachmentId(parcel.readInt())
         typeFile = parcel.readInt()
         loadState = parcel.readInt()
         status = parcel.readInt()

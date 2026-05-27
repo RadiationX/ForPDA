@@ -21,7 +21,7 @@ class ArticleTemplate @Inject constructor(
             setVariableOpt("details_title", ApiUtils.htmlEncode(page.title))
             setVariableOpt("details_content", page.html)
             for (material in page.materials) {
-                setVariableOpt("material_id", material.id)
+                setVariableOpt("material_id", material.id.id)
                 setVariableOpt("material_image", material.imageUrl)
                 setVariableOpt("material_title", material.title)
                 addBlockOpt("material")

@@ -7,6 +7,11 @@ import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.news.NewsApi
+import ru.radiationx.coretypes.ArticleAnswerId
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.ArticlePollId
+import ru.radiationx.coretypes.CommentId
+import ru.radiationx.coretypes.PageNumber
 import javax.inject.Inject
 
 /**
@@ -18,13 +23,13 @@ class NewsRepository @Inject constructor(
     private val forumUsersCache: ForumUsersCache
 ) {
 
-    suspend fun getNews(pageNumber: Int): List<NewsItem> {
+    suspend fun getNews(pageNumber: PageNumber): List<NewsItem> {
         val news = newsApi.getNews(pageNumber)
         return news.map {
-            val forumUser = forumUsersCache.getUserById(it.authorId)
+            val forumUser = forumUsersCache.getUserById(it.author.id)
             Log.e(
                 "kekosina",
-                "forumUser ${it.authorId}, ${forumUser?.id}, ${forumUser?.nick}, ${forumUser?.avatar}"
+                "forumUser ${it.author.id}, ${forumUser?.id}, ${forumUser?.nick}, ${forumUser?.avatar}"
             )
             if (forumUser != null) {
                 it.copy(avatar = forumUser.avatar?.asDeferredData())
@@ -34,19 +39,19 @@ class NewsRepository @Inject constructor(
         }
     }
 
-    suspend fun likeComment(articleId: Int, commentId: Int): Boolean {
+    suspend fun likeComment(articleId: ArticleId, commentId: CommentId): Boolean {
         return newsApi.likeComment(articleId, commentId)
     }
 
-    suspend fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
-        return newsApi.sendPoll(from, pollId, answersId)
+    suspend fun sendPoll(from: String, pollId: ArticlePollId, answersIds: List<ArticleAnswerId>): DetailsPage {
+        return newsApi.sendPoll(from, pollId, answersIds)
     }
 
-    suspend fun replyComment(articleId: Int, commentId: Int, comment: String): DetailsPage {
+    suspend fun replyComment(articleId: ArticleId, commentId: CommentId?, comment: String): DetailsPage {
         return newsApi.replyComment(articleId, commentId, comment)
     }
 
-    suspend fun getDetails(id: Int): DetailsPage {
+    suspend fun getDetails(id: ArticleId): DetailsPage {
         return newsApi.getDetails(id)
     }
 

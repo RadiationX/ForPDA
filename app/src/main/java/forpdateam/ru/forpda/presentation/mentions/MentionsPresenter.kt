@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.presentation.mentions
 
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.entity.remote.mentions.MentionItem
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.mentions.MentionsRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
@@ -13,6 +13,8 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.TopicId
 import java.util.regex.Pattern
 
 /**
@@ -29,7 +31,7 @@ class MentionsPresenter(
     private val utils: Utils
 ) : BasePresenter<MentionsView>() {
 
-    var currentSt: Int = 0
+    var pageOffset = PageOffset.default
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -40,7 +42,7 @@ class MentionsPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                mentionsRepository.getMentions(currentSt)
+                mentionsRepository.getMentions(pageOffset)
             }.onSuccess {
                 viewState.showMentions(it)
             }.onFailure {
@@ -50,10 +52,10 @@ class MentionsPresenter(
         }
     }
 
-    fun addTopicToFavorite(topicId: Int, subType: String) {
+    fun addTopicToFavorite(topicId: TopicId, subType: String) {
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+                favoritesRepository.editFavorites(FavoriteAction.AddTopic(topicId, subType))
             }.onSuccess {
                 viewState.onAddToFavorite(it)
             }.onFailure {
@@ -79,11 +81,11 @@ class MentionsPresenter(
     }
 
     fun addToFavorites(item: MentionItem) {
-        var id = 0
+        // todo refactor
         val matcher = Pattern.compile("showtopic=(\\d+)").matcher(item.link)
         if (matcher.find()) {
-            id = Integer.parseInt(matcher.group(1))
+            val topicId = TopicId(matcher.group(1).toInt())
+            viewState.showAddFavoritesDialog(topicId)
         }
-        viewState.showAddFavoritesDialog(id)
     }
 }

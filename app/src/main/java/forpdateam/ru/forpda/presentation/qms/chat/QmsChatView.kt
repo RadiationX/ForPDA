@@ -36,6 +36,7 @@ interface QmsChatView : IBaseView {
     fun onBlockUser(res: Boolean)
     fun showCreateNote(name: String, nick: String, url: String)
     fun onUploadFiles(items: List<AttachmentItem>)
+    fun initNick(nick: String)
     fun showAvatar(avatarUrl: String)
     fun showMoreMessages(items: List<QmsMessage>, startIndex: Int, endIndex: Int)
     fun makeAllRead()

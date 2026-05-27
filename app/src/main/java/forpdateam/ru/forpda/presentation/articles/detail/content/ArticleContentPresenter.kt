@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.ArticleAnswerId
+import ru.radiationx.coretypes.ArticlePollId
 
 /**
  * Created by radiationx on 11.11.17.
@@ -45,10 +47,10 @@ class ArticleContentPresenter(
             .launchIn(viewModelScope)
     }
 
-    fun sendPoll(from: String, pollId: Int, answersId: IntArray) {
+    fun sendPoll(from: String, pollId: ArticlePollId, answersIds: List<ArticleAnswerId>) {
         viewModelScope.launch {
             coRunCatching {
-                articleInteractor.sendPoll(from, pollId, answersId)
+                articleInteractor.sendPoll(from, pollId, answersIds)
             }.onFailure {
                 errorHandler.handle(it)
             }

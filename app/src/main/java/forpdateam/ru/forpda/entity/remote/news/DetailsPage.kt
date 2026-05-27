@@ -1,15 +1,16 @@
 package forpdateam.ru.forpda.entity.remote.news
 
 import android.util.SparseArray
+import forpdateam.ru.forpda.entity.remote.others.user.User
+import ru.radiationx.coretypes.ArticleId
 
 /**
  * Created by isanechek on 7/20/17.
  */
 data class DetailsPage(
-    val id: Int,
-    val authorId: Int,
+    val id: ArticleId,
+    val author: User,
     val title: String,
-    val author: String,
     val date: String,
     val imgUrl: String,
     val commentsCount: Int,

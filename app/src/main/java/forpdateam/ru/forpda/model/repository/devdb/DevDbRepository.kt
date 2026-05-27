@@ -5,6 +5,9 @@ import forpdateam.ru.forpda.entity.remote.devdb.BrandSearch
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
 import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.model.data.remote.api.devdb.DevDbApi
+import ru.radiationx.coretypes.DevDbCategoryId
+import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.DevDbDevicesId
 import javax.inject.Inject
 
 /**
@@ -15,16 +18,16 @@ class DevDbRepository @Inject constructor(
     private val devDbApi: DevDbApi
 ) {
 
-    suspend fun getBrands(catId: String): Brands {
-        return devDbApi.getBrands(catId)
+    suspend fun getBrands(categoryId: DevDbCategoryId): Brands {
+        return devDbApi.getBrands(categoryId)
     }
 
-    suspend fun getBrand(catId: String, brandId: String): Brand {
-        return devDbApi.getBrand(catId, brandId)
+    suspend fun getDevices(devicesId: DevDbDevicesId): Brand {
+        return devDbApi.getDevices(devicesId)
     }
 
-    suspend fun getDevice(devId: String): Device {
-        return devDbApi.getDevice(devId)
+    suspend fun getDevice(deviceId: DevDbDeviceId): Device {
+        return devDbApi.getDevice(deviceId)
     }
 
     suspend fun search(query: String): BrandSearch {

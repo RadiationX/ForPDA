@@ -10,6 +10,11 @@ import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class SearchParser @Inject constructor(
@@ -48,11 +53,11 @@ class SearchParser @Inject constructor(
         .getRegexParser(scope.scope, scope.articles)
         .map(response) { matcher ->
             SearchItem.News(
-                id = matcher.require(1).toInt(),
+                id = ArticleId(matcher.require(1).toInt()),
                 imageUrl = matcher.require(2),
                 date = matcher.require(3),
-                user = User.required(
-                    id = matcher.require(4).toInt(),
+                user = User(
+                    id = UserId(matcher.require(4).toInt()),
                     nick = matcher.require(5).fromHtml()
                 ),
                 title = matcher.require(6).fromHtml(),
@@ -64,12 +69,12 @@ class SearchParser @Inject constructor(
         .getRegexParser(scope.scope, scope.forum_topics)
         .map(response) { matcher ->
             SearchItem.Topic(
-                topicId = matcher.require(1).toInt(),
+                topicId = TopicId(matcher.require(1).toInt()),
                 title = matcher.require(4).fromHtml(),
                 desc = matcher.require(5).fromHtml(),
-                forumId = matcher.require(6).toInt(),
-                user = User.required(
-                    id = matcher.require(10).toInt(),
+                forumId = ForumId(matcher.require(6).toInt()),
+                user = User(
+                    id = UserId(matcher.require(10).toInt()),
                     nick = matcher.require(11).fromHtml(),
                 ),
                 date = matcher.require(12)
@@ -82,13 +87,13 @@ class SearchParser @Inject constructor(
         .map(response) { matcher ->
             val title = matcher.require(4).fromHtml()
             val post = ForumPost(
-                topicId = matcher.require(2).toInt(),
-                id = matcher.require(3).toInt(),
+                topicId = TopicId(matcher.require(2).toInt()),
+                id = PostId(matcher.require(3).toInt()),
 
                 date = matcher.require(5),
                 isOnline = matcher.require(7).contains("green"),
-                user = ForumPostUser.required(
-                    id = matcher.require(10).toInt(),
+                user = ForumPostUser(
+                    id = UserId(matcher.require(10).toInt()),
                     nick = matcher.require(9).fromHtml(),
                     avatar = matcher.require(8).let {
                         if (it.isNotEmpty()) "https://s.4pda.to/forum/uploads/$it" else null

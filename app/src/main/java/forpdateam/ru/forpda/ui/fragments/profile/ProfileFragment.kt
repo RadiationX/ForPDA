@@ -243,7 +243,7 @@ class ProfileFragment : TabFragment(R.layout.fragment_profile), ProfileAdapter.C
         }
 
         if (data.contacts.isNotEmpty()) {
-            val isMe = data.user.id == authHolder.get().userId
+            val isMe = data.user.id == authHolder.get().asAuth()?.userId
             writeMenuItem.isVisible = !isMe
         }
     }

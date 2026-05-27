@@ -2,6 +2,7 @@ package forpdateam.ru.forpda.presentation.theme
 
 import android.webkit.JavascriptInterface
 import forpdateam.ru.forpda.ui.fragments.BaseJsInterface
+import ru.radiationx.coretypes.PostId
 
 /**
  * Created by radiationx on 17.03.18.
@@ -27,39 +28,39 @@ class ThemeJsInterface(
 
     @JavascriptInterface
     fun showUserMenu(postId: String) =
-        runInUiThread(Runnable { presenter.onUserMenuClick(postId.toInt()) })
+        runInUiThread(Runnable { presenter.onUserMenuClick(PostId(postId.toInt())) })
 
     @JavascriptInterface
     fun showReputationMenu(postId: String) =
-        runInUiThread(Runnable { presenter.onReputationMenuClick(postId.toInt()) })
+        runInUiThread(Runnable { presenter.onReputationMenuClick(PostId(postId.toInt())) })
 
     @JavascriptInterface
     fun showPostMenu(postId: String) =
-        runInUiThread(Runnable { presenter.onPostMenuClick(postId.toInt()) })
+        runInUiThread(Runnable { presenter.onPostMenuClick(PostId(postId.toInt())) })
 
     @JavascriptInterface
     fun reportPost(postId: String) =
-        runInUiThread(Runnable { presenter.onReportPostClick(postId.toInt()) })
+        runInUiThread(Runnable { presenter.onReportPostClick(PostId(postId.toInt())) })
 
     @JavascriptInterface
     fun reply(postId: String) =
-        runInUiThread(Runnable { presenter.onReplyPostClick(postId.toInt()) })
+        runInUiThread(Runnable { presenter.onReplyPostClick(PostId(postId.toInt())) })
 
     @JavascriptInterface
     fun quotePost(text: String, postId: String) =
-        runInUiThread(Runnable { presenter.onQuotePostClick(postId.toInt(), text) })
+        runInUiThread(Runnable { presenter.onQuotePostClick(PostId(postId.toInt()), text) })
 
     @JavascriptInterface
     fun deletePost(postId: String) =
-        runInUiThread(Runnable { presenter.onDeletePostClick(postId.toInt()) })
+        runInUiThread(Runnable { presenter.onDeletePostClick(PostId(postId.toInt())) })
 
     @JavascriptInterface
     fun editPost(postId: String) =
-        runInUiThread(Runnable { presenter.onEditPostClick(postId.toInt()) })
+        runInUiThread(Runnable { presenter.onEditPostClick(PostId(postId.toInt())) })
 
     @JavascriptInterface
     fun votePost(postId: String, type: Boolean) =
-        runInUiThread(Runnable { presenter.onVotePostClick(postId.toInt(), type) })
+        runInUiThread(Runnable { presenter.onVotePostClick(PostId(postId.toInt()), type) })
 
     @JavascriptInterface
     fun copySelectedText(text: String) = runInUiThread(Runnable { presenter.copyText(text) })
@@ -78,7 +79,7 @@ class ThemeJsInterface(
 
     @JavascriptInterface
     fun copySpoilerLink(postId: String, spoilNumber: String) =
-        runInUiThread(Runnable { presenter.onSpoilerCopyLinkClick(postId.toInt(), spoilNumber) })
+        runInUiThread(Runnable { presenter.onSpoilerCopyLinkClick(PostId(postId.toInt()), spoilNumber) })
 
     @JavascriptInterface
     fun setPollOpen(bValue: String) =
@@ -93,6 +94,6 @@ class ThemeJsInterface(
 
     @JavascriptInterface
     fun anchorDialog(postId: String, name: String) =
-        runInUiThread(Runnable { presenter.onAnchorClick(postId.toInt(), name) })
+        runInUiThread(Runnable { presenter.onAnchorClick(PostId(postId.toInt()), name) })
 
 }

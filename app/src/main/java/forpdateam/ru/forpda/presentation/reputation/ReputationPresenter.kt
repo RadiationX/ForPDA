@@ -1,7 +1,6 @@
 package forpdateam.ru.forpda.presentation.reputation
 
 import forpdateam.ru.forpda.common.mvp.BasePresenter
-import forpdateam.ru.forpda.entity.remote.reputation.RepArgs
 import forpdateam.ru.forpda.entity.remote.reputation.RepData
 import forpdateam.ru.forpda.entity.remote.reputation.RepItem
 import forpdateam.ru.forpda.extensions.coRunCatching
@@ -12,6 +11,8 @@ import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.UserId
 import ru.radiationx.links.Link
 import ru.radiationx.quill.QuillExtra
 
@@ -20,7 +21,7 @@ import ru.radiationx.quill.QuillExtra
  */
 data class ReputationExtra(
     val link: Link.Board.Reputation.History
-): QuillExtra
+) : QuillExtra
 
 @InjectViewState
 class ReputationPresenter(
@@ -32,7 +33,7 @@ class ReputationPresenter(
     private val errorHandler: ErrorHandler
 ) : BasePresenter<ReputationView>() {
 
-    lateinit var currentArgs: RepArgs
+    var currentLink = argExtra.link
     var currentData: RepData? = null
 
     override fun onFirstViewAttach() {
@@ -40,16 +41,12 @@ class ReputationPresenter(
         loadReputation()
     }
 
-    fun loadReputation(page: Int? = null) {
+    fun loadReputation(link: Link.Board.Reputation.History? = null) {
+        currentLink = link ?: currentLink
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                reputationRepository.loadReputation(
-                    currentArgs.userId,
-                    currentArgs.mode,
-                    currentArgs.sort,
-                    page ?: currentData?.pagination?.currentPage() ?: currentArgs.initialSt
-                )
+                reputationRepository.loadReputation(currentLink)
             }.onSuccess {
                 currentData = it
                 viewState.showReputation(it)
@@ -65,7 +62,7 @@ class ReputationPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                reputationRepository.changeReputation(0, currentArgs.userId, type, message)
+                reputationRepository.changeReputation(null, currentLink.userId, type, message)
             }.onSuccess {
                 viewState.onChangeReputation()
                 loadReputation()
@@ -88,23 +85,21 @@ class ReputationPresenter(
         }
     }
 
-    fun selectPage(page: Int) {
-        loadReputation(page)
+    fun selectPage(offset: Int) {
+        loadReputation(currentLink.copy(offset = PageOffset(offset)))
     }
 
-    fun setSort(sort: String) {
-        currentArgs = currentArgs.copy(sort = sort)
+    fun setSort(order: Link.Board.Reputation.Order) {
+        currentLink = currentLink.copy(order = order)
         loadReputation()
     }
 
     fun changeReputationMode() {
-        val mode = if (currentArgs.mode == RepArgs.MODE_FROM) {
-            RepArgs.MODE_TO
-        } else {
-            RepArgs.MODE_FROM
+        val mode = when (currentLink.mode) {
+            Link.Board.Reputation.History.Mode.From -> Link.Board.Reputation.History.Mode.To
+            Link.Board.Reputation.History.Mode.To -> Link.Board.Reputation.History.Mode.From
         }
-        currentArgs = currentArgs.copy(mode = mode)
-        loadReputation()
+        loadReputation(currentLink.copy(mode = mode))
     }
 
     fun onItemClick(item: RepItem) {
@@ -115,8 +110,8 @@ class ReputationPresenter(
         viewState.showItemDialogMenu(item)
     }
 
-    fun navigateToProfile(userId: Int) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=$userId")
+    fun navigateToProfile(userId: UserId) {
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${userId.id}")
     }
 
     fun navigateToMessage(item: RepItem) {

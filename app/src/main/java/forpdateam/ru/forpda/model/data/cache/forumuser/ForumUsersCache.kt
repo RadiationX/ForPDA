@@ -3,9 +3,11 @@ package forpdateam.ru.forpda.model.data.cache.forumuser
 import forpdateam.ru.forpda.entity.db.ForumUserDb
 import forpdateam.ru.forpda.entity.remote.others.user.ForumPostUser
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
+import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.db.ForumUsersDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 /**
@@ -29,32 +31,50 @@ class ForumUsersCache @Inject constructor(
         forumUsersDao.upsertAll(forumUsers.mapNotNull { it.toDb() })
     }
 
-    fun observeUserById(id: Int): Flow<ForumUser?> {
-        return forumUsersDao.observeById(id).map { it?.toDomain() }
+    fun observeUserById(id: UserId): Flow<ForumUser?> {
+        return forumUsersDao.observeById(id.id).map { it?.toDomain() }
     }
 
-    suspend fun getUserById(id: Int): ForumUser? {
-        return forumUsersDao.getById(id)?.toDomain()
+    suspend fun getUserById(id: UserId): ForumUser? {
+        val user = forumUsersDao.getById(id.id)?.toDomain()
+        if (user != null) {
+            return user
+        }
+        return coRunCatching {
+            userSource.findUser(id)
+        }.onSuccess {
+            saveUser(it)
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
     }
 
     suspend fun getUserByNick(nick: String): ForumUser? {
         val user = forumUsersDao.getByNick(nick)?.toDomain()
-        userSource.findUsers(nick).getOrNull(0)?.also { foundUser ->
-            saveUser(foundUser)
+        if (user != null) {
+            return user
         }
-        return user
+        return coRunCatching {
+            userSource.findUsers(nick).find { it.nick.equals(nick, ignoreCase = true) }
+        }.onSuccess {
+            if (it != null) {
+                saveUser(it)
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }.getOrNull()
     }
 
 }
 
 fun ForumUserDb.toDomain(): ForumUser {
-    return ForumUser.required(id, nick, avatar)
+    return ForumUser(UserId(id), nick, avatar)
 }
 
 fun ForumUser.toDb(): ForumUserDb {
-    return ForumUserDb(id, nick, avatar)
+    return ForumUserDb(id.id, nick, avatar)
 }
 
 fun ForumPostUser.toDb(): ForumUserDb? {
-    return avatar?.let { ForumUserDb(id, nick, it) }
+    return avatar?.let { ForumUserDb(id.id, nick, it) }
 }

@@ -64,25 +64,25 @@ class ArticleDetailPresenter(
 
     fun openAuthorProfile() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.authorId}")
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.author.id.id}")
         }
     }
 
     fun copyLink() {
         currentData?.let {
-            utils.copyToClipBoard("https://4pda.to/index.php?p=${it.id}")
+            utils.copyToClipBoard("https://4pda.to/index.php?p=${it.id.id}")
         }
     }
 
     fun shareLink() {
         currentData?.let {
-            utils.shareText("https://4pda.to/index.php?p=${it.id}")
+            utils.shareText("https://4pda.to/index.php?p=${it.id.id}")
         }
     }
 
     fun createNote() {
         currentData?.let {
-            val url = "https://4pda.to/index.php?p=${it.id}"
+            val url = "https://4pda.to/index.php?p=${it.id.id}"
             viewState.showCreateNote(it.title.orEmpty(), url)
         }
     }

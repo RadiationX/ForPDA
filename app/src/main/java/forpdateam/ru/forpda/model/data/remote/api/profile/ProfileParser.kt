@@ -6,6 +6,7 @@ import forpdateam.ru.forpda.entity.remote.profile.ProfileModel
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class ProfileParser @Inject constructor(
@@ -14,7 +15,7 @@ class ProfileParser @Inject constructor(
 
     private val scope = ParserPatterns.Profile
 
-    fun parse(response: String, userId: Int): ProfileModel {
+    fun parse(response: String, userId: UserId): ProfileModel {
         val profile = patternProvider
             .getRegexParser(scope.scope, scope.main)
             .mapOnce(response) { mainMatcher ->
@@ -28,7 +29,7 @@ class ProfileParser @Inject constructor(
                 stats.addAll(parseSiteStats(mainMatcher.require(10)))
                 stats.addAll(parseForumStats(mainMatcher.require(11)))
                 ProfileModel(
-                    user = ForumUser.required(
+                    user = ForumUser(
                         id = userId,
                         avatar = mainMatcher.require(1).trim(),
                         nick = mainMatcher.require(2).trim().fromHtml()

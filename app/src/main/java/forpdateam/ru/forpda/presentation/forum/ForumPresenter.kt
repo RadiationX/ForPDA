@@ -2,9 +2,9 @@ package forpdateam.ru.forpda.presentation.forum
 
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
@@ -76,14 +76,14 @@ class ForumPresenter(
 
     private fun scrollToTarget() {
         val forumId = targetForumId ?: return
-        viewState.scrollToForum(forumId.id)
+        viewState.scrollToForum(forumId)
         targetForumId = null
     }
 
-    fun markRead(id: Int) {
+    fun markRead(forumId: ForumId) {
         viewModelScope.launch {
             coRunCatching {
-                forumRepository.markRead(id)
+                forumRepository.markRead(forumId)
             }.onSuccess {
                 viewState.onMarkRead()
             }.onFailure {
@@ -104,15 +104,10 @@ class ForumPresenter(
         }
     }
 
-    fun addToFavorite(forumId: Int, subType: String) {
+    fun addToFavorite(forumId: ForumId, subType: String) {
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(
-                    FavoritesApi.ACTION_ADD_FORUM,
-                    -1,
-                    forumId,
-                    subType
-                )
+                favoritesRepository.editFavorites(FavoriteAction.AddForum(forumId, subType))
             }.onSuccess {
                 viewState.onAddToFavorite(it)
             }.onFailure {
@@ -122,15 +117,15 @@ class ForumPresenter(
     }
 
     fun copyLink(item: ForumItemFlat) {
-        utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.id}")
+        utils.copyToClipBoard("https://4pda.to/forum/index.php?showforum=${item.id.id}")
     }
 
     fun navigateToForum(item: ForumItemFlat) {
-        router.navigateTo(Screen.Topics(link = Link.Board.Forum.default(ForumId(item.id))))
+        router.navigateTo(Screen.Topics(link = Link.Board.Forum.default(item.id)))
     }
 
     fun navigateToSearch(item: ForumItemFlat) {
-        val link = Link.Board.Search.default.copy(forums = setOf(Link.Board.Search.Forum.Id(forumId = ForumId(item.id))))
+        val link = Link.Board.Search.default.copy(forums = setOf(Link.Board.Search.Forum.Id(item.id)))
         router.navigateTo(Screen.Search.Forum(link = link))
     }
 }

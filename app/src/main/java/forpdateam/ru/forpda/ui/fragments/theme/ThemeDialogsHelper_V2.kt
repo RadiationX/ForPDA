@@ -97,8 +97,8 @@ class ThemeDialogsHelper_V2(
         userMenu.disallowAll()
         userMenu.allow(0)
         userMenu.allow(1)
-        val authData = authHolder.get()
-        if (authData.isAuth() && post.user.id != authData.userId) {
+        val authState = authHolder.get()
+        if (authState.isAuth() && post.user.id != authState.userId) {
             userMenu.allow(2)
         }
         userMenu.allow(3)
@@ -215,7 +215,8 @@ class ThemeDialogsHelper_V2(
     fun votePost(presenter: IThemePresenter, post: ForumPost, type: Boolean) {
         AlertDialog.Builder(context)
             .setMessage(
-                context.getString(R.string.change_post_reputation_Type_Nick,
+                context.getString(
+                    R.string.change_post_reputation_Type_Nick,
                     context.getString(if (type) R.string.increase else R.string.decrease),
                     post.user.nick
                 )

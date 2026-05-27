@@ -683,7 +683,7 @@ class SearchFragment : TabFragment(R.layout.fragment_search), SearchSiteView,
     }
 
     override fun deletePostUi(post: SearchItem.Post) {
-        webView.evalJs("onDeletePostClick(" + post.post.id + ");")
+        webView.evalJs("onDeletePostClick(" + post.post.id.id + ");")
     }
 
     override fun openAnchorDialog(post: SearchItem.Post, anchorName: String) {

@@ -5,6 +5,8 @@ import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.data.cache.forum.ForumCache
 import forpdateam.ru.forpda.model.data.remote.api.forum.ForumApi
+import ru.radiationx.coretypes.AnnounceId
+import ru.radiationx.coretypes.ForumId
 import javax.inject.Inject
 
 /**
@@ -30,15 +32,15 @@ class ForumRepository @Inject constructor(
         forumApi.markAllRead()
     }
 
-    suspend fun markRead(id: Int) {
-        forumApi.markRead(id)
+    suspend fun markRead(forumId: ForumId) {
+        forumApi.markRead(forumId)
     }
 
     suspend fun getRules(): ForumRules {
         return forumApi.getRules()
     }
 
-    suspend fun getAnnounce(id: Int, forumId: Int): Announce {
-        return forumApi.getAnnounce(id, forumId)
+    suspend fun getAnnounce(announceId: AnnounceId): Announce {
+        return forumApi.getAnnounce(announceId)
     }
 }

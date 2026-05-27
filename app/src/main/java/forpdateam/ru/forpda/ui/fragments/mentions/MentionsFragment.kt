@@ -21,6 +21,8 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.BaseAdapter
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.TopicId
 import ru.radiationx.quill.inject
 
 /**
@@ -44,7 +46,7 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
         }
 
         override fun onSelectedPage(pageNumber: Int) {
-            presenter.currentSt = pageNumber
+            presenter.pageOffset = PageOffset(pageNumber)
             presenter.getMentions()
         }
     }
@@ -131,11 +133,11 @@ class MentionsFragment : RecyclerFragment(), MentionsView {
         }
     }
 
-    override fun showAddFavoritesDialog(id: Int) {
+    override fun showAddFavoritesDialog(topicId: TopicId) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
-                presenter.addTopicToFavorite(id, FavoritesApi.SUB_TYPES[which])
+                presenter.addTopicToFavorite(topicId, FavoritesApi.SUB_TYPES[which])
             }
             .show()
     }

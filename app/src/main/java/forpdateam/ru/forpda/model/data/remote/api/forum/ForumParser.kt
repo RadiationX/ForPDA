@@ -6,6 +6,7 @@ import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.ForumId
 import javax.inject.Inject
 
 class ForumParser @Inject constructor(
@@ -15,7 +16,7 @@ class ForumParser @Inject constructor(
     private val scope = ParserPatterns.Forum
 
     private class Parent(
-        val id: Int,
+        val id: ForumId,
         val level: Int,
     )
 
@@ -24,7 +25,7 @@ class ForumParser @Inject constructor(
             .getRegexParser(scope.scope, scope.forums_from_search)
             .mapOnce(response) { rootMatcher ->
                 val parentsList = ArrayList<Parent>()
-                var lastParent = Parent(-1, -1)
+                var lastParent = Parent(ForumId(-1), -1)
                 parentsList.add(lastParent)
                 patternProvider
                     .getRegexParser(scope.scope, scope.forum_item_from_search)
@@ -37,7 +38,7 @@ class ForumParser @Inject constructor(
                             lastParent = parentsList[parentsList.size - 1]
                         }
                         val item = ForumItemFlat(
-                            id = matcher.require(1).toInt(),
+                            id = ForumId(matcher.require(1).toInt()),
                             parentId = lastParent.id,
                             level = level,
                             title = matcher.require(3).fromHtml(),

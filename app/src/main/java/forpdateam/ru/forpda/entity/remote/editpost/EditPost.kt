@@ -1,7 +1,10 @@
 package forpdateam.ru.forpda.entity.remote.editpost
 
+import ru.radiationx.coretypes.AttachmentId
+import ru.radiationx.coretypes.PostId
+
 data class EditPost(
-    val postId: Int,
+    val postId: PostId,
     val form: Form,
     val poll: Poll?,
     val attachments: List<Attachment>
@@ -43,7 +46,7 @@ data class EditPost(
     }
 
     class Attachment(
-        val id: Int,
+        val id: AttachmentId,
         val name: String,
         val extension: String,
         val size: Long,

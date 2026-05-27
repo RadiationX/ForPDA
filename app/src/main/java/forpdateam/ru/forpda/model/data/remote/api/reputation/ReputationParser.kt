@@ -7,6 +7,7 @@ import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.api.common.PaginationParser
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class ReputationParser @Inject constructor(
@@ -21,8 +22,8 @@ class ReputationParser @Inject constructor(
             .getRegexParser(scope.scope, scope.main)
             .map(response) { matcher ->
                 RepItem(
-                    user = User.required(
-                        id = matcher.require(1).toInt(),
+                    user = User(
+                        id = UserId(matcher.require(1).toInt()),
                         nick = matcher.require(2).fromHtml()
                     ),
                     title = matcher.require(5).fromHtml(),
@@ -38,7 +39,7 @@ class ReputationParser @Inject constructor(
             .getRegexParser(scope.scope, scope.info)
             .requireOnce(response) { matcher ->
                 RepData(
-                    id = matcher.require(1).toInt(),
+                    id = UserId(matcher.require(1).toInt()),
                     nick = matcher.require(2).fromHtml(),
                     positive = matcher.get(3)?.toInt() ?: 0,
                     negative = matcher.get(4)?.toInt() ?: 0,

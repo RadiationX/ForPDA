@@ -253,7 +253,7 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
     override fun showChat(data: QmsChatModel) {
         progressBar.visibility = View.GONE
         refreshToolbarMenuItems(true)
-        setTitles(data.title.orEmpty(), data.user.nick.orEmpty())
+        setTitles(data.title, data.user.nick)
     }
 
     override fun setTitles(title: String, nick: String) {
@@ -297,6 +297,10 @@ class QmsChatFragment : TabFragment(R.layout.fragment_qms_chat),
 
     private fun sendMessage() {
         presenter.sendMessage(messagePanel.message, attachmentsPopup.getAttachments())
+    }
+
+    override fun initNick(nick: String) {
+        themeCreator?.initNick(nick)
     }
 
     override fun showAvatar(avatarUrl: String) {

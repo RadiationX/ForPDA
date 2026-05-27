@@ -15,6 +15,8 @@ import forpdateam.ru.forpda.model.data.db.QmsThemesDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class QmsCache @Inject constructor(
@@ -27,16 +29,16 @@ class QmsCache @Inject constructor(
         return qmsContactsDao.observeAll().mapInnerList { it.toDomain() }
     }
 
-    fun observeContact(userId: Int): Flow<QmsContact?> {
-        return qmsContactsDao.observeByUserId(userId).map { it?.toDomain() }
+    fun observeContact(userId: UserId): Flow<QmsContact?> {
+        return qmsContactsDao.observeByUserId(userId.id).map { it?.toDomain() }
     }
 
     suspend fun getContacts(): List<QmsContact> {
         return qmsContactsDao.getAll().map { it.toDomain() }
     }
 
-    suspend fun getContact(userId: Int): QmsContact? {
-        return qmsContactsDao.getByUserId(userId)?.toDomain()
+    suspend fun getContact(userId: UserId): QmsContact? {
+        return qmsContactsDao.getByUserId(userId.id)?.toDomain()
     }
 
     suspend fun saveContacts(items: List<QmsContact>) {
@@ -50,10 +52,10 @@ class QmsCache @Inject constructor(
         qmsContactsDao.upsert(item.toDb())
     }
 
-    fun observeThemes(userId: Int): Flow<QmsThemes?> {
+    fun observeThemes(userId: UserId): Flow<QmsThemes?> {
         return combine(
-            flow = qmsContactsDao.observeByUserId(userId),
-            flow2 = qmsThemesDao.observeByUserId(userId),
+            flow = qmsContactsDao.observeByUserId(userId.id),
+            flow2 = qmsThemesDao.observeByUserId(userId.id),
             transform = { contact, themes ->
                 contact?.let {
                     themes.toDomain(it)
@@ -62,9 +64,9 @@ class QmsCache @Inject constructor(
         )
     }
 
-    suspend fun getThemes(userId: Int): QmsThemes {
-        val contact = qmsContactsDao.getByUserId(userId) ?: throw Exception("Not found by userId=$userId")
-        val themes = qmsThemesDao.getByUserId(userId)
+    suspend fun getThemes(userId: UserId): QmsThemes {
+        val contact = qmsContactsDao.getByUserId(userId.id) ?: throw Exception("Not found by userId=$userId")
+        val themes = qmsThemesDao.getByUserId(userId.id)
         return themes.toDomain(contact)
     }
 
@@ -77,7 +79,7 @@ class QmsCache @Inject constructor(
 
     suspend fun saveThemes(data: QmsThemes) {
         database.withTransaction {
-            qmsThemesDao.deleteByUserId(data.user.id)
+            qmsThemesDao.deleteByUserId(data.user.id.id)
             qmsThemesDao.upsertAll(data.themes.map { it.toDb(data.user.id) })
         }
     }
@@ -85,8 +87,8 @@ class QmsCache @Inject constructor(
 
 fun QmsContactDb.toDomain(): QmsContact {
     return QmsContact(
-        user = ForumUser.required(
-            id = id,
+        user = ForumUser(
+            id = UserId(id),
             nick = nick,
             avatar = avatar
         ),
@@ -96,7 +98,7 @@ fun QmsContactDb.toDomain(): QmsContact {
 
 fun QmsThemeDb.toDomain(): QmsTheme {
     return QmsTheme(
-        id = id,
+        id = QmsThreadId(id),
         countMessages = countMessages,
         countNew = countNew,
         name = name,
@@ -106,7 +108,7 @@ fun QmsThemeDb.toDomain(): QmsTheme {
 
 fun List<QmsThemeDb>.toDomain(contact: QmsContactDb): QmsThemes {
     return QmsThemes(
-        user = User.required(contact.id, contact.nick),
+        user = User(UserId(contact.id), contact.nick),
         themes = map { it.toDomain() }
     )
 }
@@ -115,15 +117,15 @@ fun QmsContact.toDb(): QmsContactDb {
     return QmsContactDb(
         nick = user.nick,
         avatar = user.avatar,
-        id = user.id,
+        id = user.id.id,
         count = count
     )
 }
 
-fun QmsTheme.toDb(userId: Int): QmsThemeDb {
+fun QmsTheme.toDb(userId: UserId): QmsThemeDb {
     return QmsThemeDb(
-        id = id,
-        userId = userId,
+        id = id.id,
+        userId = userId.id,
         countMessages = countMessages,
         countNew = countNew,
         name = name,

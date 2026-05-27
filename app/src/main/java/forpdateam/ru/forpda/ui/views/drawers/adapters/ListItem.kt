@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import forpdateam.ru.forpda.entity.app.CloseableInfo
 import forpdateam.ru.forpda.entity.app.notes.NoteItem
 import forpdateam.ru.forpda.entity.remote.devdb.Brands
+import forpdateam.ru.forpda.entity.remote.devdb.Device
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
@@ -36,4 +37,9 @@ class FavoriteListItem(val item: Favorite, val showDot: Boolean) : ListItem()
 class BrandListItem(val item: Brands.Item) : ListItem()
 
 class ForumListItem(val item: ForumItemFlat, val level: Int, val isLeaf: Boolean, val expanded: Boolean) : ListItem()
+
+class DeviceSpecsListItem(val group: Device.Specs) : ListItem()
+class DeviceCommentListItem(val comment: Device.Comment) : ListItem()
+class DeviceArticleListItem(val article: Device.Article) : ListItem()
+class DeviceTopicListItem(val topic: Device.Topic) : ListItem()
 

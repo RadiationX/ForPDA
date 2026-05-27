@@ -21,8 +21,8 @@ class QmsChatTemplate @Inject constructor(
             templateManager.fillStaticStrings(this)
             setVariableOpt("style_type", templateManager.getThemeType())
             setVariableOpt("chat_title", ApiUtils.htmlEncode(chatModel.title))
-            setVariableOpt("chatId", chatModel.themeId)
-            setVariableOpt("userId", chatModel.user.id)
+            setVariableOpt("threadId", chatModel.id.threadId.id)
+            setVariableOpt("userId", chatModel.id.userId.id)
             setVariableOpt("nick", chatModel.user.nick)
             setVariableOpt("avatarUrl", chatModel.user.avatar)
 
@@ -93,7 +93,7 @@ class QmsChatTemplate @Inject constructor(
                 is QmsMessage.Regular -> {
                     setVariableOpt("from_class", if (mess.isMyMessage) "our" else "his")
                     setVariableOpt("unread_class", if (mess.readStatus) "" else "unread")
-                    setVariableOpt("mess_id", mess.id)
+                    setVariableOpt("mess_id", mess.id.id)
                     setVariableOpt("content", mess.content)
                     setVariableOpt("time", mess.time)
                     addBlockOpt("mess")

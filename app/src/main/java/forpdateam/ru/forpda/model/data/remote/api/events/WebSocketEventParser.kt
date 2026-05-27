@@ -4,6 +4,13 @@ import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.CommentId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.QmsMessageId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.TopicId
 import javax.inject.Inject
 
 /**
@@ -36,13 +43,13 @@ class WebSocketEventParser @Inject constructor(
         val type = when (srcType) {
             SRC_TYPE_NEW -> WebSocketEvent.Topic.Type.New(postTimestamp = typeParam * 1000L)
             SRC_TYPE_READ -> WebSocketEvent.Topic.Type.Read(postTimestamp = typeParam * 1000L)
-            SRC_TYPE_MENTION -> WebSocketEvent.Topic.Type.Mention(postId = typeParam.toInt())
+            SRC_TYPE_MENTION -> WebSocketEvent.Topic.Type.Mention(postId = PostId(typeParam.toInt()))
             SRC_TYPE_HAT_UPDATE -> WebSocketEvent.Topic.Type.HatUpdate(postTimestamp = typeParam * 1000L)
             else -> null
         } ?: return null
         return WebSocketEvent.Topic(
             type = type,
-            topicId = sourceId,
+            topicId = TopicId(sourceId),
             timeStamp = System.currentTimeMillis()
         )
     }
@@ -50,22 +57,22 @@ class WebSocketEventParser @Inject constructor(
 
     private fun createWebSocketSite(sourceId: Int, srcType: Int, typeParam: Long): WebSocketEvent.Site? {
         val type = when (srcType) {
-            SRC_TYPE_MENTION -> WebSocketEvent.Site.Type.Mention(commentId = typeParam.toInt())
-            SRC_TYPE_READ -> WebSocketEvent.Site.Type.Read(commentId = typeParam.toInt())
+            SRC_TYPE_MENTION -> WebSocketEvent.Site.Type.Mention(commentId = CommentId(typeParam.toInt()))
+            SRC_TYPE_READ -> WebSocketEvent.Site.Type.Read(commentId = CommentId(typeParam.toInt()))
             else -> null
         } ?: return null
         return WebSocketEvent.Site(
             type = type,
-            articleId = sourceId,
+            articleId = ArticleId(sourceId),
             timeStamp = System.currentTimeMillis()
         )
     }
 
     private fun createWebSocketQms(sourceId: Int, srcType: Int, typeParam: Long): WebSocketEvent.Qms? {
         val type = when (srcType) {
-            SRC_TYPE_NEW -> WebSocketEvent.Qms.Type.New(messageId = typeParam.toInt())
-            SRC_TYPE_READ -> WebSocketEvent.Qms.Type.Read(messageId = typeParam.toInt())
-            SRC_TYPE_QMS_FULL_READ -> WebSocketEvent.Qms.Type.ReadAll(messageId = typeParam.toInt())
+            SRC_TYPE_NEW -> WebSocketEvent.Qms.Type.New(messageId = QmsMessageId(typeParam.toInt()))
+            SRC_TYPE_READ -> WebSocketEvent.Qms.Type.Read(messageId = QmsMessageId(typeParam.toInt()))
+            SRC_TYPE_QMS_FULL_READ -> WebSocketEvent.Qms.Type.ReadAll(messageId = QmsMessageId(typeParam.toInt()))
             SRC_TYPE_QMS_ACTION -> {
                 when (typeParam.toInt()) {
                     SRC_QMS_ACTION_TYPING -> WebSocketEvent.Qms.Type.Typing
@@ -78,7 +85,7 @@ class WebSocketEventParser @Inject constructor(
         } ?: return null
         return WebSocketEvent.Qms(
             type = type,
-            themeId = sourceId,
+            themeId = QmsThreadId(sourceId),
             timeStamp = System.currentTimeMillis()
         )
     }
@@ -91,7 +98,7 @@ class WebSocketEventParser @Inject constructor(
         }
         return WebSocketEvent.Forum(
             type = type,
-            forumId = sourceId,
+            forumId = ForumId(sourceId),
             timeStamp = System.currentTimeMillis()
         )
     }

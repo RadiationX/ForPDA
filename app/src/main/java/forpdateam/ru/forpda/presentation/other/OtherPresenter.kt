@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
-import ru.radiationx.coretypes.UserId
 
 @InjectViewState
 class OtherPresenter(
@@ -158,9 +157,9 @@ class OtherPresenter(
     }
 
     fun onProfileClick() {
-        val authData = authHolder.get()
-        if (authData.isAuth()) {
-            router.navigateTo(Screen.Profile(UserId(authData.userId)))
+        val authState = authHolder.get()
+        if (authState.isAuth()) {
+            router.navigateTo(Screen.Profile(authState.userId))
         } else {
             router.navigateTo(Screen.Auth())
         }

@@ -156,7 +156,7 @@ class AttachmentsPopup(private val context: Context, private val messagePanel: M
             if (insertAttachmentListener != null) {
                 text.append(insertAttachmentListener!!.onInsert(item))
             } else {
-                text.append("[attachment=").append(item.id).append(":").append(item.name)
+                text.append("[attachment=").append(item.id.id).append(":").append(item.name)
                     .append("]")
             }
         }
@@ -316,7 +316,7 @@ class AttachmentsPopup(private val context: Context, private val messagePanel: M
             Log.d(LOG_TAG, "Delete file $item")
             messagePanel.setText(
                 messagePanel.message.replace(
-                    ("\\[attachment=['\"]?" + item.id + ":[^\\]]*?]").toRegex(),
+                    ("\\[attachment=['\"]?" + item.id.id + ":[^\\]]*?]").toRegex(),
                     ""
                 )
             )

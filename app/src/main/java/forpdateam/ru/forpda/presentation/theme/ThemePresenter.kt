@@ -12,13 +12,12 @@ import forpdateam.ru.forpda.entity.remote.ForumPost
 import forpdateam.ru.forpda.entity.remote.editpost.AttachmentItem
 import forpdateam.ru.forpda.entity.remote.editpost.EditPostForm
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
 import forpdateam.ru.forpda.entity.remote.theme.ThemePost
-import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
-import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
@@ -41,7 +40,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.FavoriteId
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Link
+import ru.radiationx.links.parser.LinkTransformer
 import ru.radiationx.quill.QuillExtra
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -53,10 +57,11 @@ import kotlin.time.Duration.Companion.seconds
  */
 data class ThemeExtra(
     val link: Link.Board.Topic
-): QuillExtra
+) : QuillExtra
 
 @InjectViewState
 class ThemePresenter(
+    private val argExtra: ThemeExtra,
     private val context: Context,
     private val themeRepository: ThemeRepository,
     private val reputationRepository: ReputationRepository,
@@ -73,7 +78,8 @@ class ThemePresenter(
     private val linkHandler: LinkHandler,
     private val errorHandler: ErrorHandler,
     private val utils: Utils,
-    private val themeParser: ThemeParser
+    private val themeParser: ThemeParser,
+    private val linkTransformer: LinkTransformer
 ) : BasePresenter<ThemeView>(), IThemePresenter {
 
     var loadAction = ActionState.NORMAL
@@ -83,8 +89,8 @@ class ThemePresenter(
     val currentPage: ThemePage?
         get() = history.currentPage
 
-    val currentPageUrl: TopicUrl.ShowTopic.Page?
-        get() = currentPage?.url
+    val currentPageUrl: Link.Board.Topic.ShowTopic.Page?
+        get() = currentPage?.link
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -130,7 +136,7 @@ class ThemePresenter(
                 handleEvent(it)
             }
             .launchIn(viewModelScope)
-        loadUrl(argTopicUrl)
+        loadUrl(argExtra.link)
     }
 
     fun exit() {
@@ -168,7 +174,7 @@ class ThemePresenter(
 
     fun getId() = currentPage?.id ?: -1
 
-    private fun loadData(url: TopicUrl, action: ActionState) {
+    private fun loadData(link: Link.Board.Topic, action: ActionState) {
         var hatOpen = false
         var pollOpen = false
         currentPage?.let {
@@ -180,7 +186,7 @@ class ThemePresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                themeRepository.getTheme(url, hatOpen, pollOpen)
+                themeRepository.getTheme(link, hatOpen, pollOpen)
             }.map {
                 themeTemplate.mapEntity(it)
             }.onSuccess {
@@ -216,10 +222,10 @@ class ThemePresenter(
         viewState.onLoadData(page)
     }
 
-    fun addTopicToFavorite(topicId: Int, subType: String) {
+    fun addTopicToFavorite(topicId: TopicId, subType: String) {
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+                favoritesRepository.editFavorites(FavoriteAction.AddTopic(topicId, subType))
             }.onSuccess {
                 if (it) {
                     history.updateExist { it.copy(isInFavorite = true) }
@@ -231,10 +237,10 @@ class ThemePresenter(
         }
     }
 
-    fun deleteTopicFromFavorite(favId: Int) {
+    fun deleteTopicFromFavorite(favId: FavoriteId) {
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(FavoritesApi.ACTION_DELETE, favId, -1, null)
+                favoritesRepository.editFavorites(FavoriteAction.Delete(favId))
             }.onSuccess {
                 if (it) {
                     history.updateExist { it.copy(isInFavorite = false) }
@@ -253,7 +259,7 @@ class ThemePresenter(
         val form = EditPostForm()
         form.forumId = it.forumId
         form.topicId = it.id
-        form.st = it.pagination.currentPage()
+        form.st = PageOffset(it.pagination.currentPage())
         form.message = message
         form.attachments.addAll(attachments)
         form
@@ -285,14 +291,14 @@ class ThemePresenter(
         }
     }
 
-    fun openEditPostForm(postId: Int) {
+    fun openEditPostForm(postId: PostId) {
         currentPage?.let {
             router.navigateTo(
                 Screen.EditPost.Edit(
                     postId = postId,
                     topicId = it.id,
                     forumId = it.forumId,
-                    st = it.st,
+                    offset = PageOffset(it.st),
                     themeName = it.title
                 )
             )
@@ -326,7 +332,7 @@ class ThemePresenter(
     fun uploadFiles(files: List<RequestFile>, pending: List<AttachmentItem>) {
         viewModelScope.launch {
             coRunCatching {
-                editorRepository.uploadFiles(0, files, pending)
+                editorRepository.uploadFiles(null, files, pending)
             }.onSuccess {
                 viewState.onUploadFiles(it)
             }.onFailure {
@@ -338,7 +344,7 @@ class ThemePresenter(
     fun deleteFiles(items: List<AttachmentItem>) {
         viewModelScope.launch {
             coRunCatching {
-                editorRepository.deleteFiles(0, items)
+                editorRepository.deleteFiles(null, items)
             }.onSuccess {
                 viewState.onDeleteFiles(it)
             }.onFailure {
@@ -347,22 +353,22 @@ class ThemePresenter(
         }
     }
 
-    private fun loadUrl(url: TopicUrl) {
-        loadData(url, ActionState.NORMAL)
+    private fun loadUrl(link: Link.Board.Topic) {
+        loadData(link, ActionState.NORMAL)
     }
 
     fun reload() {
-        loadData(currentPageUrl ?: argTopicUrl, ActionState.REFRESH)
+        loadData(currentPageUrl ?: argExtra.link, ActionState.REFRESH)
     }
 
     fun loadNewPosts() {
         val url = currentPageUrl ?: return
-        loadUrl(TopicUrl.ShowTopic.GetNewPost(url.topicId, url.showPollResults))
+        loadUrl(Link.Board.Topic.ShowTopic.GetNewPost(url.topicId))
     }
 
     fun loadPage(page: Int) {
         val url = currentPageUrl ?: return
-        loadUrl(url.copy(st = page))
+        loadUrl(url.copy(offset = PageOffset(page)))
     }
 
     private fun backPage(): Boolean {
@@ -376,13 +382,13 @@ class ThemePresenter(
     }
 
     override fun onPollResultsClick() {
-        val currentUrl = currentPage?.url ?: return
+        val currentUrl = currentPage?.link ?: return
         val url = currentUrl.copy(showPollResults = true, anchor = null)
         loadUrl(url)
     }
 
     override fun onPollClick() {
-        val currentUrl = currentPage?.url ?: return
+        val currentUrl = currentPage?.link ?: return
         val url = currentUrl.copy(showPollResults = false, anchor = null)
         loadUrl(url)
     }
@@ -402,14 +408,14 @@ class ThemePresenter(
 
     fun copyLink() {
         currentPage?.let {
-            utils.copyToClipBoard("https://4pda.to/forum/index.php?showtopic=${it.id}")
+            utils.copyToClipBoard("https://4pda.to/forum/index.php?showtopic=${it.id.id}")
         }
     }
 
     fun openSearch() {
         currentPage?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts"
+                "https://4pda.to/forum/index.php?forums=${it.forumId.id}&topics=${it.id.id}&act=search&source=pst&result=posts"
             )
         }
     }
@@ -418,7 +424,7 @@ class ThemePresenter(
         currentPage?.let {
             viewModelScope.launch {
                 var url =
-                    "https://4pda.to/forum/index.php?forums=${it.forumId}&topics=${it.id}&act=search&source=pst&result=posts&username="
+                    "https://4pda.to/forum/index.php?forums=${it.forumId.id}&topics=${it.id.id}&act=search&source=pst&result=posts&username="
 
                 try {
                     url += URLEncoder.encode(profileRepository.getCurrentUser()?.nick.orEmpty(), "windows-1251")
@@ -433,15 +439,15 @@ class ThemePresenter(
 
     fun openForum() {
         currentPage?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.forumId}")
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.forumId.id}")
         }
     }
 
-    private fun getThemePostById(postId: Int): ThemePost? = currentPage
+    private fun getThemePostById(postId: PostId): ThemePost? = currentPage
         ?.posts
         ?.firstOrNull { it.post.id == postId }
 
-    private fun getPostById(postId: Int): ForumPost? = getThemePostById(postId)?.post
+    private fun getPostById(postId: PostId): ForumPost? = getThemePostById(postId)?.post
 
 
     override fun onFirstPageClick() = viewState.firstPage()
@@ -454,55 +460,55 @@ class ThemePresenter(
 
     override fun onSelectPageClick() = viewState.selectPage()
 
-    override fun onUserMenuClick(postId: Int) {
+    override fun onUserMenuClick(postId: PostId) {
         getPostById(postId)?.let { viewState.showUserMenu(it) }
     }
 
-    override fun onReputationMenuClick(postId: Int) {
+    override fun onReputationMenuClick(postId: PostId) {
         getPostById(postId)?.let { viewState.showReputationMenu(it) }
     }
 
-    override fun onPostMenuClick(postId: Int) {
+    override fun onPostMenuClick(postId: PostId) {
         getPostById(postId)?.let { viewState.showPostMenu(it) }
     }
 
-    override fun onReportPostClick(postId: Int) {
+    override fun onReportPostClick(postId: PostId) {
         getPostById(postId)?.let { viewState.reportPost(it) }
     }
 
-    override fun onReplyPostClick(postId: Int) {
+    override fun onReplyPostClick(postId: PostId) {
         getPostById(postId)?.let {
-            val text = "[snapback]${it.id}[/snapback] [b]${it.user.nick},[/b] \n"
+            val text = "[snapback]${it.id.id}[/snapback] [b]${it.user.nick},[/b] \n"
             viewState.insertText(text)
         }
     }
 
-    override fun onQuotePostClick(postId: Int, text: String) {
+    override fun onQuotePostClick(postId: PostId, text: String) {
         getPostById(postId)?.let {
             val date = utils.getForumDateTime(utils.parseForumDateTime(it.date))
             val insert =
-                "[quote name=\"${it.user.nick}\" date=\"$date\" post=${it.id}]$text[/quote]\n"
+                "[quote name=\"${it.user.nick}\" date=\"$date\" post=${it.id.id}]$text[/quote]\n"
             viewState.insertText(insert)
         }
     }
 
-    override fun onDeletePostClick(postId: Int) {
+    override fun onDeletePostClick(postId: PostId) {
         getPostById(postId)?.let { viewState.deletePost(it) }
     }
 
-    override fun onEditPostClick(postId: Int) {
+    override fun onEditPostClick(postId: PostId) {
         getPostById(postId)?.let { viewState.editPost(it) }
     }
 
-    override fun onVotePostClick(postId: Int, type: Boolean) {
+    override fun onVotePostClick(postId: PostId, type: Boolean) {
         getPostById(postId)?.let { viewState.votePost(it, type) }
     }
 
-    override fun onSpoilerCopyLinkClick(postId: Int, spoilNumber: String) {
+    override fun onSpoilerCopyLinkClick(postId: PostId, spoilNumber: String) {
         getPostById(postId)?.let { viewState.openSpoilerLinkDialog(it, spoilNumber) }
     }
 
-    override fun onAnchorClick(postId: Int, name: String) {
+    override fun onAnchorClick(postId: PostId, name: String) {
         getPostById(postId)?.let { viewState.openAnchorDialog(it, name) }
     }
 
@@ -538,25 +544,23 @@ class ThemePresenter(
             return
         }
         val oldUrl = currentPageUrl ?: return
-        val newUrl = TopicUrl.fromUrl(url)
-        if (newUrl == null) {
+        val newUrl = linkTransformer.parse(url)
+        if (newUrl == null || newUrl !is Link.Board.Topic) {
             linkHandler.handle(url)
             return
         }
-        if (newUrl is TopicUrl.ShowTopic) {
+        if (newUrl is Link.Board.Topic.ShowTopic) {
             if (oldUrl.topicId != newUrl.topicId) {
                 loadUrl(newUrl)
                 return
             }
         }
         val anchor = when (newUrl) {
-            is TopicUrl.FindPost -> newUrl.anchor ?: TopicUrl.Anchor.Post(newUrl.postId)
-            is TopicUrl.ShowTopic -> when (newUrl) {
-                is TopicUrl.ShowTopic.Page -> newUrl.anchor
-                is TopicUrl.ShowTopic.FindPost -> newUrl.anchor ?: TopicUrl.Anchor.Post(newUrl.postId)
-                is TopicUrl.ShowTopic.GetLastPost,
-                is TopicUrl.ShowTopic.GetNewPost -> null
-            }
+            is Link.Board.Topic.FindPost -> newUrl.anchor ?: Link.Board.Topic.Anchor.Post(newUrl.postId)
+            is Link.Board.Topic.ShowTopic.Page -> newUrl.anchor
+            is Link.Board.Topic.ShowTopic.FindPost -> newUrl.anchor ?: Link.Board.Topic.Anchor.Post(newUrl.postId)
+            is Link.Board.Topic.ShowTopic.GetLastPost,
+            is Link.Board.Topic.ShowTopic.GetNewPost -> null
         }
         if (anchor != null && getPostById(anchor.postId) != null) {
             if (topicPreferencesHolder.anchorHistory.get()) {
@@ -620,21 +624,21 @@ class ThemePresenter(
     }
 
 
-    override fun openProfile(postId: Int) {
+    override fun openProfile(postId: PostId) {
         getPostById(postId)?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id}")
+            linkHandler.handle("https://4pda.to/forum/index.php?showuser=${it.user.id.id}")
         }
     }
 
-    override fun openQms(postId: Int) {
+    override fun openQms(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.user.id}"
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.user.id.id}"
             )
         }
     }
 
-    override fun openSearchUserTopic(postId: Int) {
+    override fun openSearchUserTopic(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
                 SearchSettings.default().copy(
@@ -646,13 +650,13 @@ class ThemePresenter(
         }
     }
 
-    override fun openSearchInTopic(postId: Int) {
+    override fun openSearchInTopic(postId: PostId) {
         getThemePostById(postId)?.let {
             val post = it.post
             linkHandler.handle(
                 SearchSettings.default().copy(
-                    forums = listOf(it.forumId),
-                    topics = listOf(post.topicId),
+                    forums = listOf(it.forumId.id),
+                    topics = listOf(post.topicId.id),
                     source = SearchSettings.SOURCE_CONTENT.first,
                     nick = post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
@@ -662,7 +666,7 @@ class ThemePresenter(
         }
     }
 
-    override fun openSearchUserMessages(postId: Int) {
+    override fun openSearchUserMessages(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
                 SearchSettings.default().copy(
@@ -675,11 +679,11 @@ class ThemePresenter(
         }
     }
 
-    override fun onChangeReputationClick(postId: Int, type: Boolean) {
+    override fun onChangeReputationClick(postId: PostId, type: Boolean) {
         getPostById(postId)?.let { viewState.showChangeReputation(it, type) }
     }
 
-    override fun changeReputation(postId: Int, type: Boolean, message: String) {
+    override fun changeReputation(postId: PostId, type: Boolean, message: String) {
         getPostById(postId)?.let {
             viewModelScope.launch {
                 coRunCatching {
@@ -693,7 +697,7 @@ class ThemePresenter(
         }
     }
 
-    override fun votePost(postId: Int, type: Boolean) {
+    override fun votePost(postId: PostId, type: Boolean) {
         getPostById(postId)?.let {
             viewModelScope.launch {
                 coRunCatching {
@@ -707,15 +711,15 @@ class ThemePresenter(
         }
     }
 
-    override fun openReputationHistory(postId: Int) {
+    override fun openReputationHistory(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.user.id}"
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.user.id.id}"
             )
         }
     }
 
-    override fun quoteFromBuffer(postId: Int) {
+    override fun quoteFromBuffer(postId: PostId) {
         getPostById(postId)?.let {
             val text = utils.readFromClipboard()
             if (!text.isNullOrEmpty()) {
@@ -724,7 +728,7 @@ class ThemePresenter(
         }
     }
 
-    override fun reportPost(postId: Int, message: String) {
+    override fun reportPost(postId: PostId, message: String) {
         getPostById(postId)?.let { post ->
             viewModelScope.launch {
                 coRunCatching {
@@ -738,7 +742,7 @@ class ThemePresenter(
         }
     }
 
-    override fun deletePost(postId: Int) {
+    override fun deletePost(postId: PostId) {
         getPostById(postId)?.let { post ->
             viewModelScope.launch {
                 coRunCatching {
@@ -753,42 +757,42 @@ class ThemePresenter(
         }
     }
 
-    override fun createNote(postId: Int) {
+    override fun createNote(postId: PostId) {
         getPostById(postId)?.let {
             val themeTitle: String = currentPage?.title.orEmpty()
-            val title = context.getString(R.string.post_Topic_Nick_Number, themeTitle, it.user.nick, it.id)
-            val url = "https://4pda.to/forum/index.php?s=&showtopic=" + it.topicId + "&view=findpost&p=" + it.id
+            val title = context.getString(R.string.post_Topic_Nick_Number, themeTitle, it.user.nick, it.id.id)
+            val url = "https://4pda.to/forum/index.php?s=&showtopic=" + it.topicId.id + "&view=findpost&p=" + it.id.id
             viewState.showNoteCreate(title, url)
         }
     }
 
-    override fun copyPostLink(postId: Int) {
+    override fun copyPostLink(postId: PostId) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId.id}&view=findpost&p=${it.id.id}"
             copyText(url)
         }
     }
 
-    override fun sharePostLink(postId: Int) {
+    override fun sharePostLink(postId: PostId) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId}&view=findpost&p=${it.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.topicId.id}&view=findpost&p=${it.id.id}"
             shareText(url)
         }
     }
 
-    override fun copyAnchorLink(postId: Int, name: String) {
+    override fun copyAnchorLink(postId: PostId, name: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=$name"
+            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.id.id}&anchor=$name"
             copyText(url)
         }
     }
 
-    override fun copySpoilerLink(postId: Int, spoilNumber: String) {
+    override fun copySpoilerLink(postId: PostId, spoilNumber: String) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?act=findpost&pid=${it.id}&anchor=Spoil-${it.id}-$spoilNumber"
+                "https://4pda.to/forum/index.php?act=findpost&pid=${it.id.id}&anchor=Spoil-${it.id.id}-$spoilNumber"
             copyText(url)
         }
     }

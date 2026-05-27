@@ -8,6 +8,7 @@ import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.editpost.EditPostApi
+import ru.radiationx.coretypes.PostId
 import javax.inject.Inject
 
 /**
@@ -20,20 +21,16 @@ class PostEditorRepository @Inject constructor(
     private val forumUsersCache: ForumUsersCache
 ) {
 
-    suspend fun loadForm(postId: Int): EditPost {
+    suspend fun loadForm(postId: PostId): EditPost {
         return editPostApi.loadForm(postId)
     }
 
-    suspend fun uploadFiles(
-        id: Int,
-        files: List<RequestFile>,
-        pending: List<AttachmentItem>
-    ): List<AttachmentItem> {
-        return attachmentsApi.uploadTopicFiles(id, files, pending)
+    suspend fun uploadFiles(postId: PostId?, files: List<RequestFile>, pending: List<AttachmentItem>): List<AttachmentItem> {
+        return attachmentsApi.uploadTopicFiles(postId, files, pending)
     }
 
-    suspend fun deleteFiles(id: Int, items: List<AttachmentItem>): List<AttachmentItem> {
-        return attachmentsApi.deleteTopicFiles(id, items)
+    suspend fun deleteFiles(postId: PostId?, items: List<AttachmentItem>): List<AttachmentItem> {
+        return attachmentsApi.deleteTopicFiles(postId, items)
     }
 
     suspend fun sendPost(form: EditPostForm): ThemePage {

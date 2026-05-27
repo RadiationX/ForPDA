@@ -1,13 +1,16 @@
 package forpdateam.ru.forpda.entity.remote.favorites
 
 import forpdateam.ru.forpda.entity.remote.others.user.User
+import ru.radiationx.coretypes.FavoriteId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.TopicId
 
 /**
  * Created by radiationx on 22.09.16.
  */
 
 sealed interface Favorite {
-    val favId: Int
+    val id: FavoriteId
     val title: String
     val trackType: String
     val isPin: Boolean
@@ -15,8 +18,8 @@ sealed interface Favorite {
     val date: String
 
     data class Topic(
-        override val favId: Int,
-        val topicId: Int,
+        override val id: FavoriteId,
+        val topicId: TopicId,
         override val title: String,
         override val trackType: String,
         override val isPin: Boolean,
@@ -25,7 +28,7 @@ sealed interface Favorite {
         val isClosed: Boolean,
         val stParam: Int?,
         val desc: String?,
-        val forumId: Int,
+        val forumId: ForumId,
         val forumTitle: String,
         val author: User,
         val lastUser: User,
@@ -34,8 +37,8 @@ sealed interface Favorite {
     ) : Favorite
 
     data class Forum(
-        override val favId: Int,
-        val forumId: Int,
+        override val id: FavoriteId,
+        val forumId: ForumId,
         override val title: String,
         override val trackType: String,
         override val isPin: Boolean,

@@ -8,6 +8,10 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsContact
 import forpdateam.ru.forpda.entity.remote.qms.QmsMessage
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.WebClient
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.QmsMessageId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 
@@ -29,8 +33,8 @@ class QmsApi @Inject constructor(
         return qmsParser.parseContacts(response.body)
     }
 
-    suspend fun unBlockUsers(id: Int): List<QmsContact> {
-        val response = webClient.request(ApiRequest.Forum.Qms.UnblockUser(id))
+    suspend fun unBlockUsers(userId: UserId): List<QmsContact> {
+        val response = webClient.request(ApiRequest.Forum.Qms.UnblockUser(userId))
         return qmsParser.parseBlackList(response.body)
     }
 
@@ -39,18 +43,18 @@ class QmsApi @Inject constructor(
         return qmsParser.parseBlackList(response.body)
     }
 
-    suspend fun getThemesList(id: Int): QmsThemes {
-        val response = webClient.request(ApiRequest.Forum.Qms.GetThreads(id))
-        return qmsParser.parseThemes(response.body, id)
+    suspend fun getThemesList(userId: UserId): QmsThemes {
+        val response = webClient.request(ApiRequest.Forum.Qms.GetThreads(userId))
+        return qmsParser.parseThemes(response.body, userId)
     }
 
-    suspend fun deleteTheme(id: Int, themeId: Int): QmsThemes {
-        val response = webClient.request(ApiRequest.Forum.Qms.DeleteThread(id, themeId))
-        return qmsParser.parseThemes(response.body, id)
+    suspend fun deleteTheme(chatId: QmsChatId): QmsThemes {
+        val response = webClient.request(ApiRequest.Forum.Qms.DeleteThread(chatId))
+        return qmsParser.parseThemes(response.body, chatId.userId)
     }
 
-    suspend fun getChat(userId: Int, themeId: Int): QmsChatModel {
-        val response = webClient.request(ApiRequest.Forum.Qms.GetChat(userId, themeId))
+    suspend fun getChat(chatId: QmsChatId): QmsChatModel {
+        val response = webClient.request(ApiRequest.Forum.Qms.GetChat(chatId))
         return qmsParser.parseChat(response.body)
     }
 
@@ -59,43 +63,29 @@ class QmsApi @Inject constructor(
         return qmsParser.parseSearch(response.body)
     }
 
-    suspend fun sendNewTheme(
-        nick: String,
-        title: String,
-        mess: String,
-        files: List<AttachmentItem>
-    ): QmsChatModel {
+    suspend fun sendNewTheme(nick: String, title: String, mess: String, files: List<AttachmentItem>): QmsChatModel {
         val response = webClient.request(ApiRequest.Forum.Qms.CreateThread(nick, title, mess, files.map { it.id }))
         return qmsParser.parseChat(response.body)
     }
 
-    suspend fun sendMessage(
-        userId: Int,
-        themeId: Int,
-        text: String,
-        files: List<AttachmentItem>
-    ): List<QmsMessage> {
-        val response = webClient.request(ApiRequest.Forum.Qms.SendMessage(userId, themeId, text, files.map { it.id }))
+    suspend fun sendMessage(chatId: QmsChatId, text: String, files: List<AttachmentItem>): List<QmsMessage> {
+        val response = webClient.request(ApiRequest.Forum.Qms.SendMessage(chatId, text, files.map { it.id }))
         return qmsParser.sendMessage(response.body)
     }
 
-    suspend fun getMessagesFromWs(
-        themeId: Int,
-        messageId: Int,
-        afterMessageId: Int
-    ): List<QmsMessage> {
-        val messInfoResponse = webClient.request(ApiRequest.Forum.Qms.GetMessageInfo(themeId, messageId, afterMessageId))
+    suspend fun getMessagesFromWs(themeId: QmsThreadId, messageId: QmsMessageId, afterMessageId: QmsMessageId?): List<QmsMessage> {
+        val messInfoResponse = webClient.request(ApiRequest.Forum.Qms.GetMessageInfo(themeId, messageId))
         val userId = qmsParser.parseUserFromWebSocket(messInfoResponse.body)
-        return getMessagesAfter(userId, themeId, afterMessageId)
+        return getMessagesAfter(QmsChatId(UserId(userId), themeId), afterMessageId)
     }
 
-    suspend fun getMessagesAfter(userId: Int, themeId: Int, afterMessageId: Int): List<QmsMessage> {
-        val response = webClient.request(ApiRequest.Forum.Qms.GetMessagesAfter(userId, themeId, afterMessageId))
+    suspend fun getMessagesAfter(chatId: QmsChatId, afterMessageId: QmsMessageId?): List<QmsMessage> {
+        val response = webClient.request(ApiRequest.Forum.Qms.GetMessagesAfter(chatId, afterMessageId))
         return qmsParser.parseMoreMessages(response.body)
     }
 
-    suspend fun deleteDialog(mid: Int): String {
-        return webClient.request(ApiRequest.Forum.Qms.DeleteThreads(mid)).body
+    suspend fun deleteDialog(userId: UserId): String {
+        return webClient.request(ApiRequest.Forum.Qms.DeleteThreads(userId)).body
     }
 
 }

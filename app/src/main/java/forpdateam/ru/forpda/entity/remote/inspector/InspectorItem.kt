@@ -1,15 +1,18 @@
 package forpdateam.ru.forpda.entity.remote.inspector
 
 import forpdateam.ru.forpda.entity.remote.others.user.User
+import ru.radiationx.coretypes.QmsMessageId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.TopicId
 
-sealed interface InspectorItem {
+sealed interface InspectorItem<ID> {
 
-    val baseId: Int
+    val baseId: ID
     val baseTimeStamp: Long
     val baseRawContent: String
 
     data class Favorite(
-        val topicId: Int,
+        val topicId: TopicId,
         val timeStamp: Long,
         val lastTimeStamp: Long,
         val msgCount: Int,
@@ -17,24 +20,24 @@ sealed interface InspectorItem {
         val sourceTitle: String,
         val user: User,
         val rawContent: String
-    ) : InspectorItem {
+    ) : InspectorItem<TopicId> {
 
-        override val baseId: Int = topicId
+        override val baseId: TopicId = topicId
         override val baseTimeStamp: Long = timeStamp
         override val baseRawContent: String = rawContent
     }
 
     data class Qms(
-        val themeId: Int,
+        val themeId: QmsThreadId,
         val timeStamp: Long,
         val msgCount: Int,
         val sourceTitle: String,
         val user: User,
-        val messageId: Int,
+        val messageId: QmsMessageId,
         val rawContent: String
-    ) : InspectorItem {
+    ) : InspectorItem<QmsThreadId> {
 
-        override val baseId: Int = themeId
+        override val baseId: QmsThreadId = themeId
         override val baseTimeStamp: Long = timeStamp
         override val baseRawContent: String = rawContent
     }

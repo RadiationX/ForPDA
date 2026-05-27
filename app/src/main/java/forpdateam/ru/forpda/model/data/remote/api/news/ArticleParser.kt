@@ -15,6 +15,9 @@ import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.CommentId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class ArticleParser @Inject constructor(
@@ -29,13 +32,15 @@ class ArticleParser @Inject constructor(
         .map(response) { matcher ->
             NewsItem(
                 url = matcher.require(1),
-                id = matcher.require(2).toInt(),
+                id = ArticleId(matcher.require(2).toInt()),
                 title = matcher.require(3).fromHtml(),
                 imgUrl = matcher.require(4),
                 commentsCount = matcher.require(5).toInt(),
                 date = matcher.require(6),
-                authorId = matcher.require(7).toInt(),
-                author = matcher.require(8).fromHtml(),
+                author = User(
+                    id = UserId(matcher.require(7).toInt()),
+                    nick = matcher.require(8).fromHtml(),
+                ),
                 description = matcher.require(9).fromHtml(),
                 tags = matcher.get(10)?.let { parseTags(it) }.orEmpty(),
                 avatar = null
@@ -58,13 +63,15 @@ class ArticleParser @Inject constructor(
         .getRegexParser(scope.scope, scope.detail)
         .mapOnce(response) { matcher ->
             DetailsPage(
-                id = matcher.require(1).toInt(),
+                id = ArticleId(matcher.require(1).toInt()),
                 imgUrl = matcher.require(3),
                 title = matcher.require(4).fromHtml(),
                 tags = matcher.get(5)?.let { parseTags(it) }.orEmpty(),
                 date = matcher.require(6),
-                authorId = matcher.require(7).toInt(),
-                author = matcher.require(8).fromHtml(),
+                author = User(
+                    id = UserId(matcher.require(7).toInt()),
+                    nick = matcher.require(8).fromHtml(),
+                ),
                 commentsCount = matcher.require(9).toInt(),
                 html = matcher.require(10),
                 materials = matcher.get(11)?.let { parseMaterials(it) }.orEmpty(),
@@ -82,13 +89,15 @@ class ArticleParser @Inject constructor(
                 ?.content
 
             DetailsPage(
-                id = matcher.require(1).toInt(),
+                id = ArticleId(matcher.require(1).toInt()),
                 imgUrl = requireNotNull(imgUrl) { "imgUrl" },
                 title = matcher.require(3).fromHtml(),
                 date = matcher.require(4),
                 //Дефолтный юзер с ником News
-                authorId = 204809,
-                author = "News",
+                author = User(
+                    id = UserId(204809),
+                    nick = "News",
+                ),
                 commentsCount = matcher.require(5).toInt(),
                 html = matcher.require(6),
                 tags = matcher.get(7)?.let { parseTags(it) }.orEmpty(),
@@ -110,7 +119,7 @@ class ArticleParser @Inject constructor(
         .map(source) {
             Material(
                 imageUrl = it.require(1),
-                id = it.require(2).toInt(),
+                id = ArticleId(it.require(2).toInt()),
                 title = it.require(3).fromHtml()
             )
         }
@@ -242,8 +251,8 @@ class ArticleParser @Inject constructor(
 
     private fun CommentNode.toComment(): Comment {
         return Comment(
-            id = id,
-            user = User.required(userId, userNick),
+            id = CommentId(id),
+            user = User(UserId(userId), userNick!!),
             date = date,
             content = content,
             isDeleted = isDeleted,

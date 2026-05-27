@@ -73,7 +73,7 @@ class EditPostPresenter(
     fun loadForm() {
         viewModelScope.launch {
             coRunCatching {
-                editorRepository.loadForm(postForm.postId)
+                editorRepository.loadForm(postForm.postId!!)
             }.onSuccess {
                 postForm.fillFrom(it)
                 viewState.showForm(postForm)

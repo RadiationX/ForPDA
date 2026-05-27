@@ -42,10 +42,10 @@ class ContentController(
         return view
     }
 
-    fun addContent(context: Context?, @LayoutRes id: Int, tag: Any): View {
+    fun addContent(context: Context?, @LayoutRes layoutRes: Int, tag: Any): View {
         var view = contents[tag]
         if (view == null) {
-            view = View.inflate(context, id, null)
+            view = View.inflate(context, layoutRes, null)
             view.setVisibility(View.GONE)
             contents[tag] = view
             additionalContent.addView(view, 0)

@@ -19,6 +19,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.PageNumber
+import ru.radiationx.coretypes.UserId
 import ru.radiationx.links.Link
 
 /**
@@ -35,7 +37,7 @@ class ArticlesListPresenter(
     private val errorHandler: ErrorHandler,
     private val utils: Utils
 ) : BasePresenter<ArticlesListView>() {
-    private var currentPage = 1
+    private var currentPage = PageNumber.default
 
     private val currentItems = mutableListOf<NewsItem>()
     private val avatarsData = mutableListOf<NewsUser>()
@@ -45,7 +47,7 @@ class ArticlesListPresenter(
         refreshArticles()
     }
 
-    private fun loadArticles(page: Int, withClear: Boolean) {
+    private fun loadArticles(page: PageNumber, withClear: Boolean) {
         currentPage = page
         viewModelScope.launch {
             viewState.setRefreshing(true)
@@ -71,8 +73,8 @@ class ArticlesListPresenter(
         }
         val newsUsers = mutableListOf<NewsUser>()
         items.forEach { item ->
-            if (avatarsData.firstOrNull { it.id == item.authorId } == null) {
-                NewsUser(item.authorId, item.author, null).also {
+            if (avatarsData.firstOrNull { it.id == item.author.id } == null) {
+                NewsUser(item.author.id, item.author.nick, null).also {
                     avatarsData.add(it)
                     newsUsers.add(it)
                 }
@@ -94,7 +96,7 @@ class ArticlesListPresenter(
             val updItems = currentItems.toMutableList()
             loadedAvatars.forEach { loaded ->
                 updItems.replace(
-                    condition = { it.authorId == loaded.id && it.avatar?.value != loaded.avatarUrl },
+                    condition = { it.author.id == loaded.id && it.avatar?.value != loaded.avatarUrl },
                     map = { it.copy(avatar = loaded.avatarUrl?.asDeferredData()) }
                 )
             }
@@ -106,19 +108,19 @@ class ArticlesListPresenter(
     }
 
     fun refreshArticles() {
-        loadArticles(1, true)
+        loadArticles(PageNumber.default, true)
     }
 
     fun loadMore() {
-        loadArticles(currentPage + 1, false)
+        loadArticles(PageNumber(currentPage.value + 1), false)
     }
 
     fun onItemClick(item: NewsItem) {
         router.navigateTo(
             Screen.ArticleDetail.FromList(
-                articleId = ArticleId(item.id),
+                articleId = item.id,
                 title = item.title,
-                authorNick = item.author,
+                authorNick = item.author.nick,
                 date = item.date,
                 imageUrl = item.imgUrl,
                 commentsCount = item.commentsCount,
@@ -131,19 +133,19 @@ class ArticlesListPresenter(
     }
 
     fun copyLink(item: NewsItem) {
-        utils.copyToClipBoard("https://4pda.to/index.php?p=${item.id}")
+        utils.copyToClipBoard("https://4pda.to/index.php?p=${item.id.id}")
     }
 
     fun shareLink(item: NewsItem) {
-        utils.shareText("https://4pda.to/index.php?p=${item.id}")
+        utils.shareText("https://4pda.to/index.php?p=${item.id.id}")
     }
 
     fun openProfile(item: NewsItem) {
-        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.authorId}")
+        linkHandler.handle("https://4pda.to/forum/index.php?showuser=${item.author.id.id}")
     }
 
     fun createNote(item: NewsItem) {
-        val url = "https://4pda.to/index.php?p=${item.id}"
+        val url = "https://4pda.to/index.php?p=${item.id.id}"
         viewState.showCreateNote(item.title.orEmpty(), url)
     }
 
@@ -154,7 +156,7 @@ class ArticlesListPresenter(
     }
 
     private data class NewsUser(
-        val id: Int,
+        val id: UserId,
         val nick: String,
         val avatarUrl: String?
     )

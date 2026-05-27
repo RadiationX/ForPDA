@@ -68,8 +68,11 @@ class WebSocketController @Inject constructor(
             when (event) {
                 is WebSocketFlow.Event.Open -> {
                     val sessionId = (1000..16384).random()
+                    val authState = authHolder.get()
                     event.webSocket.send("""[$sessionId, "sv"]""")
-                    event.webSocket.send("""[0, "ea", "u${authHolder.get().userId}"]""")
+                    if (authState.isAuth()) {
+                        event.webSocket.send("""[0, "ea", "u${authState.userId}"]""")
+                    }
                     connectionState.value = ConnectionState.Connected(sessionId, event.webSocket)
                 }
 

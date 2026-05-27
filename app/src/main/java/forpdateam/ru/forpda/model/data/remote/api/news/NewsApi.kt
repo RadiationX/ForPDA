@@ -6,6 +6,11 @@ import forpdateam.ru.forpda.entity.remote.news.Comment
 import forpdateam.ru.forpda.entity.remote.news.DetailsPage
 import forpdateam.ru.forpda.entity.remote.news.NewsItem
 import forpdateam.ru.forpda.model.data.remote.WebClient
+import ru.radiationx.coretypes.ArticleAnswerId
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.ArticlePollId
+import ru.radiationx.coretypes.CommentId
+import ru.radiationx.coretypes.PageNumber
 import javax.inject.Inject
 
 /**
@@ -16,22 +21,22 @@ class NewsApi @Inject constructor(
     private val articleParser: ArticleParser
 ) {
 
-    suspend fun getNews(pageNumber: Int): List<NewsItem> {
+    suspend fun getNews(pageNumber: PageNumber): List<NewsItem> {
         val response = webClient.request(ApiRequest.Site.GetArticles(pageNumber))
         return articleParser.parseArticles(response.body)
     }
 
-    suspend fun getDetails(id: Int): DetailsPage {
+    suspend fun getDetails(id: ArticleId): DetailsPage {
         val response = webClient.request(ApiRequest.Site.GetArticle(id))
         return articleParser.parseArticle(response.body)
     }
 
-    suspend fun sendPoll(from: String, pollId: Int, answersId: IntArray): DetailsPage {
-        val response = webClient.request(ApiRequest.Site.SendPoll(pollId, answersId.toList(), from))
+    suspend fun sendPoll(from: String, pollId: ArticlePollId, answersIds: List<ArticleAnswerId>): DetailsPage {
+        val response = webClient.request(ApiRequest.Site.SendPoll(pollId, answersIds, from))
         return articleParser.parseArticle(response.body)
     }
 
-    suspend fun likeComment(articleId: Int, commentId: Int): Boolean {
+    suspend fun likeComment(articleId: ArticleId, commentId: CommentId): Boolean {
         webClient.request(ApiRequest.Site.LikeComment(articleId, commentId))
         return true
     }
@@ -40,7 +45,7 @@ class NewsApi @Inject constructor(
         return articleParser.parseComments(karmaMap, source)
     }
 
-    suspend fun replyComment(articleId: Int, commentId: Int, text: String): DetailsPage {
+    suspend fun replyComment(articleId: ArticleId, commentId: CommentId?, text: String): DetailsPage {
         val response = webClient.request(ApiRequest.Site.SendComment(articleId, commentId, text))
         return articleParser.parseArticle(response.body)
     }

@@ -12,6 +12,10 @@ import forpdateam.ru.forpda.model.data.remote.api.RequestFile
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsApi
 import forpdateam.ru.forpda.model.data.remote.api.qms.QmsApi
 import kotlinx.coroutines.flow.Flow
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.QmsMessageId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 /**
@@ -29,15 +33,19 @@ class QmsRepository @Inject constructor(
         return qmsCache.observeContacts()
     }
 
-    fun observeThemes(userId: Int): Flow<QmsThemes?> {
+    fun observeThemes(userId: UserId): Flow<QmsThemes?> {
         return qmsCache.observeThemes(userId)
     }
 
-    fun observeContact(userId: Int): Flow<QmsContact?> {
+    fun observeContact(userId: UserId): Flow<QmsContact?> {
         return qmsCache.observeContact(userId)
     }
 
     //Common
+    suspend fun findUserById(userId: UserId): ForumUser? {
+        return qmsCache.getContact(userId)?.user ?: forumUsersCache.getUserById(userId)
+    }
+
     suspend fun findUser(nick: String): List<ForumUser> {
         return qmsApi.findUser(nick)
     }
@@ -46,7 +54,7 @@ class QmsRepository @Inject constructor(
         return qmsApi.blockUser(nick)
     }
 
-    suspend fun unBlockUsers(userId: Int): List<QmsContact> {
+    suspend fun unBlockUsers(userId: UserId): List<QmsContact> {
         return qmsApi.unBlockUsers(userId)
     }
 
@@ -63,24 +71,24 @@ class QmsRepository @Inject constructor(
         return qmsApi.getBlackList()
     }
 
-    suspend fun deleteDialog(mid: Int): String {
-        return qmsApi.deleteDialog(mid)
+    suspend fun deleteDialog(userId: UserId): String {
+        return qmsApi.deleteDialog(userId)
     }
 
 
     //Themes
-    suspend fun getThemesList(id: Int): QmsThemes {
-        if (qmsCache.getContact(id) == null) {
+    suspend fun getThemesList(userId: UserId): QmsThemes {
+        if (qmsCache.getContact(userId) == null) {
             getContactList()
         }
-        return qmsApi.getThemesList(id).let {
+        return qmsApi.getThemesList(userId).let {
             qmsCache.saveThemes(it)
             qmsCache.getThemes(it.user.id)
         }
     }
 
-    suspend fun deleteTheme(id: Int, themeId: Int): QmsThemes {
-        return qmsApi.deleteTheme(id, themeId).let {
+    suspend fun deleteTheme(chatId: QmsChatId): QmsThemes {
+        return qmsApi.deleteTheme(chatId).let {
             qmsCache.saveThemes(it)
             qmsCache.getThemes(it.user.id)
         }
@@ -88,38 +96,24 @@ class QmsRepository @Inject constructor(
 
 
     //Chat
-    suspend fun getChat(userId: Int, themeId: Int): QmsChatModel {
-        return qmsApi.getChat(userId, themeId)
+    suspend fun getChat(chatId: QmsChatId): QmsChatModel {
+        return qmsApi.getChat(chatId)
     }
 
-    suspend fun sendNewTheme(
-        nick: String,
-        title: String,
-        mess: String,
-        files: List<AttachmentItem>
-    ): QmsChatModel {
+    suspend fun sendNewTheme(nick: String, title: String, mess: String, files: List<AttachmentItem>): QmsChatModel {
         return qmsApi.sendNewTheme(nick, title, mess, files)
     }
 
-    suspend fun sendMessage(
-        userId: Int,
-        themeId: Int,
-        text: String,
-        files: List<AttachmentItem>
-    ): List<QmsMessage> {
-        return qmsApi.sendMessage(userId, themeId, text, files)
+    suspend fun sendMessage(chatId: QmsChatId, text: String, files: List<AttachmentItem>): List<QmsMessage> {
+        return qmsApi.sendMessage(chatId, text, files)
     }
 
-    suspend fun getMessagesFromWs(
-        themeId: Int,
-        messageId: Int,
-        afterMessageId: Int
-    ): List<QmsMessage> {
+    suspend fun getMessagesFromWs(themeId: QmsThreadId, messageId: QmsMessageId, afterMessageId: QmsMessageId?): List<QmsMessage> {
         return qmsApi.getMessagesFromWs(themeId, messageId, afterMessageId)
     }
 
-    suspend fun getMessagesAfter(userId: Int, themeId: Int, afterMessageId: Int): List<QmsMessage> {
-        return qmsApi.getMessagesAfter(userId, themeId, afterMessageId)
+    suspend fun getMessagesAfter(chatId: QmsChatId, afterMessageId: QmsMessageId?): List<QmsMessage> {
+        return qmsApi.getMessagesAfter(chatId, afterMessageId)
     }
 
     suspend fun uploadFiles(

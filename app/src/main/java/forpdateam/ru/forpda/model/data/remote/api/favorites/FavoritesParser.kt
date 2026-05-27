@@ -9,6 +9,10 @@ import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting.Key
 import forpdateam.ru.forpda.model.data.remote.api.favorites.Sorting.Order
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.FavoriteId
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
 import ru.radiationx.regexparser.core.RegexMatch
 import javax.inject.Inject
 
@@ -68,8 +72,8 @@ class FavoritesParser @Inject constructor(
     private fun parseFavoriteTopic(match: RegexMatch): Favorite.Topic {
         val flagsGroup = match.get(5)
         return Favorite.Topic(
-            favId = match.require(1).toInt(),
-            topicId = match.require(6).toInt(),
+            id = FavoriteId(match.require(1).toInt()),
+            topicId = TopicId(match.require(6).toInt()),
             trackType = match.require(2),
             isPin = match.require(3) == "1",
             isNew = flagsGroup?.contains("+") == true,
@@ -78,20 +82,20 @@ class FavoritesParser @Inject constructor(
             title = match.require(8).fromHtml(),
             stParam = match.get(9)?.toInt(),
             desc = match.get(10)?.fromHtml(),
-            forumId = match.require(12).toInt(),
+            forumId = ForumId(match.require(12).toInt()),
             forumTitle = match.require(13).fromHtml(),
-            author = User.required(
-                match.require(14).toInt(),
+            author = User(
+                UserId(match.require(14).toInt()),
                 match.require(15).fromHtml()
             ),
-            lastUser = User.required(
-                match.require(16).toInt(),
+            lastUser = User(
+                UserId(match.require(16).toInt()),
                 match.require(17).fromHtml()
             ),
             date = match.require(18),
             curator = match.get(22)?.let {
-                User.required(
-                    it.toInt(),
+                User(
+                    UserId(it.toInt()),
                     match.require(23).fromHtml()
                 )
             }
@@ -100,15 +104,15 @@ class FavoritesParser @Inject constructor(
 
     private fun parseFavoriteForum(match: RegexMatch): Favorite.Forum {
         return Favorite.Forum(
-            favId = match.require(1).toInt(),
-            forumId = match.require(6).toInt(),
+            id = FavoriteId(match.require(1).toInt()),
+            forumId = ForumId(match.require(6).toInt()),
             trackType = match.require(2),
             isPin = match.require(3) == "1",
             isNew = match.get(5)?.contains("+") == true,
             title = match.require(8).fromHtml(),
             date = match.require(19),
-            lastUser = User.optional(
-                match.require(20).toInt(),
+            lastUser = User(
+                UserId(match.require(20).toInt()),
                 match.require(21).fromHtml()
             )
         )

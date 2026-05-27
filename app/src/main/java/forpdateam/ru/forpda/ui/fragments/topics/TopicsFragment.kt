@@ -24,6 +24,8 @@ import forpdateam.ru.forpda.ui.fragments.favorites.FavoritesFragment
 import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Link
 import ru.radiationx.quill.inject
 
@@ -152,7 +154,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
             .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
     }
 
-    private fun openAddForumToFavoriteDialog(forumId: Int) {
+    private fun openAddForumToFavoriteDialog(forumId: ForumId) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->
@@ -161,7 +163,7 @@ class TopicsFragment : RecyclerFragment(), TopicsView {
             .show()
     }
 
-    private fun openAddTopicToFavoriteDialog(topicId: Int) {
+    private fun openAddTopicToFavoriteDialog(topicId: TopicId) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setItems(FavoritesFragment.getSubNames(requireContext())) { _, which ->

@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.entity.remote.others.pagination
 /**
  * Created by radiationx on 03.03.17.
  */
+// todo refactor
 data class Pagination(
     val perPage: Int,
     val all: Int,

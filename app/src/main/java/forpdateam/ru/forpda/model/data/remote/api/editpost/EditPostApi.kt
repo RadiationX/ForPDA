@@ -9,6 +9,7 @@ import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.data.remote.WebClient
 import forpdateam.ru.forpda.model.data.remote.api.attachments.AttachmentsParser
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeParser
+import ru.radiationx.coretypes.PostId
 import javax.inject.Inject
 
 /**
@@ -23,7 +24,7 @@ class EditPostApi @Inject constructor(
     private val authHolder: AuthHolder
 ) {
 
-    suspend fun loadForm(postId: Int): EditPost {
+    suspend fun loadForm(postId: PostId): EditPost {
         val postResponse = webClient.request(ApiRequest.Forum.Post.Edit(postId))
         if (postResponse.body == "nopermission") {
             throw EditPostPermissionException()

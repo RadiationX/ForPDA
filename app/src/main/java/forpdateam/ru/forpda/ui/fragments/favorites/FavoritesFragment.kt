@@ -19,6 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.extensions.quillMoxyPresenter
 import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
@@ -31,6 +32,7 @@ import forpdateam.ru.forpda.ui.views.DynamicDialogMenu
 import forpdateam.ru.forpda.ui.views.FunnyContent
 import forpdateam.ru.forpda.ui.views.adapters.OnItemClickListener
 import forpdateam.ru.forpda.ui.views.pagination.PaginationHelper
+import ru.radiationx.coretypes.PageOffset
 
 /**
  * Created by radiationx on 22.09.16.
@@ -71,7 +73,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         }
 
         override fun onSelectedPage(pageNumber: Int) {
-            presenter.loadFavorites(pageNumber)
+            presenter.loadFavorites(PageOffset(pageNumber))
         }
     }
 
@@ -130,14 +132,10 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
                 presenter.showSubscribeDialog(data)
             }
             addItem(getPinText(false)) { _, data ->
-                presenter.changeFav(
-                    FavoritesApi.ACTION_EDIT_PIN_STATE,
-                    if (data.isPin) "unpin" else "pin",
-                    data.favId
-                )
+                presenter.changeFav(FavoriteAction.EditPinState(data.id, if (data.isPin) "unpin" else "pin"))
             }
             addItem(getString(R.string.delete)) { _, data ->
-                presenter.changeFav(FavoritesApi.ACTION_DELETE, null, data.favId)
+                presenter.changeFav(FavoriteAction.Delete(data.id))
             }
         }
 
@@ -272,11 +270,7 @@ class FavoritesFragment : RecyclerFragment(), FavoritesView {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.favorites_subscribe_email)
             .setSingleChoiceItems(getSubNames(requireContext()), subTypeIndex) { dialog, which ->
-                presenter.changeFav(
-                    FavoritesApi.ACTION_EDIT_SUB_TYPE,
-                    FavoritesApi.SUB_TYPES[which],
-                    item.favId
-                )
+                presenter.changeFav(FavoriteAction.EditTrackType(item.id, FavoritesApi.SUB_TYPES[which]))
                 dialog.dismiss()
             }
             .show()

@@ -8,6 +8,14 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.ArticleId
+import ru.radiationx.coretypes.DevDbBrandId
+import ru.radiationx.coretypes.DevDbCategoryId
+import ru.radiationx.coretypes.DevDbCommentId
+import ru.radiationx.coretypes.DevDbDeviceId
+import ru.radiationx.coretypes.DevDbDevicesId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class DevDbParser @Inject constructor(
@@ -27,7 +35,7 @@ class DevDbParser @Inject constructor(
                     .getRegexParser(scope.scope, scope.brands_items_in_letter)
                     .map(matcher.require(2)) { itemsMatcher ->
                         Brands.Item(
-                            id = itemsMatcher.require(1),
+                            id = DevDbBrandId(itemsMatcher.require(1)),
                             title = itemsMatcher.require(2).fromHtml(),
                             count = itemsMatcher.require(3).toInt()
                         )
@@ -48,9 +56,11 @@ class DevDbParser @Inject constructor(
                             catTitle = bcMatcher.require(3)
                         }
                     }
+                requireNotNull(catId) { "brands.catId" }
+                requireNotNull(catTitle) { "brands.catTitle" }
                 Brands(
-                    catId = requireNotNull(catId) { "brands.catId" },
-                    catTitle = requireNotNull(catTitle) { "brands.catTitle" },
+                    id = DevDbCategoryId(catId),
+                    title = catTitle,
                     actual = matcher.require(5).toInt(),
                     all = matcher.require(6).toInt(),
                     letterMap = letterMap
@@ -68,11 +78,11 @@ class DevDbParser @Inject constructor(
                 val specs = patternProvider
                     .getRegexParser(scope.scope, scope.main_specs)
                     .map(matcher.require(4)) {
-                        Pair(it.require(1), it.require(2))
+                        Device.Spec(it.require(1), it.require(2))
                     }
                 Brand.DeviceItem(
                     imageSrc = matcher.get(1),
-                    id = matcher.require(2),
+                    id = DevDbDeviceId(matcher.require(2)),
                     title = matcher.require(3).fromHtml(),
                     price = matcher.get(5),
                     rating = matcher.get(7)?.toInt() ?: 0,
@@ -99,11 +109,14 @@ class DevDbParser @Inject constructor(
                         }
                     }
                 title = matcher.require(4)
+                requireNotNull(id) { "brand.id" }
+                requireNotNull(title) { "brand.title" }
+                requireNotNull(catId) { "brand.catId" }
+                requireNotNull(catTitle) { "brand.catTitle" }
                 Brand(
-                    id = requireNotNull(id) { "brand.id" },
-                    title = requireNotNull(title) { "brand.title" },
-                    catId = requireNotNull(catId) { "brand.catId" },
-                    catTitle = requireNotNull(catTitle) { "brand.catTitle" },
+                    id = DevDbDevicesId(DevDbCategoryId(catId), DevDbBrandId(id)),
+                    title = title,
+                    catTitle = catTitle,
                     actual = matcher.get(5)?.toInt() ?: 0,
                     all = matcher.get(6)?.toInt() ?: 0,
                     devices = devices
@@ -116,16 +129,16 @@ class DevDbParser @Inject constructor(
     }
 
     // todo refactor
-    fun parseDevice(response: String, argDevId: String): Device {
-        val id: String = argDevId
+    fun parseDevice(response: String, argDevId: DevDbDeviceId): Device {
+        val id: DevDbDeviceId = argDevId
         var title: String? = null
         var brandId: String? = null
         var brandTitle: String? = null
         var catId: String? = null
         var catTitle: String? = null
         var rating: Int = 0
-        val images = mutableListOf<Pair<String, String>>()
-        val specsGroups = mutableListOf<Pair<String, List<Pair<String, String>>>>()
+        val images = mutableListOf<Device.Image>()
+        val specsGroups = mutableListOf<Device.Specs>()
         patternProvider
             .getRegexParser(scope.scope, scope.device_head)
             .findOnce(response) { matcher ->
@@ -133,21 +146,23 @@ class DevDbParser @Inject constructor(
 
                 patternProvider
                     .getRegexParser(scope.scope, scope.device_images)
-                    .findAll(matcher.require(2)) {
-                        images.add(Pair(it.require(2), it.require(1)))
+                    .map(matcher.require(2)) {
+                        Device.Image(it.require(2), it.require(1))
                     }
+                    .also { images.addAll(it) }
 
                 patternProvider
                     .getRegexParser(scope.scope, scope.device_specs_titled)
-                    .findAll(matcher.require(3)) {
+                    .map(matcher.require(3)) {
                         val specTitle = it.require(1).fromHtml()
                         val specs = patternProvider
                             .getRegexParser(scope.scope, scope.main_specs)
                             .map(it.require(2)) {
-                                Pair(it.require(1), it.require(2))
+                                Device.Spec(it.require(1), it.require(2))
                             }
-                        specsGroups.add(Pair(specTitle, specs))
+                        Device.Specs(specTitle, specs)
                     }
+                    .also { specsGroups.addAll(it) }
             }
 
         patternProvider
@@ -173,10 +188,10 @@ class DevDbParser @Inject constructor(
             .getRegexParser(scope.scope, scope.device_comments)
             .map(response) { matcher ->
                 Device.Comment(
-                    id = matcher.require(1).toInt(),
+                    id = DevDbCommentId(matcher.require(1).toInt()),
                     rating = matcher.require(3).toInt(),
-                    user = User.required(
-                        id = matcher.require(4).toInt(),
+                    user = User(
+                        id = UserId(matcher.require(4).toInt()),
                         nick = matcher.require(5).fromHtml()
                     ),
                     date = matcher.require(6),
@@ -189,8 +204,8 @@ class DevDbParser @Inject constructor(
         val news = patternProvider
             .getRegexParser(scope.scope, scope.device_reviews)
             .map(response) { matcher ->
-                Device.PostItem(
-                    id = matcher.require(1).toInt(),
+                Device.Article(
+                    id = ArticleId(matcher.require(1).toInt()),
                     image = matcher.require(2),
                     title = matcher.require(3).fromHtml(),
                     date = matcher.require(4),
@@ -204,9 +219,8 @@ class DevDbParser @Inject constructor(
                 patternProvider
                     .getRegexParser(scope.scope, scope.device_discuss_and_firm)
                     .map(it.require(1)) { matcher ->
-                        Device.PostItem(
-                            id = matcher.require(1).toInt(),
-                            image = null,
+                        Device.Topic(
+                            id = TopicId(matcher.require(1).toInt()),
                             title = matcher.require(2).fromHtml(),
                             date = matcher.require(3),
                             desc = matcher.get(4)?.fromHtml()
@@ -220,22 +234,25 @@ class DevDbParser @Inject constructor(
                 patternProvider
                     .getRegexParser(scope.scope, scope.device_discuss_and_firm)
                     .map(it.require(1)) { matcher ->
-                        Device.PostItem(
-                            id = matcher.require(1).toInt(),
-                            image = null,
+                        Device.Topic(
+                            id = TopicId(matcher.require(1).toInt()),
                             title = matcher.require(2).fromHtml(),
                             date = matcher.require(3),
                             desc = matcher.get(4)?.fromHtml()
                         )
                     }
             } ?: emptyList()
+        requireNotNull(title) { "device.title" }
+        requireNotNull(brandId) { "device.brandId" }
+        requireNotNull(brandTitle) { "device.brandTitle" }
+        requireNotNull(catId) { "device.catId" }
+        requireNotNull(catTitle) { "device.catTitle" }
         return Device(
-            id = requireNotNull(id),
-            title = requireNotNull(title),
-            brandId = requireNotNull(brandId),
-            brandTitle = requireNotNull(brandTitle),
-            catId = requireNotNull(catId),
-            catTitle = requireNotNull(catTitle),
+            id = id,
+            devicesId = DevDbDevicesId(DevDbCategoryId(catId), DevDbBrandId(brandId)),
+            title = title,
+            brandTitle = brandTitle,
+            catTitle = catTitle,
             rating = rating,
             specs = specsGroups,
             images = images,
@@ -251,7 +268,7 @@ class DevDbParser @Inject constructor(
             .getRegexParser(scope.scope, scope.main_search)
             .map(response) { matcher ->
                 Brand.DeviceItem(
-                    id = matcher.require(2),
+                    id = DevDbDeviceId(matcher.require(2)),
                     imageSrc = matcher.require(1),
                     title = matcher.require(3).fromHtml(),
                     price = null,

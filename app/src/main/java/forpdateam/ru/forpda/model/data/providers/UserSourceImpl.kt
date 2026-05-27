@@ -2,11 +2,19 @@ package forpdateam.ru.forpda.model.data.providers
 
 import forpdateam.ru.forpda.entity.remote.others.user.ForumUser
 import forpdateam.ru.forpda.model.data.cache.forumuser.UserSource
+import forpdateam.ru.forpda.model.data.remote.api.profile.ProfileApi
 import forpdateam.ru.forpda.model.data.remote.api.qms.QmsApi
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class UserSourceImpl @Inject constructor(
+    private val profileApi: ProfileApi,
     private val qmsApi: QmsApi
 ) : UserSource {
+
+    override suspend fun findUser(id: UserId): ForumUser {
+        return profileApi.getProfile(id).user
+    }
+
     override suspend fun findUsers(nick: String): List<ForumUser> = qmsApi.findUser(nick)
 }

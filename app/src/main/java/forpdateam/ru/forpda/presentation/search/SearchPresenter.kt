@@ -4,11 +4,11 @@ import android.content.Context
 import forpdateam.ru.forpda.R
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.entity.remote.search.SearchItem
 import forpdateam.ru.forpda.entity.remote.search.SearchResult
 import forpdateam.ru.forpda.entity.remote.search.SearchSettings
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.OtherPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
@@ -26,6 +26,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.PostId
 import ru.radiationx.links.Link
 import ru.radiationx.quill.QuillExtra
 
@@ -313,9 +316,9 @@ class SearchPresenter(
 
     private fun getItemUrl(item: SearchItem): String {
         return when (item) {
-            is SearchItem.News -> "https://4pda.to/index.php?p=${item.id}"
-            is SearchItem.Topic -> "https://4pda.to/forum/index.php?showtopic=${item.topicId}"
-            is SearchItem.Post -> "https://4pda.to/forum/index.php?showtopic=${item.post.topicId}&view=findpost&p=${item.post.id}"
+            is SearchItem.News -> "https://4pda.to/index.php?p=${item.id.id}"
+            is SearchItem.Topic -> "https://4pda.to/forum/index.php?showtopic=${item.topicId.id}"
+            is SearchItem.Post -> "https://4pda.to/forum/index.php?showtopic=${item.post.topicId.id}&view=findpost&p=${item.post.id.id}"
         }
     }
 
@@ -351,12 +354,12 @@ class SearchPresenter(
     }
 
     fun openForum(item: SearchItem) {
-        val forumId = when (item) {
+        val forumId: ForumId = when (item) {
             is SearchItem.Topic -> item.forumId
             is SearchItem.Post -> return
             is SearchItem.News -> return
         }
-        linkHandler.handle("https://4pda.to/forum/index.php?showforum=${forumId}")
+        linkHandler.handle("https://4pda.to/forum/index.php?showforum=${forumId.id}")
     }
 
     fun onClickAddInFav(item: SearchItem) {
@@ -371,7 +374,7 @@ class SearchPresenter(
         }
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+                favoritesRepository.editFavorites(FavoriteAction.AddTopic(topicId, subType))
             }.onSuccess {
                 viewState.onAddToFavorite(it)
             }.onFailure {
@@ -390,11 +393,11 @@ class SearchPresenter(
 
     override fun onPollClick() = unavailableFunction()
 
-    override fun onReplyPostClick(postId: Int) = unavailableFunction()
+    override fun onReplyPostClick(postId: PostId) = unavailableFunction()
 
-    override fun onQuotePostClick(postId: Int, text: String) = unavailableFunction()
+    override fun onQuotePostClick(postId: PostId, text: String) = unavailableFunction()
 
-    override fun quoteFromBuffer(postId: Int) = unavailableFunction()
+    override fun quoteFromBuffer(postId: PostId) = unavailableFunction()
 
     override fun onPollHeaderClick(bValue: Boolean) = unavailableFunction()
 
@@ -404,7 +407,7 @@ class SearchPresenter(
         utils.shareText(text)
     }
 
-    private fun getPostById(postId: Int): SearchItem.Post? = currentData
+    private fun getPostById(postId: PostId): SearchItem.Post? = currentData
         ?.items
         ?.filterIsInstance<SearchItem.Post>()
         ?.firstOrNull { it.post.id == postId }
@@ -419,40 +422,40 @@ class SearchPresenter(
 
     override fun onSelectPageClick() = viewState.selectPage()
 
-    override fun onUserMenuClick(postId: Int) {
+    override fun onUserMenuClick(postId: PostId) {
         getPostById(postId)?.let { viewState.showUserMenu(it) }
     }
 
-    override fun onReputationMenuClick(postId: Int) {
+    override fun onReputationMenuClick(postId: PostId) {
         getPostById(postId)?.let { viewState.showReputationMenu(it) }
     }
 
-    override fun onPostMenuClick(postId: Int) {
+    override fun onPostMenuClick(postId: PostId) {
         getPostById(postId)?.let { viewState.showPostMenu(it) }
     }
 
-    override fun onReportPostClick(postId: Int) {
+    override fun onReportPostClick(postId: PostId) {
         getPostById(postId)?.let { viewState.reportPost(it) }
     }
 
 
-    override fun onDeletePostClick(postId: Int) {
+    override fun onDeletePostClick(postId: PostId) {
         getPostById(postId)?.let { viewState.deletePost(it) }
     }
 
-    override fun onEditPostClick(postId: Int) {
+    override fun onEditPostClick(postId: PostId) {
         getPostById(postId)?.let { viewState.editPost(it) }
     }
 
-    override fun onVotePostClick(postId: Int, type: Boolean) {
+    override fun onVotePostClick(postId: PostId, type: Boolean) {
         getPostById(postId)?.let { viewState.votePost(it, type) }
     }
 
-    override fun onSpoilerCopyLinkClick(postId: Int, spoilNumber: String) {
+    override fun onSpoilerCopyLinkClick(postId: PostId, spoilNumber: String) {
         getPostById(postId)?.let { viewState.openSpoilerLinkDialog(it, spoilNumber) }
     }
 
-    override fun onAnchorClick(postId: Int, name: String) {
+    override fun onAnchorClick(postId: PostId, name: String) {
         getPostById(postId)?.let { viewState.openAnchorDialog(it, name) }
     }
 
@@ -469,23 +472,23 @@ class SearchPresenter(
         viewState.log(text)
     }
 
-    override fun openProfile(postId: Int) {
+    override fun openProfile(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?showuser=${it.post.user.id}"
+                "https://4pda.to/forum/index.php?showuser=${it.post.user.id.id}"
             )
         }
     }
 
-    override fun openQms(postId: Int) {
+    override fun openQms(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.post.user.id}"
+                "https://4pda.to/forum/index.php?act=qms&amp;mid=${it.post.user.id.id}"
             )
         }
     }
 
-    override fun openSearchUserTopic(postId: Int) {
+    override fun openSearchUserTopic(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
                 SearchSettings.default().copy(
@@ -497,11 +500,11 @@ class SearchPresenter(
         }
     }
 
-    override fun openSearchInTopic(postId: Int) {
+    override fun openSearchInTopic(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
                 SearchSettings.default().copy(
-                    topics = listOf(it.post.topicId),
+                    topics = listOf(it.post.topicId.id),
                     source = SearchSettings.SOURCE_CONTENT.first,
                     nick = it.post.user.nick,
                     result = SearchSettings.RESULT_POSTS.first,
@@ -511,7 +514,7 @@ class SearchPresenter(
         }
     }
 
-    override fun openSearchUserMessages(postId: Int) {
+    override fun openSearchUserMessages(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
                 SearchSettings.default().copy(
@@ -524,20 +527,15 @@ class SearchPresenter(
         }
     }
 
-    override fun onChangeReputationClick(postId: Int, type: Boolean) {
+    override fun onChangeReputationClick(postId: PostId, type: Boolean) {
         getPostById(postId)?.let { viewState.showChangeReputation(it, type) }
     }
 
-    override fun changeReputation(postId: Int, type: Boolean, message: String) {
+    override fun changeReputation(postId: PostId, type: Boolean, message: String) {
         getPostById(postId)?.let {
             viewModelScope.launch {
                 coRunCatching {
-                    reputationRepository.changeReputation(
-                        it.post.id,
-                        it.post.user.id,
-                        type,
-                        message
-                    )
+                    reputationRepository.changeReputation(it.post.id, it.post.user.id, type, message)
                 }.onSuccess {
                     router.showSystemMessage(R.string.reputation_changed)
                 }.onFailure {
@@ -547,7 +545,7 @@ class SearchPresenter(
         }
     }
 
-    override fun votePost(postId: Int, type: Boolean) {
+    override fun votePost(postId: PostId, type: Boolean) {
         getPostById(postId)?.let {
             viewModelScope.launch {
                 coRunCatching {
@@ -561,16 +559,16 @@ class SearchPresenter(
         }
     }
 
-    override fun openReputationHistory(postId: Int) {
+    override fun openReputationHistory(postId: PostId) {
         getPostById(postId)?.let {
             linkHandler.handle(
-                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.post.user.nick}"
+                "https://4pda.to/forum/index.php?act=rep&view=history&amp;mid=${it.post.user.id}"
             )
         }
     }
 
 
-    override fun reportPost(postId: Int, message: String) {
+    override fun reportPost(postId: PostId, message: String) {
         getPostById(postId)?.let { post ->
             viewModelScope.launch {
                 coRunCatching {
@@ -584,7 +582,7 @@ class SearchPresenter(
         }
     }
 
-    override fun deletePost(postId: Int) {
+    override fun deletePost(postId: PostId) {
         getPostById(postId)?.let { post ->
             viewModelScope.launch {
                 coRunCatching {
@@ -599,63 +597,63 @@ class SearchPresenter(
         }
     }
 
-    override fun createNote(postId: Int) {
+    override fun createNote(postId: PostId) {
         getPostById(postId)?.let {
             val topicTitle: String = it.title
             val title = context.getString(
                 R.string.post_Topic_Nick_Number,
                 topicTitle,
                 it.post.user.nick,
-                it.post.id
+                it.post.id.id
             )
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId}&view=findpost&p=${it.post.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId.id}&view=findpost&p=${it.post.id.id}"
             viewState.showNoteCreate(title, url)
         }
     }
 
-    fun openEditPostForm(postId: Int) {
+    fun openEditPostForm(postId: PostId) {
         getPostById(postId)?.let {
             val title: String = it.title
             router.navigateTo(
                 Screen.EditPost.Edit(
                     postId = it.post.id,
                     topicId = it.post.topicId,
-                    forumId = -1,
-                    st = argSettings.st,
+                    forumId = ForumId(-1),
+                    offset = PageOffset(argSettings.st),
                     themeName = title
                 )
             )
         }
     }
 
-    override fun copyPostLink(postId: Int) {
+    override fun copyPostLink(postId: PostId) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId}&view=findpost&p=${it.post.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId.id}&view=findpost&p=${it.post.id.id}"
             copyText(url)
         }
     }
 
-    override fun sharePostLink(postId: Int) {
+    override fun sharePostLink(postId: PostId) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId}&view=findpost&p=${it.post.id}"
+                "https://4pda.to/forum/index.php?s=&showtopic=${it.post.topicId.id}&view=findpost&p=${it.post.id.id}"
             shareText(url)
         }
     }
 
-    override fun copyAnchorLink(postId: Int, name: String) {
+    override fun copyAnchorLink(postId: PostId, name: String) {
         getPostById(postId)?.let {
-            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.post.id}&anchor=$name"
+            val url = "https://4pda.to/forum/index.php?act=findpost&pid=${it.post.id.id}&anchor=$name"
             copyText(url)
         }
     }
 
-    override fun copySpoilerLink(postId: Int, spoilNumber: String) {
+    override fun copySpoilerLink(postId: PostId, spoilNumber: String) {
         getPostById(postId)?.let {
             val url =
-                "https://4pda.to/forum/index.php?act=findpost&pid=${it.post.id}&anchor=Spoil-${it.post.id}-$spoilNumber"
+                "https://4pda.to/forum/index.php?act=findpost&pid=${it.post.id.id}&anchor=Spoil-${it.post.id.id}-$spoilNumber"
             copyText(url)
         }
     }

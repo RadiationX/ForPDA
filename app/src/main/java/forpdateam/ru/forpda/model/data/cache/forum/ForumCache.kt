@@ -5,6 +5,7 @@ import androidx.room.withTransaction
 import forpdateam.ru.forpda.entity.db.forum.ForumItemFlatDb
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.model.data.db.ForumsDao
+import ru.radiationx.coretypes.ForumId
 import javax.inject.Inject
 
 class ForumCache @Inject constructor(
@@ -25,9 +26,9 @@ class ForumCache @Inject constructor(
 }
 
 fun ForumItemFlatDb.toDomain(): ForumItemFlat {
-    return ForumItemFlat(id, parentId, level, title)
+    return ForumItemFlat(ForumId(id), ForumId(parentId), level, title)
 }
 
 fun ForumItemFlat.toDb(): ForumItemFlatDb {
-    return ForumItemFlatDb(id, parentId, level, title)
+    return ForumItemFlatDb(id.id, parentId.id, level, title)
 }

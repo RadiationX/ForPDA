@@ -10,6 +10,8 @@ import forpdateam.ru.forpda.model.data.remote.api.ApiUtils
 import forpdateam.ru.forpda.model.preferences.TopicPreferencesHolder
 import forpdateam.ru.forpda.model.repository.temp.TempHelper
 import forpdateam.ru.forpda.ui.TemplateManager
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.links.parser.LinkTransformer
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -18,7 +20,8 @@ class ThemeTemplate @Inject constructor(
     private val context: Context,
     private val templateManager: TemplateManager,
     private val authHolder: AuthHolder,
-    private val topicPreferencesHolder: TopicPreferencesHolder
+    private val topicPreferencesHolder: TopicPreferencesHolder,
+    private val linkTransformer: LinkTransformer
 ) {
 
     private val firstLetter = Pattern.compile("([a-zA-Zа-яА-Я])")
@@ -28,9 +31,8 @@ class ThemeTemplate @Inject constructor(
     fun mapString(page: ThemePage): String {
         val template = templateManager.getTemplate(TemplateManager.TEMPLATE_THEME)
 
-        val authData = authHolder.get()
-        val authorized = authData.isAuth()
-        val memberId = authData.userId
+        val authState = authHolder.get()
+        val authorized = authState.isAuth()
         template.apply {
             templateManager.fillStaticStrings(this)
             val prevDisabled = !page.pagination.hasPrev()
@@ -40,7 +42,7 @@ class ThemeTemplate @Inject constructor(
 
             setVariableOpt("topic_title", ApiUtils.htmlEncode(page.title))
             setVariableOpt("topic_description", ApiUtils.htmlEncode(page.desc))
-            setVariableOpt("topic_url", page.url.toHttpUrl().toString())
+            setVariableOpt("topic_url", linkTransformer.build(page.link).toString())
 
             setVariableOpt("all_pages_int", page.pagination.all)
             setVariableOpt("posts_on_page_int", page.pagination.perPage)
@@ -48,7 +50,7 @@ class ThemeTemplate @Inject constructor(
 
             setVariableOpt("authorized_bool", authorized.toString())
             setVariableOpt("is_curator_bool", false.toString())
-            setVariableOpt("member_id_int", memberId)
+            setVariableOpt("member_id_int", authState.asAuth()?.userId?.id ?: 0)
             setVariableOpt("elem_to_scroll", page.anchor?.value)
             setVariableOpt("body_type", "topic")
 
@@ -71,16 +73,13 @@ class ThemeTemplate @Inject constructor(
             )
 
 
-            var hatPostId = 0
-            if (!page.posts.isEmpty()) {
-                hatPostId = page.posts[0].post.id
-            }
+            val hatPostId: PostId? = page.posts.firstOrNull()?.post?.id
             var letterMatcher: Matcher? = null
             for (themePost in page.posts) {
                 val post = themePost.post
                 setVariableOpt("user_online", if (post.isOnline) "online" else "")
-                setVariableOpt("post_id", post.id)
-                setVariableOpt("user_id", post.user.id)
+                setVariableOpt("post_id", post.id.id)
+                setVariableOpt("user_id", post.user.id.id)
 
                 //Post header
                 setVariableOpt("avatar", post.user.avatar)
@@ -121,9 +120,9 @@ class ThemeTemplate @Inject constructor(
 
                 if (!authorized || post.canReport)
                     addBlockOpt("report_block")
-                if (!authorized || (page.canQuote && post.user.id != memberId))
+                if (!authorized || (page.canQuote && post.user.id != authState.userId))
                     addBlockOpt("reply_block")
-                if (!authorized || post.user.id != memberId)
+                if (!authorized || post.user.id != authState.userId)
                     addBlockOpt("vote_block")
                 if (!authorized || post.canDelete)
                     addBlockOpt("delete_block")

@@ -5,6 +5,10 @@ import forpdateam.ru.forpda.entity.remote.others.user.User
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.QmsMessageId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 /**
@@ -21,11 +25,11 @@ class InspectorParser @Inject constructor(
             .getRegexParser(scope.scope, scope.favorites)
             .map(response) { matcher ->
                 InspectorItem.Favorite(
-                    topicId = matcher.require(1).toInt(),
+                    topicId = TopicId(matcher.require(1).toInt()),
                     sourceTitle = matcher.require(2).fromHtml(),
                     msgCount = matcher.require(3).toInt(),
-                    user = User.required(
-                        id = matcher.require(4).toInt(),
+                    user = User(
+                        id = UserId(matcher.require(4).toInt()),
                         nick = matcher.require(5).fromHtml()
                     ),
                     timeStamp = matcher.require(6).toLong() * 1000L,
@@ -46,15 +50,15 @@ class InspectorParser @Inject constructor(
                     userNick = "Сообщения 4PDA"
                 }
                 InspectorItem.Qms(
-                    themeId = sourceId,
+                    themeId = QmsThreadId(sourceId),
                     sourceTitle = matcher.require(2).fromHtml(),
-                    user = User.required(
-                        id = matcher.require(3).toInt(),
+                    user = User(
+                        id = UserId(matcher.require(3).toInt()),
                         nick = userNick
                     ),
                     timeStamp = matcher.require(5).toLong() * 1000L,
                     msgCount = matcher.require(6).toInt(),
-                    messageId = matcher.require(7).toInt(),
+                    messageId = QmsMessageId(matcher.require(7).toInt()),
                     rawContent = matcher.require(0)
                 )
             }

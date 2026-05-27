@@ -51,7 +51,7 @@ class SearchDevicesPresenter(
     }
 
     fun openDevice(item: Brand.DeviceItem) {
-        router.navigateTo(Screen.DevDbDevice(deviceId = DevDbDeviceId(item.id)))
+        router.navigateTo(Screen.DevDbDevice(deviceId = item.id))
     }
 
     fun openSearch() {
@@ -60,20 +60,20 @@ class SearchDevicesPresenter(
 
     fun copyLink(item: Brand.DeviceItem) {
         currentData?.let {
-            utils.copyToClipBoard("https://4pda.to/devdb/${item.id}")
+            utils.copyToClipBoard("https://4pda.to/devdb/${item.id.id}")
         }
     }
 
     fun shareLink(item: Brand.DeviceItem) {
         currentData?.let {
-            utils.shareText("https://4pda.to/devdb/${item.id}")
+            utils.shareText("https://4pda.to/devdb/${item.id.id}")
         }
     }
 
     fun createNote(item: Brand.DeviceItem) {
         currentData?.let {
             val title = "DevDb: ${item.title}"
-            val url = "https://4pda.to/devdb/" + item.id
+            val url = "https://4pda.to/devdb/" + item.id.id
             viewState.showCreateNote(title, url)
         }
     }

@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.model.data.remote.api.mentions
 import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.mentions.MentionsData
 import forpdateam.ru.forpda.model.data.remote.WebClient
+import ru.radiationx.coretypes.PageOffset
 import javax.inject.Inject
 
 /**
@@ -13,8 +14,8 @@ class MentionsApi @Inject constructor(
     private val webClient: WebClient,
     private val mentionsParser: MentionsParser
 ) {
-    suspend fun getMentions(st: Int): MentionsData {
-        val response = webClient.request(ApiRequest.Forum.Mentions.LoadPage(st))
+    suspend fun getMentions(offset: PageOffset): MentionsData {
+        val response = webClient.request(ApiRequest.Forum.Mentions.LoadPage(offset))
         return mentionsParser.parse(response.body)
     }
 }

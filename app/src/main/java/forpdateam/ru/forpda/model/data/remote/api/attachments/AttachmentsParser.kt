@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.entity.remote.editpost.EditPost
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.AttachmentId
 import ru.radiationx.regexparser.core.RegexMatch
 import java.text.DecimalFormat
 import javax.inject.Inject
@@ -27,7 +28,7 @@ class AttachmentsParser @Inject constructor(
             } ?: EditPost.Attachment.Type.File
             val size = matcher.require(5).toLong()
             EditPost.Attachment(
-                id = matcher.require(1).toInt(),
+                id = AttachmentId(matcher.require(1).toInt()),
                 name = matcher.require(2),
                 extension = matcher.require(3),
                 size = size,
@@ -48,7 +49,7 @@ class AttachmentsParser @Inject constructor(
     }
 
     private fun fillAttachment(item: AttachmentItem, match: RegexMatch): AttachmentItem {
-        item.id = match.require(1).toInt()
+        item.id = AttachmentId(match.require(1).toInt())
         item.name = match.require(2)
         /*try {
             item.setName(URLDecoder.decode(matcher.group(2), "utf-8"));

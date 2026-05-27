@@ -328,13 +328,23 @@ sealed interface Link : Parcelable {
 
             sealed interface Anchor : Parcelable {
 
+                val postId: PostId
+
                 val value: String
 
                 @Parcelize
-                data class Post(val postId: PostId, override val value: String) : Anchor
+                data class Post(override val postId: PostId) : Anchor {
+
+                    override val value: String
+                        get() = "entry${postId.id}"
+                }
 
                 @Parcelize
-                data class Node(val name: String, val postId: PostId, val number: Int, override val value: String) : Anchor
+                data class Node(val name: String, override val postId: PostId, val number: Int) : Anchor {
+
+                    override val value: String
+                        get() = "${name}-${postId.id}-${number}"
+                }
             }
         }
 

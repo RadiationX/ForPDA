@@ -1,10 +1,13 @@
 package forpdateam.ru.forpda.model.repository.theme
 
 import forpdateam.ru.forpda.entity.remote.theme.ThemePage
-import forpdateam.ru.forpda.entity.remote.theme.TopicUrl
 import forpdateam.ru.forpda.model.data.cache.forumuser.ForumUsersCache
 import forpdateam.ru.forpda.model.data.cache.history.HistoryCache
 import forpdateam.ru.forpda.model.data.remote.api.theme.ThemeApi
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.TopicId
+import ru.radiationx.links.Link
+import ru.radiationx.links.parser.LinkTransformer
 import javax.inject.Inject
 
 /**
@@ -14,30 +17,27 @@ import javax.inject.Inject
 class ThemeRepository @Inject constructor(
     private val themeApi: ThemeApi,
     private val historyCache: HistoryCache,
-    private val forumUsersCache: ForumUsersCache
+    private val forumUsersCache: ForumUsersCache,
+    private val linkTransformer: LinkTransformer
 ) {
 
-    suspend fun getTheme(
-        url: TopicUrl,
-        hatOpen: Boolean,
-        pollOpen: Boolean
-    ): ThemePage {
-        return themeApi.getTheme(url, hatOpen, pollOpen).also {
+    suspend fun getTheme(link: Link.Board.Topic, hatOpen: Boolean, pollOpen: Boolean): ThemePage {
+        return themeApi.getTheme(link, hatOpen, pollOpen).also {
             val forumUsers = it.posts.map { it.post.user }
             forumUsersCache.savePostUsers(forumUsers)
-            historyCache.add(it.id, it.url.toHttpUrl().toString(), it.title)
+            historyCache.add(it.id.id, linkTransformer.build(it.link).toString(), it.title)
         }
     }
 
-    suspend fun reportPost(themeId: Int, postId: Int, message: String) {
-        themeApi.reportPost(themeId, postId, message)
+    suspend fun reportPost(topicId: TopicId, postId: PostId, message: String) {
+        themeApi.reportPost(topicId, postId, message)
     }
 
-    suspend fun deletePost(postId: Int) {
+    suspend fun deletePost(postId: PostId) {
         themeApi.deletePost(postId)
     }
 
-    suspend fun votePost(postId: Int, type: Boolean): String {
+    suspend fun votePost(postId: PostId, type: Boolean): String {
         return themeApi.votePost(postId, type)
     }
 }

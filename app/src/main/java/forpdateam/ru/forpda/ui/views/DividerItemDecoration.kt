@@ -3,6 +3,7 @@ package forpdateam.ru.forpda.ui.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import forpdateam.ru.forpda.extensions.getDrawableAttr
@@ -23,8 +24,8 @@ class DividerItemDecoration : ItemDecoration {
     /**
      * Custom divider will be used
      */
-    constructor(context: Context, resId: Int) {
-        mDivider = context.getDrawable(resId)
+    constructor(context: Context, @DrawableRes drawableRes: Int) {
+        mDivider = context.getDrawable(drawableRes)
     }
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {

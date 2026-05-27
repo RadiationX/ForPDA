@@ -5,7 +5,8 @@ import forpdateam.ru.forpda.common.mvp.BasePresenter
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.extensions.coRunCatching
-import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
+import forpdateam.ru.forpda.model.repository.avatar.AvatarRepository
+import forpdateam.ru.forpda.model.repository.qms.QmsRepository
 import forpdateam.ru.forpda.presentation.ErrorHandler
 import forpdateam.ru.forpda.presentation.LinkHandler
 import forpdateam.ru.forpda.presentation.Screen
@@ -31,7 +32,8 @@ data class QmsThemesExtra(
 @InjectViewState
 class QmsThemesPresenter(
     private val argExtra: QmsThemesExtra,
-    private val qmsInteractor: QmsInteractor,
+    private val qmsRepository: QmsRepository,
+    private val avatarRepository: AvatarRepository,
     private val router: TabRouter,
     private val linkHandler: LinkHandler,
     private val errorHandler: ErrorHandler
@@ -41,7 +43,7 @@ class QmsThemesPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        qmsInteractor
+        qmsRepository
             .observeThemes(argExtra.userId)
             .filterNotNull()
             .onEach {
@@ -50,9 +52,11 @@ class QmsThemesPresenter(
             }
             .launchIn(viewModelScope)
 
-        qmsInteractor
+        qmsRepository
             .observeContact(argExtra.userId)
-            .mapNotNull { it?.user?.avatar ?: avatarUrl }
+            .mapNotNull { contact ->
+                contact?.user?.avatar ?: avatarRepository.getAvatar(argExtra.userId)
+            }
             .onEach { viewState.showAvatar(it) }
             .launchIn(viewModelScope)
     }
@@ -61,7 +65,7 @@ class QmsThemesPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                qmsInteractor.getThemesList(argExtra.userId)
+                qmsRepository.getThemesList(argExtra.userId)
             }.onSuccess {
                 currentData = it
                 if (it.themes.isEmpty()) {
@@ -78,7 +82,7 @@ class QmsThemesPresenter(
         val nick = currentData?.user?.nick ?: return
         viewModelScope.launch {
             coRunCatching {
-                qmsInteractor.blockUser(nick)
+                qmsRepository.blockUser(nick)
             }.map {
                 it.firstOrNull { it.user.nick == nick } != null
             }.onSuccess {
@@ -89,11 +93,11 @@ class QmsThemesPresenter(
         }
     }
 
-    fun deleteTheme(themeId: Int) {
+    fun deleteTheme(themeId: QmsThreadId) {
         currentData?.let {
             viewModelScope.launch {
                 coRunCatching {
-                    qmsInteractor.deleteTheme(it.user.id, themeId)
+                    qmsRepository.deleteTheme(QmsChatId(it.user.id, themeId))
                 }.onFailure {
                     errorHandler.handle(it)
                 }
@@ -108,24 +112,20 @@ class QmsThemesPresenter(
     fun openChat() {
         currentData?.let {
             Log.e("kokosina", "openChat")
-            router.replaceScreen(
-                Screen.QmsChat.Create(
-                    userId = UserId(it.user.id),
-                )
-            )
+            router.replaceScreen(Screen.QmsChat.Create(userId = it.user.id))
         }
     }
 
     fun createNote() {
         currentData?.let {
-            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.user.id}"
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.user.id.id}"
             viewState.showCreateNote(it.user.nick, url)
         }
     }
 
     fun createThemeNote(item: QmsTheme) {
         currentData?.let {
-            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.user.id}&t=${item.id}"
+            val url = "https://4pda.to/forum/index.php?act=qms&mid=${it.user.id.id}&t=${item.id.id}"
             viewState.showCreateNote(item.name.orEmpty(), it.user.nick, url)
         }
     }
@@ -133,7 +133,7 @@ class QmsThemesPresenter(
     fun onItemClick(item: QmsTheme) {
         currentData?.let {
             router.navigateTo(
-                Screen.QmsChat.Existed(chatId = QmsChatId(UserId(it.user.id), QmsThreadId(item.id))).apply {
+                Screen.QmsChat.Existed(chatId = QmsChatId(it.user.id, item.id)).apply {
                     screenTitle = item.name
                     screenSubTitle = it.user.nick
                 }

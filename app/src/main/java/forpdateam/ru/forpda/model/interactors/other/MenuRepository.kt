@@ -148,7 +148,7 @@ class MenuRepository @Inject constructor(
             .observe()
             .onEach {
                 loadMainMenuGroup()
-                Log.e("lplplp", "MenuRepository observe auth ${it.state}")
+                Log.e("lplplp", "MenuRepository observe auth ${it}")
                 updateMenuItems()
             }
             .launchIn(GlobalScope)

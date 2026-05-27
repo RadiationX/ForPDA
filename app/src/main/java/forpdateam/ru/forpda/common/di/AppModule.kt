@@ -15,10 +15,10 @@ import forpdateam.ru.forpda.client.CookieStorage
 import forpdateam.ru.forpda.client.NetworkObserver
 import forpdateam.ru.forpda.client.WebClientImpl
 import forpdateam.ru.forpda.client.websocket.WebSocketController
+import forpdateam.ru.forpda.common.UriLinkUrlAdapter
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.apptheme.AppThemeController
 import forpdateam.ru.forpda.common.apptheme.AppThemeControllerImpl
-import ru.radiationx.flowpreferences.FlowPreferences
 import forpdateam.ru.forpda.common.webview.CustomWebViewClient
 import forpdateam.ru.forpda.model.AuthHolder
 import forpdateam.ru.forpda.model.CloseableInfoHolder
@@ -92,7 +92,6 @@ import forpdateam.ru.forpda.model.interactors.events.handlers.FavoritesEventsHan
 import forpdateam.ru.forpda.model.interactors.events.handlers.NotificationEventsHandler
 import forpdateam.ru.forpda.model.interactors.events.handlers.QmsEventsHandler
 import forpdateam.ru.forpda.model.interactors.other.MenuRepository
-import forpdateam.ru.forpda.model.interactors.qms.QmsInteractor
 import forpdateam.ru.forpda.model.preferences.ListsPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.MainPreferencesHolder
 import forpdateam.ru.forpda.model.preferences.NotificationPreferencesHolder
@@ -138,6 +137,9 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import ru.mintrocket.lib.mintpermissions.MintPermissions
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
+import ru.radiationx.flowpreferences.FlowPreferences
+import ru.radiationx.links.parser.LinkTransformer
+import ru.radiationx.links.url.LinkUrlAdapter
 import ru.radiationx.quill.QuillModule
 import javax.inject.Inject
 import javax.inject.Provider
@@ -148,6 +150,7 @@ class AppModule(
     application: App
 ) : QuillModule() {
     init {
+        val linkUrlAdapter = UriLinkUrlAdapter()
 
         instance<App> { application }
         instance<Application> { application }
@@ -164,6 +167,9 @@ class AppModule(
         instance<NavigatorHolder> { cicerone.getNavigatorHolder() }
 
         single<Utils>()
+
+        instance<LinkUrlAdapter> { linkUrlAdapter }
+        instance { LinkTransformer(linkUrlAdapter) }
         singleImpl<SystemLinkHandler, SystemLinkHandlerImpl>()
         singleImpl<LinkHandler, LinkHandlerImpl>()
 
@@ -315,7 +321,6 @@ class AppModule(
         single<NotificationPreferencesHolder>()
 
         single<CrossScreenInteractor>()
-        single<QmsInteractor>()
     }
 
     class PreferencesProvider @Inject constructor(

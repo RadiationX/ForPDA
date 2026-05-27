@@ -5,6 +5,7 @@ import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
 import forpdateam.ru.forpda.model.data.cache.favorites.FavoritesCache
+import ru.radiationx.coretypes.TopicId
 import java.sql.Date
 import javax.inject.Inject
 
@@ -49,7 +50,7 @@ class FavoritesEventsHandler @Inject constructor(
         }
     }
 
-    private suspend fun updateItem(topicId: Int, block: (Favorite.Topic) -> Favorite.Topic) {
+    private suspend fun updateItem(topicId: TopicId, block: (Favorite.Topic) -> Favorite.Topic) {
         val item = favoritesCache.getItemByTopicId(topicId) ?: return
         val newItem = block.invoke(item)
         if (newItem == item) {

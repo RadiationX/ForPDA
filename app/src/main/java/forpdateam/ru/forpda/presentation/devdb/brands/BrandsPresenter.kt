@@ -9,7 +9,6 @@ import forpdateam.ru.forpda.presentation.Screen
 import forpdateam.ru.forpda.presentation.TabRouter
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
-import ru.radiationx.coretypes.DevDbBrandId
 import ru.radiationx.coretypes.DevDbCategoryId
 import ru.radiationx.coretypes.DevDbDevicesId
 import ru.radiationx.quill.QuillExtra
@@ -30,10 +29,10 @@ class BrandsPresenter(
 ) : BasePresenter<BrandsView>() {
 
     companion object {
-        const val CATEGORY_PHONES = "phones"
-        const val CATEGORY_PAD = "pad"
-        const val CATEGORY_EBOOK = "ebook"
-        const val CATEGORY_SMARTWATCH = "smartwatch"
+        val CATEGORY_PHONES = DevDbCategoryId("phones")
+        val CATEGORY_PAD = DevDbCategoryId("pad")
+        val CATEGORY_EBOOK = DevDbCategoryId("ebook")
+        val CATEGORY_SMARTWATCH = DevDbCategoryId("smartwatch")
     }
 
     private val categories = arrayOf(
@@ -43,7 +42,7 @@ class BrandsPresenter(
         CATEGORY_SMARTWATCH
     )
     private var currentCategory = argExtra.categoryId?.let { id ->
-        categories.firstOrNull { it == id.id }
+        categories.firstOrNull { it == id }
     } ?: categories.first()
 
     private var currentData: Brands? = null
@@ -76,7 +75,7 @@ class BrandsPresenter(
 
     fun openBrand(item: Brands.Item) {
         val data = currentData ?: return
-        val id = DevDbDevicesId(DevDbCategoryId(data.catId), DevDbBrandId(item.id))
+        val id = DevDbDevicesId(data.id, item.id)
         router.navigateTo(Screen.DevDbDevices(devicesId = id))
     }
 

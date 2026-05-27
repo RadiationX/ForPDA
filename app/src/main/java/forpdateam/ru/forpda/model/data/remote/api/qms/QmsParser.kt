@@ -10,6 +10,10 @@ import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.remote.ParserPatterns
 import forpdateam.ru.forpda.model.data.remote.parser.BaseParser
 import forpdateam.ru.forpda.model.data.storage.PatternProvider
+import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.QmsMessageId
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class QmsParser @Inject constructor(
@@ -21,8 +25,8 @@ class QmsParser @Inject constructor(
     fun parseSearch(response: String): List<ForumUser> = patternProvider
         .getRegexParser(scope.scope, scope.finduser)
         .map(response) { matcher ->
-            ForumUser.required(
-                id = matcher.require(1).toInt(),
+            ForumUser(
+                id = UserId(matcher.require(1).toInt()),
                 nick = matcher.require(2).fromHtml(),
                 avatar = matcher.require(3).let {
                     when {
@@ -40,8 +44,8 @@ class QmsParser @Inject constructor(
             .getRegexParser(scope.scope, scope.blacklist_main)
             .map(response) { matcher ->
                 QmsContact(
-                    user = ForumUser.required(
-                        id = matcher.require(1).toInt(),
+                    user = ForumUser(
+                        id = UserId(matcher.require(1).toInt()),
                         nick = matcher.require(3).fromHtml(),
                         avatar = matcher.require(2)
                     ),
@@ -62,8 +66,8 @@ class QmsParser @Inject constructor(
         .getRegexParser(scope.scope, scope.contacts_main)
         .map(response) { matcher ->
             QmsContact(
-                user = ForumUser.required(
-                    id = matcher.require(1).toInt(),
+                user = ForumUser(
+                    id = UserId(matcher.require(1).toInt()),
                     nick = matcher.require(4).trim().fromHtml(),
                     avatar = matcher.require(3)
                 ),
@@ -71,7 +75,7 @@ class QmsParser @Inject constructor(
             )
         }
 
-    fun parseThemes(response: String, argId: Int): QmsThemes {
+    fun parseThemes(response: String, userId: UserId): QmsThemes {
         val nick = patternProvider
             .getRegexParser(scope.scope, scope.thread_nick)
             .requireOnce(response) { matcher ->
@@ -82,7 +86,7 @@ class QmsParser @Inject constructor(
             .getRegexParser(scope.scope, scope.thread_main)
             .map(response) { matcher ->
                 QmsTheme(
-                    id = matcher.require(1).toInt(),
+                    id = QmsThreadId(matcher.require(1).toInt()),
                     date = matcher.require(2),
                     name = matcher.require(3).trim().fromHtml(),
                     countMessages = matcher.require(4).toInt(),
@@ -90,18 +94,22 @@ class QmsParser @Inject constructor(
                 )
             }
 
-        return QmsThemes(User.required(argId, nick), themes)
+        return QmsThemes(User(UserId(userId.id), nick), themes)
     }
 
     fun parseChat(response: String): QmsChatModel {
         val chat = patternProvider
             .getRegexParser(scope.scope, scope.chat_info)
             .mapOnce(response) { matcher ->
+                val chatId = QmsChatId(
+                    userId = UserId(matcher.require(3).toInt()),
+                    threadId = QmsThreadId(matcher.require(4).toInt())
+                )
                 QmsChatModel(
+                    id = chatId,
                     title = matcher.require(2).trim().fromHtml(),
-                    themeId = matcher.require(4).toInt(),
-                    user = ForumUser.required(
-                        id = matcher.require(3).toInt(),
+                    user = ForumUser(
+                        id = chatId.userId,
                         nick = matcher.require(1).trim().fromHtml(),
                         avatar = matcher.require(5),
                     ),
@@ -141,8 +149,8 @@ class QmsParser @Inject constructor(
             } else {
                 val isMyMessage = matcher.require(1).isNotEmpty()
                 QmsMessage.Regular(
+                    id = QmsMessageId(matcher.require(2).toInt()),
                     isMyMessage = isMyMessage,
-                    id = matcher.require(2).toInt(),
                     readStatus = if (isMyMessage) {
                         matcher.require(3) != "1"
                     } else {

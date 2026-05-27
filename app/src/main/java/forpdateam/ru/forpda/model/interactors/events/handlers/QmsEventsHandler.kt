@@ -2,10 +2,11 @@ package forpdateam.ru.forpda.model.interactors.events.handlers
 
 import forpdateam.ru.forpda.entity.remote.events.WebSocketEvent
 import forpdateam.ru.forpda.entity.remote.inspector.InspectorDiff
-import forpdateam.ru.forpda.entity.remote.inspector.InspectorItem
 import forpdateam.ru.forpda.entity.remote.qms.QmsTheme
 import forpdateam.ru.forpda.entity.remote.qms.QmsThemes
 import forpdateam.ru.forpda.model.data.cache.qms.QmsCache
+import ru.radiationx.coretypes.QmsThreadId
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 class QmsEventsHandler @Inject constructor(
@@ -33,14 +34,14 @@ class QmsEventsHandler @Inject constructor(
         }
     }
 
-    private suspend fun updateCounter(themeId: Int, block: (Int) -> Int) {
-        val target = findTarget(themeId) ?: return
+    private suspend fun updateCounter(threadId: QmsThreadId, block: (Int) -> Int) {
+        val target = findTarget(threadId) ?: return
         val newThemeCount = block(target.theme.countNew)
         if (newThemeCount == target.theme.countNew) {
             return
         }
         val updatedThemes = target.themes.themes.map {
-            if (it.id == themeId) {
+            if (it.id == threadId) {
                 it.copy(countNew = newThemeCount)
             } else {
                 it
@@ -56,7 +57,7 @@ class QmsEventsHandler @Inject constructor(
         updateContact(target.themes.user.id)
     }
 
-    private suspend fun findTarget(themeId: Int): Target? {
+    private suspend fun findTarget(themeId: QmsThreadId): Target? {
         val themesList = qmsCache.getAllThemes()
         for (themes in themesList) {
             for (theme in themes.themes) {
@@ -68,7 +69,7 @@ class QmsEventsHandler @Inject constructor(
         return null
     }
 
-    private suspend fun updateContact(userId: Int) {
+    private suspend fun updateContact(userId: UserId) {
         qmsCache.getContact(userId)?.also { contact ->
             val newContactCount = qmsCache.getThemes(userId).themes.sumOf { it.countNew }
             val newContact = contact.copy(count = newContactCount)

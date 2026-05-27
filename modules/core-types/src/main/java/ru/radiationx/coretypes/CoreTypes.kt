@@ -26,6 +26,12 @@ data class ArticleId(val id: Int) : CoreType
 data class CommentId(val id: Int) : CoreType
 
 @Parcelize
+data class ArticlePollId(val id: Int) : CoreType
+
+@Parcelize
+data class ArticleAnswerId(val id: Int) : CoreType
+
+@Parcelize
 data class DevDbCategoryId(val id: String) : CoreType
 
 @Parcelize
@@ -36,6 +42,9 @@ data class DevDbDevicesId(val categoryId: DevDbCategoryId, val brandId: DevDbBra
 
 @Parcelize
 data class DevDbDeviceId(val id: String) : CoreType
+
+@Parcelize
+data class DevDbCommentId(val id: Int) : CoreType
 
 @Parcelize
 data class UserId(val id: Int) : CoreType
@@ -56,7 +65,19 @@ data class QmsThreadId(val id: Int) : CoreType
 data class QmsChatId(val userId: UserId, val threadId: QmsThreadId) : CoreType
 
 @Parcelize
+data class QmsMessageId(val id: Int) : CoreType
+
+@Parcelize
 data class TopicId(val id: Int) : CoreType
 
 @Parcelize
 data class PostId(val id: Int) : CoreType
+
+@Parcelize
+data class AttachmentId(val id: Int) : CoreType
+
+@Parcelize
+sealed interface AttachmentRelation : CoreType {
+    data class Post(val postId: PostId?) : AttachmentRelation
+    data object Qms : AttachmentRelation
+}

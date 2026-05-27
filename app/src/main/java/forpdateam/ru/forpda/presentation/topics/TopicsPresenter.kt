@@ -2,11 +2,11 @@ package forpdateam.ru.forpda.presentation.topics
 
 import forpdateam.ru.forpda.common.Utils
 import forpdateam.ru.forpda.common.mvp.BasePresenter
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.entity.remote.topics.TopicItem
 import forpdateam.ru.forpda.entity.remote.topics.TopicsData
 import forpdateam.ru.forpda.extensions.coRunCatching
 import forpdateam.ru.forpda.extensions.replace
-import forpdateam.ru.forpda.model.data.remote.api.favorites.FavoritesApi
 import forpdateam.ru.forpda.model.interactors.CrossScreenInteractor
 import forpdateam.ru.forpda.model.repository.faviorites.FavoritesRepository
 import forpdateam.ru.forpda.model.repository.forum.ForumRepository
@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.TopicId
 import ru.radiationx.links.Link
 import ru.radiationx.quill.QuillExtra
 
@@ -43,7 +45,7 @@ class TopicsPresenter(
     private val utils: Utils
 ) : BasePresenter<TopicsView>() {
 
-    private var currentSt = argExtra.link.offset.value
+    private var pageOffset = argExtra.link.offset
     var currentData: TopicsData? = null
 
     override fun onFirstViewAttach() {
@@ -61,7 +63,7 @@ class TopicsPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                topicsRepository.getTopics(argExtra.link.forumId, currentSt)
+                topicsRepository.getTopics(argExtra.link.forumId, pageOffset)
             }.onSuccess {
                 currentData = it
                 viewState.showTopics(it)
@@ -73,19 +75,14 @@ class TopicsPresenter(
     }
 
     fun loadPage(st: Int) {
-        currentSt = st
+        pageOffset = PageOffset(st)
         loadTopics()
     }
 
-    fun addForumToFavorite(forumId: Int, subType: String) {
+    fun addForumToFavorite(forumId: ForumId, subType: String) {
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(
-                    FavoritesApi.ACTION_ADD_FORUM,
-                    -1,
-                    forumId,
-                    subType
-                )
+                favoritesRepository.editFavorites(FavoriteAction.AddForum(forumId, subType))
             }.onSuccess {
                 viewState.onAddToFavorite(it)
             }.onFailure {
@@ -94,10 +91,10 @@ class TopicsPresenter(
         }
     }
 
-    fun addTopicToFavorite(topicId: Int, subType: String) {
+    fun addTopicToFavorite(topicId: TopicId, subType: String) {
         viewModelScope.launch {
             coRunCatching {
-                favoritesRepository.editFavorites(FavoritesApi.ACTION_ADD, -1, topicId, subType)
+                favoritesRepository.editFavorites(FavoriteAction.AddTopic(topicId, subType))
             }.onSuccess {
                 viewState.onAddToFavorite(it)
             }.onFailure {
@@ -109,7 +106,7 @@ class TopicsPresenter(
     fun markRead() {
         viewModelScope.launch {
             coRunCatching {
-                forumRepository.markRead(forumId)
+                forumRepository.markRead(argExtra.link.forumId)
             }.onSuccess {
                 viewState.onMarkRead()
             }.onFailure {
@@ -118,7 +115,7 @@ class TopicsPresenter(
         }
     }
 
-    private fun markRead(id: Int) {
+    private fun markRead(id: TopicId) {
         currentData?.also { data ->
             val newItems = data.topicItems.replace(
                 condition = { it.id == id },
@@ -130,17 +127,17 @@ class TopicsPresenter(
     }
 
     fun openForum() {
-        router.navigateTo(Screen.Forum(forumId = ForumId(forumId)))
+        router.navigateTo(Screen.Forum(forumId = argExtra.link.forumId))
     }
 
     fun openSearch() {
-        val link = Link.Board.Search.default.copy(forums = setOf(Link.Board.Search.Forum.Id(ForumId(forumId))))
+        val link = Link.Board.Search.default.copy(forums = setOf(Link.Board.Search.Forum.Id(argExtra.link.forumId)))
         router.navigateTo(Screen.Search.Forum(link))
     }
 
     fun openTopicForum() {
         currentData?.let {
-            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.id}")
+            linkHandler.handle("https://4pda.to/forum/index.php?showforum=${it.id.id}")
         }
     }
 
@@ -172,8 +169,8 @@ class TopicsPresenter(
     private fun getItemLink(item: TopicItem): String {
         return when (item) {
             is TopicItem.Announce -> item.url
-            is TopicItem.Forum -> "https://4pda.to/forum/index.php?showforum=${item.id}"
-            is TopicItem.Topic -> "https://4pda.to/forum/index.php?showtopic=${item.id}"
+            is TopicItem.Forum -> "https://4pda.to/forum/index.php?showforum=${item.id.id}"
+            is TopicItem.Topic -> "https://4pda.to/forum/index.php?showtopic=${item.id.id}"
         }
     }
 }

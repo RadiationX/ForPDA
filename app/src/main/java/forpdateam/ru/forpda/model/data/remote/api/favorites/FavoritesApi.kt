@@ -2,8 +2,11 @@ package forpdateam.ru.forpda.model.data.remote.api.favorites
 
 import forpdateam.ru.forpda.common.ApiRequest
 import forpdateam.ru.forpda.entity.remote.favorites.Favorite
+import forpdateam.ru.forpda.entity.remote.favorites.FavoriteAction
 import forpdateam.ru.forpda.entity.remote.favorites.FavoritesData
 import forpdateam.ru.forpda.model.data.remote.WebClient
+import ru.radiationx.coretypes.FavoriteId
+import ru.radiationx.coretypes.PageOffset
 import javax.inject.Inject
 
 /**
@@ -15,12 +18,12 @@ class FavoritesApi @Inject constructor(
     private val favoritesParser: FavoritesParser
 ) {
 
-    suspend fun getFavorites(st: Int, all: Boolean, sorting: Sorting): FavoritesData {
-        var data = getFavorites(st, sorting)
+    suspend fun getFavorites(offset: PageOffset, all: Boolean, sorting: Sorting): FavoritesData {
+        var data = getFavorites(offset, sorting)
         if (all) {
             while (data.pagination.hasNext()) {
                 val page = data.pagination.nextPage()
-                val favData = getFavorites(page, sorting)
+                val favData = getFavorites(PageOffset(page), sorting)
                 data = data.copy(
                     pagination = favData.pagination,
                     items = data.items + favData.items
@@ -52,47 +55,24 @@ class FavoritesApi @Inject constructor(
         return data
     }
 
-    private suspend fun getFavorites(st: Int, sorting: Sorting): FavoritesData {
-        val response = webClient.request(ApiRequest.Forum.Favorite.GetList(st, sorting))
+    private suspend fun getFavorites(offset: PageOffset, sorting: Sorting): FavoritesData {
+        val response = webClient.request(ApiRequest.Forum.Favorite.GetList(offset, sorting))
         return favoritesParser.parseFavorites(response.body)
     }
 
-    suspend fun editSubscribeType(type: String?, favId: Int): Boolean {
-        checkNotNull(type)
-        val response = webClient.request(ApiRequest.Forum.Favorite.EditTrackType(favId, type))
-        return favoritesParser.checkIsComplete(response.body)
-    }
-
-    suspend fun editPinState(type: String?, favId: Int): Boolean {
-        checkNotNull(type)
-        val response = webClient.request(ApiRequest.Forum.Favorite.EditPinState(favId, type))
-        return favoritesParser.checkIsComplete(response.body)
-    }
-
-    suspend fun delete(favId: Int): Boolean {
-        val response = webClient.request(ApiRequest.Forum.Favorite.Delete(favId))
-        return favoritesParser.checkIsComplete(response.body)
-    }
-
-    suspend fun add(id: Int, action: Int, type: String?): Boolean {
-        checkNotNull(type)
+    suspend fun editFavorites(action: FavoriteAction): Boolean {
         val request = when (action) {
-            ACTION_ADD_FORUM -> ApiRequest.Forum.Favorite.Add.Forum(id, type)
-            ACTION_ADD -> ApiRequest.Forum.Favorite.Add.Topic(id, type)
-            else -> null
+            is FavoriteAction.AddTopic -> ApiRequest.Forum.Favorite.Add.Topic(action.topicId, action.trackType)
+            is FavoriteAction.AddForum -> ApiRequest.Forum.Favorite.Add.Forum(action.forumId, action.trackType)
+            is FavoriteAction.Delete -> ApiRequest.Forum.Favorite.Delete(action.favoriteId)
+            is FavoriteAction.EditPinState -> ApiRequest.Forum.Favorite.EditPinState(action.favoriteId, action.state)
+            is FavoriteAction.EditTrackType -> ApiRequest.Forum.Favorite.EditTrackType(action.favoriteId, action.trackType)
         }
-        requireNotNull(request)
         val response = webClient.request(request)
         return favoritesParser.checkIsComplete(response.body)
     }
 
     companion object {
-
-        const val ACTION_EDIT_SUB_TYPE = 0
-        const val ACTION_EDIT_PIN_STATE = 1
-        const val ACTION_DELETE = 2
-        const val ACTION_ADD = 3
-        const val ACTION_ADD_FORUM = 4
         val SUB_TYPES = arrayOf("none", "delayed", "immediate", "daily", "weekly", "pinned")
 
         private val DESC_ORDER = Comparator<Favorite> { item1, item2 ->

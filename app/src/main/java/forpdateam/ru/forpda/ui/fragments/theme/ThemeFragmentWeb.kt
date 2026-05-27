@@ -272,7 +272,7 @@ class ThemeFragmentWeb : ThemeFragment(), ExtendedWebView.JsLifeCycleListener, T
     }
 
     override fun deletePostUi(post: ForumPost) {
-        webView.evalJs("deletePost(" + post.id + ");")
+        webView.evalJs("deletePost(" + post.id.id + ");")
     }
 
     override fun openAnchorDialog(post: ForumPost, anchorName: String) {

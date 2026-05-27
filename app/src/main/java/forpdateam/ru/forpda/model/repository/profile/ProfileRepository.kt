@@ -8,6 +8,7 @@ import forpdateam.ru.forpda.model.data.remote.api.profile.ProfileApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import ru.radiationx.coretypes.UserId
 import javax.inject.Inject
 
 /**
@@ -31,10 +32,11 @@ class ProfileRepository @Inject constructor(
     }
 
     suspend fun getCurrentUser(): ForumUser? {
-        if (!authHolder.get().isAuth()) {
+        val authState = authHolder.get()
+        if (!authState.isAuth()) {
             return null
         }
-        val cachedUser = forumUsersCache.getUserById(authHolder.get().userId)
+        val cachedUser = forumUsersCache.getUserById(authState.userId)
         if (cachedUser != null) {
             return cachedUser
         }
@@ -42,10 +44,14 @@ class ProfileRepository @Inject constructor(
     }
 
     suspend fun loadSelf(): ProfileModel {
-        return loadProfile(authHolder.get().userId)
+        val authState = authHolder.get()
+        require(authState.isAuth()) {
+            "Invalid auth state $authState"
+        }
+        return loadProfile(authState.userId)
     }
 
-    suspend fun loadProfile(userId: Int): ProfileModel {
+    suspend fun loadProfile(userId: UserId): ProfileModel {
         return profileApi.getProfile(userId).also {
             forumUsersCache.saveUser(it.user)
         }

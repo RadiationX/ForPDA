@@ -5,6 +5,8 @@ import forpdateam.ru.forpda.entity.remote.forum.Announce
 import forpdateam.ru.forpda.entity.remote.forum.ForumItemFlat
 import forpdateam.ru.forpda.entity.remote.forum.ForumRules
 import forpdateam.ru.forpda.model.data.remote.WebClient
+import ru.radiationx.coretypes.AnnounceId
+import ru.radiationx.coretypes.ForumId
 import javax.inject.Inject
 
 /**
@@ -26,8 +28,8 @@ class ForumApi @Inject constructor(
         return forumParser.parseRules(response.body)
     }
 
-    suspend fun getAnnounce(id: Int, forumId: Int): Announce {
-        val response = webClient.request(ApiRequest.Forum.Forums.GetAnnounce(forumId, id))
+    suspend fun getAnnounce(announceId: AnnounceId): Announce {
+        val response = webClient.request(ApiRequest.Forum.Forums.GetAnnounce(announceId))
         return forumParser.parseAnnounce(response.body)
     }
 
@@ -35,7 +37,7 @@ class ForumApi @Inject constructor(
         webClient.request(ApiRequest.Forum.Forums.MarkAllRead)
     }
 
-    suspend fun markRead(id: Int) {
-        webClient.request(ApiRequest.Forum.Forums.MarkRead(id))
+    suspend fun markRead(forumId: ForumId) {
+        webClient.request(ApiRequest.Forum.Forums.MarkRead(forumId))
     }
 }

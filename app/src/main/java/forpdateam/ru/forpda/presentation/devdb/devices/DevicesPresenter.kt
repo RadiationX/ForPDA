@@ -42,7 +42,7 @@ class DevicesPresenter(
         viewModelScope.launch {
             viewState.setRefreshing(true)
             coRunCatching {
-                devDbRepository.getBrand(argExtra.devicesId)
+                devDbRepository.getDevices(argExtra.devicesId)
             }.onSuccess {
                 currentData = it
                 viewState.showData(it)
@@ -54,7 +54,7 @@ class DevicesPresenter(
     }
 
     fun openDevice(item: Brand.DeviceItem) {
-        router.navigateTo(Screen.DevDbDevice(deviceId = DevDbDeviceId(item.id)))
+        router.navigateTo(Screen.DevDbDevice(deviceId = item.id))
     }
 
     fun openSearch() {
@@ -63,20 +63,20 @@ class DevicesPresenter(
 
     fun copyLink(item: Brand.DeviceItem) {
         currentData?.let {
-            utils.copyToClipBoard("https://4pda.to/devdb/${item.id}")
+            utils.copyToClipBoard("https://4pda.to/devdb/${item.id.id}")
         }
     }
 
     fun shareLink(item: Brand.DeviceItem) {
         currentData?.let {
-            utils.shareText("https://4pda.to/devdb/${item.id}")
+            utils.shareText("https://4pda.to/devdb/${item.id.id}")
         }
     }
 
     fun createNote(item: Brand.DeviceItem) {
         currentData?.let {
             val title = "DevDb: ${it.title} ${item.title}"
-            val url = "https://4pda.to/devdb/" + item.id
+            val url = "https://4pda.to/devdb/" + item.id.id
             viewState.showCreateNote(title, url)
         }
     }

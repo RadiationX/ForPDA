@@ -128,7 +128,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder<?>> {
             title.setText(item.getTitle());
             description.setText(item.getDescription());
             ImageLoader.getInstance().displayImage(item.getImgUrl(), cover);
-            username.setText(item.getAuthor());
+            username.setText(item.getAuthor().getNick());
             date.setText(item.getDate());
         }
     }
@@ -164,7 +164,7 @@ public class NewsListAdapter extends BaseAdapter<NewsItem, BaseViewHolder<?>> {
             /*if (news.newNews && nContainer.getVisibility() == View.GONE) {
                 nContainer.setVisibility(View.VISIBLE);
             }*/
-            username.setText(news.getAuthor());
+            username.setText(news.getAuthor().getNick());
             //category.setText(news.category);
             title.setText(news.getTitle());
             description.setText(news.getDescription());

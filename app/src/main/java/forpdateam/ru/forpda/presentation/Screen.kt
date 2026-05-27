@@ -43,7 +43,10 @@ import ru.radiationx.coretypes.DevDbCategoryId
 import ru.radiationx.coretypes.DevDbDeviceId
 import ru.radiationx.coretypes.DevDbDevicesId
 import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.PostId
 import ru.radiationx.coretypes.QmsChatId
+import ru.radiationx.coretypes.TopicId
 import ru.radiationx.coretypes.UserId
 import ru.radiationx.links.Link
 
@@ -142,14 +145,14 @@ sealed class Screen : com.github.terrakok.cicerone.Screen {
         }
 
         class Edit(
-            private val postId: Int,
-            private val topicId: Int,
-            private val forumId: Int,
-            private val st: Int,
+            private val postId: PostId,
+            private val topicId: TopicId,
+            private val forumId: ForumId,
+            private val offset: PageOffset,
             private val themeName: String,
         ) : EditPost() {
             override fun createFragment(factory: FragmentFactory): Fragment {
-                return EditPostFragment.newInstanceEdit(postId, topicId, forumId, st, themeName)
+                return EditPostFragment.newInstanceEdit(postId, topicId, forumId, offset, themeName)
             }
         }
     }

@@ -14,19 +14,19 @@ class FunnyContent(context: Context?) : RelativeLayout(context) {
 
     private val binding by viewBinding<FunnyContentBinding>(attachToRoot = true)
 
-    fun setImage(@DrawableRes resId: Int): FunnyContent {
-        binding.funnyImage.setImageResource(resId)
+    fun setImage(@DrawableRes drawableRes: Int): FunnyContent {
+        binding.funnyImage.setImageResource(drawableRes)
         return this
     }
 
-    fun setTitle(@StringRes resId: Int): FunnyContent {
-        binding.funnyTitle.setText(resId)
+    fun setTitle(@StringRes stringRes: Int): FunnyContent {
+        binding.funnyTitle.setText(stringRes)
         binding.funnyTitle.visibility = VISIBLE
         return this
     }
 
-    fun setDesc(@StringRes resId: Int): FunnyContent {
-        binding.funnyDesc.setText(resId)
+    fun setDesc(@StringRes stringRes: Int): FunnyContent {
+        binding.funnyDesc.setText(stringRes)
         binding.funnyDesc.visibility = VISIBLE
         return this
     }

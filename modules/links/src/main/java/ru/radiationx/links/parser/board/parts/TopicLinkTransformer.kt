@@ -144,13 +144,13 @@ internal object TopicLinkTransformer {
     private fun String.parseAnchor(): Link.Board.Topic.Anchor? {
         entryRegex.find(this)?.also {
             val postId = it.groupValues[1].parsePostId() ?: return@also
-            return Link.Board.Topic.Anchor.Post(postId = postId, value = this)
+            return Link.Board.Topic.Anchor.Post(postId = postId)
         }
         nodeRegex.find(this)?.also {
             val name = it.groupValues[1]
             val postId = it.groupValues[2].parsePostId() ?: return@also
             val number = it.groupValues[3].toIntOrNull() ?: return@also
-            return Link.Board.Topic.Anchor.Node(name = name, postId = postId, number = number, value = this)
+            return Link.Board.Topic.Anchor.Node(name = name, postId = postId, number = number)
         }
         return null
     }

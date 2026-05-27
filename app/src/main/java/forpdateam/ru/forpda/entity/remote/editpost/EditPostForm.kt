@@ -1,5 +1,10 @@
 package forpdateam.ru.forpda.entity.remote.editpost
 
+import ru.radiationx.coretypes.ForumId
+import ru.radiationx.coretypes.PageOffset
+import ru.radiationx.coretypes.PostId
+import ru.radiationx.coretypes.TopicId
+
 /**
  * Created by radiationx on 10.01.17.
  */
@@ -11,10 +16,10 @@ class EditPostForm {
     var message = ""
     var poll: EditPoll? = null
 
-    var forumId = 0
-    var topicId = 0
-    var postId = 0
-    var st = 0
+    var forumId = ForumId(0)
+    var topicId = TopicId(0)
+    var postId: PostId? = null
+    var st = PageOffset.default
 
     fun addAttachment(item: AttachmentItem) {
         attachments.add(item)
